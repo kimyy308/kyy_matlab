@@ -1,0 +1,553 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="1231"
+   name=""
+   committed-date="2006-03-20T22:13:53.000000Z"
+   url="https://svn.sourceforge.net/svnroot/mexcdf/mexnc/trunk/tests"
+   last-author="johnevans007"
+   kind="dir"
+   uuid="7777c5ed-ba16-0410-9800-bbefcde0efde"
+   revision="1541"/>
+<entry
+   committed-rev="798"
+   name="test_inq_unlimdim.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-07-13T13:47:16.000000Z"
+   checksum="5043f8a9aded3a3ad79b68490da01f67"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:05.000000Z"/>
+<entry
+   committed-rev="798"
+   name="test_dimid.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-07-13T13:47:16.000000Z"
+   checksum="d48b5edbe135c1a6ccdb36c9ebcc37fd"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:05.000000Z"/>
+<entry
+   committed-rev="798"
+   name="test_inq.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-07-13T13:47:16.000000Z"
+   checksum="75303eb792aac75516eda8513406e28b"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:05.000000Z"/>
+<entry
+   committed-rev="1228"
+   name="test_dimdef.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2006-03-20T20:50:13.000000Z"
+   checksum="4cdc57ba53c132daf192291b7976f777"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:05.000000Z"/>
+<entry
+   committed-rev="798"
+   name="test_attname.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-07-13T13:47:16.000000Z"
+   checksum="1af1eb03c8e1f0187a27770f251b3dff"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:05.000000Z"/>
+<entry
+   committed-rev="1228"
+   name="test_put_get_var_int.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2006-03-20T20:50:13.000000Z"
+   checksum="e34c3f99bb17428d97d0315fd1e1f0b5"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:05.000000Z"/>
+<entry
+   committed-rev="798"
+   name="test_inq_dimid.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-07-13T13:47:16.000000Z"
+   checksum="e7fcc894dd7b8c88388b678672e3133b"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:05.000000Z"/>
+<entry
+   committed-rev="798"
+   name="test_put_varm.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-07-13T13:47:16.000000Z"
+   checksum="88f3d08ccdd48a70d769eff6dcd2dd93"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:05.000000Z"/>
+<entry
+   committed-rev="798"
+   name="test_inq_attlen.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-07-13T13:47:16.000000Z"
+   checksum="86036078aad533eacf72d5d4755168b9"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:05.000000Z"/>
+<entry
+   committed-rev="798"
+   name="test_inq_att.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-07-13T13:47:16.000000Z"
+   checksum="abb031e998825afea6a2c864f0b312e2"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:05.000000Z"/>
+<entry
+   committed-rev="1228"
+   name="test_put_get_var_schar.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2006-03-20T20:50:13.000000Z"
+   checksum="3acc59adf69687c4a78ff9698b4f93cf"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:05.000000Z"/>
+<entry
+   committed-rev="889"
+   name="test__open.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-08-11T11:54:58.000000Z"
+   checksum="86b5a5237b5fcc8fda713db8056b9da4"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:05.000000Z"/>
+<entry
+   committed-rev="798"
+   name="test_attinq.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-07-13T13:47:16.000000Z"
+   checksum="5f5cd15977a9e8a9681a727b0c516a1d"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:05.000000Z"/>
+<entry
+   committed-rev="798"
+   name="test_rename_dim.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-07-13T13:47:16.000000Z"
+   checksum="eaea9a058dcb961e602f7ab5643e92a6"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:05.000000Z"/>
+<entry
+   committed-rev="1228"
+   name="test_put_get_var_uchar.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2006-03-20T20:50:13.000000Z"
+   checksum="33fe23c0ef86fbf39be59353da5a3106"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:05.000000Z"/>
+<entry
+   committed-rev="798"
+   name="test_set_fill.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-07-13T13:47:16.000000Z"
+   checksum="a569682a974f43b9d5d4c8e015b3316c"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:05.000000Z"/>
+<entry
+   committed-rev="798"
+   name="test_inq_atttype.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-07-13T13:47:16.000000Z"
+   checksum="3372318266d06c07908b7b59e1e84e7d"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:05.000000Z"/>
+<entry
+   committed-rev="1131"
+   name="test_open.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2006-01-31T19:30:01.000000Z"
+   checksum="14b0a35089d35ee4d2e286dba87c22ff"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:05.000000Z"/>
+<entry
+   committed-rev="895"
+   name="test__create.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-08-11T12:31:40.000000Z"
+   checksum="b01a425ce643a1a6e6314591a79d49af"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:05.000000Z"/>
+<entry
+   committed-rev="1228"
+   name="test_create.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2006-03-20T20:50:13.000000Z"
+   checksum="fd3a73092dba00d02a143d7c7227fca2"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:05.000000Z"/>
+<entry
+   committed-rev="798"
+   name="test_varmget.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-07-13T13:47:16.000000Z"
+   checksum="23ffaa8cc20b96659568dd99737dbbe1"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:05.000000Z"/>
+<entry
+   committed-rev="798"
+   name="test_varid.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-07-13T13:47:16.000000Z"
+   checksum="4145c5e287f87d4ddda9c19b9dbd62f3"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:05.000000Z"/>
+<entry
+   committed-rev="1043"
+   name="test_varput_1g.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-12-07T15:25:45.000000Z"
+   checksum="d95e5179caeab5ddf9a7402e551b14e0"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:05.000000Z"/>
+<entry
+   committed-rev="1228"
+   name="test_put_get_var_double.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2006-03-20T20:50:13.000000Z"
+   checksum="248a66cef4932894b1607208092fee35"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:05.000000Z"/>
+<entry
+   committed-rev="585"
+   name="test_del_att.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-05-05T21:14:43.000000Z"
+   checksum="66375061b3e751d30babe486e4f1a4e8"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:06.000000Z"/>
+<entry
+   committed-rev="798"
+   name="test_inq_varid.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-07-13T13:47:16.000000Z"
+   checksum="be7e7c132fb6a1af2747e0e25b445e1e"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:05.000000Z"/>
+<entry
+   committed-rev="798"
+   name="test_inquire.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-07-13T13:47:16.000000Z"
+   checksum="74b743fa2fd0e51bc96c6245730409df"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:05.000000Z"/>
+<entry
+   committed-rev="701"
+   name="test_attdel.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-06-19T13:49:10.000000Z"
+   checksum="885c65aa0ebb217f1a9ee8705f050ece"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:06.000000Z"/>
+<entry
+   committed-rev="798"
+   name="test_rename_var.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-07-13T13:47:16.000000Z"
+   checksum="08cbf216e94df75e98173b88960a445e"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:06.000000Z"/>
+<entry
+   committed-rev="798"
+   name="test_put_get_att.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-07-13T13:47:16.000000Z"
+   checksum="d1aaa6da1e62cf73a35b0fed9730f8ff"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:06.000000Z"/>
+<entry
+   committed-rev="798"
+   name="test_inq_dim.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-07-13T13:47:16.000000Z"
+   checksum="c267a1fea796c062fda5b06b8cf6e329"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:06.000000Z"/>
+<entry
+   committed-rev="798"
+   name="test_attrename.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-07-13T13:47:16.000000Z"
+   checksum="24b9f53a84eab96d3f3c9afb0f2ebf41"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:06.000000Z"/>
+<entry
+   committed-rev="798"
+   name="test_vara_put_get.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-07-13T13:47:16.000000Z"
+   checksum="dc0a6f6a351810f12646b640edb99f46"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:06.000000Z"/>
+<entry
+   committed-rev="647"
+   name="test_strerror.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-06-01T18:04:38.000000Z"
+   checksum="0c566603ebc38a9af6ef372ab70940e6"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:06.000000Z"/>
+<entry
+   committed-rev="798"
+   name="test_attcopy.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-07-13T13:47:16.000000Z"
+   checksum="ea87dcb4199e522f7d1c0f06782ed764"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:06.000000Z"/>
+<entry
+   committed-rev="798"
+   name="test_redef_def_dim.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-07-13T13:47:16.000000Z"
+   checksum="4c1c665cc622a42b95b919ca79f27ad7"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:06.000000Z"/>
+<entry
+   committed-rev="1228"
+   name="test_put_get_var_short.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2006-03-20T20:50:13.000000Z"
+   checksum="f78a45511df1427fd6dcba27f8a2c365"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:06.000000Z"/>
+<entry
+   committed-rev="798"
+   name="test_inq_var.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-07-13T13:47:16.000000Z"
+   checksum="973edd1188ee8defa77d7f42df5b111e"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:06.000000Z"/>
+<entry
+   committed-rev="798"
+   name="test_varinq.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-07-13T13:47:16.000000Z"
+   checksum="b10959afae7e7bbacc04a73e89c8d1fb"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:06.000000Z"/>
+<entry
+   committed-rev="1228"
+   name="test_dimrename.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2006-03-20T20:50:13.000000Z"
+   checksum="1f5ef99741f95ef204fb45c1b517aeef"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:06.000000Z"/>
+<entry
+   committed-rev="798"
+   name="test_put_var_bad_param_datatype.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-07-13T13:47:16.000000Z"
+   checksum="0e2eb26013846ecf87c78b21b586a938"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:06.000000Z"/>
+<entry
+   committed-rev="798"
+   name="test_vars_put_get.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-07-13T13:47:16.000000Z"
+   checksum="58377f1643a4202720cb6c60b7796c0d"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:06.000000Z"/>
+<entry
+   committed-rev="853"
+   name="README"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-07-31T15:35:21.000000Z"
+   checksum="abacb83b5e85e9b9de9c4acc73c52690"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:06.000000Z"/>
+<entry
+   committed-rev="1228"
+   name="test_put_get_var_float.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2006-03-20T20:50:13.000000Z"
+   checksum="26cecf40b806006847bba2209296ad61"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:06.000000Z"/>
+<entry
+   committed-rev="798"
+   name="test_def_var.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-07-13T13:47:16.000000Z"
+   checksum="cf09e780d7313172ce637787a4eaa46a"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:06.000000Z"/>
+<entry
+   committed-rev="870"
+   name="test_vardef.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-08-08T13:04:12.000000Z"
+   checksum="c486a355055aaed5605236013a44c2b2"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:06.000000Z"/>
+<entry
+   committed-rev="798"
+   name="test_get_var_bad_param_datatype.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-07-13T13:47:16.000000Z"
+   checksum="09409e7c98ae6feb6d0fa75f75f1f858"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:06.000000Z"/>
+<entry
+   committed-rev="1231"
+   name="test_mexnc.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2006-03-20T22:13:53.000000Z"
+   checksum="a560369859b9eb5cc2bf237e734aa195"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:06.000000Z"/>
+<entry
+   committed-rev="798"
+   name="test_inq_attid.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-07-13T13:47:16.000000Z"
+   checksum="dd2ce9472364c230ea1fc33515d7aacf"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:06.000000Z"/>
+<entry
+   committed-rev="798"
+   name="test_get_var1_text.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-07-13T13:47:16.000000Z"
+   checksum="daf05c7e1976c29080b4c4d8ae12881e"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:06.000000Z"/>
+<entry
+   committed-rev="798"
+   name="test_sync.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-07-13T13:47:16.000000Z"
+   checksum="4deedc338942d1b1ad0359474f60f31e"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:06.000000Z"/>
+<entry
+   committed-rev="798"
+   name="test_rename_att.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-07-13T13:47:16.000000Z"
+   checksum="5abcd52dbcd2a29a6f515fc2befb8dd9"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:06.000000Z"/>
+<entry
+   committed-rev="798"
+   name="test_varrename.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-07-13T13:47:16.000000Z"
+   checksum="4d9d8594b49f33e3f387a2ea3e1085c7"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:06.000000Z"/>
+<entry
+   committed-rev="798"
+   name="test_diminq.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-07-13T13:47:16.000000Z"
+   checksum="814ee7557ce86ddf7f1011a4709c646f"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:06.000000Z"/>
+<entry
+   committed-rev="798"
+   name="test_attput.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-07-13T13:47:16.000000Z"
+   checksum="14ee187a1b06b849895abf29d1e24c8c"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:06.000000Z"/>
+<entry
+   committed-rev="798"
+   name="test_copy_att.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-07-13T13:47:16.000000Z"
+   checksum="0b8a47b1bf947864d58a7e4382dacd3f"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:06.000000Z"/>
+<entry
+   committed-rev="1166"
+   name="create_test_ncfile.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2006-02-20T19:45:33.000000Z"
+   checksum="f30f118397c9bd95784148899f95cc8b"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:06.000000Z"/>
+<entry
+   committed-rev="798"
+   name="test_put_get_var_text.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-07-13T13:47:16.000000Z"
+   checksum="5cb804f32c74faac9c541732b9d5f6db"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:06.000000Z"/>
+<entry
+   committed-rev="901"
+   name="test__enddef.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-08-11T12:50:49.000000Z"
+   checksum="72b6310d5439cfa57763a16741c71474"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:06.000000Z"/>
+<entry
+   committed-rev="798"
+   name="test_lfs.m"
+   text-time="2006-06-21T16:45:06.000000Z"
+   committed-date="2005-07-13T13:47:16.000000Z"
+   checksum="33758d8347b1f08ad167410a7c143ba9"
+   last-author="johnevans007"
+   kind="file"
+   prop-time="2006-06-21T16:45:06.000000Z"/>
+</wc-entries>

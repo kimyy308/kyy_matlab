@@ -1,0 +1,560 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="description" CONTENT="The CSIRO matlab/netCDF is used in a matlabsession to retrieve data from, and information about, existing netCDF files. The interface has options for automatically handling missing values, scalefactors, and permutation of hyperslabs. It also has a simple syntax.">
+   <META NAME="keywords" CONTENT="CSIRO matlab netCDF interface">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.04 [en] (X11; I; SunOS 4.1.3 sun4m) [Netscape]">
+   <TITLE>matlab-netCDF home page</TITLE>
+<!$Id: matlab-netcdf.html,v 1.14 2002/02/19 05:00:46 man133 Exp man133 $>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF" LINK="#000089">
+<IMG SRC="http://www.marine.csiro.au/dmrimages/dmrlogo3.gif" ALT="CSIRO Marine Research" BORDER=0  ALIGN=TOP>
+
+<BLOCKQUOTE>&nbsp;
+<CENTER>
+<H1>
+CSIRO matlab/netCDF interface</H1></CENTER>
+
+<HR ALIGN=LEFT width = 100%>
+<H4>
+Index</H4>
+<A HREF="#short_description">Short Description of the matlab/netCDF interface</A>
+<BR><A HREF="#portability">Portability issues</A>
+<BR><A HREF="#installation">Downloading and installation</A>
+<BR><A HREF="#summary">Summary of functions</A>
+<BR><A HREF="#doc_getnc">Detailed discussion of getnc</A>
+<BR><A HREF="#further_documentation">Further documentation</A>
+<BR><A HREF="#backwards_compatibility">Backwards compatibility issues</A>
+<BR><A HREF="#latest_changes">Latest changes</A>
+<BR><A HREF="#disclaimer">Disclaimer</A>
+<BR><A HREF="#development_people">People involved in the development of
+the matlab/netCDF interface</A>
+<BR><A HREF="#contact">Contact details</A>
+<BR><A HREF="#links">Matlab links</A>
+
+<P>
+<HR ALIGN=LEFT width = 100%><A NAME="short_description"></A>
+<H4>
+Short Description of the matlab/netCDF interface</H4>
+This page describes an interface between <A HREF="http://www.unidata.ucar.edu/packages/netcdf">NetCDF</A>
+and <A HREF="http://www.mathworks.com">MATLAB (versions 5 and 6).</A> The interface
+has been developed since 1991 by a <A HREF="#development_people">number
+of people</A>.
+
+<P>The basis of the interface is a machine-dependent mex-file called mexcdf53
+(an older version running under matlab4 used mexcdf). Rather than call
+the mex-file directly users are advised to employ either Chuck Denham's netCDF
+toolbox or the CSIRO matlab/netCDF interface described here.
+
+<P>The CSIRO matlab/netCDF interface has a simple syntax. It has options
+for automatically handling missing values, scale factors, and permutation
+of hyperslabs. It is however limited to retrieving data from, and information
+about, existing netCDF files.
+
+<P>By contrast, Chuck's netCDF toolbox allows users to create and manipulate
+netCDF files as well as to read and examine them. It does this by making
+full use of matlab features that were new in version 5 - such as cells, structures
+and operator overloading.
+The extra capabilities mean that there is a little more to learn and remember.
+
+<p>I suggest that you install them both and use the one most appropriate to your given problem.</p>
+
+<P>The rest of this web page describes the interface between matlab and
+netCDF files. There is an older, no longer supported, version of the CSIRO
+interface that runs under matlab4; this web document tells you how to get
+that version but does not describe it.
+
+<P>
+<HR ALIGN=LEFT width = 100%><A NAME="portability"></A>
+<H4>
+Portability issues</H4>
+Almost all of the machine dependence of the system is in the mex-file which
+is downloaded separately. The m-files that make up the CSIRO matlab/netCDF
+interface have been tested on a number of unix machines as well as a windows-95
+box. No problems have been found with matlab versions 5.0 through to 6.1.
+
+<P>Earlier versions, however, did not work properly on pc operating systems
+because they used file names with more than 8 characters. This has been
+changed for the latest version. The m-file 'whatnc' will produce prettier
+output on a unix machine (where it is able to make unix function calls)
+but it will still work on non-unix machines.
+
+<P>
+<HR ALIGN=LEFT width = 100%><A NAME="installation"></A>
+<H4>
+Downloading and installation</H4>
+What you should get depends on whether you are using matlab4 or later versions (5.0 through to 6.1)
+and also whether you want backwards compatibility to older versions of
+the matlab/netCDF interface that ran under matlab3 and 4.
+<DL>
+<DT>
+matlab 5 and 6 users</DT>
+
+<DD>
+First you should install Chuck Denham's <A HREF="http://crusty.er.usgs.gov/~cdenham/MexCDF/nc4ml5.html">netCDF
+toolbox and the appropriate mex-file</A>. Note that although the latest version of Chuck's toolbox should work for all
+versions of matlab5 and 6 these may require different versions of the mex files due to incompatibilities between
+different matlab versions.
+</DD>
+
+
+<P>Next get the CSIRO matlab/netCDF interface. There are 2 versions of
+this according to whether you are a new user or whether you already have
+code requiring the previous version of the interface (in this case you
+will get all of the code needed for the latest version of the interface
+as well as extra m-files to mimic the previous version). Each version of
+the interface is available in 2 forms - as a tar'ed and compressed file
+or as a p-code file. The contents of these files are identical but the
+tar'ed and compressed file is very small (~56 kb) and is convenient for
+unix users while the p-code version is much larger(~256 kb) but will work
+for everyone.
+
+<P>New users download one of the following
+<UL>
+<LI>
+tar'ed and compressed file <A HREF="ftp://ftp.marine.csiro.au/pub/mansbrid/matlab_netcdf_5_0.tar.Z">matlab_netcdf_5_0.tar.Z</A></LI>
+
+<LI>
+p-code file <A HREF="ftp://ftp.marine.csiro.au/pub/mansbrid/matlab_netcdf_5_0.p">matlab_netcdf_5_0.p</A></LI>
+</UL>
+Users wanting backwards compatibility download one of the following
+<UL>
+<LI>
+tar'ed and compressed file <A HREF="ftp://ftp.marine.csiro.au/pub/mansbrid/matlab_netcdf_4x5.tar.Z">matlab_netcdf_4x5.tar.Z</A></LI>
+
+<LI>
+p-code file <A HREF="ftp://ftp.marine.csiro.au/software/mansbrid/matlab_netcdf_4x5.p">matlab_netcdf_4x5.p</A></LI>
+</UL>
+
+<DT>
+matlab 4 users</DT>
+
+<DD>
+An older, no longer supported, version of the CSIRO interface is also available
+as <A HREF="ftp://ftp.marine.csiro.au/pub/mansbrid/matlab-netcdf-4.0.tar.Z">matlab-netcdf-4.0.tar.Z</A>.
+This requires an older mex-file which can be obtained from Rich Signell's
+<A HREF="http://crusty.er.usgs.gov/mexcdf.html">"MEXCDF: The Matlab/NetCDF
+Interface"</A> home page.</DD>
+</DL>
+The installation of the m-files is easy.
+<OL>
+<LI>
+If you have a tar'ed and compressed file then just type</LI>
+
+<BR>zcat matlab_netcdf_5_0.tar.Z | tar -xf -
+<BR>or
+<BR>zcat matlab_netcdf_4x5.tar.Z | tar -xf -
+<BR>as appropriate. This will put all of the m-files into a suitable directory
+(called something like matlab_netcdf_5_0).
+
+<P>If you have a p-code version then put this into a new directory (called
+something like matlab_netcdf_5_0), start matlab, and type in the name of
+the p-code file (without the .p). This will automagically put the required
+m-files into the directory.
+<LI>
+Put the directory containing the matlab/netCDF interface into matlab's
+path - perhaps by using the 'path' command. It is possible to store the
+m-files in the directory containing Chuck's files (this would usually be
+$TOOLBOX/local/netcdf). The only trouble with this is that matlab will
+then see a conflict between the Contents.m file is this distribution and
+chuck's netCDF help file.</LI>
+
+<LI>
+Edit the m-file pos_cds.m; it returns the path to the common data set directory.
+pos_cds.m is called by whatnc, inqnc and getnc and so any netCDF file in
+the common data set will be accessible to users without them needing to
+specify path names.</LI>
+
+<LI>
+You may edit the the function y_rescale.m although this is strongly advised
+against. The function y_rescale determines whether getnc applies the attributes
+scale_factor and add_offset to relevant variables and attributes. The default
+is that any variable will be automatically rescaled; if a variable has
+attributes valid_range, valid_min, valid_max or _FillValue then these will
+be automatically rescaled also. This behaviour can be changed by editing
+y_rescale.m but you should be very cautious in doing so. In particular,
+if the variable is rescaled and its attributes not, or vice versa, then
+the options to replace 'invalid' data will not work in the way expected
+in the netCDF standard.</LI>
+</OL>
+
+<HR ALIGN=LEFT width = 100%><A NAME="summary"></A>
+<H4>
+Summary of functions</H4>
+The following commands are available (use help in matlab for further information)
+and will be supported in the future. There is also a <A HREF="#doc_getnc">detailed
+discussion of getnc</A>.
+<DL>
+<DT>
+attnc</DT>
+
+<DD>
+imports attributes of a netCDF file</DD>
+
+<DT>
+getnc</DT>
+
+<DD>
+imports variables from a netCDF file</DD>
+
+<DT>
+inqnc</DT>
+
+<DD>
+interactive inquiry of netCDF file</DD>
+
+<DT>
+netcdf toolbox</DT>
+
+<DD>
+direct calls to netCDF functions - use 'help netcdf' for a detailed description</DD>
+
+<DT>
+timenc</DT>
+
+<DD>
+finds the time vector and the corresponding base date for a netCDF file
+that meets <A HREF="http://www-pcmdi.llnl.gov/drach/netCDF.html">COARDS
+standards</A></DD>
+
+<DT>
+whatnc</DT>
+
+<DD>
+lists netCDF files in current directory</DD>
+</DL>
+
+<HR ALIGN=LEFT width = 100%><A NAME="doc_getnc"></A>
+<H4>
+Detailed description of getnc</H4>
+getnc retrieves data from a NetCDF file. It is called from within matlab 5 or 6
+by:
+
+<P>values = getnc(file, varid, corner, end_point, stride, order, change_miss, new_miss, squeeze_it, rescale_opts)
+
+<P>DESCRIPTION:
+<BR><P>getnc retrieves data from a NetCDF file. The way getnc behaves depends
+on how many of the input arguments are passed to it. If no arguments are
+passed then it returns a help message. If one argument is passed then the
+user is asked questions to determine information necessary for the data
+retrieval. If more than one argument is passed then getnc returns the data
+without needing to ask any questions. The input arguments are listed below.
+
+<P>INPUT:
+<DL>
+<DT>
+file</DT>
+
+<DD>
+is the name of a netCDF file but without the .cdf or .nc extent.</DD>
+
+<DT>
+varid</DT>
+
+<DD>
+may be an integer or a string. If it is an integer then it must be the
+menu number of the n dimensional variable as used by a call to inqnc or
+getnc. If it is a string then it should be the name of the variable.</DD>
+
+<DT>
+corner</DT>
+
+<DD>
+is a vector of length n specifying the hyperslab corner with the lowest
+index values (the bottom left-hand corner in a 2-space). The corners refer
+to the dimensions in the same order that these dimensions are listed in
+the relevant questions in getnc.m and in the inqnc.m description of the
+variable. A negative element means that all values in that direction will
+be returned. If a negative scalar is used this means that all of the elements
+in the array will be returned.</DD>
+
+<DT>
+end_point</DT>
+
+<DD>
+is a vector of length n specifying the hyperslab corner with the highest
+index values (the top right-hand corner in a 2-space). The corners refer
+to the dimensions in the same order that these dimensions are listed in
+the relevant questions in getnc.m and in the inqnc.m description of the
+variable. An element in the end_point vector will be ignored if the corresponding
+element in the corner vector is negative.</DD>
+
+<DT>
+stride</DT>
+
+<DD>
+is a vector of length n specifying the interval between accessed values
+of the hyperslab (sub-sampling) in each of the n dimensions. A value of
+1 accesses adjacent values in the given dimension; a value of 2 accesses
+every other value; and so on. If no sub-sampling is required in any direction
+then it is allowable to just pass the scalar 1 (or -1 to be consistent
+with the corner and end_point notation).</DD>
+
+<DT>
+order</DT>
+
+<DD>
+is a vector of length n specifying the order of the dimensions in the returned
+array. order = -1 or [1 2 3 .. n] for an n dimensional netCDF variable
+will return an array with the dimensions in the same order as described
+by a call to inqnc(file) from within matlab or 'ncdump -h' from the command
+line. Putting order = -2 will reverse this order. More general permutations
+are given re-arranging the numbers 1 to n in the vector.</DD>
+
+<DT>
+change_miss</DT>
+
+<DD>
+== 1 causes missing values to be returned unchanged.</DD>
+
+<BR>== 2 causes missing values to be changed to NaN.
+<BR>== 3 causes missing values to be changed to new_miss (after rescaling
+if that is necessary).
+<BR>&lt; 0 produces the default (missing values to be changed to NaN).
+<DT>
+new_miss</DT>
+
+<DD>
+is the value given to missing data if change_miss = 3.</DD>
+
+<DT>
+squeeze_it</DT>
+
+<DD>
+specifies whether the returned array should be squeezed. That is, when
+squeeze_it is non-zero then the squeeze function will be applied to the
+returned array to eliminate singleton array dimensions. This is the default.
+Note also that a 1-d array is returned as a column vector.</DD>
+
+<dt>rescale_opts</dt>
+
+<dd>is a 2 element vector specifying whether or not rescaling is
+carried out on retrieved variables or attributes. Only use this option
+if you are sure that you know what you are doing.
+If rescale_opts(1) == 1 then a variable read in by getnc.m will be
+rescaled by 'scale_factor' and  'add_offset' if these are attributes of
+the variable; this is the default. If rescale_opts(1) == 0 then this
+rescaling will not be done.
+If rescale_opts(2) == 1 then the attributes '_FillValue', 'valid_range',
+'valid_min' and 'valid_max' read in by getnc.m (and used to find the
+missing values of the relevant variable) will be rescaled by
+'scale_factor' and 'add_offset'; this is the default. If rescale_opts(2)
+== 0 then this rescaling will not be done.</dd>
+</DL>
+OUTPUT:
+<DL>
+<DT>
+values</DT>
+
+<DD>
+is a scalar, vector or array of values that is read in from the NetCDF
+file</DD>
+</DL>
+NOTES:
+<OL>
+<LI>
+In order for getnc to work non-interactively it is only strictly necessary
+to pass the first 2 input arguments to getnc - sensible defaults are available
+for the rest.</LI>
+
+<BR>These are:
+<BR>corner, end_point = [-1 ... -1], => all elements retrieved
+<BR>stride = 1, => all elements retrieved
+<BR>order = [1 2 3 .. n] for an n dimensional netCDF variable
+<BR>change_miss = 2, => missing values replaced by NaNs
+<BR>new_miss = 0;
+<BR>squeeze_it = 1; => singleton dimensions will be removed
+<LI>
+It is not acceptable to pass only 3 input arguments since there is no default
+in the case of the corner points being specified but the end points not.</LI>
+
+<LI>
+By default the order of the dimensions of a returned array will be the
+same as they appear in the relevant call to 'inqnc' (from matlab) or 'ncdump
+-h' (from the command line). (This is the opposite to what happened in
+an earlier version of getnc.) This actually involves getnc re-arranging
+the returned array because the netCDF utilities follow the C convention
+for data storage and matlab follows the fortran convention.</LI>
+
+
+<P>Since the netCDF file follows the C convention this means that in the
+actual storage of the data lon is the fastest changing index, followed
+by lat, and then month. However matlab (and fortran) use the opposite convention
+and so month is the fastest changing index, followed by lat, and then lon.
+getnc actually used the permute function to reverse the storage order.
+If efficiency is a concern (because of using very large arrays or a large
+number of small arrays) then passing order == -2 to getnc will produce
+the fastest response by returning the data in its 'natural' order (a 180x90x12
+array in our example)
+<LI>
+If the values are returned in a one-dimensional array then this will be
+a column vector. This choice provides consistency if there is an unlimited
+dimension. That is, if the length of the unlimited dimension is n then
+an m x n array will be returned even for n = 1.)</LI>
+
+<LI>
+A strange 'feature' of matlab 5 (and later versions) is that it will not tolerate a singleton
+dimension as the final dimension. Thus, if you chose to have only one element
+in the final dimension this dimension will be 'squeezed' whether you want
+it to be or not - this seems to be unavoidable.</LI>
+</OL>
+EXAMPLES:
+
+<P>To be more explicit, suppose that we use inqnc to examine a netCDF file.
+Then 2 lines in the output might read:
+
+<P>The 3 dimensions are 1) month = 12 2) lat = 90 3) lon = 180.
+<BR>--- Information about airtemp(month lat lon ) ---
+
+<P>Likewise using 'ncdump -h' from the command line would have the corresponding
+line:
+
+<P>short airtemp(month, lat, lon);
+
+<P>1) The simplest possible call to getnc will get all the elements of
+the variable (note the order of the dimensions):
+
+<P>>> airtemp = getnc('oberhuber', 'airtemp');
+<BR>>> size(airtemp) = 12 90 180
+
+<P>2) Get a subsample of the variable, note the stride:
+
+<P>&nbsp;>> airtemp = getnc('oberhuber', 'airtemp', [-1 1 3], [-1 46 6],
+[1 5 1]);
+<BR>>> size(airtemp)
+<BR>ans = 12 10 4
+
+<P>3) Get all the elements of the variable, but with dimensions permuted:
+
+<P>&nbsp;>> airtemp = getnc('oberhuber', 'airtemp', -1, -1, -1, [2 3 1]);
+<BR>>> size(airtemp)
+<BR>ans = 90 180 12
+
+<P>4) Get all the elements of the variable, but with missing values replaced
+with 1000. Note that the corner, end_point, stride and order vectors have
+been replaced by -1 to indicate that the whole range is required in the
+default order:
+<BR>>> airtemp = getnc('oberhuber', 'airtemp', -1, -1, -1, -1, 3, 1000);
+
+<P>>> size(airtemp)
+<BR>ans = 12 90 180
+
+<P>5) Get a subsample of the variable, a singleton dimension is squeezed:
+
+<P>&nbsp;>> airtemp = getnc('oberhuber', 'airtemp', [-1 7 -1], [-1 7 -1]);
+<BR>>> size(airtemp)
+<BR>ans = 12 180
+
+<P>6) Get a subsample of the variable, a singleton dimension is not squeezed:
+
+<P>&nbsp;>> airtemp = getnc('oberhuber','airtemp',[-1 7 -1],[-1 7 -1],-1,-1,-1,-1,0);
+<BR>>> size(airtemp)
+<BR>ans = 12 1 180
+
+<P>
+<HR ALIGN=LEFT width = 100%><A NAME="further_documentation"></A>
+<H4>
+Further documentation</H4>
+There used to be a user manual in latex and postscript form. I have not
+yet updated the manual and so have not put it in this distribution. In
+fact it should not be necessary for an experienced matlab and netCDF user
+to read the manual at all. Simply do a help on the 5 m-files that would
+be commonly used - attnc, getnc, inqnc, timenc and whatnc.
+
+<P>
+<HR ALIGN=LEFT width = 100%><A NAME="backwards_compatibility"></A>
+<H4>
+Backwards compatibility issues</H4>
+Earlier versions of these m-files had names like getcdf, whatcdf, etc and
+were used for matlab versions 3.5 and 4.2. If you have a lot of legacy
+code that you don't wish to change then you should download and install
+matlab-netcdf-4.2-5.0.tar.Z. This runs under matlab 5 and mimics the older
+matlab/netCDF interface.
+
+<P>
+<HR ALIGN=LEFT width = 100%><A NAME="latest_changes"></A>
+<H4>
+Latest changes</H4>
+
+<UL>
+<LI>
+
+<I>July 3 2000: </I>timenc was generalised so that it could handle
+dates before the introduction of the Gregorian calendar on October 15,
+1582; it now works back to the year -4712. The earlier version could
+give incorrect dates for files which used the pre-Gregorian calendar in
+either the time vector values or in its 'units' attribute.
+
+<LI>
+<I>April 22 1998: </I>timenc was generalised so that when requested it
+will return only part of the time vector. It can also return the length
+of the time vector as a separate variable.</LI>
+
+<LI>
+<I>December 12 1997:</I> attnc was generalised so that when the user does
+not specify the name of the variable's attribute then all of the attributes
+(and their names) will be returned in cells.</LI>
+</UL>
+
+
+<P>
+<HR ALIGN=LEFT width = 100%><A NAME="disclaimer"></A>
+<H4>
+Disclaimer</H4>
+This software is provided "as is" without warranty of any kind. It is covered
+by a general CSIRO <A HREF="http://www.csiro.au/legalnotices/disclaimer.html">Legal
+Notice and Disclaimer</A>.
+
+<P>
+<HR ALIGN=LEFT width = 100%><A NAME="development_people"></A>
+<H4>
+People involved in the development of the matlab/netCDF interface</H4>
+Julie Allen: <A HREF="mailto:jallen@whoi.edu">jallen@whoi.edu</A>
+<BR>Chuck Denham: <A HREF="mailto:cdenham@usgs.gov">cdenham@usgs.gov</A>
+<BR>Jim Mansbridge: <A HREF="mailto:jim.mansbridge@csiro.au">jim.mansbridge@csiro.au</A>
+<BR>Rich Signell: <A HREF="mailto:rsignell@usgs.gov">rsignell@usgs.gov</A>
+
+<P>
+<HR ALIGN=LEFT width = 100%><A NAME="contact"></A>
+<H4>
+Contact details</H4>
+
+
+<P>This web page is maintained by Jim Mansbridge, CSIRO Division of Marine
+Research
+
+<P><B>Postal address:</B> GPO Box 1538, Hobart, Tasmania 7001, Australia&nbsp;<!--CHANGE NEXT LINE TO YOUR PHONE NUMBERS -->
+<BR><B>Phone:</B> +61-3-62 32 5416
+<BR><B>Fax:</B> +61-3-62 32 5123&nbsp;<!--CHANGE NEXT LINES TO YOUR EMAIL ADDRESS -->
+<BR><B>Email:</B><A HREF="mailto:Jim.Mansbridge@csiro.au"> Jim.Mansbridge@csiro.au</A>
+
+<P>
+<HR ALIGN=LEFT width = 100%><A NAME="links"></A>
+<H4>
+Matlab links</H4>
+
+<table width=180 border=0 cellpadding=0 cellspacing=0><tr><td align=center>
+<font size=-1><a href="http://www.links2go.com/topic/MATLAB">
+<img alt="Key Resource" src=http://www.marine.csiro.au/~mansbrid/key.gif width=121 height=121 border=0><br>
+<b><i>Links<sup><small>2</small></sup>Go</i> Key Resource</b><br>
+MATLAB Topic</a></font></td></tr></table>
+
+<P>
+<HR ALIGN=LEFT width = 100%>This page is <A HREF="http://www.marine.csiro.au/sw/matlab-netcdf.html">http://www.marine.csiro.au/sw/matlab-netcdf.html</A>.
+<BR>It was last revised $Date: 2002/02/19 05:00:46 $.&nbsp;<!--START OF FOOTER  PLEASE DON'T CHANGE-->
+<BR><BR<FONT SIZE="2">
+<HR>Further details on the research of the CSIRO Division of Marine Research
+are available through the Division's Home Page.
+<CENTER></CENTER>
+
+<CENTER><IMG SRC="http://www.marine.csiro.au/dmrimages/home.gif" ALT="CSIRO Marine Home Page" ALIGN=BOTTOM
+BORDER="1"></A>
+
+<P>For more information contact reception@marine.csiro.au or telephone
++61-3-62325222. Unless otherwise indicated all contents in these web documents
+are copyright &copy; 1997 CSIRO. Use of this web site and information available
+from it is subject to our <A HREF="http://www.csiro.au/legalnotices/legalnotices/disclaimer.html">Legal
+Notice and Disclaimer</A></BLOCKQUOTE>
+
+</BODY>
+</HTML>
