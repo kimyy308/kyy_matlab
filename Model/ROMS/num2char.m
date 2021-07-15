@@ -1,5 +1,7 @@
 function c = num2char(c,r)
 
+%%%Test
+
 % NUM2CHAR   Converts numeric Array's to CharacterArrays
 %
 %  C = NUM2CHAR( Array , Replace );
