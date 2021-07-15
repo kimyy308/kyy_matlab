@@ -1,6 +1,8 @@
 close all; clear all;  clc;
 warning off;
 
+%test
+
 all_testname2 = {'CNRM-ESM2-1', 'EC-Earth3-Veg', 'ACCESS-CM2', 'CNRM-CM6-1-HR', 'CMCC-ESM2'};
 
 % all_region2 ={'NWP','AKP4'};
