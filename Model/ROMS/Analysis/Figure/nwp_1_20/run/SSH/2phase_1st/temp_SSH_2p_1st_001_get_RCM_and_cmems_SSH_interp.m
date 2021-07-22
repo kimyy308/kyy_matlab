@@ -5,10 +5,10 @@ close all; clear all;  clc;
 % all_region ={'YSECS', 'ECS2', 'ES', 'YS', 'NES', 'SES'}
 
 % all_region ={'NWP', 'AKP4'}
-all_region ={'TEST'}
+all_region ={'AKP4'}
 % all_testname = {'test11', 'test12'};
-all_testname = {'test2102'};
-% all_testname = {'test2102', 'test2103', 'test2104', 'test2105', 'test2106'};
+% all_testname = {'test2102'};
+all_testname = {'test2102', 'test2103', 'test2104', 'test2105', 'test2106'};
 
 % all_testname = {'ens03'};
 
@@ -25,6 +25,7 @@ for testnameind=1:length(all_testname)
             addpath(genpath([dropboxpath '\source\matlab\Common\Figure']));
             addpath(genpath([dropboxpath '\source\matlab\Common\netcdf_old']));
             addpath(genpath([dropboxpath '\source\matlab\Model\ROMS\Grid_kyy']));
+            addpath(genpath([dropboxpath '\source\matlab\Common\seawater_ver3_2']));
             addpath(genpath([matlabroot,'\toolbox\matlab\imagesci\'])); %% add new netcdf path
         elseif (strcmp(system_name,'GLNXA64'))
             dropboxpath='/home/kimyy/Dropbox';
@@ -43,7 +44,7 @@ for testnameind=1:length(all_testname)
 
         % for snu_desktop
         testname=all_testname{testnameind} 
-        inputyear = [1985:2014]; % % put year which you want to plot [year year ...]
+        inputyear = [1993:2014]; % % put year which you want to plot [year year ...]
         inputmonth = [1 2 3 4 5 6 7 8 9 10 11 12]; % % put month which you want to plot [month month ...]
         variable = 'zeta';
         varname ='zeta';
@@ -116,6 +117,7 @@ for testnameind=1:length(all_testname)
             param_script ='C:\Users\USER\Dropbox\source\matlab\Model\ROMS\Analysis\Figure\nwp_1_20\run\fig_param\fig_param_kyy_EKB_RMS.m'
 %             filedir = strcat('E:\Data\Model\ROMS\nwp_1_20\output\', testname, '\run\packed_monthly\'); % % where data files are
             filedir = strcat('D:\Data\Model\ROMS\nwp_1_20\backup_surf\', testname, '\run\zeta\'); % % where data files are
+            monfiledir = strcat('E:\Data\Model\ROMS\nwp_1_20\output\', testname, '\run\packed_monthly\');
             griddir = strcat('E:\Data\Model\ROMS\nwp_1_20\output\', testname, '\run\packed_monthly\'); % % where data files are
             savedir = strcat('D:\Data\Model\ROMS\nwp_1_20\', testname, '\run\'); % % where data files are
             cmemsdir='Z:\내 드라이브\Data\Observation\CMEMS\';
@@ -134,8 +136,14 @@ for testnameind=1:length(all_testname)
             fig_flags{8,1}='detrended sea level correlation analysis';
             fig_flags{9,1}='moving averaged interped sea level trend analysis';
             fig_flags{10,1}='moving averaged interped sea level correlation analysis';
-
-            for flagi=1:10
+            fig_flags{11,1}='steric sea level analysis';
+            fig_flags{12,1}='steric sea level data nc save';
+            fig_flags{13,1}='RCM and GCM steric sea level interped data nc save';
+            fig_flags{14,1}='thermosteric sea level analysis';
+            fig_flags{15,1}='steric sea level data nc save';
+            fig_flags{16,1}='halosteric sea level analysis';
+            
+            for flagi=1:20
                 fig_flags{flagi,2}=0;
             end
             fig_flags{1,2}=1;
@@ -148,6 +156,13 @@ for testnameind=1:length(all_testname)
             fig_flags{8,2}=0;
             fig_flags{9,2}=0;
             fig_flags{10,2}=0;
+            fig_flags{11,2}=1;
+            fig_flags{12,2}=1;
+            fig_flags{13,2}=0;
+            fig_flags{14,2}=1;
+            fig_flags{15,2}=1;
+            fig_flags{16,2}=1;
+            fig_flags{17,2}=1;
         end
         
 % % %         get model data and cmemsstructed data      
@@ -2152,55 +2167,1098 @@ for testnameind=1:length(all_testname)
             fig_flag=0;
         end
         
-%         %%% get sea level anomaly
-%         cmems_sla = comb_cmems_data;
-%         for sla_i=1:size(cmems_sla,1)
-%             for sla_j=1:size(cmems_sla,2)
-%                 cmems_sla_mean(sla_i,sla_j)=mean(cmems_sla(sla_i,sla_j,:),'omitnan');
-%             end
-%         end
-        
-%         for l=1:288
-%             tempmsl=interped_sla(:,:,l);
-%             msl(l)=mean(tempmsl(:),'omitnan');
-% %             tempmsl_lp=comb_interped_sla_2y_lowpass(:,:,l);
-%             tempmsl_lp=comb_interped_2y_lowpass(:,:,l);
-%             msl_lp(l)=mean(tempmsl_lp(:),'omitnan');
-%         end
-%         plot(msl,'k');
-%         hold on;
-%         plot(msl_lp,'r');
-%         hold off;
+% % %         get ts & calculate zosto
+        fig_flag=fig_flags{11,2};
+        while (fig_flag)
+            run(param_script);
+            ind=1;
+            matname = [savedir,testname,'_',regionname,'model_steric_ssh_',num2str(min(inputyear),'%04i'),'_',num2str(max(inputyear),'%04i'),'.mat'];
+            if (exist(matname , 'file') ~= 2 || fig_flag==2)   
+                for yearij = 1:length(inputyear)
+                    if (exist('rho_0_va')==0)
+                        for monthij = 1:length(inputmonth)
+                            disp([num2str(yearij), 'y_',num2str(monthij),'m'])
+                            tic;
+                            tempyear = inputyear(yearij);
+                            tempmonth = inputmonth(monthij);
+                            % ex : rootdir\test37\data\2001\test37_monthly_2001_01.nc
+%                             filename = strcat(filedir, num2str(tempyear,'%04i'), '\', ...
+%                                     testname, '_monthly_', num2str(tempyear,'%04i'), '_', num2str(tempmonth,'%02i'), '.nc');
+                            filename = strcat(monfiledir, num2str(tempyear,'%04i'), '\', ...
+                                'pck_', testname, '_monthly_', num2str(tempyear,'%04i'), '_', num2str(tempmonth,'%02i'), '.nc');
+%                             gridname = strcat(griddir, num2str(tempyear,'%04i'), '\', ...
+%                                 'pck_', testname, '_monthly_', num2str(tempyear,'%04i'), '_', num2str(tempmonth,'%02i'), '.nc');
 
-% 
-% % % %         mean trend (raw, seasonal filtered)
-%         mean_trend=mean(trend(:),'omitnan');
-%         mean_trend_filtered=mean(trend_filtered(:),'omitnan');
-        
-        
-% % %   correlation coefficient between model_ssh_filtered_detrended and cmems_filtered_detrended
-        
-        
+                                
+                            % read model data
+                            if (exist('lon_min')==0)
+                                modelinfo=ncinfo(filename);
+                                lon = ncread(filename,'lon_rho',[1 1],[modelinfo.Dimensions(5).Length,1]);
+                                lat = ncread(filename,'lat_rho',[1 1],[1,modelinfo.Dimensions(6).Length]);
+                                
+                                [lon_min, lon_max, lat_min, lat_max] = ...
+                                    Func_0012_findind_Y(1, lonlat, lon, lat);
+%                                 
+%                                 lon_west = abs(lon - (lonlat(1)-1));
+%                                 [min_lon_west, lon_min]=min(lon_west);
+%                                 lon_east = abs(lon - (lonlat(2)+1));
+%                                 [min_lon_east, lon_max]=min(lon_east);
+%                                 lat_south = abs(lat - (lonlat(3)-1));
+%                                 [min_lat_south, lat_min]=min(lat_south);
+%                                 lat_north = abs(lat - (lonlat(4)+1));
+%                                 [min_lat_north, lat_max]=min(lat_north);
 
+                                lon = ncread(filename,'lon_rho', [lon_min(1) lat_min(1)], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1]);
+                                lat = ncread(filename,'lat_rho', [lon_min(1) lat_min(1)], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1]);
+
+                                switch(regionname)
+                                    case('NWP') %% North western Pacific
+                                        mask_model(1:size(lon,1),1:size(lon,2))=1;
+                                    otherwise
+                                        mask_model = double(inpolygon(lon,lat,refpolygon(:,1),refpolygon(:,2)));
+                                        mask_model(mask_model==0)=NaN;
+                                end
+                            end
+
+                            data_info = ncinfo(filename, varname);  %% [lon lat depth time] -> [1601 1201 33 1]
+
+                            if (exist('h')==0)
+                                h = ncread(filename,'h',[lon_min(1) lat_min(1)], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1]);
+                                pm = ncread(filename,'pm',[lon_min(1) lat_min(1)], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1]);
+                                pn = ncread(filename,'pn',[lon_min(1) lat_min(1)], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1]);
+                                dA=1./pm .* 1./pn;
+                                Vtransform = ncread(filename, 'Vtransform');
+                                Vstretching = ncread(filename, 'Vstretching');
+                                theta_s = ncread(filename, 'theta_s');
+                                theta_b = ncread(filename, 'theta_b');
+                                hc = ncread(filename, 'hc');
+                                N = length(ncread(filename, 's_rho'));
+                            end
+                            data = ncread(filename,varname,[lon_min(1) lat_min(1) 1], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1 1]);
+                            PT_src(:,:,:,monthij) = ncread(filename,'temp',[lon_min(1) lat_min(1) 1 1], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1 inf 1]);
+                            S_src(:,:,:,monthij) = ncread(filename,'salt',[lon_min(1) lat_min(1) 1 1], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1 inf 1]);
+                            S_src(S_src<=0)=0;
+
+                            vtype ='w';
+                            zw=zlevs(Vtransform, Vstretching, h,data,theta_s,theta_b,hc,N,vtype);
+
+                            dz = diff(zw);
+                            dz = permute(dz, [2,3,1]);
+    %                         vol_0    = nansum( is_ocean.*dz.*dA, 'all' );       % global sum, 0-D
+    %                         area_0   = nansum( is_ocean(:,:,1).*dA, 'all' );    % global sum, 0-D
+                            vtype ='r';
+                            P = zlevs(Vtransform, Vstretching, h,data,theta_s,theta_b,hc,N,vtype);
+                            P = -permute(P, [2,3,1]);
+                            comb_P(:,:,:,monthij)=P;
+                        end
+                            PT_src = mean(PT_src, 4 );
+                            S_src = mean(S_src, 4 );
+                            P = mean(comb_P, 4);
+                            T_src = sw_temp(S_src, PT_src, P, zeros(size(P)) );
+                            rho_src = sw_dens(S_src, T_src, P );
+                            dep_0 = h + data;
+                            rho_0_va = sum( rho_src.*dz, 3 , 'omitnan') ./ dep_0;       % vertical(local) average, 2-D
+                    end
+                    
+                    for monthij = 1:length(inputmonth)
+                        disp([num2str(yearij), 'y_',num2str(monthij),'m'])
+                        tic;
+                        tempyear = inputyear(yearij);
+                        tempmonth = inputmonth(monthij);
+                        % ex : rootdir\test37\data\2001\test37_monthly_2001_01.nc
+%                         filename = strcat(monfiledir, num2str(tempyear,'%04i'), '\', ...
+%                                 testname, '_monthly_', num2str(tempyear,'%04i'), '_', num2str(tempmonth,'%02i'), '.nc');
+                        filename = strcat(monfiledir, num2str(tempyear,'%04i'), '\', ...
+                                'pck_', testname, '_monthly_', num2str(tempyear,'%04i'), '_', num2str(tempmonth,'%02i'), '.nc');
+
+                        data_info = ncinfo(filename, varname);  %% [lon lat depth time] -> [1601 1201 33 1]
+
+                        if (exist('h')==0)
+                            h = ncread(filename,'h',[lon_min(1) lat_min(1)], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1]);
+                            pm = ncread(filename,'pm',[lon_min(1) lat_min(1)], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1]);
+                            pn = ncread(filename,'pn',[lon_min(1) lat_min(1)], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1]);
+                            dA=1./pm .* 1./pn;
+                            Vtransform = ncread(filename, 'Vtransform');
+                            Vstretching = ncread(filename, 'Vstretching');
+                            theta_s = ncread(filename, 'theta_s');
+                            theta_b = ncread(filename, 'theta_b');
+                            hc = ncread(filename, 'hc');
+                            N = length(ncread(filename, 's_rho'));
+                        end
+                        data = ncread(filename,varname,[lon_min(1) lat_min(1) 1], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1 1]);
+                        PT_src = ncread(filename,'temp',[lon_min(1) lat_min(1) 1 1], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1 inf 1]);
+                        S_src = ncread(filename,'salt',[lon_min(1) lat_min(1) 1 1], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1 inf 1]);
+                        S_src(S_src<=0)=0;
+
+                        vtype ='w';
+                        zw=zlevs(Vtransform, Vstretching, h,data,theta_s,theta_b,hc,N,vtype);
+
+                        dz = diff(zw);
+                        dz = permute(dz, [2,3,1]);
+
+                        vtype ='r';
+                        P = zlevs(Vtransform, Vstretching, h,data,theta_s,theta_b,hc,N,vtype);
+                        P = -permute(P, [2,3,1]);
+                        T_src = sw_temp (S_src, PT_src, P, zeros(size(P)) );
+                        rho_src = sw_dens (S_src, T_src, P );
+
+                        dep_n = h + data;
+                        rho_n_va = sum( rho_src.*dz, 3 , 'omitnan') ./ dep_n;      % vertical(local) average
+%                         rho_n_va2 = sum( rho_src.*dz, 3 , 'omitnan') ./ (h+data);
+
+%                         rho_n_ga = nansum( rho_src.*dz.*dA, 'all' ) ./ vol_0;  % global average
+                        zosto = dep_0       .* ( 1 - rho_n_va ./ rho_0_va );
+%                         zosto_2 = dep_n       .* ( 1 - rho_n_va ./ rho_0_va );
+                        comb_zosto(:,:,ind) = zosto;
+
+                        len_lon_model = size(data,1);
+                        len_lat_model = size(data,2);
+
+                        GLO_zostoname='D:\Data\Model\CMIP5\zosto\historical\zosto_interp_IPSL-CM5A-LR_historical_1976-2005.nc';
+
+                        if (exist('lon_glo')==0)
+                            GLO_modelinfo=ncinfo(GLO_zostoname);
+                            lon_glo = ncread(GLO_zostoname,'lon',[1 1],[inf,1]);
+                            lat_glo = ncread(GLO_zostoname,'lat',[1 1],[1,inf]);
+
+                            lon_west_glo = abs(lon_glo - (lonlat(1)-1));
+                            [min_lon_west_glo, lon_min_glo]=min(lon_west_glo);
+                            lon_east_glo = abs(lon_glo - (lonlat(2)+1));
+                            [min_lon_east_glo, lon_max_glo]=min(lon_east_glo);
+                            lat_south_glo = abs(lat_glo - (lonlat(3)-1));
+                            [min_lat_south_glo, lat_min_glo]=min(lat_south_glo);
+                            lat_north_glo = abs(lat_glo - (lonlat(4)+1));
+                            [min_lat_north_glo, lat_max_glo]=min(lat_north_glo);
+
+                            lon_glo = ncread(GLO_zostoname,'lon', [lon_min_glo(1) lat_min_glo(1)], [lon_max_glo(1)-lon_min_glo(1)+1 lat_max_glo(1)-lat_min_glo(1)+1]);
+                            lat_glo = ncread(GLO_zostoname,'lat', [lon_min_glo(1) lat_min_glo(1)], [lon_max_glo(1)-lon_min_glo(1)+1 lat_max_glo(1)-lat_min_glo(1)+1]);
+
+                            switch(regionname)
+                                otherwise
+                                    mask_model_glo = double(inpolygon(lon_glo,lat_glo,refpolygon(:,1),refpolygon(:,2)));
+                                    mask_model_glo(mask_model_glo==0)=NaN;
+                            end
+                        end
+
+                        interped_zosto = griddata(double(lon), double(lat), zosto,double(lon_glo),double(lat_glo));   
+
+                        comb_interped_zosto(:,:,ind) = interped_zosto;
+
+                        ind = ind + 1;
+                        toc;
+                    end
+                end
+                
+                save(matname, 'mask_model', 'len_lon_model', 'len_lat_model', 'comb_zosto',  ...
+                    'mask_model_glo', 'comb_interped_zosto', ...
+                    'lon_glo', 'lat_glo', 'lon', 'lat', '-v7.3');
+                
+                
+                
+            else
+                load(matname);
+% % % % % % % % % % % % % % % % % % %                     landname = [savedir,testname,'_',regionname,'land_steric_ssh_',num2str(min(inputyear),'%04i'),'_',num2str(max(inputyear),'%04i'),'.mat'];
+% % % % % % % % % % % % % % % % % % % 
+% % % % % % % % % % % % % % % % % % %                     filename = strcat('D:\Data\Model\ROMS\nwp_1_20\test53\run\2005\ocean_rst2.nc');
+% % % % % % % % % % % % % % % % % % %                     modelinfo=ncinfo(filename);
+% % % % % % % % % % % % % % % % % % %                     lon = ncread(filename,'lon_rho',[1 1],[modelinfo.Dimensions(5).Length,1]);
+% % % % % % % % % % % % % % % % % % %                     lat = ncread(filename,'lat_rho',[1 1],[1,modelinfo.Dimensions(6).Length]);
+% % % % % % % % % % % % % % % % % % % 
+% % % % % % % % % % % % % % % % % % %                     lon_west = abs(lon - (lonlat(1)-1));
+% % % % % % % % % % % % % % % % % % %                     [min_lon_west, lon_min]=min(lon_west);
+% % % % % % % % % % % % % % % % % % %                     lon_east = abs(lon - (lonlat(2)+1));
+% % % % % % % % % % % % % % % % % % %                     [min_lon_east, lon_max]=min(lon_east);
+% % % % % % % % % % % % % % % % % % %                     lat_south = abs(lat - (lonlat(3)-1));
+% % % % % % % % % % % % % % % % % % %                     [min_lat_south, lat_min]=min(lat_south);
+% % % % % % % % % % % % % % % % % % %                     lat_north = abs(lat - (lonlat(4)+1));
+% % % % % % % % % % % % % % % % % % %                     [min_lat_north, lat_max]=min(lat_north);
+% % % % % % % % % % % % % % % % % % % 
+% % % % % % % % % % % % % % % % % % %                     lon = ncread(filename,'lon_rho', [lon_min(1) lat_min(1)], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1]);
+% % % % % % % % % % % % % % % % % % %                     lat = ncread(filename,'lat_rho', [lon_min(1) lat_min(1)], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1]);
+% % % % % % % % % % % % % % % % % % %                     mask_rho = ncread(filename,'mask_rho', [lon_min(1) lat_min(1)], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1]);
+% % % % % % % % % % % % % % % % % % %                     interped_mask_rho = griddata(double(lon), double(lat), mask_rho,double(lon_glo),double(lat_glo));   
+% % % % % % % % % % % % % % % % % % %                     land_model_interped=interped_mask_rho;
+% % % % % % % % % % % % % % % % % % %                     land_model_interped(interped_mask_rho==0)=1;
+% % % % % % % % % % % % % % % % % % %                     interped_mask_rho(interped_mask_rho==0)=NaN;
+% % % % % % % % % % % % % % % % % % %                     land_model_interped(isfinite(interped_mask_rho))=NaN;
+% % % % % % % % % % % % % % % % % % % 
+% % % % % % % % % % % % % % % % % % %                     [scenname, error_status] = Func_0013_RCM_CMIP6_scenname(testname);
+% % % % % % % % % % % % % % % % % % %                     gcmname = Func_0004_get_GCMname_from_RCM(testname);
+% % % % % % % % % % % % % % % % % % % 
+% % % % % % % % % % % % % % % % % % %                     GLO_zostoname = ['D:\Data\Model\CMIP5\zosto\', scenname, '\', ...
+% % % % % % % % % % % % % % % % % % %                         'zosto_interp_', gcmname, '_', scenname, '_', num2str(min(inputyear),'%04i'), '-', num2str(max(inputyear),'%04i'), '.nc'];
+% % % % % % % % % % % % % % % % % % %                     lon_glo = ncread(GLO_zostoname,'lon',[1 1],[inf,1]);
+% % % % % % % % % % % % % % % % % % %                     lat_glo = ncread(GLO_zostoname,'lat',[1 1],[1,inf]);
+% % % % % % % % % % % % % % % % % % % 
+% % % % % % % % % % % % % % % % % % %                     lon_west_glo = abs(lon_glo - (lonlat(1)-1));
+% % % % % % % % % % % % % % % % % % %                     [min_lon_west_glo, lon_min_glo]=min(lon_west_glo);
+% % % % % % % % % % % % % % % % % % %                     lon_east_glo = abs(lon_glo - (lonlat(2)+1));
+% % % % % % % % % % % % % % % % % % %                     [min_lon_east_glo, lon_max_glo]=min(lon_east_glo);
+% % % % % % % % % % % % % % % % % % %                     lat_south_glo = abs(lat_glo - (lonlat(3)-1));
+% % % % % % % % % % % % % % % % % % %                     [min_lat_south_glo, lat_min_glo]=min(lat_south_glo);
+% % % % % % % % % % % % % % % % % % %                     lat_north_glo = abs(lat_glo - (lonlat(4)+1));
+% % % % % % % % % % % % % % % % % % %                     [min_lat_north_glo, lat_max_glo]=min(lat_north_glo);
+% % % % % % % % % % % % % % % % % % % 
+% % % % % % % % % % % % % % % % % % %                     lon_glo = ncread(GLO_zostoname,'lon', [lon_min_glo(1) lat_min_glo(1)], [lon_max_glo(1)-lon_min_glo(1)+1 lat_max_glo(1)-lat_min_glo(1)+1]);
+% % % % % % % % % % % % % % % % % % %                     lat_glo = ncread(GLO_zostoname,'lat', [lon_min_glo(1) lat_min_glo(1)], [lon_max_glo(1)-lon_min_glo(1)+1 lat_max_glo(1)-lat_min_glo(1)+1]);
+% % % % % % % % % % % % % % % % % % % 
+% % % % % % % % % % % % % % % % % % %                     switch(regionname)
+% % % % % % % % % % % % % % % % % % %                         otherwise
+% % % % % % % % % % % % % % % % % % %                             mask_model_glo = double(inpolygon(lon_glo,lat_glo,refpolygon(:,1),refpolygon(:,2)));
+% % % % % % % % % % % % % % % % % % %                             mask_model_glo(mask_model_glo==0)=NaN;
+% % % % % % % % % % % % % % % % % % %                     end
+% % % % % % % % % % % % % % % % % % %                     land_model_glo2=ncread(GLO_zostoname, 'zosto',[lon_min_glo(1) lat_min_glo(1), 1], [lon_max_glo(1)-lon_min_glo(1)+1 lat_max_glo(1)-lat_min_glo(1)+1, 1]);
+% % % % % % % % % % % % % % % % % % %                     land_model_glo=land_model_glo2;
+% % % % % % % % % % % % % % % % % % %                     land_model_glo(isnan(land_model_glo2))=1;
+% % % % % % % % % % % % % % % % % % %                     land_model_glo(isfinite(land_model_glo2))=NaN;
+% % % % % % % % % % % % % % % % % % %                     save(landname, 'land_model_interped', 'land_model_glo', '-v7.3');
+%                 end
+            end
+            fig_flag=0;
+        end
+
+% % %         steric sea level analysis
+        fig_flag=fig_flags{12,2};
+        while (fig_flag)
+            ncoutfilename = strcat(savedir, testname,'_',regionname, '_steric_ssh_',num2str(min(inputyear),'%04i'),'_',num2str(max(inputyear),'%04i'), '.nc');
+            if (exist(ncoutfilename , 'file') ~= 2 || fig_flag==2)   
+            
+                comb_zosto_correct = comb_zosto;
+                for i=1:len_lon_model
+                    for j=1:len_lat_model
+                        raw_zosto=squeeze(comb_zosto(i,j,:));
+                        std5_zosto = 5.* std(raw_zosto);
+                        diff_zosto = diff(raw_zosto);
+                        if diff_zosto(end)> std5_zosto;
+                            raw_zosto(end) = raw_zosto(end-1) + diff_zosto(end-1);
+                            diff_zosto(end)=diff_zosto(end-1);
+                        end
+                        raw_zosto(find(diff_zosto>std5_zosto)+1)= (raw_zosto(find(diff_zosto>std5_zosto)) + raw_zosto(find(diff_zosto>std5_zosto)+2))./2.0;
+                        continuity_error=diff(find(diff_zosto>std5_zosto));
+                        continuity_error(continuity_error==1)=55555;
+                        if continuity_error==55555
+                            'error'
+                            break
+                        end
+                        comb_zosto_correct(i,j,:)=raw_zosto;
+                    end
+                end
+                
+                for i=1:size(comb_interped_zosto,1)
+                    for j=1:size(comb_interped_zosto,2)
+                        raw_zosto=squeeze(comb_interped_zosto(i,j,:));
+                        std5_zosto =5.* std(raw_zosto);
+                        diff_zosto = diff(raw_zosto);
+                        if diff_zosto(end)> std5_zosto;
+                            raw_zosto(end) = raw_zosto(end-1) + diff_zosto(end-1);
+                            diff_zosto(end)=diff_zosto(end-1);
+                        end
+                        raw_zosto(find(diff_zosto>std5_zosto)+1)= (raw_zosto(find(diff_zosto>std5_zosto)) + raw_zosto(find(diff_zosto>std5_zosto)+2))./2.0;
+                        continuity_error=diff(find(diff_zosto>std5_zosto));
+                        continuity_error(continuity_error==1)=55555;
+                        if continuity_error==55555
+                            'error'
+                            break
+                        end
+                        comb_interped_zosto_correct(i,j,:)=raw_zosto;
+                    end
+                end
+                
+                rawsshfilename = strcat(savedir, testname,'_',regionname, '_ssh_trend_',num2str(min(inputyear),'%04i'),'_',num2str(max(inputyear),'%04i'), '.nc');
+                mask_rho = ncread(rawsshfilename, 'trend');
+                mask_rho(isfinite(mask_rho))=1;
+%                 for tt= 1:size(ftime)
+                    comb_zosto_correct = comb_zosto_correct .* mask_rho;
+%                 end
+%                 plot(squeeze(mean(mean(comb_interped_zosto_correct,1,'omitnan'),2,'omitnan')))
+
+            % % %         make ncfile
+                ncid = netcdf.create(ncoutfilename,'NETCDF4');
+
+                lon_dimid = netcdf.defDim(ncid, 'lon', len_lon_model);
+                lat_dimid = netcdf.defDim(ncid,'lat',len_lat_model);
+                time_dimid = netcdf.defDim(ncid, 'time', 0);
+%                 clim_time_dimid = netcdf.defDim(ncid, 'clim_time', 12);
+
+                netcdf.putAtt(ncid,netcdf.getConstant('NC_GLOBAL'), ...
+                    'type', ['NWP 1/20 _ ', testname, 'model monthly SSH analysis file']);
+                netcdf.putAtt(ncid,netcdf.getConstant('NC_GLOBAL'), ...
+                    'title', [' steric SSH analysis (', num2str(min(inputyear)), '-', num2str(max(inputyear)) ,') ']);
+                netcdf.putAtt(ncid,netcdf.getConstant('NC_GLOBAL'), ...
+                    'source', [' ROMS NWP 1/20 data from _ ',testname ]);
+                netcdf.putAtt(ncid,netcdf.getConstant('NC_GLOBAL'), ...
+                    'author', 'Created by Y.Y.Kim');
+                netcdf.putAtt(ncid,netcdf.getConstant('NC_GLOBAL'), ...
+                    'date', date);
+
+                timevarid=netcdf.defVar(ncid, 'time', 'NC_DOUBLE', time_dimid);
+                netcdf.putAtt(ncid,timevarid,'long_name','time');
+                netcdf.putAtt(ncid,timevarid,'units','days since 1900-12-31 00:00:00');
+                netcdf.putAtt(ncid,timevarid,'calendar','gregorian');
+
+                lon_rhovarid=netcdf.defVar(ncid, 'lon_rho', 'NC_DOUBLE', [lon_dimid lat_dimid]);
+                netcdf.putAtt(ncid,lon_rhovarid,'long_name','lon_model');
+                netcdf.putAtt(ncid,lon_rhovarid,'units','degree_east');
+
+                lat_rhovarid=netcdf.defVar(ncid, 'lat_rho', 'NC_DOUBLE', [lon_dimid lat_dimid]);
+                netcdf.putAtt(ncid,lat_rhovarid,'long_name','lat_model');
+                netcdf.putAtt(ncid,lat_rhovarid,'units','degree_north');
+
+                steric_sshvarid=netcdf.defVar(ncid, 'steric_ssh', 'NC_FLOAT', [lon_dimid lat_dimid time_dimid]);
+                netcdf.putAtt(ncid,steric_sshvarid,'long_name','steric_ssh');
+                netcdf.putAtt(ncid,steric_sshvarid,'units','m');
+                netcdf.defVarChunking(ncid,steric_sshvarid,'CHUNKED',[len_lon_model/10, len_lat_model/10, length(ftime)/10]);
+                netcdf.defVarDeflate(ncid,steric_sshvarid,true,true,1);
+
+                netcdf.endDef(ncid);
+
+                netcdf.putVar(ncid, timevarid, 0, length(ftime), ftime);
+%                 netcdf.putVar(ncid, clim_timevarid, 0, length(climtime), climtime);
+                netcdf.putVar(ncid, lon_rhovarid, [0 0], [len_lon_model len_lat_model], lon);
+                netcdf.putVar(ncid, lat_rhovarid, [0 0], [len_lon_model len_lat_model], lat);
+                netcdf.putVar(ncid, steric_sshvarid, [0 0 0], [len_lon_model len_lat_model length(ftime)], comb_zosto_correct);
+                netcdf.close(ncid);
+            end
+            fig_flag=0;
+        end
         
-% %         figure;
-% %         pcolor(corr_clim(:,:,2)')
-% %         shading flat
-% %         colorbar
-% %         disp('corr coef_detrended complete') 
-             
-%         for l=1:300
-%             tempm=squeeze(comb_interped_data_filtered(:,:,l));
-%             m_interped(l)=mean(tempm(:),'omitnan');
-%             tempm=squeeze(comb_cmems_data_filtered(:,:,l));
-%             m_cmems(l)=mean(tempm(:),'omitnan');
-%         end
-%         corrcoef(m_interped, m_cmems)
-%         pcolor(corr_interped')
-%         shading flat
-%         colorbar;
+% % %         steric sea level analysis (interp)
+        fig_flag=fig_flags{13,2};
+        while (fig_flag)
+            ncoutfilename = strcat(savedir, testname,'_',regionname, '_interped_steric_ssh_',num2str(min(inputyear),'%04i'),'_',num2str(max(inputyear),'%04i'), '.nc');
+            if (exist(ncoutfilename , 'file') ~= 2 || fig_flag==2)   
+                comb_interped_zosto_correct = comb_interped_zosto;
+                
+                rawsshfilename = strcat(savedir, testname,'_',regionname, '_ssh_trend_',num2str(min(inputyear),'%04i'),'_',num2str(max(inputyear),'%04i'), '.nc');
 
-%         save([filedir,testname,'_',regionname,'ssh_trend_corr_coef_',num2str(min(inputyear),'%04i'),'_',num2str(max(inputyear),'%04i'),'.mat'], '-v7.3');
+                raw_ssh = ncread(rawsshfilename, 'raw_ssh');
+                clear comb_interped_ssh_correct
+%                 oldncoutfilename = strcat(savedir, 'old_', testname,'_',regionname, '_interped_steric_ssh_',num2str(min(inputyear),'%04i'),'_',num2str(max(inputyear),'%04i'), '.nc');
+%                 comb_interped_ssh_correct = ncread(oldncoutfilename, 'interped_ssh');
+                for tt=1:size(ftime,2)
+                    comb_interped_ssh_correct(:,:,tt) = griddata(double(lon), double(lat), double(squeeze(raw_ssh(:,:,tt))),double(lon_glo),double(lat_glo));   
+                end
 
+                mean_interped_zosto_correct = squeeze(mean(mean(comb_interped_zosto_correct,1,'omitnan'),2,'omitnan'));
+%                 diff_mean_interped_zosto_correct = diff( mean_interped_zosto_correct);
+                slope_mzos = polyfit(ftime, mean_interped_zosto_correct,1);
+                fit_mzos = polyval(slope_mzos, ftime);
+                noise_ind = find(mean_interped_zosto_correct > fit_mzos'+std(mean_interped_zosto_correct));
+                comb_interped_zosto_correct(:,:,noise_ind) = NaN;
+                
+                for i=1:size(comb_interped_zosto,1)
+                    for j=1:size(comb_interped_zosto,2)
+                        raw_zosto = squeeze(comb_interped_zosto_correct(i,j,:));
+                        nanx = isnan(raw_zosto);
+                        if sum(nanx) ~= length(ftime)
+                            raw_zosto(nanx) = interp1(ftime(~nanx), raw_zosto(~nanx), ftime(nanx));
+                            comb_interped_zosto_correct(i,j,:) = raw_zosto;
+                            raw_ssh = squeeze(comb_interped_ssh_correct(i,j,:));
+                            raw_ssh(nanx) = interp1(ftime(~nanx), raw_ssh(~nanx), ftime(nanx));
+                            comb_interped_ssh_correct(i,j,:) = raw_ssh;
+                        end
+                    end
+                end
+                
+                mask_rho = ncread(filename,'mask_rho', [lon_min(1) lat_min(1)], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1]);
+                interped_mask_rho = griddata(double(lon), double(lat), mask_rho,double(lon_glo),double(lat_glo));   
+                land_model_interped=interped_mask_rho;
+                land_model_interped(interped_mask_rho==0)=1;
+                interped_mask_rho(interped_mask_rho==0)=NaN;
+                land_model_interped(isfinite(interped_mask_rho))=NaN;
+                
+                ocean_mask_model = land_model_interped;
+                ocean_mask_model(isnan(land_model_interped))=1;
+                ocean_mask_model(isfinite(land_model_interped))=NaN;
+                
+                comb_interped_zosto_correct= comb_interped_zosto_correct .* ocean_mask_model .* mask_model_glo;
+                
+                
+                
+%                 mask_rho = squeeze(std(permute(comb_interped_zosto_correct, [3 1 2])));
+%                 mask_rho (mask_rho < mask_rho(2,2).*5) = NaN;
+%                 pcolor(mask_rho'); shading flat; colorbar
+
+                plot(squeeze(mean(mean(comb_interped_zosto_correct,1,'omitnan'),2,'omitnan')))
+                       
+                switch testname
+                    case {'test53', 'test54', 'test55', 'test56'}
+                        scenname='historical';
+                    case {'test61', 'test62', 'test63', 'test64'}
+                        scenname='rcp26';
+                    case {'test57', 'test58', 'test59', 'test60'}
+                        scenname='rcp45';
+                    case {'test65', 'test66', 'test67', 'test68'}
+                        scenname='rcp85';
+                end
+                switch testname
+                    case {'test53', 'test61', 'test57', 'test65'}
+                        gcmname='IPSL-CM5A-LR';
+                    case {'test54', 'test62', 'test58', 'test66'}
+                        gcmname='IPSL-CM5A-MR';
+                    case {'test55', 'test63', 'test59', 'test67'}
+                        gcmname='NorESM1-M';
+                    case {'test56', 'test64', 'test60', 'test68'}
+                        gcmname='MPI-ESM-LR';
+                end
+                
+                GLO_zostoname = ['D:\Data\Model\CMIP5\zosto\', scenname, '\', ...
+                    'zosto_interp_', gcmname, '_', scenname, '_', num2str(min(inputyear),'%04i'), '-', num2str(max(inputyear),'%04i'), '.nc'];
+
+                if (exist('lon_min_glo')==0)
+                    GLO_modelinfo=ncinfo(GLO_zostoname);
+                    lon_glo = ncread(GLO_zostoname,'lon',[1 1],[inf,1]);
+                    lat_glo = ncread(GLO_zostoname,'lat',[1 1],[1,inf]);
+
+                    lon_west_glo = abs(lon_glo - (lonlat(1)-1));
+                    [min_lon_west_glo, lon_min_glo]=min(lon_west_glo);
+                    lon_east_glo = abs(lon_glo - (lonlat(2)+1));
+                    [min_lon_east_glo, lon_max_glo]=min(lon_east_glo);
+                    lat_south_glo = abs(lat_glo - (lonlat(3)-1));
+                    [min_lat_south_glo, lat_min_glo]=min(lat_south_glo);
+                    lat_north_glo = abs(lat_glo - (lonlat(4)+1));
+                    [min_lat_north_glo, lat_max_glo]=min(lat_north_glo);
+
+                    lon_glo = ncread(GLO_zostoname,'lon', [lon_min_glo(1) lat_min_glo(1)], [lon_max_glo(1)-lon_min_glo(1)+1 lat_max_glo(1)-lat_min_glo(1)+1]);
+                    lat_glo = ncread(GLO_zostoname,'lat', [lon_min_glo(1) lat_min_glo(1)], [lon_max_glo(1)-lon_min_glo(1)+1 lat_max_glo(1)-lat_min_glo(1)+1]);
+
+                    switch(regionname)
+                        otherwise
+                            mask_model_glo = double(inpolygon(lon_glo,lat_glo,refpolygon(:,1),refpolygon(:,2)));
+                            mask_model_glo(mask_model_glo==0)=NaN;
+                    end
+                end
+                comb_gcm_zosto = ncread(GLO_zostoname,'zosto', [lon_min_glo(1) lat_min_glo(1) 1 ], [lon_max_glo(1)-lon_min_glo(1)+1 lat_max_glo(1)-lat_min_glo(1)+1 inf]);
+                
+                comb_gcm_zosto = comb_gcm_zosto .* mask_model_glo;
+                
+                len_lon_model = size( lon_glo,1);
+                len_lat_model = size( lat_glo,2);
+                % % %         make ncfile
+                ncid = netcdf.create(ncoutfilename,'NETCDF4');
+
+                lon_dimid = netcdf.defDim(ncid, 'lon', len_lon_model);
+                lat_dimid = netcdf.defDim(ncid,'lat',len_lat_model);
+                time_dimid = netcdf.defDim(ncid, 'time', 0);
+%                 clim_time_dimid = netcdf.defDim(ncid, 'clim_time', 12);
+
+                netcdf.putAtt(ncid,netcdf.getConstant('NC_GLOBAL'), ...
+                    'type', ['NWP 1/20 _ ', testname, 'GCM and RCM monthly interped steric SSH analysis file']);
+                netcdf.putAtt(ncid,netcdf.getConstant('NC_GLOBAL'), ...
+                    'title', [' steric SSH analysis (', num2str(min(inputyear)), '-', num2str(max(inputyear)) ,') ']);
+                netcdf.putAtt(ncid,netcdf.getConstant('NC_GLOBAL'), ...
+                    'source', [' ROMS NWP 1/20 data and from _ ',testname, ' and ', gcmname]);
+                netcdf.putAtt(ncid,netcdf.getConstant('NC_GLOBAL'), ...
+                    'author', 'Created by Y.Y.Kim');
+                netcdf.putAtt(ncid,netcdf.getConstant('NC_GLOBAL'), ...
+                    'date', date);
+
+                timevarid=netcdf.defVar(ncid, 'time', 'NC_DOUBLE', time_dimid);
+                netcdf.putAtt(ncid,timevarid,'long_name','time');
+                netcdf.putAtt(ncid,timevarid,'units','days since 1900-12-31 00:00:00');
+                netcdf.putAtt(ncid,timevarid,'calendar','gregorian');
+
+                lon_glovarid=netcdf.defVar(ncid, 'lon_glo', 'NC_DOUBLE', [lon_dimid lat_dimid]);
+                netcdf.putAtt(ncid,lon_glovarid,'long_name','lon_model');
+                netcdf.putAtt(ncid,lon_glovarid,'units','degree_east');
+
+                lat_glovarid=netcdf.defVar(ncid, 'lat_glo', 'NC_DOUBLE', [lon_dimid lat_dimid]);
+                netcdf.putAtt(ncid,lat_glovarid,'long_name','lat_model');
+                netcdf.putAtt(ncid,lat_glovarid,'units','degree_north');
+
+                interped_steric_sshvarid=netcdf.defVar(ncid, 'interped_steric_ssh', 'NC_FLOAT', [lon_dimid lat_dimid time_dimid]);
+                netcdf.putAtt(ncid,interped_steric_sshvarid,'long_name','interped_steric_ssh');
+                netcdf.putAtt(ncid,interped_steric_sshvarid,'units','m');
+                netcdf.defVarChunking(ncid,interped_steric_sshvarid,'CHUNKED',[len_lon_model/10, len_lat_model/10, length(ftime)/10]);
+                netcdf.defVarDeflate(ncid,interped_steric_sshvarid,true,true,1);
+                
+                interped_sshvarid=netcdf.defVar(ncid, 'interped_ssh', 'NC_FLOAT', [lon_dimid lat_dimid time_dimid]);
+                netcdf.putAtt(ncid,interped_sshvarid,'long_name','interped_ssh');
+                netcdf.putAtt(ncid,interped_sshvarid,'units','m');
+                netcdf.defVarChunking(ncid,interped_sshvarid,'CHUNKED',[len_lon_model/10, len_lat_model/10, length(ftime)/10]);
+                netcdf.defVarDeflate(ncid,interped_sshvarid,true,true,1);
+
+                gcm_steric_sshvarid=netcdf.defVar(ncid, 'gcm_steric_ssh', 'NC_FLOAT', [lon_dimid lat_dimid time_dimid]);
+                netcdf.putAtt(ncid,gcm_steric_sshvarid,'long_name',['gcm_steric_ssh from ', gcmname]);
+                netcdf.putAtt(ncid,gcm_steric_sshvarid,'units','m');
+                netcdf.defVarChunking(ncid,gcm_steric_sshvarid,'CHUNKED',[len_lon_model/10, len_lat_model/10, length(ftime)/10]);
+                netcdf.defVarDeflate(ncid,gcm_steric_sshvarid,true,true,1);
+                
+                netcdf.endDef(ncid);
+
+                netcdf.putVar(ncid, timevarid, 0, length(ftime), ftime);
+%                 netcdf.putVar(ncid, clim_timevarid, 0, length(climtime), climtime);
+                netcdf.putVar(ncid, lon_glovarid, [0 0], [len_lon_model len_lat_model], lon_glo);
+                netcdf.putVar(ncid, lat_glovarid, [0 0], [len_lon_model len_lat_model], lat_glo);
+                netcdf.putVar(ncid, gcm_steric_sshvarid, [0 0 0], [len_lon_model len_lat_model length(ftime)], comb_gcm_zosto);
+                netcdf.putVar(ncid, interped_steric_sshvarid, [0 0 0], [len_lon_model len_lat_model length(ftime)], comb_interped_zosto_correct);
+                netcdf.putVar(ncid, interped_sshvarid, [0 0 0], [len_lon_model len_lat_model length(ftime)], comb_interped_ssh_correct);
+                netcdf.close(ncid);
+            end
+            fig_flag=0;
+        end
+
+% % %         get ts & calculate zosto_thermo
+        fig_flag=fig_flags{14,2};
+        while (fig_flag)
+            run(param_script);
+            ind=1;
+            matname = [savedir,testname,'_',regionname,'model_thermosteric_ssh_',num2str(min(inputyear),'%04i'),'_',num2str(max(inputyear),'%04i'),'.mat'];
+            clear rho_0_va
+            if (exist(matname , 'file') ~= 2 || fig_flag==2)   
+                for yearij = 1:length(inputyear)
+                    if (exist('rho_0_va')==0)
+                        for monthij = 1:length(inputmonth)
+                            disp([num2str(yearij), 'y_',num2str(monthij),'m'])
+                            tic;
+                            tempyear = inputyear(yearij);
+                            tempmonth = inputmonth(monthij);
+                            % ex : rootdir\test37\data\2001\test37_monthly_2001_01.nc
+                            filename = strcat(monfiledir, num2str(tempyear,'%04i'), '\', ...
+                                'pck_', testname, '_monthly_', num2str(tempyear,'%04i'), '_', num2str(tempmonth,'%02i'), '.nc');
+
+                                
+                            % read model data
+                            if (exist('lon_min')==0)
+                                modelinfo=ncinfo(filename);
+                                lon = ncread(filename,'lon_rho',[1 1],[modelinfo.Dimensions(5).Length,1]);
+                                lat = ncread(filename,'lat_rho',[1 1],[1,modelinfo.Dimensions(6).Length]);
+                                
+                                [lon_min, lon_max, lat_min, lat_max] = ...
+                                    Func_0012_findind_Y(1, lonlat, lon, lat);
+
+                                lon = ncread(filename,'lon_rho', [lon_min(1) lat_min(1)], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1]);
+                                lat = ncread(filename,'lat_rho', [lon_min(1) lat_min(1)], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1]);
+
+                                switch(regionname)
+                                    case('NWP') %% North western Pacific
+                                        mask_model(1:size(lon,1),1:size(lon,2))=1;
+                                    otherwise
+                                        mask_model = double(inpolygon(lon,lat,refpolygon(:,1),refpolygon(:,2)));
+                                        mask_model(mask_model==0)=NaN;
+                                end
+                            end
+
+                            data_info = ncinfo(filename, varname);  %% [lon lat depth time] -> [1601 1201 33 1]
+
+                            if (exist('h')==0)
+                                h = ncread(filename,'h',[lon_min(1) lat_min(1)], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1]);
+                                pm = ncread(filename,'pm',[lon_min(1) lat_min(1)], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1]);
+                                pn = ncread(filename,'pn',[lon_min(1) lat_min(1)], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1]);
+                                dA=1./pm .* 1./pn;
+                                Vtransform = ncread(filename, 'Vtransform');
+                                Vstretching = ncread(filename, 'Vstretching');
+                                theta_s = ncread(filename, 'theta_s');
+                                theta_b = ncread(filename, 'theta_b');
+                                hc = ncread(filename, 'hc');
+                                N = length(ncread(filename, 's_rho'));
+                            end
+                            data = ncread(filename,varname,[lon_min(1) lat_min(1) 1], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1 1]);
+                            PT_src(:,:,:,monthij) = ncread(filename,'temp',[lon_min(1) lat_min(1) 1 1], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1 inf 1]);
+                            S_src(:,:,:,monthij) = ncread(filename,'salt',[lon_min(1) lat_min(1) 1 1], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1 inf 1]);
+                            S_src(S_src<=0)=0;
+
+                            vtype ='w';
+                            zw=zlevs(Vtransform, Vstretching, h,data,theta_s,theta_b,hc,N,vtype);
+
+                            dz = diff(zw);
+                            dz = permute(dz, [2,3,1]);
+    %                         vol_0    = nansum( is_ocean.*dz.*dA, 'all' );       % global sum, 0-D
+    %                         area_0   = nansum( is_ocean(:,:,1).*dA, 'all' );    % global sum, 0-D
+                            vtype ='r';
+                            P = zlevs(Vtransform, Vstretching, h,data,theta_s,theta_b,hc,N,vtype);
+                            P = -permute(P, [2,3,1]);
+                            comb_P(:,:,:,monthij)=P;
+                        end
+                            PT_src = mean(PT_src, 4 );
+                            S_src = mean(S_src, 4 );
+                            P = mean(comb_P, 4);
+                            T_src = sw_temp(S_src, PT_src, P, zeros(size(P)) );
+                            rho_src = sw_dens(S_src, T_src, P );
+                            dep_0 = h + data;
+                            rho_0_va = sum( rho_src.*dz, 3 , 'omitnan') ./ dep_0;       % vertical(local) average, 2-D
+                    end
+                    
+                    for monthij = 1:length(inputmonth)
+                        disp([num2str(yearij), 'y_',num2str(monthij),'m'])
+                        tic;
+                        tempyear = inputyear(yearij);
+                        tempmonth = inputmonth(monthij);
+                        filename = strcat(monfiledir, num2str(tempyear,'%04i'), '\', ...
+                                'pck_', testname, '_monthly_', num2str(tempyear,'%04i'), '_', num2str(tempmonth,'%02i'), '.nc');
+
+                        data_info = ncinfo(filename, varname);  %% [lon lat depth time] -> [1601 1201 33 1]
+
+                        if (exist('h')==0)
+                            h = ncread(filename,'h',[lon_min(1) lat_min(1)], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1]);
+                            pm = ncread(filename,'pm',[lon_min(1) lat_min(1)], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1]);
+                            pn = ncread(filename,'pn',[lon_min(1) lat_min(1)], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1]);
+                            dA=1./pm .* 1./pn;
+                            Vtransform = ncread(filename, 'Vtransform');
+                            Vstretching = ncread(filename, 'Vstretching');
+                            theta_s = ncread(filename, 'theta_s');
+                            theta_b = ncread(filename, 'theta_b');
+                            hc = ncread(filename, 'hc');
+                            N = length(ncread(filename, 's_rho'));
+                        end
+                        data = ncread(filename,varname,[lon_min(1) lat_min(1) 1], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1 1]);
+% % % % %                        S should be used as climate value
+                        PT_src = ncread(filename,'temp',[lon_min(1) lat_min(1) 1 1], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1 inf 1]);
+%                         S_src = ncread(filename,'salt',[lon_min(1) lat_min(1) 1 1], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1 inf 1]);
+                        S_src(S_src<=0)=0;
+
+                        vtype ='w';
+                        zw=zlevs(Vtransform, Vstretching, h,data,theta_s,theta_b,hc,N,vtype);
+
+                        dz = diff(zw);
+                        dz = permute(dz, [2,3,1]);
+
+                        vtype ='r';
+                        P = zlevs(Vtransform, Vstretching, h,data,theta_s,theta_b,hc,N,vtype);
+                        P = -permute(P, [2,3,1]);
+                        T_src = sw_temp (S_src, PT_src, P, zeros(size(P)) );
+                        rho_src = sw_dens (S_src, T_src, P );
+
+                        dep_n = h + data;
+                        rho_n_va = sum( rho_src.*dz, 3 , 'omitnan') ./ dep_n;      % vertical(local) average
+%                         rho_n_va2 = sum( rho_src.*dz, 3 , 'omitnan') ./ (h+data);
+
+%                         rho_n_ga = nansum( rho_src.*dz.*dA, 'all' ) ./ vol_0;  % global average
+                        zosto = dep_0       .* ( 1 - rho_n_va ./ rho_0_va );
+%                         zosto_2 = dep_n       .* ( 1 - rho_n_va ./ rho_0_va );
+                        comb_zosto_thermo(:,:,ind) = zosto;
+
+                        len_lon_model = size(data,1);
+                        len_lat_model = size(data,2);
+
+                        GLO_zostoname='D:\Data\Model\CMIP5\zosto\historical\zosto_interp_IPSL-CM5A-LR_historical_1976-2005.nc';
+
+                        if (exist('lon_glo')==0)
+                            GLO_modelinfo=ncinfo(GLO_zostoname);
+                            lon_glo = ncread(GLO_zostoname,'lon',[1 1],[inf,1]);
+                            lat_glo = ncread(GLO_zostoname,'lat',[1 1],[1,inf]);
+
+                            lon_west_glo = abs(lon_glo - (lonlat(1)-1));
+                            [min_lon_west_glo, lon_min_glo]=min(lon_west_glo);
+                            lon_east_glo = abs(lon_glo - (lonlat(2)+1));
+                            [min_lon_east_glo, lon_max_glo]=min(lon_east_glo);
+                            lat_south_glo = abs(lat_glo - (lonlat(3)-1));
+                            [min_lat_south_glo, lat_min_glo]=min(lat_south_glo);
+                            lat_north_glo = abs(lat_glo - (lonlat(4)+1));
+                            [min_lat_north_glo, lat_max_glo]=min(lat_north_glo);
+
+                            lon_glo = ncread(GLO_zostoname,'lon', [lon_min_glo(1) lat_min_glo(1)], [lon_max_glo(1)-lon_min_glo(1)+1 lat_max_glo(1)-lat_min_glo(1)+1]);
+                            lat_glo = ncread(GLO_zostoname,'lat', [lon_min_glo(1) lat_min_glo(1)], [lon_max_glo(1)-lon_min_glo(1)+1 lat_max_glo(1)-lat_min_glo(1)+1]);
+
+                            switch(regionname)
+                                otherwise
+                                    mask_model_glo = double(inpolygon(lon_glo,lat_glo,refpolygon(:,1),refpolygon(:,2)));
+                                    mask_model_glo(mask_model_glo==0)=NaN;
+                            end
+                        end
+
+                        interped_zosto = griddata(double(lon), double(lat), zosto,double(lon_glo),double(lat_glo));   
+
+                        comb_interped_zosto_thermo(:,:,ind) = interped_zosto;
+
+                        ind = ind + 1;
+                        toc;
+                    end
+                end
+                
+                save(matname, 'mask_model', 'len_lon_model', 'len_lat_model', 'comb_zosto_thermo',  ...
+                    'mask_model_glo', 'comb_interped_zosto_thermo', ...
+                    'lon_glo', 'lat_glo', 'lon', 'lat', '-v7.3');
+            else
+                load(matname);
+            end
+            fig_flag=0;
+        end
+        
+% % %         thermosteric sea level analysis (ncsave)
+        fig_flag=fig_flags{15,2};
+        while (fig_flag)
+            ncoutfilename = strcat(savedir, testname,'_',regionname, '_thermosteric_ssh_',num2str(min(inputyear),'%04i'),'_',num2str(max(inputyear),'%04i'), '.nc');
+            if (exist(ncoutfilename , 'file') ~= 2 || fig_flag==2)   
+                comb_zosto_correct = comb_zosto_thermo;
+                for i=1:len_lon_model
+                    for j=1:len_lat_model
+                        raw_zosto=squeeze(comb_zosto_thermo(i,j,:));
+                        std5_zosto = 5.* std(raw_zosto);
+                        diff_zosto = diff(raw_zosto);
+                        if diff_zosto(end)> std5_zosto;
+                            raw_zosto(end) = raw_zosto(end-1) + diff_zosto(end-1);
+                            diff_zosto(end)=diff_zosto(end-1);
+                        end
+                        raw_zosto(find(diff_zosto>std5_zosto)+1)= (raw_zosto(find(diff_zosto>std5_zosto)) + raw_zosto(find(diff_zosto>std5_zosto)+2))./2.0;
+                        continuity_error=diff(find(diff_zosto>std5_zosto));
+                        continuity_error(continuity_error==1)=55555;
+                        if continuity_error==55555
+                            'error'
+                            break
+                        end
+                        comb_zosto_correct(i,j,:)=raw_zosto;
+                    end
+                end
+                
+                for i=1:size(comb_interped_zosto,1)
+                    for j=1:size(comb_interped_zosto,2)
+                        raw_zosto=squeeze(comb_interped_zosto(i,j,:));
+                        std5_zosto =5.* std(raw_zosto);
+                        diff_zosto = diff(raw_zosto);
+                        if diff_zosto(end)> std5_zosto;
+                            raw_zosto(end) = raw_zosto(end-1) + diff_zosto(end-1);
+                            diff_zosto(end)=diff_zosto(end-1);
+                        end
+                        raw_zosto(find(diff_zosto>std5_zosto)+1)= (raw_zosto(find(diff_zosto>std5_zosto)) + raw_zosto(find(diff_zosto>std5_zosto)+2))./2.0;
+                        continuity_error=diff(find(diff_zosto>std5_zosto));
+                        continuity_error(continuity_error==1)=55555;
+                        if continuity_error==55555
+                            'error'
+                            break
+                        end
+                        comb_interped_zosto_correct(i,j,:)=raw_zosto;
+                    end
+                end
+                
+                rawsshfilename = strcat(savedir, testname,'_',regionname, '_ssh_trend_',num2str(min(inputyear),'%04i'),'_',num2str(max(inputyear),'%04i'), '.nc');
+                mask_rho = ncread(rawsshfilename, 'trend');
+                mask_rho(isfinite(mask_rho))=1;
+%                 for tt= 1:size(ftime)
+                    comb_zosto_correct = comb_zosto_correct .* mask_rho;
+%                 end
+%                 plot(squeeze(mean(mean(comb_interped_zosto_correct,1,'omitnan'),2,'omitnan')))
+
+            % % %         make ncfile
+                ncid = netcdf.create(ncoutfilename,'NETCDF4');
+
+                lon_dimid = netcdf.defDim(ncid, 'lon', len_lon_model);
+                lat_dimid = netcdf.defDim(ncid,'lat',len_lat_model);
+                time_dimid = netcdf.defDim(ncid, 'time', 0);
+%                 clim_time_dimid = netcdf.defDim(ncid, 'clim_time', 12);
+
+                netcdf.putAtt(ncid,netcdf.getConstant('NC_GLOBAL'), ...
+                    'type', ['NWP 1/20 _ ', testname, 'model monthly SSH analysis file']);
+                netcdf.putAtt(ncid,netcdf.getConstant('NC_GLOBAL'), ...
+                    'title', [' steric SSH analysis (', num2str(min(inputyear)), '-', num2str(max(inputyear)) ,') ']);
+                netcdf.putAtt(ncid,netcdf.getConstant('NC_GLOBAL'), ...
+                    'source', [' ROMS NWP 1/20 data from _ ',testname ]);
+                netcdf.putAtt(ncid,netcdf.getConstant('NC_GLOBAL'), ...
+                    'author', 'Created by Y.Y.Kim');
+                netcdf.putAtt(ncid,netcdf.getConstant('NC_GLOBAL'), ...
+                    'date', date);
+
+                timevarid=netcdf.defVar(ncid, 'time', 'NC_DOUBLE', time_dimid);
+                netcdf.putAtt(ncid,timevarid,'long_name','time');
+                netcdf.putAtt(ncid,timevarid,'units','days since 1900-12-31 00:00:00');
+                netcdf.putAtt(ncid,timevarid,'calendar','gregorian');
+
+                lon_rhovarid=netcdf.defVar(ncid, 'lon_rho', 'NC_DOUBLE', [lon_dimid lat_dimid]);
+                netcdf.putAtt(ncid,lon_rhovarid,'long_name','lon_model');
+                netcdf.putAtt(ncid,lon_rhovarid,'units','degree_east');
+
+                lat_rhovarid=netcdf.defVar(ncid, 'lat_rho', 'NC_DOUBLE', [lon_dimid lat_dimid]);
+                netcdf.putAtt(ncid,lat_rhovarid,'long_name','lat_model');
+                netcdf.putAtt(ncid,lat_rhovarid,'units','degree_north');
+
+                steric_sshvarid=netcdf.defVar(ncid, 'steric_ssh', 'NC_FLOAT', [lon_dimid lat_dimid time_dimid]);
+                netcdf.putAtt(ncid,steric_sshvarid,'long_name','steric_ssh');
+                netcdf.putAtt(ncid,steric_sshvarid,'units','m');
+                netcdf.defVarChunking(ncid,steric_sshvarid,'CHUNKED',[len_lon_model/10, len_lat_model/10, length(ftime)/10]);
+                netcdf.defVarDeflate(ncid,steric_sshvarid,true,true,1);
+
+                netcdf.endDef(ncid);
+
+                netcdf.putVar(ncid, timevarid, 0, length(ftime), ftime);
+%                 netcdf.putVar(ncid, clim_timevarid, 0, length(climtime), climtime);
+                netcdf.putVar(ncid, lon_rhovarid, [0 0], [len_lon_model len_lat_model], lon);
+                netcdf.putVar(ncid, lat_rhovarid, [0 0], [len_lon_model len_lat_model], lat);
+                netcdf.putVar(ncid, steric_sshvarid, [0 0 0], [len_lon_model len_lat_model length(ftime)], comb_zosto_correct);
+                netcdf.close(ncid);
+            end
+            fig_flag=0;
+        end
+        
+% % %         get ts & calculate zosto_halo
+        fig_flag=fig_flags{16,2};
+        while (fig_flag)
+            run(param_script);
+            ind=1;
+            matname = [savedir,testname,'_',regionname,'model_halosteric_ssh_',num2str(min(inputyear),'%04i'),'_',num2str(max(inputyear),'%04i'),'.mat'];
+            clear rho_0_va
+            if (exist(matname , 'file') ~= 2 || fig_flag==2)   
+                for yearij = 1:length(inputyear)
+                    if (exist('rho_0_va')==0)
+                        for monthij = 1:length(inputmonth)
+                            disp([num2str(yearij), 'y_',num2str(monthij),'m'])
+                            tic;
+                            tempyear = inputyear(yearij);
+                            tempmonth = inputmonth(monthij);
+                            % ex : rootdir\test37\data\2001\test37_monthly_2001_01.nc
+                            filename = strcat(monfiledir, num2str(tempyear,'%04i'), '\', ...
+                                'pck_', testname, '_monthly_', num2str(tempyear,'%04i'), '_', num2str(tempmonth,'%02i'), '.nc');
+
+                                
+                            % read model data
+                            if (exist('lon_min')==0)
+                                modelinfo=ncinfo(filename);
+                                lon = ncread(filename,'lon_rho',[1 1],[modelinfo.Dimensions(5).Length,1]);
+                                lat = ncread(filename,'lat_rho',[1 1],[1,modelinfo.Dimensions(6).Length]);
+                                
+                                [lon_min, lon_max, lat_min, lat_max] = ...
+                                    Func_0012_findind_Y(1, lonlat, lon, lat);
+
+                                lon = ncread(filename,'lon_rho', [lon_min(1) lat_min(1)], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1]);
+                                lat = ncread(filename,'lat_rho', [lon_min(1) lat_min(1)], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1]);
+
+                                switch(regionname)
+                                    case('NWP') %% North western Pacific
+                                        mask_model(1:size(lon,1),1:size(lon,2))=1;
+                                    otherwise
+                                        mask_model = double(inpolygon(lon,lat,refpolygon(:,1),refpolygon(:,2)));
+                                        mask_model(mask_model==0)=NaN;
+                                end
+                            end
+
+                            data_info = ncinfo(filename, varname);  %% [lon lat depth time] -> [1601 1201 33 1]
+
+                            if (exist('h')==0)
+                                h = ncread(filename,'h',[lon_min(1) lat_min(1)], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1]);
+                                pm = ncread(filename,'pm',[lon_min(1) lat_min(1)], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1]);
+                                pn = ncread(filename,'pn',[lon_min(1) lat_min(1)], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1]);
+                                dA=1./pm .* 1./pn;
+                                Vtransform = ncread(filename, 'Vtransform');
+                                Vstretching = ncread(filename, 'Vstretching');
+                                theta_s = ncread(filename, 'theta_s');
+                                theta_b = ncread(filename, 'theta_b');
+                                hc = ncread(filename, 'hc');
+                                N = length(ncread(filename, 's_rho'));
+                            end
+                            data = ncread(filename,varname,[lon_min(1) lat_min(1) 1], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1 1]);
+                            PT_src(:,:,:,monthij) = ncread(filename,'temp',[lon_min(1) lat_min(1) 1 1], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1 inf 1]);
+                            S_src(:,:,:,monthij) = ncread(filename,'salt',[lon_min(1) lat_min(1) 1 1], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1 inf 1]);
+                            S_src(S_src<=0)=0;
+
+                            vtype ='w';
+                            zw=zlevs(Vtransform, Vstretching, h,data,theta_s,theta_b,hc,N,vtype);
+
+                            dz = diff(zw);
+                            dz = permute(dz, [2,3,1]);
+    %                         vol_0    = nansum( is_ocean.*dz.*dA, 'all' );       % global sum, 0-D
+    %                         area_0   = nansum( is_ocean(:,:,1).*dA, 'all' );    % global sum, 0-D
+                            vtype ='r';
+                            P = zlevs(Vtransform, Vstretching, h,data,theta_s,theta_b,hc,N,vtype);
+                            P = -permute(P, [2,3,1]);
+                            comb_P(:,:,:,monthij)=P;
+                        end
+                            PT_src = mean(PT_src, 4 );
+                            S_src = mean(S_src, 4 );
+                            P = mean(comb_P, 4);
+                            T_src = sw_temp(S_src, PT_src, P, zeros(size(P)) );
+                            rho_src = sw_dens(S_src, T_src, P );
+                            dep_0 = h + data;
+                            rho_0_va = sum( rho_src.*dz, 3 , 'omitnan') ./ dep_0;       % vertical(local) average, 2-D
+                    end
+                    
+                    for monthij = 1:length(inputmonth)
+                        disp([num2str(yearij), 'y_',num2str(monthij),'m'])
+                        tic;
+                        tempyear = inputyear(yearij);
+                        tempmonth = inputmonth(monthij);
+                        filename = strcat(monfiledir, num2str(tempyear,'%04i'), '\', ...
+                                'pck_', testname, '_monthly_', num2str(tempyear,'%04i'), '_', num2str(tempmonth,'%02i'), '.nc');
+
+                        data_info = ncinfo(filename, varname);  %% [lon lat depth time] -> [1601 1201 33 1]
+
+                        if (exist('h')==0)
+                            h = ncread(filename,'h',[lon_min(1) lat_min(1)], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1]);
+                            pm = ncread(filename,'pm',[lon_min(1) lat_min(1)], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1]);
+                            pn = ncread(filename,'pn',[lon_min(1) lat_min(1)], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1]);
+                            dA=1./pm .* 1./pn;
+                            Vtransform = ncread(filename, 'Vtransform');
+                            Vstretching = ncread(filename, 'Vstretching');
+                            theta_s = ncread(filename, 'theta_s');
+                            theta_b = ncread(filename, 'theta_b');
+                            hc = ncread(filename, 'hc');
+                            N = length(ncread(filename, 's_rho'));
+                        end
+                        data = ncread(filename,varname,[lon_min(1) lat_min(1) 1], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1 1]);
+% % % % %                        PT should be used as climate value
+%                         PT_src = ncread(filename,'temp',[lon_min(1) lat_min(1) 1 1], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1 inf 1]);
+                        S_src = ncread(filename,'salt',[lon_min(1) lat_min(1) 1 1], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1 inf 1]);
+                        S_src(S_src<=0)=0;
+
+                        vtype ='w';
+                        zw=zlevs(Vtransform, Vstretching, h,data,theta_s,theta_b,hc,N,vtype);
+
+                        dz = diff(zw);
+                        dz = permute(dz, [2,3,1]);
+
+                        vtype ='r';
+                        P = zlevs(Vtransform, Vstretching, h,data,theta_s,theta_b,hc,N,vtype);
+                        P = -permute(P, [2,3,1]);
+                        T_src = sw_temp (S_src, PT_src, P, zeros(size(P)) );
+                        rho_src = sw_dens (S_src, T_src, P );
+
+                        dep_n = h + data;
+                        rho_n_va = sum( rho_src.*dz, 3 , 'omitnan') ./ dep_n;      % vertical(local) average
+%                         rho_n_va2 = sum( rho_src.*dz, 3 , 'omitnan') ./ (h+data);
+
+%                         rho_n_ga = nansum( rho_src.*dz.*dA, 'all' ) ./ vol_0;  % global average
+                        zosto = dep_0       .* ( 1 - rho_n_va ./ rho_0_va );
+%                         zosto_2 = dep_n       .* ( 1 - rho_n_va ./ rho_0_va );
+                        comb_zosto_halo(:,:,ind) = zosto;
+
+                        len_lon_model = size(data,1);
+                        len_lat_model = size(data,2);
+
+                        GLO_zostoname='D:\Data\Model\CMIP5\zosto\historical\zosto_interp_IPSL-CM5A-LR_historical_1976-2005.nc';
+
+                        if (exist('lon_glo')==0)
+                            GLO_modelinfo=ncinfo(GLO_zostoname);
+                            lon_glo = ncread(GLO_zostoname,'lon',[1 1],[inf,1]);
+                            lat_glo = ncread(GLO_zostoname,'lat',[1 1],[1,inf]);
+
+                            lon_west_glo = abs(lon_glo - (lonlat(1)-1));
+                            [min_lon_west_glo, lon_min_glo]=min(lon_west_glo);
+                            lon_east_glo = abs(lon_glo - (lonlat(2)+1));
+                            [min_lon_east_glo, lon_max_glo]=min(lon_east_glo);
+                            lat_south_glo = abs(lat_glo - (lonlat(3)-1));
+                            [min_lat_south_glo, lat_min_glo]=min(lat_south_glo);
+                            lat_north_glo = abs(lat_glo - (lonlat(4)+1));
+                            [min_lat_north_glo, lat_max_glo]=min(lat_north_glo);
+
+                            lon_glo = ncread(GLO_zostoname,'lon', [lon_min_glo(1) lat_min_glo(1)], [lon_max_glo(1)-lon_min_glo(1)+1 lat_max_glo(1)-lat_min_glo(1)+1]);
+                            lat_glo = ncread(GLO_zostoname,'lat', [lon_min_glo(1) lat_min_glo(1)], [lon_max_glo(1)-lon_min_glo(1)+1 lat_max_glo(1)-lat_min_glo(1)+1]);
+
+                            switch(regionname)
+                                otherwise
+                                    mask_model_glo = double(inpolygon(lon_glo,lat_glo,refpolygon(:,1),refpolygon(:,2)));
+                                    mask_model_glo(mask_model_glo==0)=NaN;
+                            end
+                        end
+
+                        interped_zosto = griddata(double(lon), double(lat), zosto,double(lon_glo),double(lat_glo));   
+
+                        comb_interped_zosto_halo(:,:,ind) = interped_zosto;
+
+                        ind = ind + 1;
+                        toc;
+                    end
+                end
+                
+                save(matname, 'mask_model', 'len_lon_model', 'len_lat_model', 'comb_zosto_halo',  ...
+                    'mask_model_glo', 'comb_interped_zosto_halo', ...
+                    'lon_glo', 'lat_glo', 'lon', 'lat', '-v7.3');
+            else
+                load(matname);
+            end
+            fig_flag=0;
+        end
+
+% % %         halosteric sea level analysis (ncsave)
+        fig_flag=fig_flags{17,2};
+        while (fig_flag)
+            ncoutfilename = strcat(savedir, testname,'_',regionname, '_halosteric_ssh_',num2str(min(inputyear),'%04i'),'_',num2str(max(inputyear),'%04i'), '.nc');
+            if (exist(ncoutfilename , 'file') ~= 2 || fig_flag==2)   
+                comb_zosto_correct = comb_zosto_halo;
+                for i=1:len_lon_model
+                    for j=1:len_lat_model
+                        raw_zosto=squeeze(comb_zosto_halo(i,j,:));
+                        std5_zosto = 5.* std(raw_zosto);
+                        diff_zosto = diff(raw_zosto);
+                        if diff_zosto(end)> std5_zosto;
+                            raw_zosto(end) = raw_zosto(end-1) + diff_zosto(end-1);
+                            diff_zosto(end)=diff_zosto(end-1);
+                        end
+                        raw_zosto(find(diff_zosto>std5_zosto)+1)= (raw_zosto(find(diff_zosto>std5_zosto)) + raw_zosto(find(diff_zosto>std5_zosto)+2))./2.0;
+                        continuity_error=diff(find(diff_zosto>std5_zosto));
+                        continuity_error(continuity_error==1)=55555;
+                        if continuity_error==55555
+                            'error'
+                            break
+                        end
+                        comb_zosto_correct(i,j,:)=raw_zosto;
+                    end
+                end
+                
+                for i=1:size(comb_interped_zosto,1)
+                    for j=1:size(comb_interped_zosto,2)
+                        raw_zosto=squeeze(comb_interped_zosto(i,j,:));
+                        std5_zosto =5.* std(raw_zosto);
+                        diff_zosto = diff(raw_zosto);
+                        if diff_zosto(end)> std5_zosto;
+                            raw_zosto(end) = raw_zosto(end-1) + diff_zosto(end-1);
+                            diff_zosto(end)=diff_zosto(end-1);
+                        end
+                        raw_zosto(find(diff_zosto>std5_zosto)+1)= (raw_zosto(find(diff_zosto>std5_zosto)) + raw_zosto(find(diff_zosto>std5_zosto)+2))./2.0;
+                        continuity_error=diff(find(diff_zosto>std5_zosto));
+                        continuity_error(continuity_error==1)=55555;
+                        if continuity_error==55555
+                            'error'
+                            break
+                        end
+                        comb_interped_zosto_correct(i,j,:)=raw_zosto;
+                    end
+                end
+                
+                rawsshfilename = strcat(savedir, testname,'_',regionname, '_ssh_trend_',num2str(min(inputyear),'%04i'),'_',num2str(max(inputyear),'%04i'), '.nc');
+                mask_rho = ncread(rawsshfilename, 'trend');
+                mask_rho(isfinite(mask_rho))=1;
+%                 for tt= 1:size(ftime)
+                    comb_zosto_correct = comb_zosto_correct .* mask_rho;
+%                 end
+%                 plot(squeeze(mean(mean(comb_interped_zosto_correct,1,'omitnan'),2,'omitnan')))
+
+            % % %         make ncfile
+                ncid = netcdf.create(ncoutfilename,'NETCDF4');
+
+                lon_dimid = netcdf.defDim(ncid, 'lon', len_lon_model);
+                lat_dimid = netcdf.defDim(ncid,'lat',len_lat_model);
+                time_dimid = netcdf.defDim(ncid, 'time', 0);
+%                 clim_time_dimid = netcdf.defDim(ncid, 'clim_time', 12);
+
+                netcdf.putAtt(ncid,netcdf.getConstant('NC_GLOBAL'), ...
+                    'type', ['NWP 1/20 _ ', testname, 'model monthly SSH analysis file']);
+                netcdf.putAtt(ncid,netcdf.getConstant('NC_GLOBAL'), ...
+                    'title', [' steric SSH analysis (', num2str(min(inputyear)), '-', num2str(max(inputyear)) ,') ']);
+                netcdf.putAtt(ncid,netcdf.getConstant('NC_GLOBAL'), ...
+                    'source', [' ROMS NWP 1/20 data from _ ',testname ]);
+                netcdf.putAtt(ncid,netcdf.getConstant('NC_GLOBAL'), ...
+                    'author', 'Created by Y.Y.Kim');
+                netcdf.putAtt(ncid,netcdf.getConstant('NC_GLOBAL'), ...
+                    'date', date);
+
+                timevarid=netcdf.defVar(ncid, 'time', 'NC_DOUBLE', time_dimid);
+                netcdf.putAtt(ncid,timevarid,'long_name','time');
+                netcdf.putAtt(ncid,timevarid,'units','days since 1900-12-31 00:00:00');
+                netcdf.putAtt(ncid,timevarid,'calendar','gregorian');
+
+                lon_rhovarid=netcdf.defVar(ncid, 'lon_rho', 'NC_DOUBLE', [lon_dimid lat_dimid]);
+                netcdf.putAtt(ncid,lon_rhovarid,'long_name','lon_model');
+                netcdf.putAtt(ncid,lon_rhovarid,'units','degree_east');
+
+                lat_rhovarid=netcdf.defVar(ncid, 'lat_rho', 'NC_DOUBLE', [lon_dimid lat_dimid]);
+                netcdf.putAtt(ncid,lat_rhovarid,'long_name','lat_model');
+                netcdf.putAtt(ncid,lat_rhovarid,'units','degree_north');
+
+                steric_sshvarid=netcdf.defVar(ncid, 'steric_ssh', 'NC_FLOAT', [lon_dimid lat_dimid time_dimid]);
+                netcdf.putAtt(ncid,steric_sshvarid,'long_name','steric_ssh');
+                netcdf.putAtt(ncid,steric_sshvarid,'units','m');
+                netcdf.defVarChunking(ncid,steric_sshvarid,'CHUNKED',[len_lon_model/10, len_lat_model/10, length(ftime)/10]);
+                netcdf.defVarDeflate(ncid,steric_sshvarid,true,true,1);
+
+                netcdf.endDef(ncid);
+
+                netcdf.putVar(ncid, timevarid, 0, length(ftime), ftime);
+%                 netcdf.putVar(ncid, clim_timevarid, 0, length(climtime), climtime);
+                netcdf.putVar(ncid, lon_rhovarid, [0 0], [len_lon_model len_lat_model], lon);
+                netcdf.putVar(ncid, lat_rhovarid, [0 0], [len_lon_model len_lat_model], lat);
+                netcdf.putVar(ncid, steric_sshvarid, [0 0 0], [len_lon_model len_lat_model length(ftime)], comb_zosto_correct);
+                netcdf.close(ncid);
+            end
+            fig_flag=0;
+        end
+        
     end
 end

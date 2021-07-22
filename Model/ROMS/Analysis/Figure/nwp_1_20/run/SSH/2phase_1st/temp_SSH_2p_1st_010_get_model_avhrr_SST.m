@@ -6,7 +6,8 @@ all_testname = {'test2102', 'test2103', 'test2104', 'test2105', 'test2106'};
 % all_testname = {'ens03'};
 
 % all_region ={'AKP', 'NWP', 'ES', 'SS', 'YS'};
-all_region ={'NWP'};
+% all_region ={'NWP'};
+all_region ={'AKP4'};
 
 for testnameind=1:length(all_testname)
     for regionind=1:length(all_region)
@@ -42,7 +43,7 @@ for testnameind=1:length(all_testname)
         dl=1/20;
         % for snu_desktop
         testname=all_testname{testnameind} 
-        inputyear = [1985:2014]; % % put year which you want to plot [year year ...]
+        inputyear = [1993:2014]; % % put year which you want to plot [year year ...]
         inputmonth = [1 2 3 4 5 6 7 8 9 10 11 12]; % % put month which you want to plot [month month ...]
 
 

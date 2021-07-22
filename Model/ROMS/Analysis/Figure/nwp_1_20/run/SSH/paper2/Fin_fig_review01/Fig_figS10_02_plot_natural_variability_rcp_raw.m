@@ -103,7 +103,7 @@ for regionind2=1:length(all_region2)
             
 % load([tidedir,regionname, '_', testname, '_model_interped_land','.mat']);
 
-            amplev=([0 15]);       
+            amplev=([0 10]);       
             m_proj(m_proj_name,'lon',[lonlat(1) lonlat(2)],'lat',[lonlat(3) lonlat(4)]);
             sb{testnameind}=subplot(8,4,[1+(testnameind-1)*8 2+(testnameind-1)*8 5+(testnameind-1)*8 6+(testnameind-1)*8]);  % Auto-fitted to the figure.
             pos_sb{testnameind}=get(sb{testnameind}, 'pos'); % Get the position.
@@ -175,7 +175,7 @@ for regionind2=1:length(all_region2)
             ys_std=mean_data.*ysmask;
             [mean_ys_std(testnameind,1), error_status] = Func_0011_get_area_weighted_mean(ys_std, lon_rho, lat_rho);
             
-            amplev=([0 15]);       
+            amplev=([0 10]);       
             m_proj(m_proj_name,'lon',[lonlat(1) lonlat(2)],'lat',[lonlat(3) lonlat(4)]);
             sb{testnameind}=subplot(8,4,[3+(testnameind-5)*8 4+(testnameind-5)*8 7+(testnameind-5)*8 8+(testnameind-5)*8]);  % Auto-fitted to the figure.
             pos_sb{testnameind}=get(sb{testnameind}, 'pos'); % Get the position.

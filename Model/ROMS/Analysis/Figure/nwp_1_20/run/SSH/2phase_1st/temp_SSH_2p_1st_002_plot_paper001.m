@@ -5,7 +5,8 @@ all_testname2 = {'test2102', 'test2103', 'test2104', 'test2105', 'test2106'};
 % all_testname2 = {'test2102'};
 
 % all_region2 ={'NWP','AKP4'};
-all_region2 ={'AKP4'};
+all_region2 ={'NWP'};
+% all_region2 ={'AKP4'};
 
 % all_region2 ={'TEST'};
 
@@ -175,7 +176,7 @@ for testnameind2=1:length(all_testname2)
             fig_flags{67,2}=0;
             fig_flags{68,2}=0;
             fig_flags{69,2}=1;
-            fig_flags{70,2}=2;
+            fig_flags{70,2}=1;
             fig_flags{76,2}=1;
         end
 %         for flagi=1:100

@@ -130,8 +130,11 @@ for testnameind=1:length(all_testname)
             fig_flags{8,1}='detrended sea level correlation analysis';
             fig_flags{9,1}='moving averaged interped sea level trend analysis';
             fig_flags{10,1}='moving averaged interped sea level correlation analysis';
+            fig_flags{11,1}='steric sea level analysis';
+            fig_flags{12,1}='steric sea level data nc save';
+            fig_flags{13,1}='RCM and GCM steric sea level interped data nc save';
 
-            for flagi=1:10
+            for flagi=1:13
                 fig_flags{flagi,2}=0;
             end
             fig_flags{1,2}=2;
@@ -144,6 +147,10 @@ for testnameind=1:length(all_testname)
             fig_flags{8,2}=0;
             fig_flags{9,2}=1;
             fig_flags{10,2}=1;
+            fig_flags{11,2}=1;
+            fig_flags{12,2}=1;
+            fig_flags{13,2}=1;
+            
         end
         
 % % %         get model data and cmemsstructed data      

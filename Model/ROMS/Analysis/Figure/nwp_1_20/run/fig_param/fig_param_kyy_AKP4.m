@@ -45,7 +45,7 @@ if (exist('variable' , 'var') == 1)
         case('SSH')
             varname = 'zeta';
             colorbar_title = '(m)';
-            colormap_style = bwrmap;
+%             colormap_style = bwrmap;
 %             colorbar_lev = [-0.2 1.0];
             colorbar_lev = [-0.5 0.4];
             colorbar_diff_lev = [0 0.8];
