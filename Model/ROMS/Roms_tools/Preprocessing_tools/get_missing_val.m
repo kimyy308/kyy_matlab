@@ -47,13 +47,15 @@ function [field,interp_flag]=get_missing_val(lon,lat,field,missvalue,ro,default,
 %  Updated    2-Oct-2006 by Xavier Capet and Pierrick Penven 
 %                        (add the 'savefile option')
 %  Updated    06-Sep-2018 by Yong-Yub Kim (empty value or weird value --> missing value
+%  Updated    16-Jun-2018 by Yong-Yub Kim using missvalue from Fillvalue of attribute
+
 % Menkes 2007 correct for Ro
 %  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 interp_flag=1;
 if nargin<4
   oa_interp=0;
-  missvalue=NaN;
+%   missvalue=NaN;
   default=0;
   ro=0;
 elseif nargin<5
@@ -69,8 +71,8 @@ end
 
 % field(field<-10000)=missvalue;
 % field(field>10000)=missvalue;
-field(field==-32767)=NaN;
-field(isnan(field))=missvalue;
+% field(field==-32767)=NaN;
+% field(isnan(field))=missvalue;
 
 if isnan(missvalue)
   ismask=isnan(field);
