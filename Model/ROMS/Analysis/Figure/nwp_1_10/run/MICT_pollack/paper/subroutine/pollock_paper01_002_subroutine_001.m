@@ -91,7 +91,14 @@
     set(gcf, 'PaperUnits', 'points');
     set(gcf, 'PaperSize', [hor_paper_size_x, hor_paper_size_y]);
     set(gcf,'PaperPosition', [paper_position_hor paper_position_ver paper_position_width paper_position_height]) 
+    
+%     [indw, inde, inds, indn]=Func_0012_findind_Y(1/10,[128, 130, 37, 39],lon_rho,lat_rho); % southern EKB
+%     [indw, inde, inds, indn]=Func_0012_findind_Y(1/10,[127, 131, 37, 42],lon_rho,lat_rho);
 
+    sEKB_lon=lon_rho(indw:inde,inds:indn);
+    sEKB_lat=lat_rho(indw:inde,inds:indn);
+    sEKB_data=mean_data(indw:inde,inds:indn);
+    [sEKB_mean, error_status] = Func_0011_get_area_weighted_mean(sEKB_data, sEKB_lon, sEKB_lat)
     saveas(gcf,jpgname,'tif');
 
     disp(' ')

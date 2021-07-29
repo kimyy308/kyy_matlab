@@ -12,7 +12,8 @@ close all; clear all;  clc;
 % all_testname = {'test57', 'test58', 'test59', 'test60'};
 % all_testname = {'test57', 'test58', 'test59', 'test60','test65','test66'};
 % all_testname = {'test61', 'test62', 'test63', 'test64'};
-all_testname = {'test65', 'test66', 'test67', 'test68'};
+% all_testname = {'test65', 'test66', 'test67', 'test68'};
+all_testname = {'test66'};
 % all_testname = {'test62', 'test63', 'test61'};
 % all_testname = {'test61', 'test62', 'test63', 'test64', 'ens09', 'test65', 'test66', 'test67', 'test68', 'ens10'};
 % all_testname = {'test57', 'test58', 'test59', 'test60', 'ens08', 'test65', 'test66', 'test67', 'test68', 'ens10'};
@@ -196,12 +197,12 @@ for testnameind=1:length(all_testname)
             fig_flags{8,2}=0;
             fig_flags{9,2}=0;
             fig_flags{10,2}=0;
-            fig_flags{11,2}=1;
+            fig_flags{11,2}=0;
             fig_flags{12,2}=0;
             fig_flags{13,2}=0;
             fig_flags{14,2}=0;
             fig_flags{15,2}=0;
-            fig_flags{16,2}=0;
+            fig_flags{16,2}=1;
             fig_flags{17,2}=0;
         end
         
@@ -3202,6 +3203,11 @@ for testnameind=1:length(all_testname)
             fig_flag=0;
         end
 
+        mean1=mean(comb_zosto_halo(:,:,1:12),3);
+        mean2=mean(comb_zosto_halo(:,:,13:24),3);
+        pcolor(squeeze(mean2-mean1)'); shading flat; colorbar;
+        
+        
 % % %         halosteric sea level analysis (ncsave)
         fig_flag=fig_flags{17,2};
         while (fig_flag)

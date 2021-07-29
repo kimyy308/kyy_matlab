@@ -86,11 +86,11 @@ smoothname=['D:\Data\Model\ROMS\nwp_1_20\input\test53\roms_grid_nwp_1_20_test53.
 % tide_frc_name=['D:\MEPL\project\NWP\make_init\forcing\frc_10tides_TPX07.nc'];
 
 blkname=[ROMS_files_dir,'roms_blk.nc'];
-clmname=['D:\Data\Model\ROMS\nwp_1_20\input\test2199\','roms_nwp_clim.nc'];
+clmname=['D:\Data\Model\ROMS\nwp_1_20\input\test2116\','roms_nwp_clim.nc'];
 % ininame=[ROMS_files_dir,'roms_nwp_ini2_test27.nc'];
-ininame=['D:\Data\Model\ROMS\nwp_1_20\input\test2199\','roms_nwp_ini_test2199.nc'];
+ininame=['D:\Data\Model\ROMS\nwp_1_20\input\test2116\','roms_nwp_ini_test2116.nc'];
 rstname=['D:\Data\Model\ROMS\nwp_1_20\test49\run\1980\','ocean_avg_0001.nc'];
-oaname =['D:\Data\Model\ROMS\nwp_1_20\input\test2199\','roms_nwp_oa.nc'];    % oa file  : intermediate file not used
+oaname =['D:\Data\Model\ROMS\nwp_1_20\input\test2116\','roms_nwp_oa.nc'];    % oa file  : intermediate file not used
                                              %            in roms simulations
 bryname=[ROMS_files_dir,'roms_bry.nc'];
 Zbryname=[ROMS_files_dir,'roms_bry_Z.nc'];% Zbry file: intermediate file not used

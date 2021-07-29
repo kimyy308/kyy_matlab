@@ -23,7 +23,7 @@ for testnameind=1:length(all_testname)
 %         addpath(genpath([matlabroot,'/toolbox/matlab/imagesci/'])); %% add new netcdf path
         addpath(genpath('C:\Users\User\Dropbox\source\matlab\Model\ROMS\Analysis\Figure\nwp_1_10\run\MICT_pollack\paper\subroutine\'))
         addpath(genpath('C:\Users\User\Dropbox\source\matlab\function\'))
-        [erorr_status] = Func_0008_set_dropbox_path(computer);
+        [dropboxpath, erorr_status] = Func_0008_set_dropbox_path(computer);
         shadlev = [-2 2];
         % rms_shadlev = [0 4];
         trend_shadlev = [0 4];
@@ -31,7 +31,7 @@ for testnameind=1:length(all_testname)
         conlev  = 0:5:35;
         dl=1/10;
         
-        [byrmap, error_status] = Func_0009_get_colormaps('byr2');
+        [byrmap, error_status] = Func_0009_get_colormaps('byr2', dropboxpath);
         yrmap = byrmap(129:256,:);
         
         % for snu_desktop
@@ -148,7 +148,7 @@ for testnameind=1:length(all_testname)
             for flagi=1:100
                 fig_flags{flagi,2}=0;
             end
-            fig_flags{1,2}=1;  % 'probability plot for pollock spwaning ground';
+            fig_flags{1,2}=2;  % 'probability plot for pollock spwaning ground';
             fig_flags{2,2}=1;  % 'probability plot for pollock location (elapsed ?? days)';
             fig_flags{3,2}=1;  % 'temp diff plot between 80s and later';
             fig_flags{4,2}=0;  % 'vec diff plot between 80s and later';

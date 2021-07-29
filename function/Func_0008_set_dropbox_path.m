@@ -1,4 +1,4 @@
-function [error_status, dropboxpath] = Func_0008_set_dropbox_path(system_name)
+function [dropboxpath, error_status] = Func_0008_set_dropbox_path(system_name)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % function status=set_dropbox_path(system_name);

@@ -1,4 +1,4 @@
-function [colormap, error_status] = Func_0009_get_colormaps(colormapname)
+function [colormap, error_status] = Func_0009_get_colormaps(colormapname, dropboxpath)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % function [colormap, error_status] = Func_0009_get_colormaps(colormapname);
@@ -24,12 +24,12 @@ switch colormapname
     case('yr')
         colormap = byrmap(129:256,:);
     case('gmt_ocn')
-        load([dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', tmp.fs, 'Common', ...
-            tmp.fs, 'Figure', tmp.fs, 'gmt_ocean_mod2.mat'])  % % set colormap (gmt_ocean, nonwhite)
+        load([dropboxpath, filesep, 'source', filesep, 'matlab', filesep, 'Common', ...
+            filesep, 'Figure', filesep, 'gmt_ocean_mod2.mat'])  % % set colormap (gmt_ocean, nonwhite)
         colormap = gmt_ocean_mod2;
     case('byr2')
-        load([dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', tmp.fs, 'Common', ...
-            tmp.fs, 'Figure', tmp.fs, 'byrmap2.mat'])  % % set colormap (blue-yellow-red)
+        load([dropboxpath, filesep, 'source', filesep, 'matlab', filesep, 'Common', ...
+            filesep, 'Figure', filesep, 'byrmap2.mat'])  % % set colormap (blue-yellow-red)
         colormap = byrmap2;
     case('jet_mod')
         load C:\Users\User\Dropbox\source\matlab\Common\Figure\jet_mod  % % set colormap (jet_modified)

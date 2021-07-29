@@ -51,7 +51,7 @@ sstdifflev = [0 20];
 
 % for snu_desktopd
 % testname=all_testname2{testnameind2}    % % need to change
-inputyear = [2006:2060]; % % put year which you want to plot [year year ...]
+inputyear = [2006:2100]; % % put year which you want to plot [year year ...]
 inputmonth = [1 2 3 4 5 6 7 8 9 10 11 12]; % % put month which you want to plot [month month ...]
 
 % varname ='zeta';
@@ -144,7 +144,7 @@ for testind=1:length(RCM_testnames)
     
     testname=GCM_testnames{testind};
 %     filedir=strcat('E:\Data\Model\CMIP5\zos\', scenname, '\interp\', testname, '\');
-    filedir=strcat('E:\Data\Model\CMIP5\surface\',scenname,'_');
+    filedir=strcat('D:\Data\Model\CMIP5\surface\',scenname,'_');
 
     GCM_modelfilenames{testind} = strcat(filedir, testname,'_',regionname, '_sst_trend_', ...
         num2str(min(inputyear),'%04i'),'_',num2str(max(inputyear),'%04i'), '.nc');
@@ -155,7 +155,7 @@ for testind=1:length(RCM_testnames)
 %     GCM_movfilenames{testind} = strcat(filedir, testname,'_',regionname, 'moving_averaged_cmems_interped_sst_trend_', ...
 %         num2str(min(inputyear),'%04i'),'_',num2str(max(inputyear),'%04i'), '.nc');
     
-    cmemsdir='E:\Data\Observation\CMEMS\';
+    cmemsdir='Z:\내 드라이브\Data\Observation\CMEMS\';
     cmems_filename = strcat(filedir, testname,'_',regionname, 'cmems_sst_trend_',num2str(min(inputyear),'%04i'),'_',num2str(max(inputyear),'%04i'), '.nc');
 end
 
@@ -348,6 +348,12 @@ for folding=1:1
             set(mslplot_all{2},'Marker','^');
             set(mslplot_all{3},'Marker','o');
             set(mslplot_all{4},'Marker','+');
+            
+            for testind=1:length(RCM_testnames)
+                mean_sst(testind,1)=mean(RCM_interped_sst_yearly_mean(testind,1:5));
+                mean_sst(testind,2)=mean(RCM_interped_sst_yearly_mean(testind,end-4:end));
+                mean_sst(testind,3)=mean_sst(testind,2)-mean_sst(testind,1);
+            end
             
             xlabel('Year')
             ylabel('Mean SST (^oC)')
