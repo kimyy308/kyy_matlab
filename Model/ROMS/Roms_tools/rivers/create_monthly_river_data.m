@@ -38,6 +38,7 @@ oldCJD(end+1)= 37600; %May
 
 yeari=2019;
 for monthi=6:12
+    monthi
     mfile =[filedir, '\', num2str(endyear), '\', 'datong_archive_', num2str(yeari), num2str(monthi, '%02i'), '.dat'];
     fid=fopen(mfile);
     data=textscan(fid, '%f %f %f %f %f %f %f %f %f %f %f %f');
@@ -70,3 +71,4 @@ for yeari=startyear:endyear
     end
 end
 fclose(fid);
+

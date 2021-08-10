@@ -5,7 +5,7 @@ all_testname = {'test06'};
 
 % all_region ={'pollock_egg', 'pollock_egg2', 'ES'};
 % all_region ={'pollock_egg'};
-all_region ={'ES'};
+all_region ={'pollock_egg'};
 
 % all_region ={'ES_KHOA','YS_KHOA', 'SS_KHOA'};
 
@@ -31,8 +31,8 @@ for testnameind=1:length(all_testname)
 
         % for snu_desktop
         testname=all_testname{testnameind} 
-%         inputyear = [1983:1992]; % % put year which you want to plot [year year ...]
-        inputyear = [1993:2019]; % % put year which you want to plot [year year ...]
+        inputyear = [1983:1992]; % % put year which you want to plot [year year ...]
+%         inputyear = [1993:2019]; % % put year which you want to plot [year year ...]
 
 %         inputmonth = [1 2 3 4 5 6 7 8 9 10 11 12]; % % put month which you want to plot [month month ...]
         inputmonth = [1,2]; % % put month which you want to plot [month month ...]
@@ -83,8 +83,8 @@ for testnameind=1:length(all_testname)
 %         end
         param_script ='/home/kimyy/Dropbox/source/matlab/Model/ROMS/Analysis/Figure/nwp_1_10/run/fig_param/fig_param_kyy_EKB_RMS.m';
         filedir = strcat('/home/auto/ext_hdi/nwp_1_10/reanalysis/'); % % where data files are
-        ltransdir = ['/home/auto/ext_hdi/LTRANSv2b_auto/output/', testname, '_DA_2/'];
-        savedir = strcat('/home/auto/ext_hdh/Model/ROMS/nwp_1_10/', testname, '/DA_2/');
+        ltransdir = ['/home/auto/ext_hdi/LTRANSv2b_auto/output/', testname, '_DA_6/'];
+        savedir = strcat('/home/auto/ext_hdh/Model/ROMS/nwp_1_10/', testname, '/DA_6/');
         inputdir = ['/home/auto/MAMS/Data/01_NWP_1_10/Input/'];
         mkdir(savedir);
         
@@ -300,14 +300,14 @@ for testnameind=1:length(all_testname)
                             lonlat_ind=[lon_min(1), lon_max(1), lat_min(1), lat_max(1)];
                             temp_surf= temp(:,:,end);
                             
-                            if strcmp(ltrans_testname,'pollock5')==1
+                            if strcmp(ltrans_testname,'pollock5')==1 || strcmp(ltrans_testname,'pollock6')==1 || strcmp(ltrans_testname,'pollock7')==1
                                 temp_50=temp_surf;
                             else
                                 temp_50 = get_hslice_pollock(filename, filename, temp, -50, 'temp', lonlat_ind)';
                             end
                             
                             egg_mask=zeros(size(mask_rho));
-                            idx_egg = find(-h >= -500 & temp_50 >= 2 & temp_50 <= 5);
+                            idx_egg = find(-h >= -500 & -h <= -50 & temp_50 >= 2 & temp_50 <= 5);
                             egg_mask(idx_egg)=1;
                             egg_mask = egg_mask .* egg_mask_model;
 
@@ -335,17 +335,17 @@ for testnameind=1:length(all_testname)
                             for i=1:loncount-2
                                 for j=1:latcount-2
                                     vort(i+1,j+1) = (v_rho(i+2,j+1)-v_rho(i,j+1)) ...
-                                        / (xdist(i+1, j+1)*2) + ...
+                                        / (xdist(i+1, j+1)*2) - ...
                                         (u_rho(i+1,j+2)-u_rho(i+1,j)) ...
-                                        / (xdist(i+1, j+1)*2);
+                                        / (ydist(i+1, j+1)*2);
                                     wind_curl(i+1,j+1) = (vwind(i+2,j+1)-vwind(i,j+1)) ...
-                                        / (xdist(i+1, j+1)*2) + ...
+                                        / (xdist(i+1, j+1)*2) - ...
                                         (uwind(i+1,j+2)-uwind(i+1,j)) ...
-                                        / (xdist(i+1, j+1)*2);
+                                        / (ydist(i+1, j+1)*2);
                                     wstr_curl(i+1,j+1) = (vwstr(i+2,j+1)-vwstr(i,j+1)) ...
-                                        / (xdist(i+1, j+1)*2) + ...
+                                        / (xdist(i+1, j+1)*2) - ...
                                         (uwstr(i+1,j+2)-uwstr(i+1,j)) ...
-                                        / (xdist(i+1, j+1)*2);
+                                        / (ydist(i+1, j+1)*2);
                                 end
                             end
                             vort(1,2:latcount-2)=vort(2,2:latcount-2);

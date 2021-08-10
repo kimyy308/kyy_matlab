@@ -55,6 +55,7 @@ if (exist(jpgname , 'file') ~= 2 || fig_flag==2)
     -(cumsum_lon_sum_data(42)/cumsum_lon_sum_ref_data(42)) .*100 % 15d
     -(cumsum_lon_sum_data(43)/cumsum_lon_sum_ref_data(43)) .*100 % 15d
 
+    sum(lon_sum_later_data(:), 'omitnan')- sum(lon_sum_ref_data(:), 'omitnan')
     lon_rho = ncread(ncname, 'lon_rho');
     lat_rho = ncread(ncname, 'lat_rho');
 %                 pcolor(sum(comb_egg_mask,3)'/size(comb_egg_mask,3)); shading flat; colorbar

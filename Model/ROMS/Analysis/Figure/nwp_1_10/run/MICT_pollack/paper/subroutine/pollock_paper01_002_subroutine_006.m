@@ -8,6 +8,7 @@ if (exist(jpgname , 'file') ~= 2 || fig_flag==2)
             ncname = [savedir,testname,'_',regionname,'model_pollock_',num2str(tempyear,'%04i'),'_',num2str(tempmonth,'%02i'),'.nc'];
             disp([num2str(yearij), 'y_',num2str(monthij),'m'])
             ref_data=ncread(ncname, 'egg_mask');
+            sum(ref_data(:), 'omitnan') %2789 3078 2156 3188 3050 2806  -> new : 2174 2680 1764 2864 2422 2230
             lastday_m=size(ref_data,3);
             if (exist('comb_ref_data')==0)
                 comb_ref_data=ref_data;
@@ -17,6 +18,7 @@ if (exist(jpgname , 'file') ~= 2 || fig_flag==2)
         end
     end
     mean_ref_data=mean(comb_ref_data,3);
+    sum_ref_data=sum(comb_ref_data,3);
 %                 mean_ref_data(mean_ref_data==0)=NaN;
 
     clear data comb_data
@@ -37,9 +39,11 @@ if (exist(jpgname , 'file') ~= 2 || fig_flag==2)
     end
 
     mean_later_data=mean(comb_data,3);
+    sum_later_data=sum(comb_data,3);
 %                 mean_later_data(mean_later_data==0)=NaN;
     mean_data=mean_later_data-mean_ref_data;
     mean_data(mean_data==0)=NaN;
+    sum_data=sum_later_data-sum_ref_data;
 
 
 % mean_ref_data2=mean_ref_data; mean_ref_data2(mean_ref_data2==0)=NaN;
@@ -84,7 +88,7 @@ if (exist(jpgname , 'file') ~= 2 || fig_flag==2)
     ax{testnameind,2}=axes;
 %                 set(ax{testnameind,2},'pos',pos_ax{testnameind});
     pc{testnameind,2}=m_pcolor(lon_rho',lat_rho', mean_data','parent',ax{testnameind,2});
-    colormap(ax{testnameind,2},byrmap);
+    colormap(ax{testnameind,2},byrmap3);
     caxis([-0.5,0.5]);
     shading(gca,m_pcolor_shading_method);   
 
