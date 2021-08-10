@@ -405,6 +405,12 @@ pollock_egg2polygon = ...
     133.0, 44.0;
     133.0, 34.0];
 
+% %      pollock_egg polygon
+pollock_egg3polygon = ...
+    [127.0, 36.0;
+    127.0, 41.0;
+    133.0, 41.0;
+    133.0, 36.0];
 
 % %      South Korean EEZ
 SK_EEZ_polygon = ...

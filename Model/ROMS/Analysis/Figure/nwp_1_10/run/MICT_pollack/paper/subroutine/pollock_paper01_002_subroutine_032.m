@@ -6,7 +6,8 @@
         tempyear = inputyear(yearij);
         for monthij = 1:length(inputmonth)
             tempmonth = inputmonth(monthij);
-            ncname = [filedir,testname,regionname,'_rms_clim_',num2str(1983,'%04i'),'_',num2str(2018,'%02i'),'.nc'];
+%             ncname = [filedir,testname,regionname,'_rms_clim_',num2str(1983,'%04i'),'_',num2str(2018,'%02i'),'.nc'];
+            ncname = [filedir,testname,regionname,'_sq_er_clim_',num2str(1983,'%04i'),'_',num2str(2018,'%02i'),'.nc'];
 % model_land=ncread(ncname, 'avhrr_land');
             disp([num2str(yearij), 'y_',num2str(monthij),'m'])
             sst_ind=(inputyear(yearij)-1983)*12+inputmonth(monthij);

@@ -1,7 +1,7 @@
 close all; clear all;  clc;   
 % all_region ={'NWP','ES', 'SS', 'YS', 'ECS'}
 % all_region ={'EKB','EK','WB'}
-all_region ={'EK_atm'}
+all_region ={'pollock_egg3'}
 
 for regionind=1:length(all_region)
     clearvars '*' -except regionind all_region
@@ -42,55 +42,8 @@ for regionind=1:length(all_region)
     varname ='temp';  %% reference variable -> temperature
     run('nwp_polygon_point.m');
     regionname=all_region{regionind}
-    switch(regionname)
-        case('NWP') %% North western Pacific
-            lonlat = [115, 164, 15, 52];  %% whole data area
-            refpolygon(1,1)=lonlat(1);
-            refpolygon(2,1)=lonlat(2);
-            refpolygon(1,2)=lonlat(3);
-            refpolygon(2,2)=lonlat(4);
-        case('ES') %% East Sea
-            refpolygon=espolygon;
-        case('SS') %% South Sea
-            refpolygon=sspolygon;
-        case('YS') %% Yellow Sea
-            refpolygon=yspolygon;
-        case('ECS') %% East China Sea
-            refpolygon=ecspolygon;
-        case('EKB') %% East Korea Bay (large area)
-            lonlat = [127, 131, 37, 42]; 
-            refpolygon(1,1)=lonlat(1);
-            refpolygon(2,1)=lonlat(2);
-            refpolygon(1,2)=lonlat(3);
-            refpolygon(2,2)=lonlat(4);
-        case('EK') %% East Korea Bay
-            lonlat = [127, 129.5, 37.3, 41]; 
-            refpolygon(1,1)=lonlat(1);
-            refpolygon(2,1)=lonlat(2);
-            refpolygon(1,2)=lonlat(3);
-            refpolygon(2,2)=lonlat(4);
-        case('WB') %% Wonsan Bay
-            lonlat = [127, 128.3, 38.7, 40.2]; 
-            refpolygon(1,1)=lonlat(1);
-            refpolygon(2,1)=lonlat(2);
-            refpolygon(1,2)=lonlat(3);
-            refpolygon(2,2)=lonlat(4);
-        case('EK_atm') %% EK_atm
-            lonlat = [127, 128.3, 38.7, 40.2]; 
-            refpolygon(1,1)=lonlat(1);
-            refpolygon(2,1)=lonlat(2);
-            refpolygon(1,2)=lonlat(3);
-            refpolygon(2,2)=lonlat(4);
-        otherwise
-            ('?')
-    end
-    lonlat(1)=min(refpolygon(:,1));
-    lonlat(2)=max(refpolygon(:,1));
-    lonlat(3)=min(refpolygon(:,2));
-    lonlat(4)=max(refpolygon(:,2));
-    % % % for EKB
-    % regionname='EKB';
-    % lonlat = [127, 129.5, 38, 40.5];
+        [error_status, refpolygon, lonlat] = Func_0007_get_polygon_data_from_regionname(regionname);
+
 
     switch(testname)
         case('avg_ens_10km_mean_monthly_') %% seo's Reanalysis data

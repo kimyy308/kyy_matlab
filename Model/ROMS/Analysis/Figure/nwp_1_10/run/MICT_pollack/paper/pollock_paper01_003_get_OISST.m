@@ -3,7 +3,7 @@ close all; clear all;  clc;
 % all_region ={'EKB','EK','WB'}
 % all_region ={'pollock_egg', 'pollock_egg2'}
 % all_region ={'ES', 'pollock_egg'}
-all_region ={'pollock_egg'}
+all_region ={'pollock_egg3'}
 
 warning off;
 for regionind=1:length(all_region)
@@ -46,59 +46,8 @@ for regionind=1:length(all_region)
     varname ='temp';  %% reference variable -> temperature
     run('nwp_polygon_point.m');
     regionname=all_region{regionind}
-    switch(regionname)
-        case('NWP') %% North western Pacific
-            lonlat = [115, 164, 15, 52];  %% whole data area
-            refpolygon(1,1)=lonlat(1);
-            refpolygon(2,1)=lonlat(2);
-            refpolygon(1,2)=lonlat(3);
-            refpolygon(2,2)=lonlat(4);
-        case('ES') %% East Sea
-            refpolygon=espolygon;
-        case('SS') %% South Sea
-            refpolygon=sspolygon;
-        case('YS') %% Yellow Sea
-            refpolygon=yspolygon;
-        case('ECS') %% East China Sea
-            refpolygon=ecspolygon;
-        case('EKB') %% East Korea Bay (large area)
-            lonlat = [127, 131, 37, 42]; 
-            refpolygon(1,1)=lonlat(1);
-            refpolygon(2,1)=lonlat(2);
-            refpolygon(1,2)=lonlat(3);
-            refpolygon(2,2)=lonlat(4);
-        case('EK') %% East Korea Bay
-            lonlat = [127, 129.5, 37.3, 41]; 
-            refpolygon(1,1)=lonlat(1);
-            refpolygon(2,1)=lonlat(2);
-            refpolygon(1,2)=lonlat(3);
-            refpolygon(2,2)=lonlat(4);
-        case('WB') %% Wonsan Bay
-            lonlat = [127, 128.3, 38.7, 40.2]; 
-            refpolygon(1,1)=lonlat(1);
-            refpolygon(2,1)=lonlat(2);
-            refpolygon(1,2)=lonlat(3);
-            refpolygon(2,2)=lonlat(4);
-        case('EK_atm') %% EK_atm
-            lonlat = [127, 128.3, 38.7, 40.2]; 
-            refpolygon(1,1)=lonlat(1);
-            refpolygon(2,1)=lonlat(2);
-            refpolygon(1,2)=lonlat(3);
-            refpolygon(2,2)=lonlat(4);
-        case('pollock_egg')
-            refpolygon=pollock_eggpolygon;
-        case('pollock_egg2')
-            refpolygon=pollock_egg2polygon;
-        otherwise
-            ('?')
-    end
-    lonlat(1)=min(refpolygon(:,1));
-    lonlat(2)=max(refpolygon(:,1));
-    lonlat(3)=min(refpolygon(:,2));
-    lonlat(4)=max(refpolygon(:,2));
-    % % % for EKB
-    % regionname='EKB';
-    % lonlat = [127, 129.5, 38, 40.5];
+    [error_status, refpolygon, lonlat] = Func_0007_get_polygon_data_from_regionname(regionname);
+
 
     switch(testname)
         case('avg_ens_10km_mean_monthly_') %% seo's Reanalysis data
@@ -221,13 +170,13 @@ for regionind=1:length(all_region)
                 avhrr_lon = ncread(avhrrfilename,'lon',[1],[avhrrinfo.Dimensions(2).Length]);
                 avhrr_lat = ncread(avhrrfilename,'lat',[1],[avhrrinfo.Dimensions(1).Length]);
                 
-                avhrr_lon_west = abs(avhrr_lon - (lonlat(1)));
+                avhrr_lon_west = abs(avhrr_lon - (lonlat(1)-1));
                 min_avhrr_lon_west=min(avhrr_lon_west);
-                avhrr_lon_east = abs(avhrr_lon - (lonlat(2)));
+                avhrr_lon_east = abs(avhrr_lon - (lonlat(2)+1));
                 min_avhrr_lon_east=min(avhrr_lon_east);
-                avhrr_lat_south = abs(avhrr_lat - (lonlat(3)));
+                avhrr_lat_south = abs(avhrr_lat - (lonlat(3)-1));
                 min_avhrr_lat_south=min(avhrr_lat_south);
-                avhrr_lat_north = abs(avhrr_lat - (lonlat(4)));
+                avhrr_lat_north = abs(avhrr_lat - (lonlat(4)+1));
                 min_avhrr_lat_north=min(avhrr_lat_north);
 
                 avhrr_lon_min = find(avhrr_lon_west == min_avhrr_lon_west);
