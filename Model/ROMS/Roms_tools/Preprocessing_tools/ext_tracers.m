@@ -1,4 +1,4 @@
-function ext_tracers(oaname,seas_datafile,ann_datafile,...
+function ext_tracers(WOA_switch, oaname,seas_datafile,ann_datafile,...
                       dataname,dataname2,vname,tname,zname,Roa);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -38,7 +38,7 @@ function ext_tracers(oaname,seas_datafile,ann_datafile,...
 %  e-mail:Pierrick.Penven@ird.fr  
 %
 %  Updated    5-Oct-2006 by Pierrick Penven (test for negative salinity)
-%
+%  Updated    14-Aug-2021 by Yong-Yub Kim (addition of WOA2018)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 disp(' ')
 %
@@ -72,10 +72,19 @@ ncseas=netcdf(seas_datafile)
 % Y=ncseas{'lat'}(:);
 % Zseas=-ncseas{'depth'}(:);
 % T=ncseas{'time'}(:);
+if (WOA_switch==0)
 X=ncseas{'X'}(:);
 Y=ncseas{'Y'}(:);
 Zseas=-ncseas{'Z'}(:);
 T=ncseas{'T'}(:);
+elseif (WOA_switch==2)
+X=ncseas{'lon'}(:);
+Y=ncseas{'lat'}(:);
+Zseas=-ncseas{'depth'}(:);
+T=ncseas{'time'}(:);
+end
+
+
 tlen=length(T);
 Nzseas=length(Zseas);
 %
@@ -99,19 +108,26 @@ Nz=length(Z);
 %
 tname
 tclim=nc{tname}(:);
-T
-T=T*30; % if time in month in the dataset !!!
-if (tclim~=T)
-  error(['time mismatch  tclim = ',num2str(tclim),...
-         '  t = ',num2str(T)])
-end
+
+% % WOA 2018 has a time dimension 1
+% % % % T
+% % % % T=T*30; % if time in month in the dataset !!!
+% % % % if (tclim~=T)
+% % % %   error(['time mismatch  tclim = ',num2str(tclim),...
+% % % %          '  t = ',num2str(T)])
+% % % % end
+
 %
 % Read the annual dataset
 %
 if Nz > Nzseas
   ncann=netcdf(ann_datafile);
-%   zann=-ncann{'depth'}(1:Nz);
+
+if (WOA_switch==0)
   zann=-ncann{'Z'}(1:Nz);
+elseif (WOA_switch==2)
+  zann=-ncann{'depth'}(1:Nz);
+end
 %   zann=-ncann{'Depth'}(1:Nz);
   if (Z~=zann)
     error('Vertical levels mismatch')
@@ -124,12 +140,21 @@ if Nz > Nzseas
     error('vertical levels dont match')
   end
   datazgrid=zeros(Nz,M,L);
-  missval=ncann{dataname}.missing_value(:);
+  
+  if (WOA_switch==0)
+    missval=ncann{dataname}.missing_value(:);
+  elseif (WOA_switch==2)
+    missval=single(9.969209968386869e+36);
+  end
+
   for k=Nzseas+1:Nz
     if ~isempty(i2)
-%       data=squeeze(ncann{dataname}(1,k,j,i2));
-      data=squeeze(ncann{dataname}(k,j,i2));
-      disp('read dimension is changed 4->3 (annual), ext_tracers, Y.Y.Kim');
+        if (WOA_switch==0)
+          data=squeeze(ncann{dataname}(k,j,i2));
+        elseif (WOA_switch==2)
+          data=squeeze(ncann{dataname}(1,k,j,i2));
+        end
+%       disp('read dimension is changed 4->3 (annual), ext_tracers, Y.Y.Kim');
     else
       data=[];
     end
@@ -144,6 +169,8 @@ if Nz > Nzseas
   end
   close(ncann);
 end
+
+
 %
 % interpole the seasonal dataset on the horizontal roms grid
 %
@@ -151,7 +178,12 @@ disp([' Ext tracers: horizontal interpolation of the seasonal data'])
 %
 % loop on time
 %
-missval=ncseas{dataname2}.missing_value(:);
+if (WOA_switch==0)
+    missval=ncann{dataname}.missing_value(:);
+elseif (WOA_switch==2)
+    missval=single(9.969209968386869e+36);
+end
+
 for l=1:tlen
 %for l=1:1
   disp(['time index: ',num2str(l),' of total: ',num2str(tlen)])
@@ -170,8 +202,12 @@ for l=1:tlen
     if ~isempty(i3)
       data=cat(2,data,squeeze(ncseas{dataname}(l,k,j,i3)));
     end
-    data=get_missing_val(x,y,data,missval,Roa,default);
-    datazgrid(k,:,:)=interp2(x,y,data,lon,lat,'cubic');
+    if(~isempty(data))
+        data=get_missing_val(x,y,data,missval,Roa,default);
+        datazgrid(k,:,:)=interp2(x,y,data,lon,lat,'cubic');
+    else
+        disp('what?')
+    end
 %     datazgrid(l,k,:,:)=interp2(x,y,data,lon,lat,'cubic');
 %     disp('read dimension is changed(seasonal) 3->4, ext_tracers, Y.Y.Kim');
   end

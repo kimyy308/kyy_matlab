@@ -61,7 +61,7 @@ for testnameind=1:length(all_testname)
         
 % % %         switch region
         regionname=all_region{regionind};
-        [error_status, refpolygon, lonlat] = Func_0007_get_polygon_data_from_regionname(regionname);
+        [refpolygon, lonlat, error_status] = Func_0007_get_polygon_data_from_regionname(regionname);
 
         switch testname
             case {'test53', 'test54', 'test55', 'test56'}

@@ -30,7 +30,7 @@ for regionind2=1:length(all_region2)
             error_status=Func_0008_set_dropbox_path(system_name);
             run('nwp_polygon_point.m');
             regionname=all_region2{regionind2};
-            [error_status, refpolygon, lonlat] = Func_0007_get_polygon_data_from_regionname(regionname);
+            [refpolygon, lonlat, error_status] = Func_0007_get_polygon_data_from_regionname(regionname);
             load('C:\Users\User\Dropbox\source\matlab\Common\Figure\gmt_ocean_mod2.mat')  % % set colormap (gmt_ocean, nonwhite)
         end
 

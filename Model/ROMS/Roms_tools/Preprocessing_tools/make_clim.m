@@ -45,7 +45,7 @@
 %  Contributions of P. Marchesiello (IRD)
 %
 %  Updated    1-Sep-2006 by Pierrick Penven
-%
+%  Updated    14-Aug-2021 by Yong-Yub Kim (addition of WOA2018)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear all
 close all
@@ -63,10 +63,26 @@ romstools_param
 %    salt_month_data : monthly salinity climatology
 %    salt_ann_data   : annual salinity climatology
 %
-temp_month_data=[woa_dir,'temp_month.cdf'];
-temp_ann_data=[woa_dir,'temp_ann.cdf'];
-salt_month_data=[woa_dir,'salt_month.cdf'];
-salt_ann_data=[woa_dir,'salt_ann.cdf'];
+
+% temp_month_data=[woa_dir,'temp_month.cdf'];
+% temp_ann_data=[woa_dir,'temp_ann.cdf'];
+% salt_month_data=[woa_dir,'salt_month.cdf'];
+% salt_ann_data=[woa_dir,'salt_ann.cdf'];
+
+temp_ann_data    = [woa_dir, filesep, '2018', filesep, 'woa18_decav81B0_t00_04.nc'];
+salt_ann_data    = [woa_dir, filesep, '2018', filesep, 'woa18_decav81B0_s00_04.nc'];
+
+if (WOA_switch==0)
+    temp_month_data  = [woa_dir,'temp_month.cdf'];  %% for WOA 1998
+    salt_month_data  = [woa_dir,'salt_month.cdf']; %% for WOA 1998
+elseif (WOA_switch==1)
+    temp_month_data  = [woa_dir,'woa2013_temp.nc'];  %% for WOA 2013
+    salt_month_data  = [woa_dir,'woa2013_salt.nc']; %% for WOA 2013
+elseif (WOA_switch==2)
+    temp_month_data  = [woa_dir, filesep, '2018', filesep, 'woa18_decav81B0_t01_04.nc'];  %% for WOA 2018
+    salt_month_data  = [woa_dir, filesep, '2018', filesep, 'woa18_decav81B0_s01_04.nc']; %% for WOA 2018
+end
+
 %
 %
 %%%%%%%%%%%%%%%%%%% END USERS DEFINED VARIABLES %%%%%%%%%%%%%%%%%%%%%%%
@@ -112,7 +128,11 @@ if (makeoa)
   disp(' ')
   disp(' Create the OA file...')
   nc=netcdf(temp_ann_data);
+  if (WOA_switch==0)
   Z=nc{'Z'}(:);
+  elseif (WOA_switch==2)
+  Z=nc{'depth'}(:);
+  end
   kmax=max(find(Z<hmax))-1;
   Z=Z(1:kmax);
   close(nc)
@@ -134,14 +154,24 @@ if (makeoa)
 % % % by kyy
 %   ext_tracers(oaname,temp_month_data,temp_ann_data,...
 %               'temperature','temp','tclm_time','Z',Roa);
-  ext_tracers(oaname,temp_month_data,temp_ann_data,...
+  if (WOA_switch==0)
+  ext_tracers(WOA_switch, oaname,temp_month_data,temp_ann_data,...
               'temperature','temperature','temp','tclm_time','Z',Roa);
+  elseif (WOA_switch==2)
+      ext_tracers(WOA_switch, oaname,temp_month_data,temp_ann_data,...
+              't_an','t_an','temp','tclm_time','Z',Roa);
+  end
   disp(' ')
   disp(' Salinity...')
-%   ext_tracers(oaname,salt_month_data,salt_ann_data,...
+%   ext_tracers(WOA_switch, oaname,salt_month_data,salt_ann_data,...
 %               'salinity','salt','sclm_time','Z',Roa);
-  ext_tracers(oaname,salt_month_data,salt_ann_data,...
+  if (WOA_switch==0)
+       ext_tracers(WOA_switch, oaname,salt_month_data,salt_ann_data,...
               'salinity','salinity','salt','sclm_time','Z',Roa);
+  elseif (WOA_switch==2)
+       ext_tracers(WOA_switch, oaname,salt_month_data,salt_ann_data,...
+              's_an','s_an','salt','sclm_time','Z',Roa);
+  end
 end
 %
 % Vertical interpolations 

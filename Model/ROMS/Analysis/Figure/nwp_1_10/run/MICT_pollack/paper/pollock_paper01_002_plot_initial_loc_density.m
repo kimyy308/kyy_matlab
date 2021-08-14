@@ -70,7 +70,7 @@ for testnameind=1:length(all_testname)
         run('nwp_polygon_point.m');
         
 % % %         switch region
-        [error_status, refpolygon, lonlat] = Func_0007_get_polygon_data_from_regionname(regionname);
+        [refpolygon, lonlat, error_status] = Func_0007_get_polygon_data_from_regionname(regionname);
 
         param_script =['C:\users\user/Dropbox/source/matlab/Model/ROMS/Analysis/Figure/nwp_1_10/run/fig_param/fig_param_kyy_', regionname, '.m'];
         figrawdir =strcat('Z:\내 드라이브\research\Ph_D_course\Particle tracking of the walleye pollock\figure\', testname, '\DA\'); % % where figure files will be saved

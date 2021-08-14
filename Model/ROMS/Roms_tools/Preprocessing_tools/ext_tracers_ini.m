@@ -1,4 +1,4 @@
-function ext_tracers_ini(ininame,grdname,seas_datafile,ann_datafile,...
+function ext_tracers_ini(Vtransform, Vstretching, ininame,grdname,seas_datafile,ann_datafile,...
                          dataname,vname,type,tini);
  warning off;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -21,6 +21,8 @@ function ext_tracers_ini(ininame,grdname,seas_datafile,ann_datafile,...
 %    type          : position on C-grid ('r', 'u', 'v', 'p')
 %    tini          : initialisation time [days]
 %
+%  Updated    14-Aug-2021 by Yong-Yub Kim (addition of Vtransform, Vstretching)
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 disp(' ')
 %
@@ -64,13 +66,19 @@ if (WOA_switch==0)
     Y=ncseas{'Y'}(:);
     Zseas=-ncseas{'Z'}(:);
     T=ncseas{'T'}(:).*30;
-else 
+elseif (WOA_switch==1)
     % % for WOA 2013
     ncseas=netcdf(seas_datafile);
     X=ncseas{'LON'}(:);
     Y=ncseas{'LAT'}(:);
     Zseas=-ncseas{'DEPTH'}(:);
     T=ncseas{'TIME'}(:).*30;
+elseif (WOA_switch==2)
+    ncseas=netcdf(seas_datafile);
+    X=ncseas{'lon'}(:);
+    Y=ncseas{'lat'}(:);
+    Zseas=-ncseas{'depth'}(:);
+    T=ncseas{'time'}(:).*30;
 end
 
 tlen=length(T);
@@ -81,10 +89,14 @@ if (WOA_switch==0)
 %
 % Read annual datafile
 %
-ncann=netcdf(ann_datafile);
-Zann=-ncann{'Z'}(:);
-Nz=length(Zann);
+    ncann=netcdf(ann_datafile);
+    Zann=-ncann{'Z'}(:);
+    Nz=length(Zann);
 % % Y.Y.Kim doesn't use annual data -> comment
+elseif (WOA_switch==2)
+    ncann=netcdf(ann_datafile);
+    Zann=-ncann{'depth'}(:);
+    Nz=length(Zann);
 end
 %
 % Determine time index to process
@@ -128,6 +140,13 @@ y=Y(j);
 % % %
 
 if (WOA_switch==0)
+    missval=ncseas{dataname}.missing_value(:);  %%for WOA 1998  
+else
+    % missval=ncseas{dataname}.FillValue(:);  %% for WOA 2013
+    missval=single(9.969209968386869e+36);  %% for WOA 2013, 18
+end
+
+if (WOA_switch==0)
 % %     Y.Y.Kim doesn't use annual data -> comment
     if Nz > Nzseas
       if Zseas~=Zann(1:length(Zseas)) 
@@ -155,6 +174,40 @@ if (WOA_switch==0)
     end
     close(ncann);
 % %     Y.Y.Kim doesn't use annual data -> comment
+elseif (WOA_switch==2)
+    if Nz > Nzseas
+      if Zseas~=Zann(1:length(Zseas)) 
+        error('vertical levels dont match')
+      end
+      datazgrid=zeros(Nz,M,L);
+%       missval=ncann{dataname}.missing_value(:);
+      for k=Nzseas+1:Nz
+        if ~isempty(i2)
+          if (WOA_switch==0)
+              data=squeeze(ncann{dataname}(k,j,i2));
+            elseif (WOA_switch==2)
+              data=squeeze(ncann{dataname}(1,k,j,i2));
+            end
+        else
+          data=[];
+        end
+        if ~isempty(i1)
+          data=cat(2,squeeze(ncann{dataname}(k,j,i1)),data);
+        end
+        if ~isempty(i3)
+                    disp('tt');
+
+          data=cat(2,data,squeeze(ncann{dataname}(k,j,i3)));
+        end
+        if(~isempty(data))
+            data=get_missing_val(x,y,data,missval,ro,default);
+            datazgrid(k,:,:)=interp2(x,y,data,lon,lat,'cubic');
+        else
+            disp('what?')
+        end
+      end
+    end
+    close(ncann);
 end
 
 
@@ -166,7 +219,7 @@ if (WOA_switch==0)
     missval=ncseas{dataname}.missing_value(:);  %%for WOA 1998  
 else
     % missval=ncseas{dataname}.FillValue(:);  %% for WOA 2013
-    missval=single(9.969209968386869e+36);  %% for WOA 2013
+    missval=single(9.969209968386869e+36);  %% for WOA 2013, 18
 end
 if (WOA_switch==0)
     if Nz <= Nzseas
@@ -178,6 +231,7 @@ end
 if (WOA_switch==0)
     Nzseas = min([Nz Nzseas]);
 end
+
 for k=1:Nzseas
   if ~isempty(i2)
     data=squeeze(ncseas{dataname}(l,k,j,i2));
@@ -190,9 +244,11 @@ for k=1:Nzseas
   if ~isempty(i3)
     data=cat(2,data,squeeze(ncseas{dataname}(l,k,j,i3)));
   end
-%   'kyy'
+%   'kyy'  
+%   if(~isempty(data))
   data=get_missing_val(x,y,data,missval,ro,default);
   datazgrid(k,:,:)=interp2(x,y,data,lon,lat,'cubic');
+%   end
 end
 close(ncseas);
 %

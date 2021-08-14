@@ -22,6 +22,7 @@
 %  P. Marchesiello & P. Penven - IRD 2005
 %
 %  Version of 21-Sep-2005
+%  Updated    14-Aug-2021 by Yong-Yub Kim (addition of WOA2018)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear all
 close all
@@ -36,8 +37,10 @@ romstools_param
 %
 if (WOA_switch==0)
     title='ROMS initial file from WOA 1998';
-else
+elseif (WOA_switch==1)
     title='ROMS initial file from WOA 2013';
+elseif (WOA_switch==2)
+    title='ROMS initial file from WOA 2018';
 end
 
 
@@ -56,13 +59,16 @@ end
 if (WOA_switch==0)
     temp_month_data  = [woa_dir,'temp_month.cdf'];  %% for WOA 1998
     salt_month_data  = [woa_dir,'salt_month.cdf']; %% for WOA 1998
-else
+elseif (WOA_switch==1)
     temp_month_data  = [woa_dir,'woa2013_temp.nc'];  %% for WOA 2013
     salt_month_data  = [woa_dir,'woa2013_salt.nc']; %% for WOA 2013
+elseif (WOA_switch==2)
+    temp_month_data  = [woa_dir, filesep, '2018', filesep, 'woa18_decav81B0_t01_04.nc'];  %% for WOA 2013
+    salt_month_data  = [woa_dir, filesep, '2018', filesep, 'woa18_decav81B0_s01_04.nc']; %% for WOA 2013
 end
 
-temp_ann_data    = [woa_dir,'temp_ann.cdf'];
-salt_ann_data    = [woa_dir,'salt_ann.cdf'];
+temp_ann_data    = [woa_dir, filesep, '2018', filesep, 'woa18_decav81B0_t00_04.nc'];
+salt_ann_data    = [woa_dir, filesep, '2018', filesep, 'woa18_decav81B0_s00_04.nc'];
 insitu2pot       = 1;   %1: transform in-situ temperature to potential temperature
 
 %
@@ -83,8 +89,9 @@ disp([' Title: ',title])
 %                tini,'clobber');
 
 create_inifile_Y(ininame,grdname,title,...
-               theta_s,theta_b,hc,N,...
+               Vtransform, Vstretching, theta_s,theta_b,hc,N,...
                tini,'clobber');
+           
 %
 % Horizontal and vertical interp/extrapolations 
 %
@@ -94,20 +101,26 @@ disp(' ')
 disp(' Temperature...')
 
 if (WOA_switch==0)
-    ext_tracers_ini(ininame,grdname,temp_month_data,temp_ann_data,...
+    ext_tracers_ini(Vtransform, Vstretching, ininame,grdname,temp_month_data,temp_ann_data,...
                 'temperature','temp','r',tini);  %% for WOA 1998
-else
-    ext_tracers_ini(ininame,grdname,temp_month_data,temp_ann_data,...
+elseif (WOA_switch==1)
+    ext_tracers_ini(Vtransform, Vstretching, ininame,grdname,temp_month_data,temp_ann_data,...
                 'T_AN','temp','r',tini);  %% for WOA 2013
+elseif (WOA_switch==2)
+    ext_tracers_ini(Vtransform, Vstretching, ininame,grdname,temp_month_data,temp_ann_data,...
+                't_an','temp','r',tini);  %% for WOA 2018
 end
 disp(' ')
 disp(' Salinity...')
 if (WOA_switch==0)
-    ext_tracers_ini(ininame,grdname,salt_month_data,salt_ann_data,...
+    ext_tracers_ini(Vtransform, Vstretching, ininame,grdname,salt_month_data,salt_ann_data,...
                  'salinity','salt','r',tini); %% for WOA 1998
-else
-     ext_tracers_ini(ininame,grdname,salt_month_data,salt_ann_data,...
-         'S_AN','salt','r',tini); %% for WOA 1998
+elseif (WOA_switch==1)
+     ext_tracers_ini(Vtransform, Vstretching, ininame,grdname,salt_month_data,salt_ann_data,...
+         'S_AN','salt','r',tini); %% for WOA 2013
+ elseif (WOA_switch==2)
+     ext_tracers_ini(Vtransform, Vstretching, ininame,grdname,salt_month_data,salt_ann_data,...
+         's_an','salt','r',tini); %% for WOA 2018
 end
 
 

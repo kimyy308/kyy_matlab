@@ -63,7 +63,7 @@ for testnameind2=1:length(all_testname2)
         regionname=all_region2{regionind2};
         
 % % %         switch region
-        [tmp.error_status, refpolygon, lonlat] = Func_0007_get_polygon_data_from_regionname(regionname);
+        [refpolygon, lonlat, tmp.error_status] = Func_0007_get_polygon_data_from_regionname(regionname);
         
 % % %         flag configuration
         for folding=1:1

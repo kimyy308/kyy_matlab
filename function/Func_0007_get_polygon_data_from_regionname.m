@@ -1,4 +1,4 @@
-function [error_status, refpolygon, lonlat] = Func_0007_get_polygon_data_from_regionname(regionname)
+function [refpolygon, lonlat, error_status] = Func_0007_get_polygon_data_from_regionname(regionname)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % function [refpolygon, lonlat]=get_polygon_data_from_regionname(regionname);

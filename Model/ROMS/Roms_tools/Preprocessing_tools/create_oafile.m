@@ -309,6 +309,7 @@ M=Mp-1;
 type = 'OA file' ; 
 history = 'ROMS' ;
 ncid = netcdf.create(oaname, 'NETCDF4');
+
 %
 %  Create dimensions
 %

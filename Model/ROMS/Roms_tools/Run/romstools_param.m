@@ -76,9 +76,9 @@ FORC_DATA_DIR = [RUN_dir,'DATA\'];
 bioname=[ROMS_files_dir,'roms_frcbio.nc'];  %Iron Dust forcing 
 					                           %file with PISCES
 % grdname=[ROMS_files_dir,'roms_grid2_ADD_03.nc'];
-grdname=['D:\Data\Model\ROMS\nwp_1_20\input\test53\roms_grid_nwp_1_20_test53.nc'];
+grdname=['D:\Data\Model\ROMS\nwp_1_20\input\test2117\roms_grid_nwp_1_20_test2117.nc'];
 % grdname=['/data1/kimyy/Model/ROMS/roms_nwp/nwp_1_20/input/test53/spinup/roms_grid_nwp_1_20_test53.nc'];
-smoothname=['D:\Data\Model\ROMS\nwp_1_20\input\test53\roms_grid_nwp_1_20_test53.nc'];
+smoothname=['D:\Data\Model\ROMS\nwp_1_20\input\test2117\roms_grid_nwp_1_20_test2117.nc'];
 % grdname=['D:\add2_ini_bry_grd\grid\roms_add_grid2_flat2_yellow.nc'];
 % frcname=['D:\Roms_tools\rivers\roms_river_add2_2_2013.nc'];
 
@@ -86,11 +86,11 @@ smoothname=['D:\Data\Model\ROMS\nwp_1_20\input\test53\roms_grid_nwp_1_20_test53.
 % tide_frc_name=['D:\MEPL\project\NWP\make_init\forcing\frc_10tides_TPX07.nc'];
 
 blkname=[ROMS_files_dir,'roms_blk.nc'];
-clmname=['D:\Data\Model\ROMS\nwp_1_20\input\test2116\','roms_nwp_clim.nc'];
+clmname=['D:\Data\Model\ROMS\nwp_1_20\input\test2122\','roms_nwp_clim.nc'];
 % ininame=[ROMS_files_dir,'roms_nwp_ini2_test27.nc'];
-ininame=['D:\Data\Model\ROMS\nwp_1_20\input\test2116\','roms_nwp_ini_test2116.nc'];
+ininame=['D:\Data\Model\ROMS\nwp_1_20\input\test2122\','roms_nwp_ini_test2122.nc'];
 rstname=['D:\Data\Model\ROMS\nwp_1_20\test49\run\1980\','ocean_avg_0001.nc'];
-oaname =['D:\Data\Model\ROMS\nwp_1_20\input\test2116\','roms_nwp_oa.nc'];    % oa file  : intermediate file not used
+oaname =['D:\Data\Model\ROMS\nwp_1_20\input\test2122\','roms_nwp_oa7.nc'];    % oa file  : intermediate file not used
                                              %            in roms simulations
 bryname=[ROMS_files_dir,'roms_bry.nc'];
 Zbryname=[ROMS_files_dir,'roms_bry_Z.nc'];% Zbry file: intermediate file not used
@@ -118,7 +118,7 @@ makeplot     = 1;                 % 1: create a few graphics after each preproce
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % for making initial file
-WOA_switch = 0; %% 0 -> WOA1998, 1 -> WOA2013
+WOA_switch = 2; %% 0 -> WOA1998, 1 -> WOA2013, 2-> WOA2018
 
 
 %
@@ -273,7 +273,7 @@ tini=0;
 %
 % World Ocean Atlas directory (WOA2001 or WOA2005) 
 %
-woa_dir=['D:\Data\Model\ROMS\nwp_1_20\etc\Roms_tools\WOA1998\'];
+woa_dir=['D:\Data\Observation\WOA\'];
 %
 % SODA 3 daily data directory (SODA 3.4.2) 
 %

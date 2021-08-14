@@ -46,7 +46,7 @@ for regionind=1:length(all_region)
     varname ='temp';  %% reference variable -> temperature
     run('nwp_polygon_point.m');
     regionname=all_region{regionind}
-    [error_status, refpolygon, lonlat] = Func_0007_get_polygon_data_from_regionname(regionname);
+    [refpolygon, lonlat, error_status] = Func_0007_get_polygon_data_from_regionname(regionname);
 
 
     switch(testname)
