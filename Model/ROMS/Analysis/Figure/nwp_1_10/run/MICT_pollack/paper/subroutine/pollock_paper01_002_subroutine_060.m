@@ -116,7 +116,7 @@ if (exist(jpgname , 'file') ~= 2 || fig_flag==2)
 %     clearvars filename startRow formatSpec fileID dataArray ans raw col numericData rawData row regexstr result numbers invalidThousandsSeparator thousandsRegExp;
 
 % %                 10 year lowpass filter
-    AOI_value=lowpass(AOI_value, 1/120, 1, 'Steepness', 0.99);  % phase correction is applied automatically, but butterworth isn't.
+%     AOI_value=lowpass(AOI_value, 1/120, 1, 'Steepness', 0.99);  % phase correction is applied automatically, but butterworth isn't.
 
 %                 bar(AOI_year+AOI_month/12, AOI_value_filt)
 %                 plot(AOI_year+AOI_month/12, AOI_value)
@@ -141,10 +141,12 @@ if (exist(jpgname , 'file') ~= 2 || fig_flag==2)
             end
         end
     end
-    
+    AOI_value_yearly = mean(AOI_value(inputmonth, :), 1);
+    AOI_value_yearly=lowpass(AOI_value_yearly, 1/10, 1, 'Steepness', 0.7);  % phase correction is applied automatically, but butterworth isn't.
+    AOI_value_yearly = AOI_value_yearly(allyear-1969);
     AOI_year_yearly = mean(AOI_year(inputmonth, allyear-1969), 1);
     AOI_month_yearly = mean(AOI_month(inputmonth, allyear-1969), 1);
-    AOI_value_yearly = mean(AOI_value(inputmonth, allyear-1969), 1);
+%     AOI_value_yearly = mean(AOI_value(inputmonth, allyear-1969), 1);
     
     
 % % % % %      fit aoi data to model daily time

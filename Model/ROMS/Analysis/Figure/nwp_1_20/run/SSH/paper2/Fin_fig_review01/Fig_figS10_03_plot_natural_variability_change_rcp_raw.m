@@ -41,7 +41,7 @@ for regionind2=1:length(all_region2)
        
         if (strcmp(system_name,'PCWIN64'))
             % % for windows
-            figrawdir =strcat('Z:\내 드라이브\MEPL\project\SSH\5th_year\figure\paper2\fin_fig_r1\'); % % where figure files will be saved
+            figrawdir =strcat('D:\MEPL\project\SSH\5th_year\figure\paper2\fin_fig_r1\'); % % where figure files will be saved
             cmip5dir = strcat('D:\Data\Model\CMIP5\'); % % where data files are
         elseif (strcmp(system_name,'GLNXA64'))
         end

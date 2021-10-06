@@ -95,7 +95,7 @@
     egg_half_2=mean(sum_ts_egg_mask(half_len+1:end));
 %                 txt1=text(5, max(double(mean_ts_nwv))-diff(double([min(mean_ts_nev), max(mean_ts_nwv)]))/32.0 , ...
 %                     ['egg# = ', num2str(round(egg_half_1,1)), ' / ', num2str(round(egg_half_2,1))], 'FontSize', 20); 
-
+    egg_half_2/egg_half_1
     set(lgd,'FontSize',15);
     set(lgd,'Position',[0.13 0.88, 0.775, 0.03]);
     set(lgd,'Orientation','horizontal');

@@ -12,6 +12,7 @@ colorbar_title_fontsize = 15;
 colormap_style = jet;  % % default
 
 % % set varname
+if (exist('variable' , 'var') == 1)
 switch(variable)
     case('SST')
         varname = 'temp'
@@ -56,7 +57,7 @@ switch(variable)
         colorbar_title = ' ';
 %         colormap_style =bwrmap2;  
 end
-
+end
 % % set calendar name
 calendarname=cell(1,12); calendarname{1} = 'January'; calendarname{2} = 'February'; calendarname{3} = 'March'; calendarname{4} = 'April'; calendarname{5} = 'May'; calendarname{6} = 'June';
 calendarname{7} = 'July'; calendarname{8} = 'August'; calendarname{9} = 'September'; calendarname{10} = 'October'; calendarname{11} = 'November'; calendarname{12} = 'December';

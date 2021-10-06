@@ -12,34 +12,15 @@
             
             all_checktime=ncread(ncname, 'checktime');
             ind_checktime=find(all_checktime==temp_checktime);
-            if(exist('curl_mask')==0)
-                lon_rho = ncread(ncname, 'lon_rho');
-                lat_rho = ncread(ncname, 'lat_rho');
-                vel_polygon=SK_EEZ_polygon;
-                vel_mask = double(inpolygon(lon_rho,lat_rho,vel_polygon(:,1),vel_polygon(:,2)));
-            end
             ocean_time=ncread(ncname, 'time')+datenum(1900,12,31);
-            u_rho=ncread(ncname, 'u_rho').*vel_mask;
-            u_rho(u_rho==0)=NaN;
-            v_rho=ncread(ncname, 'v_rho').*vel_mask;
-            v_rho(v_rho==0)=NaN;
-            egg_mask=ncread(ncname, 'egg_mask').*vel_mask;
-            egg_mask(egg_mask==0)=NaN;
             mov_dist_lon_mean = ncread(ncname, 'mov_dist_lon_mean', [1 ind_checktime], [inf 1]);
             mov_dist_lat_mean = ncread(ncname, 'mov_dist_lat_mean', [1 ind_checktime], [inf 1]);
-
-            lastday_m=size(u_rho,3);
-            if (exist('comb_u_rho')==0)
-                comb_u_rho=u_rho;
-                comb_v_rho=v_rho;
-                comb_egg_mask=egg_mask;
+            lastday_m=length(mov_dist_lon_mean);
+            if (exist('comb_mov_dist_lon_mean')==0)
                 comb_ocean_time=ocean_time;
                 comb_mov_dist_lon_mean= mov_dist_lon_mean;
                 comb_mov_dist_lat_mean= mov_dist_lat_mean;
             else
-                comb_u_rho(:,:,end+1:end+lastday_m)=u_rho;
-                comb_v_rho(:,:,end+1:end+lastday_m)=v_rho;
-                comb_egg_mask(:,:,end+1:end+lastday_m)=egg_mask;
                 comb_ocean_time(end+1:end+lastday_m)=ocean_time;
                 comb_mov_dist_lon_mean(end+1:end+lastday_m)=mov_dist_lon_mean;
                 comb_mov_dist_lat_mean(end+1:end+lastday_m)=mov_dist_lat_mean;
@@ -47,28 +28,16 @@
         end
     end
 
-%     ts_u_rho=reshape(comb_u_rho,[size(comb_u_rho,1)*size(comb_u_rho,2), size(comb_u_rho,3)]);
-%     mean_ts_u_rho=mean(ts_u_rho,1,'omitnan');
-%     ts_v_rho=reshape(comb_v_rho,[size(comb_v_rho,1)*size(comb_v_rho,2), size(comb_v_rho,3)]);
-%     mean_ts_v_rho=mean(ts_v_rho,1,'omitnan');
-%     ts_egg_mask=reshape(comb_egg_mask,[size(comb_egg_mask,1)*size(comb_egg_mask,2), size(comb_egg_mask,3)]);
-%     sum_ts_egg_mask=sum(ts_egg_mask,1,'omitnan');
-
     half_len=round(length(comb_mov_dist_lat_mean)/2);
     egg_half_1=mean(comb_mov_dist_lat_mean(1:half_len), 'omitnan');
     egg_half_2=mean(comb_mov_dist_lat_mean(half_len+1:end), 'omitnan');
     regime_ts_egg_mask(1:half_len)=egg_half_1;
     regime_ts_egg_mask(half_len+1:length(comb_mov_dist_lat_mean))=egg_half_2;
 
-%     mean_ts_nwv= mean_ts_v_rho.*cosd(45)-mean_ts_u_rho.*cosd(45);
-
     axLH = gca;
     mslplot{2}=bar(comb_mov_dist_lat_mean, 'FaceColor', [0.6 0.6 0.6], 'parent',axLH);
     hold on
     mslplot{1}=plot(regime_ts_egg_mask,'k','parent',axLH);
-%                 mslplot{2}=plot(comb_mov_dist_lat_mean, 'Color', 'b', 'LineStyle', '-', 'parent',axLH);
-%                 mslplot{2}=plot(comb_mov_dist_lat_mean, 'color', [0.8 0.8 0.8], 'parent',axLH);
-%     ylim(axRH, [-1,1])
     ylabel(axLH,'degrees (lat)')
     ax_pos = get(axLH,'position');
     set(axLH,'yaxislocation','left','position',ax_pos+[0 0.02 -0.01 -0.02]);
@@ -80,32 +49,24 @@
 
     axis tight 
     ylim(axLH, [-1,1])
-
-%                 set(axLH,'xlim', get(axRH, 'xlim'), 'xtick', get(axRH,'xtick'),'xticklabel',[], 'xaxislocation','top');
     set(axLH,'ycolor','k', 'box', 'off', 'FontSize',15);
-%                 set(axRH,'ycolor','b', 'box', 'off', 'FontSize',15);
     xlabel(axLH, 'Year');
 
-    title(['latitudinal shift(',num2str(temp_checktime), 'd)',  ',', num2str(min(allyear),'%04i'),'-',num2str(max(allyear),'%04i'), ...
-        ', ', num2str(min(inputmonth),'%02i'),'-', num2str(max(inputmonth),'%02i')]);
-
-%                 set(axLH,'xlim', get(axRH, 'xlim'), 'xtick', get(axRH,'xtick'),'xticklabel',[], 'xaxislocation','top');
-
     set(mslplot{1},'LineWidth',2);
-%                 set(mslplot{2},'LineWidth',2);
     grid on
-
-    lgd=legend([mslplot{1}], '# of eggs');
-
-    half_len=length(comb_mov_dist_lat_mean)/2;
-    egg_half_1=mean(comb_mov_dist_lat_mean(1:half_len), 'omitnan');
-    egg_half_2=mean(comb_mov_dist_lat_mean(half_len+1:end), 'omitnan');
-%                 txt1=text(5, max(double(mean_ts_nwv))-diff(double([min(mean_ts_nev), max(mean_ts_nwv)]))/32.0 , ...
-%                     ['egg# = ', num2str(round(egg_half_1,1)), ' / ', num2str(round(egg_half_2,1))], 'FontSize', 20); 
-
+    lgd=legend([mslplot{1}], 'moved distance of individuals(lat)');
     set(lgd,'FontSize',15);
     set(lgd,'Position',[0.13 0.88, 0.775, 0.03]);
     set(lgd,'Orientation','horizontal');
+    
+    title(['latitudinal shift(',num2str(temp_checktime), 'd)',  ',', num2str(min(allyear),'%04i'),'-',num2str(max(allyear),'%04i'), ...
+        ', ', num2str(min(inputmonth),'%02i'),'-', num2str(max(inputmonth),'%02i')]);
+    
+    half_len=length(comb_mov_dist_lat_mean)/2;
+    egg_half_1=mean(comb_mov_dist_lat_mean(1:half_len), 'omitnan');
+    egg_half_2=mean(comb_mov_dist_lat_mean(half_len+1:end), 'omitnan');
+
+    
 
     set(gcf,'PaperPosition', [0 0 36 12]) 
     saveas(gcf,jpgname,'tif');

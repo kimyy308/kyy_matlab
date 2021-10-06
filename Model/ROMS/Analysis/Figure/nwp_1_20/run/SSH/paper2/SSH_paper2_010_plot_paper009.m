@@ -5,8 +5,8 @@ warning off;
 % all_testname2 = {'ens02','test53','test55','test56'};
 % all_testname2 = {'test11', 'test12'};
 % all_testname2 = {'test53', 'test54', 'test55', 'test56', 'ens03'};
-all_testname2 = {'test53', 'test54', 'test55', 'test56'};
-% all_testname2 = {'test56'};
+% all_testname2 = {'test53', 'test54', 'test55', 'test56'};
+all_testname2 = {'test56'};
 
 % all_region2 ={'NWP','ES', 'SS', 'YS', 'AKP'}
 % all_region2 ={'NWP','AKP4', 'YS', 'YSECS', 'ECS2', 'NES', 'SES', 'ES'}
@@ -3086,13 +3086,13 @@ for testnameind2=1:length(all_testname2)
              
              eee= ysecs_m_interped_ssh(logical(~isnan(ysecs_m_interped_ssh).*~isnan(ysecs_m_cmems_adt)));
              fff= ysecs_m_cmems_adt(logical(~isnan(ysecs_m_interped_ssh).*~isnan(ysecs_m_cmems_adt)));
-             ysecscorr=corrcoef(eee,fff)
+             [ysecscorr, ysecsp, ysecscorr_l, ysecescorr_u]=corrcoef(eee,fff, 'alpha', 0.05)
              ysecscorr_rank = corr(eee,fff, 'Type', 'Spearman')
              ysecscorr_tau = corr(eee,fff, 'Type', 'Kendall')
              
              eeeg= ysecs_m_interped_ssh(logical(~isnan(ysecs_m_interped_ssh).*~isnan(ysecs_m_cmems_adt).*~isnan(ysecs_m_gcm_interped_ssh)));
              fffg= ysecs_m_cmems_adt(logical(~isnan(ysecs_m_interped_ssh).*~isnan(ysecs_m_cmems_adt).*~isnan(ysecs_m_gcm_interped_ssh)));
-             rcmg_ysecscorr=corrcoef(eeeg,fffg)
+             [rcmg_ysecscorr, rcmg_ysecsp, rcmg_ysecscorr_l, rcmg_ysecescorr_u]=corrcoef(eeeg,fffg, 'alpha', 0.05)
              rcmg_ysecscorr_rank = corr(eeeg,fffg, 'Type', 'Spearman')
              rcmg_ysecscorr_tau = corr(eeeg,fffg, 'Type', 'Kendall')
              
@@ -3110,7 +3110,7 @@ for testnameind2=1:length(all_testname2)
 
              ii= ysecs_m_gcm_interped_ssh(logical(~isnan(ysecs_m_gcm_interped_ssh).*~isnan(ysecs_m_cmems_adt)));
              jj= ysecs_m_cmems_adt(logical(~isnan(ysecs_m_gcm_interped_ssh).*~isnan(ysecs_m_cmems_adt)));
-             gcmysecscorr=corrcoef(ii,jj)
+             [gcmysecscorr, gcmysecsp, gcmysecscorr_l, gcmysecescorr_u]=corrcoef(ii,jj, 'alpha', 0.05)
              gcmysecscorr_rank = corr(ii,jj, 'Type', 'Spearman')
              gcmysecscorr_tau = corr(ii,jj, 'Type', 'Kendall')
              

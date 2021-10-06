@@ -3,14 +3,14 @@
 
 
 % % set colorbar parameter
-load C:\Users\KYY\Dropbox\source\matlab\Common\Figure\jet_mod  % % set colormap (jet_modified)
-run('C:\Users\kyy\Dropbox\source\matlab\Common\Figure\bwr_map')  % % set colormap (blue and white)
+load C:\Users\user\Dropbox\source\matlab\Common\Figure\jet_mod  % % set colormap (jet_modified)
+run('C:\Users\user\Dropbox\source\matlab\Common\Figure\bwr_map')  % % set colormap (blue and white)
 colorbar_fontsize = 15;
 colorbar_title_fontsize = 15;
 colormap_style = jet_mod;  % % default
 
 % % set varname
-% if (exist('variable' , 'var') == 1)
+if (exist('variable' , 'var') == 1)
     switch(variable)
         case('SST')
             varname = 'temp'
@@ -55,7 +55,8 @@ colormap_style = jet_mod;  % % default
             varname = var;
             colorbar_title = ' ';
     end
-% end
+end
+
 % % set calendar name
 calendarname=cell(1,12); calendarname{1} = 'January'; calendarname{2} = 'February'; calendarname{3} = 'March'; calendarname{4} = 'April'; calendarname{5} = 'May'; calendarname{6} = 'June';
 calendarname{7} = 'July'; calendarname{8} = 'August'; calendarname{9} = 'September'; calendarname{10} = 'October'; calendarname{11} = 'November'; calendarname{12} = 'December';

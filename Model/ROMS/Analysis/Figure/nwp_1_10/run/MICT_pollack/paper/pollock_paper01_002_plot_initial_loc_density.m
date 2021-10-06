@@ -4,9 +4,9 @@ close all; clear all;  clc;
 
 all_testname = {'test06'};
 
-all_region ={'pollock_egg3'};
+% all_region ={'pollock_egg3'};
 % all_region ={'pollock_egg', 'pollock_egg2'};
-% all_region ={'ES'};
+all_region ={'ES'};
 % all_region ={'ES_KHOA','YS_KHOA', 'SS_KHOA'};
 
 
@@ -39,9 +39,9 @@ for testnameind=1:length(all_testname)
         testname=all_testname{testnameind} 
 %         inputyear = [1983];
 %         inputyear = [1983:1987]; % % put year which you want to plot [year year ...]
-        inputyear = [1983:1992]; % % put year which you want to plot [year year ...]
+%         inputyear = [1983:1992]; % % put year which you want to plot [year year ...]
 %         inputyear = [1987:1990]; % % put year which you want to plot [year year ...]
-%         inputyear = [1988:1992]; % % put year which you want to plot [year year ...]
+        inputyear = [1988:1992]; % % put year which you want to plot [year year ...]
 %         inputyear = [1987:1995]; % % put year which you want to plot [year year ...]
 %         inputyear = [1987:2000]; % % put year which you want to plot [year year ...]
 %         inputyear = [1987:2019]; % % put year which you want to plot [year year ...]
@@ -73,7 +73,7 @@ for testnameind=1:length(all_testname)
         [refpolygon, lonlat, error_status] = Func_0007_get_polygon_data_from_regionname(regionname);
 
         param_script =['C:\users\user/Dropbox/source/matlab/Model/ROMS/Analysis/Figure/nwp_1_10/run/fig_param/fig_param_kyy_', regionname, '.m'];
-        figrawdir =strcat('Z:\내 드라이브\research\Ph_D_course\Particle tracking of the walleye pollock\figure\', testname, '\DA\'); % % where figure files will be saved
+        figrawdir =strcat('D:\research\Ph_D_course\2021_Particle tracking of the walleye pollock\figure\', testname, '\DA\'); % % where figure files will be saved
         filedir = strcat('D:\Data\Model\ROMS\nwp_1_10\test06\DA\'); % % where data files are
         savedir = strcat('D:\Data\Model\ROMS\nwp_1_10\test06\DA\pollock_6\');
         inputdir = ['/home/auto/MAMS/Data/01_NWP_1_10/Input/'];
@@ -149,7 +149,11 @@ for testnameind=1:length(all_testname)
 %             fig_flags{65,1}='# of individual plot at each grid (elapsed ?? days)';
 %             fig_flags{66,1}='# of individual (elapsed ?? days) diff plot between 80s and later';
 %             fig_flags{67,1}='probability plot for pollock spwaning ground (~41N)';
-%             
+%             fig_flags{68,1}='particle moved distance-lon time series (regime, EEZ)';
+%             fig_flags{69,1}=coastal area (<500m) numegg(??d) time series (regime)';
+%             fig_flags{70,1}=southern coastal area (<500m, 39N) numegg(??d) time series (regime)';
+
+
 %             for flagi=1:100
 %                 fig_flags{flagi,2}=0;
 %             end
@@ -220,14 +224,15 @@ for testnameind=1:length(all_testname)
 %             fig_flags{65,2}=1;  %'# of individual plot at each grid (elapsed ?? days)';
 %             fig_flags{66,2}=1;  %'# of individual (elapsed ?? days) diff plot between 80s and later';
 %             fig_flags{67,2}=0;  %'probability plot for pollock spwaning ground (~41N)';
-% 
+%             fig_flags{68,2}=0;  %'particle moved distance-lon time series (regime)';
+%             fig_flags{69,2}=1;  %'coastal area (<500m) numegg(??d) time series (regime)';
+%             fig_flags{70,2}=1;  %'southern coastal area (<500m, 39N) numegg(??d) time series (regime)';
 %         end
 %         
         for flagi=1:100
             fig_flags{flagi,2}=0;
         end
-        fig_flags{31,2}=2; 
-        fig_flags{32,2}=2; 
+        fig_flags{56,2}=2; 
         
         
         figdir=[figrawdir,LTRANS_testname, '\', regionname, '\spawn\'];
@@ -1055,6 +1060,47 @@ for testnameind=1:length(all_testname)
             fig_flag=0;
         end
         
+% % %       'particle moved distance-lon time series (regime)';
+        fig_flag=fig_flags{68,2};
+        fig_name=fig_flags{68,1};
+        while (fig_flag)
+            for checkti=1:length(checktime)
+                temp_checktime=checktime(checkti);
+                jpgname=strcat(regime_outfile, '_', testname,'_',regionname, '_regime_ts_mv_lon_', num2str(temp_checktime, '%02i'), '_', ...
+                    num2str(min(allyear),'%04i'),'_',num2str(max(allyear),'%04i'), 'y', ...
+                    num2str(min(inputmonth),'%02i'),'_',num2str(max(inputmonth),'%02i'), 'm', '.tif'); %% ~_year_month.jpg
+                pollock_paper01_002_subroutine_068;
+            end
+            fig_flag=0;
+        end   
+        
+% % %       'coastal area numegg(??d) time series (regime)';
+        fig_flag=fig_flags{69,2};
+        fig_name=fig_flags{69,1};
+        while (fig_flag)
+            for checkti=1:length(checktime)
+                temp_checktime=checktime(checkti);
+                jpgname=strcat(regime_outfile, '_', testname,'_',regionname, '_coast_regime_ts_egg_',num2str(temp_checktime, '%02i'), 'd_', ...
+                    num2str(min(allyear),'%04i'),'_',num2str(max(allyear),'%04i'), 'y', ...
+                    num2str(min(inputmonth),'%02i'),'_',num2str(max(inputmonth),'%02i'), 'm', '.tif'); %% ~_year_month.jpg
+                pollock_paper01_002_subroutine_069;
+            end
+            fig_flag=0;
+        end    
+        
+% % %       'Southern Korea coastal area numegg(??d) time series (regime)';
+        fig_flag=fig_flags{70,2};
+        fig_name=fig_flags{70,1};
+        while (fig_flag)
+            for checkti=1:length(checktime)
+                temp_checktime=checktime(checkti);
+                jpgname=strcat(regime_outfile, '_', testname,'_',regionname, '_southern_coast_regime_ts_egg_',num2str(temp_checktime, '%02i'), 'd_', ...
+                    num2str(min(allyear),'%04i'),'_',num2str(max(allyear),'%04i'), 'y', ...
+                    num2str(min(inputmonth),'%02i'),'_',num2str(max(inputmonth),'%02i'), 'm', '.tif'); %% ~_year_month.jpg
+                pollock_paper01_002_subroutine_070;
+            end
+            fig_flag=0;
+        end    
         
     end
 end

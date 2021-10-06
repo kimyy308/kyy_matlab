@@ -1,54 +1,72 @@
 close all; clear all;  clc;
 % %  Updated 05-Jul-2021 by Yong-Yub Kim, structure
 
-% % configuration of RCM
+% % % configuration of RCM
 RCM_info.name={'test2102', 'test2103', 'test2104', 'test2105', 'test2106'};
 RCM_info.abbs = {'RCM-CNRM', 'RCM-EC-Veg', 'RCM-ACC', 'RCM-CNRM-HR', 'RCM-CMCC'};
 RCM_info.model = 'nwp_1_20';
 % RCM_info.dataroot = '/data1/RCM/CMIP6/';
-RCM_info.dataroot = ['E:', filesep, 'Data', filesep, 'Model', filesep, ...
-    'ROMS', filesep, 'nwp_1_20', filesep, 'output', filesep];
+RCM_info.dataroot = ['D:', filesep, 'Data', filesep, 'Model', filesep, ...
+    'ROMS', filesep, 'nwp_1_20', filesep, 'backup_surf', filesep];
 % RCM_info.saveroot = '/data1/RCM/CMIP6/';
 RCM_info.saveroot = ['D:', filesep, 'Data', filesep, 'Model', filesep, ...
-    'ROMS', filesep, 'nwp_1_20', filesep, 'output', filesep];
-RCM_info.progress = 'run';
-RCM_info.region = {'AKP4'};
+    'ROMS', filesep, 'nwp_1_20', filesep, 'backup_surf', filesep];
+RCM_info.phase = 'run';
+% RCM_info.region = {'NWP', 'AKP4'};
+RCM_info.region = {'TEST'};
 RCM_info.years = 1993:2014;
 RCM_info.months = 1:12;
 RCM_grid.dl = 1/20;
 
-% % configuration of GCM
+% % % configuration of GCM
 GCM_info.name={'CNRM-ESM2-1', 'EC-Earth3-Veg', 'ACCESS-CM2', 'CNRM-CM6-1-HR', 'CMCC-CM2-HR4'};
 GCM_info.abbs = {'GCM-CNRM', 'GCM-EC-Veg', 'GCM-ACC', 'GCM-CNRM-HR', 'GCM-CMCC'};
 GCM_info.model = GCM_info.name;
 GCM_info.dataroot = ['D:', filesep, 'Data', filesep, 'Model', filesep, ...
-    'CMIP6', filesep, 'zos', filesep];
+    'CMIP6', filesep, 'NWP', filesep];
 GCM_info.saveroot = GCM_info.dataroot;
-GCM_info.progress = RCM_info.progress;
+GCM_info.phase = RCM_info.phase;
 GCM_info.region = RCM_info.region;
 GCM_info.years = RCM_info.years;
 GCM_info.months = RCM_info.months;
 GCM_grid.dl = 1/2;
 
-% % configuration of flags (make file)
+% % % configuration of CMEMS
+CMEMS_info.filedir = 'D:\Data\Observation\CMEMS\';
+CMEMS_grid.dl = 1/4;
+
+% % % configuration of flags (make file)
 flags.make_std_mat = 1;
 flags.make_std_nc = 1;
 
-% % configuration of figure levels
+% % % configuration of figure levels
 param.fig_lev_shad = [-2 2];
 param.fig_lev_shad_trend = [0 4];
 param.fig_lev_shad_bias = [-4 4];
 param.fig_lev_con = 0:5:35;
 param.fig_lev_rms = [0 4];
 
+
+
 % %  working
 for testnameind=1:length(RCM_info.name)
     for regionind=1:length(RCM_info.region)
-        clearvars '*' -except regionind testnameind RCM_info flags flg_lev RCM_grid param ...
-            GCM_info GCM_grid
+        clearvars '*' -except regionind testnameind flags flg_lev param ...
+            RCM_info RCM_grid GCM_info GCM_grid CMEMS_info CMEMS_grid
         
+        tmp.variable = 'zeta';
+        tmp.variable_GCM = 'zos';
+        tmp.variable_CMEMS = 'sla';
         tmp.fs = filesep; % file separator win = '\', linux = '/'
-        
+
+        % %     set dropbox path
+        if (strcmp(computer,'PCWIN64'))
+            tmp.dropboxpath = 'C:\Users\User\Dropbox';
+        else
+            tmp.dropboxpath = '/home/kimyy/Dropbox';
+        end
+        addpath(genpath([tmp.dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', tmp.fs, 'function']));
+
 % %     set temporary variables (testname, regionname, filesep, ...)
         RCM_info.testname = RCM_info.name{testnameind};
         RCM_info.regionname = RCM_info.region{regionind};
@@ -59,32 +77,24 @@ for testnameind=1:length(RCM_info.name)
         GCM_info.regionname = RCM_info.regionname;
         GCM_info.abb = GCM_info.abbs{testnameind};
         GCM_info.scenario = RCM_info.scenario;
-        
-        variable = 'zeta';
-        % %     set dropbox path
-        if (strcmp(computer,'PCWIN64'))
-            tmp.dropboxpath = 'C:\Users\User\Dropbox';
-        else
-            tmp.dropboxpath = '/home/kimyy/Dropbox';
-        end
-        addpath(genpath([tmp.dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', tmp.fs, 'function']));
-        
-        [tmp.error_status, tmp.dropboxpath] = Func_0008_set_dropbox_path(computer);
+                
+        [tmp.dropboxpath, tmp.error_status] = Func_0008_set_dropbox_path(computer);
         addpath(genpath([tmp.dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', tmp.fs, 'Model' ...
             tmp.fs, 'ROMS', tmp.fs, 'Analysis', tmp.fs, 'Figure', tmp.fs, 'nwp_1_20', tmp.fs ...
             'run', tmp.fs, 'SSH', tmp.fs, '2phase_1st', tmp.fs, 'subroutine']));
         
-        [tmp.error_status, RCM_grid.refpolygon, RCM_grid.domain] = Func_0007_get_polygon_data_from_regionname(RCM_info.regionname);
+        [RCM_grid.refpolygon, RCM_grid.domain, tmp.error_status] = Func_0007_get_polygon_data_from_regionname(RCM_info.regionname);
 
         tmp.param_script = [tmp.dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', ...
             tmp.fs, 'Model', tmp.fs, 'ROMS', tmp.fs, 'Analysis', tmp.fs, 'Figure', ...
             tmp.fs, 'nwp_1_20', tmp.fs, 'run', tmp.fs, 'fig_param', tmp.fs, ...
             'fig_param2_kyy_', RCM_info.regionname, '.m'];
         RCM_info.filedir = [RCM_info.dataroot, RCM_info.testname, tmp.fs, 'run', tmp.fs, ...
-            'packed_monthly', tmp.fs];
-        RCM_info.savedir = [RCM_info.saveroot, RCM_info.testname, tmp.fs, 'run', tmp.fs, ...
-            'packed_monthly', tmp.fs];
-        CMEMS_info.filedir = 'Z:\내 드라이브\Data\Observation\CMEMS\';
+            tmp.variable, tmp.fs];
+        RCM_info.savedir = [RCM_info.dataroot, RCM_info.testname, tmp.fs, 'run', tmp.fs, ...
+            tmp.variable, tmp.fs];
+        GCM_info.filedir = [GCM_info.dataroot, tmp.variable_GCM, tmp.fs, GCM_info.scenario, tmp.fs, ...
+            'Omon', tmp.fs, GCM_info.testname, tmp.fs];
         
 % % %         flag configuration (process)
         for folding=1:1
@@ -102,7 +112,7 @@ for testnameind=1:length(RCM_info.name)
             for flagi=1:length(flags.fig_name)
                 flags.fig_switch(flagi)=0;
             end
-            flags.fig_switch(1)=1;
+            flags.fig_switch(1)=2;
             flags.fig_switch(2)=1;
             flags.fig_switch(3)=1;
             flags.fig_switch(4)=1;
@@ -119,152 +129,48 @@ for testnameind=1:length(RCM_info.name)
             SSH_2p_1st_001_sub_001_get_SSH;
         end
         
+        
+%         pcolor(RCM_data_interped.clim_mean(:,:,12)'); shading flat; colorbar;
+%         pcolor(RCM_data.clim_mean(:,:,12)'); shading flat; colorbar;
+%         pcolor(RCM_data_interped.all(:,:,12)'); shading flat; colorbar;
+%         pcolor(RCM_data.all(:,:,12)'); shading flat; colorbar;
+% 
+%         pcolor(GCM_data_interped.clim_mean(:,:,12)'); shading flat; colorbar;
+%         pcolor(GCM_data.clim_mean(:,:,12)'); shading flat; colorbar;
+%         pcolor(GCM_data_interped.all(:,:,12)'); shading flat; colorbar;
+%         pcolor(GCM_data.all(:,:,12)'); shading flat; colorbar;
+
 % % %         time set
         for folding=1:1
-            tind=1;
-            for yearij = 1:length(inputyear)
-                for month=1:12 
-                    tempyear = inputyear(yearij);
-                    ftime(tind) = datenum(tempyear,month,15) - datenum(1900,12,31);
-                    tind=tind+1;
+            tmp.tind=1;
+            for yearij = 1:length(RCM_info.years)
+                for month=1:length(RCM_info.months) 
+                    tmp.year = RCM_info.years(yearij);
+%                     tmp.month = RCM_info.months(monthij);
+                    RCM_time.ftime(tmp.tind) = datenum(tmp.year,month,15) - datenum(1900,12,31);
+                    tmp.tind=tmp.tind+1;
                 end
             end
-            for month=1:12 
-                    tempyear = inputyear(yearij);
-                    climtime(month) = datenum(1950,month,15) - datenum(1900,12,31);
+            for month=1:length(RCM_info.months)  
+                tmp.year = RCM_info.years(yearij);
+                RCM_time.climtime(month) = datenum(1950,month,15) - datenum(1900,12,31);
             end
 
-            for i =1:length(inputyear) 
-                tempyear=inputyear(i);
-                for month=1:12
-                    xData((12*(i-1))+month) = datenum([num2str(tempyear),'-',num2str(month,'%02i'),'-01',]);
+            for i =1:length(RCM_info.years) 
+                tmp.year = RCM_info.years(yearij);
+                for month=1:length(RCM_info.months)  
+                    RCM_time.xData((12*(i-1))+month) = datenum([num2str(tmp.year),'-',num2str(month,'%02i'),'-01',]); 
                 end
             end
 
-            trendtime=inputyear(1):1/12:inputyear(end)+1-1/12;
-            trendtime_yearly=inputyear(1) : inputyear(end);
+            RCM_time.trendtime=RCM_info.years(1):1/length(RCM_info.months) : RCM_info.years(end)+1-1/length(RCM_info.months) ;
+            RCM_time.trendtime_yearly=RCM_info.years(1) : RCM_info.years(end);
         end     
-    
-% % %         sea level analysis
-        fig_flag=fig_flags{2,2};
-        while (fig_flag)
-            ncoutfilename = strcat(savedir, testname,'_',regionname, '_ssh_trend_',num2str(min(inputyear),'%04i'),'_',num2str(max(inputyear),'%04i'), '.nc');
-            if (exist(ncoutfilename , 'file') ~= 2 || fig_flag==2)   
-            % % %         trend
-                trend(1:len_lon_model,1:len_lat_model)=NaN;
-                for i=1:len_lon_model
-                    for j=1:len_lat_model
-                        p=polyfit(trendtime,squeeze(comb_data(i,j,:))',1);
-                        trend(i,j)=p(1);
-                    end
-                end
-                trend = trend * 1000.0; %% m/y -> mm/y
-               disp('trend complete') 
+        
 
-            % % %         trend (seasonal filtered)
-                for t=1:length(inputyear)
-                    comb_data_filtered(:,:,(t-1)*12+1:(t-1)*12+12)=single(comb_data(:,:,(t-1)*12+1:(t-1)*12+12)-comb_spatial_meanmodel);
-                end
-
-                trend_filtered(1:len_lon_model,1:len_lat_model)=NaN;
-                for i=1:len_lon_model
-                    for j=1:len_lat_model
-                        p=polyfit(trendtime,squeeze(comb_data_filtered(i,j,:))',1);
-                        trend_filtered(i,j)=p(1);
-                    end
-                end
-                trend_filtered = trend_filtered * 1000.0; %% m/y -> mm/y
-                disp('trend_filtered complete') 
-
-            % % %         climatological trend 
-                comb_spatial_data=reshape(comb_data, [len_lon_model len_lat_model 12 length(inputyear)]);
-                climtrendtime=inputyear(1):inputyear(end);
-                for i=1:len_lon_model
-                    for j=1:len_lat_model
-                        for k=1:12  % month
-                            p=polyfit(climtrendtime,squeeze(comb_spatial_data(i,j,k,:))',1);
-                            trend_clim(i,j,k)=p(1);
-                        end
-                    end
-                end
-                disp('climatological trend complete') 
-
-            % % %         make ncfile
-                ncid = netcdf.create(ncoutfilename,'NETCDF4');
-
-                lon_dimid = netcdf.defDim(ncid, 'lon', len_lon_model);
-                lat_dimid = netcdf.defDim(ncid,'lat',len_lat_model);
-                time_dimid = netcdf.defDim(ncid, 'time', 0);
-                clim_time_dimid = netcdf.defDim(ncid, 'clim_time', 12);
-
-                netcdf.putAtt(ncid,netcdf.getConstant('NC_GLOBAL'), ...
-                    'type', ['NWP 1/20 _ ', testname, 'model, cmems monthly SSH analysis file']);
-                netcdf.putAtt(ncid,netcdf.getConstant('NC_GLOBAL'), ...
-                    'title', [' monthly SSH analysis (', num2str(min(inputyear)), '-', num2str(max(inputyear)) ,') ']);
-                netcdf.putAtt(ncid,netcdf.getConstant('NC_GLOBAL'), ...
-                    'source', [' ROMS NWP 1/20 data from _ ',testname ]);
-                netcdf.putAtt(ncid,netcdf.getConstant('NC_GLOBAL'), ...
-                    'author', 'Created by Y.Y.Kim');
-                netcdf.putAtt(ncid,netcdf.getConstant('NC_GLOBAL'), ...
-                    'date', date);
-
-                timevarid=netcdf.defVar(ncid, 'time', 'NC_DOUBLE', time_dimid);
-                netcdf.putAtt(ncid,timevarid,'long_name','time');
-                netcdf.putAtt(ncid,timevarid,'units','days since 1900-12-31 00:00:00');
-                netcdf.putAtt(ncid,timevarid,'calendar','gregorian');
-
-                clim_timevarid=netcdf.defVar(ncid, 'clim_time', 'NC_DOUBLE', clim_time_dimid);
-                netcdf.putAtt(ncid,clim_timevarid,'long_name','clim_time');
-                netcdf.putAtt(ncid,clim_timevarid,'units','days since 1900-12-31 00:00:00');
-                netcdf.putAtt(ncid,clim_timevarid,'calendar','gregorian');
-
-                lon_rhovarid=netcdf.defVar(ncid, 'lon_rho', 'NC_DOUBLE', [lon_dimid lat_dimid]);
-                netcdf.putAtt(ncid,lon_rhovarid,'long_name','lon_model');
-                netcdf.putAtt(ncid,lon_rhovarid,'units','degree_east');
-
-                lat_rhovarid=netcdf.defVar(ncid, 'lat_rho', 'NC_DOUBLE', [lon_dimid lat_dimid]);
-                netcdf.putAtt(ncid,lat_rhovarid,'long_name','lat_model');
-                netcdf.putAtt(ncid,lat_rhovarid,'units','degree_north');
-
-                raw_sshvarid=netcdf.defVar(ncid, 'raw_ssh', 'NC_FLOAT', [lon_dimid lat_dimid time_dimid]);
-                netcdf.putAtt(ncid,raw_sshvarid,'long_name','raw_ssh');
-                netcdf.putAtt(ncid,raw_sshvarid,'units','m');
-
-                ssh_filteredvarid=netcdf.defVar(ncid, 'ssh_filtered', 'NC_FLOAT', [lon_dimid lat_dimid time_dimid]);
-                netcdf.putAtt(ncid,ssh_filteredvarid,'long_name','ssh_filtered');
-                netcdf.putAtt(ncid,ssh_filteredvarid,'units','m');
-
-                trendvarid=netcdf.defVar(ncid, 'trend', 'NC_FLOAT', [lon_dimid lat_dimid]);
-                netcdf.putAtt(ncid,trendvarid,'long_name','trend');
-                netcdf.putAtt(ncid,trendvarid,'units','mm/year');
-
-                trend_filteredvarid=netcdf.defVar(ncid, 'trend_filtered', 'NC_FLOAT', [lon_dimid lat_dimid]);
-                netcdf.putAtt(ncid,trend_filteredvarid,'long_name','trend_filtered');
-                netcdf.putAtt(ncid,trend_filteredvarid,'units','mm/year');
-
-                clim_sshvarid=netcdf.defVar(ncid, 'clim_ssh', 'NC_FLOAT', [lon_dimid lat_dimid clim_time_dimid]);
-                netcdf.putAtt(ncid,clim_sshvarid,'long_name','clim_ssh');
-                netcdf.putAtt(ncid,clim_sshvarid,'units','m');
-
-                clim_ssh_trendvarid=netcdf.defVar(ncid, 'clim_ssh_trend', 'NC_FLOAT', [lon_dimid lat_dimid clim_time_dimid]);
-                netcdf.putAtt(ncid,clim_ssh_trendvarid,'long_name','clim_ssh_trend');
-                netcdf.putAtt(ncid,clim_ssh_trendvarid,'units','m');
-
-                netcdf.endDef(ncid);
-
-                netcdf.putVar(ncid, timevarid, 0, length(ftime), ftime);
-                netcdf.putVar(ncid, clim_timevarid, 0, length(climtime), climtime);
-                netcdf.putVar(ncid, lon_rhovarid, [0 0], [len_lon_model len_lat_model], lon);
-                netcdf.putVar(ncid, lat_rhovarid, [0 0], [len_lon_model len_lat_model], lat);
-                netcdf.putVar(ncid, raw_sshvarid, [0 0 0], [len_lon_model len_lat_model length(ftime)], comb_data);
-                netcdf.putVar(ncid, ssh_filteredvarid, [0 0 0], [len_lon_model len_lat_model length(ftime)], comb_data_filtered);
-                netcdf.putVar(ncid, trendvarid, [0 0], [len_lon_model, len_lat_model], trend);
-                netcdf.putVar(ncid, trend_filteredvarid, [0 0], [len_lon_model, len_lat_model], trend_filtered);
-                netcdf.putVar(ncid, clim_sshvarid, [0 0 0], [len_lon_model, len_lat_model length(climtime)], comb_spatial_meanmodel);
-                netcdf.putVar(ncid, clim_ssh_trendvarid, [0 0 0], [len_lon_model, len_lat_model length(climtime)], trend_clim);
-                netcdf.close(ncid);
-            end
-            fig_flag=0;
+        if flags.fig_switch(1) > 0
+            flags.fig_tmp = flags.fig_switch(2);
+            SSH_2p_1st_001_sub_002_cal_SSH_trends;
         end
 
 % % %     cmems sea level trend analysis

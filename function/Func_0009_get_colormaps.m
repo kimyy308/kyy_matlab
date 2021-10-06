@@ -36,8 +36,13 @@ switch colormapname
             filesep, 'Figure', filesep, 'byrmap3.mat'])  % % set colormap (blue-yellow-red)
         colormap = byrmap3;
     case('jet_mod')
-        load C:\Users\User\Dropbox\source\matlab\Common\Figure\jet_mod  % % set colormap (jet_modified)
+        load([dropboxpath, filesep, 'source', filesep, 'matlab', filesep, 'Common', ...
+            filesep, 'Figure', filesep, 'jet_mod.mat'])  % % set colormap (jet_modified)
         colormap = jet_mod;
+    case('bwr')
+        load([dropboxpath, filesep, 'source', filesep, 'matlab', filesep, 'Common', ...
+            filesep, 'Figure', filesep, 'bwr_map.mat'])  % % set colormap (bwrmap)
+        colormap = bwrmap;
 end
 
 error_status=1;

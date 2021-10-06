@@ -75,6 +75,8 @@ switch(regionname)
         refpolygon=es_khoapolygon;
     case('TEST') %% for debugging
         refpolygon=testpolygon;
+    case('SK_EEZ') %%south korea EEZ (real fishing area)
+        refpolygon=SK_EEZ_polygon;
     otherwise
         ('?')
 end

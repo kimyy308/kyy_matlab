@@ -52,7 +52,7 @@ for regionind2=1:length(all_region2)
        
         if (strcmp(system_name,'PCWIN64'))
             % % for windows
-            figrawdir =strcat('Z:\내 드라이브\MEPL\project\SSH\5th_year\figure\paper2\fin_fig_r1\'); % % where figure files will be saved
+            figrawdir =strcat('D:\MEPL\project\SSH\5th_year\figure\paper2\fin_fig_r1\'); % % where figure files will be saved
         elseif (strcmp(system_name,'GLNXA64'))
         end
 
@@ -71,7 +71,7 @@ for regionind2=1:length(all_region2)
         testname ='test53';
         tempyear=2005;
         varname='zeta';
-        filedir = strcat('J', ':\Data\Model\ROMS\nwp_1_20\', testname, '\run\'); % % where data files are
+        filedir = strcat('D', ':\Data\Model\ROMS\nwp_1_20\', testname, '\run\'); % % where data files are
         tidedir = strcat('D', ':\Data\Model\ROMS\nwp_1_20\', testname, '\run\'); % % where data files are
         filename=[tidedir, num2str(tempyear,'%04i'), '\', testname, '_harmonic_analysis_', varname, '_', regionname, '_', num2str(tempyear, '%04i'), '.nc'];
         lon_rho=ncread(filename, 'lon_rho');
@@ -93,6 +93,16 @@ for regionind2=1:length(all_region2)
         mask_model = double(inpolygon(lon_rho,lat_rho,refpolygon(:,1),refpolygon(:,2)));
         mask_model(mask_model==0)=NaN;
         mean_data=mean_data .*mask_model;
+        
+        % % %         get std
+        for loni=1:size(all_con4_amp_diff,1)
+            for lati=1:size(all_con4_amp_diff,2)
+                std_all_con4_amp_diff(loni,lati)=std(all_con4_amp_diff(loni,lati,:));
+            end
+        end
+        std_all_con4_amp_diff=std_all_con4_amp_diff.*mask_model;
+        mean(std_all_con4_amp_diff(:),'omitnan')
+        
         load([filedir,regionname, '_', testname, '_model_land','.mat']);
 
         amplev=([-15 15]);
@@ -129,6 +139,9 @@ for regionind2=1:length(all_region2)
         RCM_lat{testnameind}=lat_rho;
         RCM_tidal_amp_change{testnameind}=mean_data;
             
+        
+        
+        
         testnameind = 2;        
         param_script =['C:\Users\User\Dropbox\source\matlab\Model\ROMS\Analysis\Figure\nwp_1_20\run\fig_param\fig_param_kyy_', regionname, '.m'];
         run(param_script);
@@ -142,8 +155,6 @@ for regionind2=1:length(all_region2)
             all_con4_amp_diff(:,:,temp_testind)=con4_amp_diff;
         end
 
-        
-        
         mean_data=mean(all_con4_amp_diff,3);
         mask_model = double(inpolygon(lon_rho,lat_rho,refpolygon(:,1),refpolygon(:,2)));
         mask_model(mask_model==0)=NaN;
