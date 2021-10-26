@@ -19,6 +19,10 @@ function [scenname, error_status] = RCM_CMIP6_scenname(testname)
 switch(testname)
     case {'test2102', 'test2103', 'test2104', 'test2105', 'test2106'}
         scenname='historical';
+    case {'test2107', 'test2108', 'test2109', 'test2110', 'test2111'}
+        scenname='ssp585';
+    case {'test2117', 'test2118', 'test2119', 'test2120', 'test2121'}
+        scenname='historical';
 end
 
 error_status = 1;

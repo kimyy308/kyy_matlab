@@ -11,7 +11,8 @@ all_testname2 = {'CNRM-ESM2-1', 'EC-Earth3-Veg', 'ACCESS-CM2', 'CNRM-CM6-1-HR', 
 all_region2 ={'AKP4'};
 
 % all_region2 ={'YS'};
-all_var2 = {'SSH'};
+% all_var2 = {'SST', 'SSS', 'SSH'};
+all_var2 = {'SST', 'SSS', 'SSH'};
 % all_var2 = {'BT'};
 
 % all_region2 ={'NWP'}
@@ -56,8 +57,9 @@ for testnameind2=1:length(all_testname2)
 
         % for snu_desktopd
         testname=all_testname2{testnameind2}    % % need to change
-        inputyear1 = [1993:2014]; % % put year which you want to plot [year year ...]
+%         inputyear1 = [2020]; % % put year which you want to plot [year year ...]
 %         inputyear1 = [1993:2014]; % % put year which you want to plot [year year ...]
+        inputyear1 = [1985:2014]; % % put year which you want to plot [year year ...]
 %         inputyear1 = [1993:1993]; % % put year which you want to plot [year year ...]
         
         season='all';
@@ -70,6 +72,8 @@ for testnameind2=1:length(all_testname2)
                 inputmonth = [1 2 12]; % % put month which you want to plot [month month ...]
         end
         scenname ='historical';
+%         scenname ='ssp585';
+
 %         varname ='zeta'
         run('nwp_polygon_point.m');
         regionname=all_region2{regionind2};
@@ -134,7 +138,11 @@ for testnameind2=1:length(all_testname2)
             cmip6dir = strcat('D:\Data\Model\CMIP6\NWP\'); % % where data files are
         elseif (strcmp(system_name,'GLNXA64'))
         end
-        
+        dirs.figrawdir =strcat('Z:\내 드라이브\MEPL\project\SSH\6th_year\figure\nwp_1_20\'); % % where figure files will be saved
+        tmp.fs=filesep;
+        tmp.regionname=regionname;
+        tmp.testname=testname;
+        RCM_info.years=inputyear1;
         run(param_script);
 
         figdir=[figrawdir,'CLIM\'];
@@ -146,6 +154,13 @@ for testnameind2=1:length(all_testname2)
 % start-------------------- earlier decadal current plot
         pngname=strcat(outfile, '_', testname,'_',regionname, '_clim_uv_',num2str(min(inputyear1),'%04i'), ...
             '_',num2str(max(inputyear1),'%04i'), '.tif'); %% ~_year_month.jpg
+        dirs.figdir=[dirs.figrawdir,'surface', tmp.fs, tmp.regionname, tmp.fs, 'vec', tmp.fs, ...
+            num2str(min(RCM_info.years)), '_', num2str(max(RCM_info.years)), tmp.fs];
+        if (exist(strcat(dirs.figdir) , 'dir') ~= 7)
+            mkdir(strcat(dirs.figdir));
+        end 
+        tmp.tifname=strcat(dirs.figdir, tmp.testname, '_clim_uv_',num2str(min(RCM_info.years),'%04i'), ...
+            '_',num2str(max(RCM_info.years),'%04i'), '.tif'); %% ~_year_month.jpg
 %         if (exist(pngname , 'file') ~= 2)        
             for yearij=1:length(inputyear1)
                 tempyear=inputyear1(yearij);
@@ -238,6 +253,7 @@ for testnameind2=1:length(all_testname2)
             set(gcf, 'PaperSize', [hor_paper_size_x, hor_paper_size_y]);
             set(gcf,'PaperPosition', [paper_position_hor paper_position_ver paper_position_width paper_position_height]) 
             saveas(gcf,pngname,'tif'); RemoveWhiteSpace([], 'file', pngname);
+            saveas(gcf, tmp.tifname,'tif'); RemoveWhiteSpace([], 'file', tmp.tifname);
             close all;
             clear lon_rho mean_u ref_vec_x_range
 %         end
@@ -249,7 +265,16 @@ for testnameind2=1:length(all_testname2)
                 variable=all_var2{varind2};
                 pngname=strcat(outfile, '_', testname,'_',regionname, '_clim_', variable,'_',num2str(min(inputyear1),'%04i'), ...
                     '_',num2str(max(inputyear1),'%04i'), '.tif'); %% ~_year_month.jpg
-                if (exist(pngname , 'file') ~= 2)        
+                
+                dirs.figdir=[dirs.figrawdir,'surface', tmp.fs, tmp.regionname, tmp.fs, variable, tmp.fs, ...
+                    num2str(min(RCM_info.years)), '_', num2str(max(RCM_info.years)), tmp.fs];
+                if (exist(strcat(dirs.figdir) , 'dir') ~= 7)
+                    mkdir(strcat(dirs.figdir));
+                end 
+                tmp.tifname=strcat(dirs.figdir, tmp.testname, '_clim_', variable, '_',num2str(min(RCM_info.years),'%04i'), ...
+                     '_',num2str(max(RCM_info.years),'%04i'), '.tif'); %% ~_year_month.jpg
+                 
+%                 if (exist(pngname , 'file') ~= 2)        
                     run(param_script);
                     for yearij=1:length(inputyear1)
                         tempyear=inputyear1(yearij);
@@ -299,7 +324,11 @@ for testnameind2=1:length(all_testname2)
                     elseif (strcmp(variable,'SSH')==1)
                         mean_data=mean_data-mean(mean_data(:),'omitnan');
                         load(['D:\Data\Model\CMIP6\zos_correction\GCM_corr_', scenname, '.mat']);
-                        GCM_correction=GCM_corr(testnameind2).ts((min(inputyear1)-1985)*12+1:(max(inputyear1)-1985)*12+12);
+                        if strcmp(scenname, 'historical')
+                            GCM_correction=GCM_corr(testnameind2).ts((min(inputyear1)-1985)*12+1:(max(inputyear1)-1985)*12+12);
+                        else
+                            GCM_correction=GCM_corr(testnameind2).ts((min(inputyear1)-2015)*12+1:(max(inputyear1)-2015)*12+12);
+                        end
                         GCM_corr_reshape=reshape(GCM_correction, [12, length(GCM_correction)/12]);
                         GCM_corr_tgt=GCM_corr_reshape(inputmonth,:);
                         GCM_corr_mean=mean(GCM_corr_tgt(:));
@@ -345,9 +374,10 @@ for testnameind2=1:length(all_testname2)
                     set(gcf, 'PaperSize', [hor_paper_size_x, hor_paper_size_y]);
                     set(gcf,'PaperPosition', [paper_position_hor paper_position_ver paper_position_width paper_position_height]) 
                     saveas(gcf,pngname,'tif'); RemoveWhiteSpace([], 'file', pngname);
+                    saveas(gcf,tmp.tifname,'tif'); RemoveWhiteSpace([], 'file', tmp.tifname);
                     close all;
                     clear lon_rho mean_data
-                end
+%                 end
             end
 % end-------------------- earlier decadal SST plot
 % % % % 

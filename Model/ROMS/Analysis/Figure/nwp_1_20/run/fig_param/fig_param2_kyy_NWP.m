@@ -25,50 +25,50 @@ param.colorbar_title_fontsize = 15;
 param.colormap_style = cmap.jet_mod;  % % default
 
 % % set varname
-if (exist('tmp') == 1)
+if (isfield(tmp, 'variable') == 1)
     switch(tmp.variable)
         case('SST')
-            param.varname = 'temp'
+            param.varname = 'temp';
             param.colorbar_title = '(^oC)';
             param.colorbar_lev = [-2 33];
             param.colorbar_lev_meanplot = [19 23];
         case('BT')
-            param.varname = 'temp'
+            param.varname = 'temp';
             param.colorbar_title = '(^oC)';
             param.colorbar_lev = [-2 33];
         case('SSS')
-            param.varname = 'salt'
+            param.varname = 'salt';
             param.colorbar_title = ' ';
             param.colorbar_lev = [25 35];
         case('SSH')
-            param.varname = 'zeta'
+            param.varname = 'zeta';
             param.colorbar_title = '(m)';
             param.colorbar_lev = [-0.7 1.3];
         case('vert_temp')
-            param.varname = 'temp'
+            param.varname = 'temp';
             param.colorbar_title = '(^oC)';
             param.colormap_style = jet;
         case('vert_salt')
-            param.varname = 'salt'
+            param.varname = 'salt';
             param.colorbar_title = ' ';
             param.colormap_style = jet;
         case('vert_u')
-            param.varname = 'u'
+            param.varname = 'u';
             param.colorbar_title = '(m/s)';
             param.colormap_style = cmap.bwrmap;
         case('vert_v')
-            param.varname = 'v'
+            param.varname = 'v';
             param.colorbar_title = '(m/s)';
             param.colormap_style = cmap.bwrmap;
         case('vert_rho')
-            param.varname = 'zeta'
+            param.varname = 'zeta';
             param.colorbar_title = '(kg/m^3)';
         case('speed')
-            param.varname = 'speed'
+            param.varname = 'speed';
             param.colorbar_title = '(m/s)';
             param.colorbar_lev_meanplot = [0.05 0.25];
         case('H')
-            param.varname = 'h'
+            param.varname = 'h';
             param.colorbar_title = '(m)';
             param.colorbar_lev = [-5000 0];
         otherwise

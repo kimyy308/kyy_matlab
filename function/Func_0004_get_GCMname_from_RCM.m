@@ -25,15 +25,15 @@ switch(testname)
         gcmtestname='NorESM1-M';
     case {'test56', 'test60', 'test64', 'test68'}
         gcmtestname='MPI-ESM-LR';
-    case {'test2102'}
+    case {'test2102', 'test2107', 'test2117', 'test2127'}
         gcmtestname='CNRM-ESM2-1';
-    case {'test2103'}
+    case {'test2103', 'test2108', 'test2118', 'test2128'}
         gcmtestname='EC-Earth3-Veg';
-    case {'test2104'}
+    case {'test2104', 'test2109', 'test2119', 'test2129'}
         gcmtestname='ACCESS-CM2';
-    case {'test2105'}
+    case {'test2105', 'test2110', 'test2120', 'test2130'}
         gcmtestname='CNRM-CM6-1-HR';
-    case {'test2106'}
+    case {'test2106', 'test2111', 'test2121', 'test2131'}
         gcmtestname='CMCC-ESM2';
 end
 

@@ -4,9 +4,9 @@ close all; clear all;  clc;
 
 all_testname = {'test06'};
 
-% all_region ={'pollock_egg3'};
+all_region ={'pollock_egg3'};
 % all_region ={'pollock_egg', 'pollock_egg2'};
-all_region ={'ES'};
+% all_region ={'ES'};
 % all_region ={'ES_KHOA','YS_KHOA', 'SS_KHOA'};
 
 
@@ -232,7 +232,7 @@ for testnameind=1:length(all_testname)
         for flagi=1:100
             fig_flags{flagi,2}=0;
         end
-        fig_flags{56,2}=2; 
+        fig_flags{63,2}=2; 
         
         
         figdir=[figrawdir,LTRANS_testname, '\', regionname, '\spawn\'];

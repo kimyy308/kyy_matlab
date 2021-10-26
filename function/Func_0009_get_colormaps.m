@@ -22,6 +22,7 @@ switch colormapname
     case('byr')
         colormap = customcolormap_preset('red-yellow-blue');
     case('yr')
+        byrmap = customcolormap_preset('red-yellow-blue');
         colormap = byrmap(129:256,:);
     case('gmt_ocn')
         load([dropboxpath, filesep, 'source', filesep, 'matlab', filesep, 'Common', ...

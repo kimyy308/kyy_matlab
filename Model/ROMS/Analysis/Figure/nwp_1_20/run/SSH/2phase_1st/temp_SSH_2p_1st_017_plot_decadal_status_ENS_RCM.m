@@ -4,8 +4,11 @@ warning off;
 % if(isempty(gcp('nocreate')))
 %     parpool(4);
 % end
-all_testname2 = {'test2102', 'test2103', 'test2104', 'test2105', 'test2106'};
-scenname='historical';
+% all_testname2 = {'test2102', 'test2103', 'test2104', 'test2105', 'test2106'};
+all_testname2 = {'test2107', 'test2108', 'test2109', 'test2110', 'test2111'};
+
+% scenname='historical';
+scenname='ssp585';
 
 % all_region2 ={'NWP', 'AKP4'};
 all_region2 ={'AKP4'};
@@ -15,7 +18,7 @@ all_region2 ={'AKP4'};
 % all_var2 = {'SST', 'SSH', 'SSS'};
 % all_var2 = {'SSH'};
 % all_var2 = {'SST', 'SSS'};
-all_var2 = {'SSS'};
+all_var2 = {'SST', 'SSH', 'SSS'};
 % all_var2 = {'BT'};
 
 % all_region2 ={'NWP'}
@@ -60,7 +63,8 @@ for regionind2=1:length(all_region2)
 
     % for snu_desktop
 %     inputyear1 = [1993:2014]; % % put year which you want to plot [year year ...]
-    inputyear1 = [1985:2014]; % % put year which you want to plot [year year ...]
+%     inputyear1 = [1985:2014]; % % put year which you want to plot [year year ...]
+    inputyear1 = [2050]; % % put year which you want to plot [year year ...]
 
     inputmonth = [1:12]; % % put month which you want to plot [month month ...]
 
@@ -121,7 +125,11 @@ for regionind2=1:length(all_region2)
     
     figrawdir =strcat('Z:\내 드라이브\MEPL\project\SSH\6th_year\figure\nwp_1_20\ENS\',scenname, filesep, regionname,filesep); % % where figure files will be saved
     param_script =['C:\Users\user\Dropbox\source\matlab\Model\ROMS\Analysis\Figure\nwp_1_20\run\fig_param\fig_param_kyy_', regionname, '.m'];
-
+    dirs.figrawdir =strcat('Z:\내 드라이브\MEPL\project\SSH\6th_year\figure\nwp_1_20\'); % % where figure files will be saved
+    tmp.fs=filesep;
+    tmp.regionname=regionname;
+%     tmp.testname=testname;
+    RCM_info.years=inputyear1;
 
     run(param_script);
     
@@ -131,60 +139,68 @@ for regionind2=1:length(all_region2)
     end 
     outfile = strcat(figdir,regionname);
 
-% % % % start-------------------- decadal current plot
-% % %     pngname=strcat(outfile, '_ENS_',regionname, '_clim_uv_',num2str(min(inputyear1),'%04i'), ...
-% % %         '_',num2str(max(inputyear1),'%04i'), '.tif'); %% ~_year_month.jpg
-% % %     variable='UV';
-% % %     for testnameind2=1:length(all_testname2)
-% % %         testname=all_testname2{testnameind2};
-% % %         filedir = strcat('E:\Data\Model\ROMS\nwp_1_20\output\', testname, '\run\packed_monthly\'); % % where data files are          
-% % %         matdir = strcat('D:\Data\Model\ROMS\nwp_1_20\', testname, '\run\mean\');
-% % %         griddir = strcat('E:\Data\Model\ROMS\nwp_1_20\output\', testname, '\run\packed_monthly\'); % % where data files are            
-% % %         
-% % %         matname = [matdir, testname, '_', regionname, '_', variable, '_mean_', num2str(min(inputyear1),'%04i'), '-', num2str(max(inputyear1),'%04i'), '.mat'];
-% % %         load(matname);
-% % %         if (exist('ens_u_rho' , 'var') ~= 1)
-% % %             ens_u_rho=u_rho;
-% % %             ens_v_rho=v_rho;
-% % %         else
-% % %             ens_u_rho=ens_u_rho+u_rho;
-% % %             ens_v_rho=ens_v_rho+v_rho;
-% % %         end
-% % %     end
-% % %     ens_u_rho=ens_u_rho/length(all_testname2);
-% % %     ens_v_rho=ens_v_rho/length(all_testname2);
-% % %     u_rho=ens_u_rho;
-% % %     v_rho=ens_v_rho;
-% % %     
-% % %     mask_model = double(inpolygon(cut_lon_rho,cut_lat_rho,refpolygon(:,1),refpolygon(:,2)));
-% % %     mask_model(mask_model==0)=NaN;
-% % %     u_rho=u_rho(1:size(mask_model,1),:).*mask_model;
-% % %     v_rho=v_rho(:,1:size(mask_model,2)).*mask_model;  
-% % % 
-% % %     m_proj(m_proj_name,'lon',[lonlat(1) lonlat(2)],'lat',[lonlat(3) lonlat(4)]);
-% % %     hold on;
-% % %     m_gshhs_i('color',m_gshhs_line_color)  
-% % %     m_gshhs_i('patch',m_gshhs_land_color);   % gray colored land
-% % % 
-% % %     uvplot=m_quiver(cut_lon_rho(1:m_quiver_x_interval:end,1:m_quiver_y_interval:end)', ...
-% % %                     cut_lat_rho(1:m_quiver_x_interval:end,1:m_quiver_y_interval:end)', ...
-% % %                     u_rho(1:m_quiver_x_interval:end,1:m_quiver_y_interval:end)' * m_quiver_vector_size, ...
-% % %                     v_rho(1:m_quiver_x_interval:end,1:m_quiver_y_interval:end)' * m_quiver_vector_size, ...
-% % %                     'color',m_quiver_vector_color, 'AutoScale','off','LineWidth', m_quiver_LineWidth);
-% % % 
-% % %     m_text(m_quiver_ref_text_x_location, m_quiver_ref_text_y_location, m_quiver_ref_text, 'FontSize', m_quiver_ref_text_fontsize); 
-% % %     m_grid('fontsize', m_grid_fontsize, 'box', m_grid_box_type, 'tickdir', m_grid_tickdir_type);
-% % %     titlename = strcat('UV mean, ','Ens',',(',num2str(min(inputyear1),'%04i'),'-',num2str(max(inputyear1),'%04i'),') ');  %% + glacier contribution
-% % %     title(titlename,'fontsize',m_pcolor_title_fontsize);  %%title
-% % % 
-% % %     set(gcf, 'PaperUnits', 'points');
-% % %     set(gcf, 'PaperSize', [hor_paper_size_x, hor_paper_size_y]);
-% % %     set(gcf,'PaperPosition', [paper_position_hor paper_position_ver paper_position_width paper_position_height]) 
-% % %     saveas(gcf,pngname,'tif'); RemoveWhiteSpace([], 'file', pngname);
-% % % %                 system(['magick ', pngname, ' -trim ', pngname]);
-% % % 
-% % %     close all;
-% % %     clear lon_rho mean_u ref_vec_x_range
+% start-------------------- decadal current plot
+    pngname=strcat(outfile, '_ENS_',regionname, '_clim_uv_',num2str(min(inputyear1),'%04i'), ...
+        '_',num2str(max(inputyear1),'%04i'), '.tif'); %% ~_year_month.jpg
+    variable='UV';
+    dirs.figdir=[dirs.figrawdir,'surface', tmp.fs, tmp.regionname, tmp.fs, 'vec', tmp.fs, ...
+        num2str(min(RCM_info.years)), '_', num2str(max(RCM_info.years)), tmp.fs];
+    if (exist(strcat(dirs.figdir) , 'dir') ~= 7)
+        mkdir(strcat(dirs.figdir));
+    end 
+    tmp.tifname=strcat(dirs.figdir, 'RCM_ENS', '_clim_uv_',num2str(min(RCM_info.years),'%04i'), ...
+    '_',num2str(max(RCM_info.years),'%04i'), '.tif'); %% ~_year_month.jpg
+    for testnameind2=1:length(all_testname2)
+        testname=all_testname2{testnameind2};
+        filedir = strcat('E:\Data\Model\ROMS\nwp_1_20\output\', testname, '\run\packed_monthly\'); % % where data files are          
+        matdir = strcat('D:\Data\Model\ROMS\nwp_1_20\', testname, '\run\mean\');
+        griddir = strcat('E:\Data\Model\ROMS\nwp_1_20\output\', testname, '\run\packed_monthly\'); % % where data files are            
+        
+        matname = [matdir, testname, '_', regionname, '_', variable, '_mean_', num2str(min(inputyear1),'%04i'), '-', num2str(max(inputyear1),'%04i'), '.mat'];
+        load(matname);
+        if (exist('ens_u_rho' , 'var') ~= 1)
+            ens_u_rho=u_rho;
+            ens_v_rho=v_rho;
+        else
+            ens_u_rho=ens_u_rho+u_rho;
+            ens_v_rho=ens_v_rho+v_rho;
+        end
+    end
+    ens_u_rho=ens_u_rho/length(all_testname2);
+    ens_v_rho=ens_v_rho/length(all_testname2);
+    u_rho=ens_u_rho;
+    v_rho=ens_v_rho;
+    
+    mask_model = double(inpolygon(cut_lon_rho,cut_lat_rho,refpolygon(:,1),refpolygon(:,2)));
+    mask_model(mask_model==0)=NaN;
+    u_rho=u_rho(1:size(mask_model,1),:).*mask_model;
+    v_rho=v_rho(:,1:size(mask_model,2)).*mask_model;  
+
+    m_proj(m_proj_name,'lon',[lonlat(1) lonlat(2)],'lat',[lonlat(3) lonlat(4)]);
+    hold on;
+    m_gshhs_i('color',m_gshhs_line_color)  
+    m_gshhs_i('patch',m_gshhs_land_color);   % gray colored land
+
+    uvplot=m_quiver(cut_lon_rho(1:m_quiver_x_interval:end,1:m_quiver_y_interval:end)', ...
+                    cut_lat_rho(1:m_quiver_x_interval:end,1:m_quiver_y_interval:end)', ...
+                    u_rho(1:m_quiver_x_interval:end,1:m_quiver_y_interval:end)' * m_quiver_vector_size, ...
+                    v_rho(1:m_quiver_x_interval:end,1:m_quiver_y_interval:end)' * m_quiver_vector_size, ...
+                    'color',m_quiver_vector_color, 'AutoScale','off','LineWidth', m_quiver_LineWidth);
+
+    m_text(m_quiver_ref_text_x_location, m_quiver_ref_text_y_location, m_quiver_ref_text, 'FontSize', m_quiver_ref_text_fontsize); 
+    m_grid('fontsize', m_grid_fontsize, 'box', m_grid_box_type, 'tickdir', m_grid_tickdir_type);
+    titlename = strcat('UV mean, ','Ens',',(',num2str(min(inputyear1),'%04i'),'-',num2str(max(inputyear1),'%04i'),') ');  %% + glacier contribution
+    title(titlename,'fontsize',m_pcolor_title_fontsize);  %%title
+
+    set(gcf, 'PaperUnits', 'points');
+    set(gcf, 'PaperSize', [hor_paper_size_x, hor_paper_size_y]);
+    set(gcf,'PaperPosition', [paper_position_hor paper_position_ver paper_position_width paper_position_height]) 
+    saveas(gcf,pngname,'tif'); RemoveWhiteSpace([], 'file', pngname);
+    saveas(gcf, tmp.tifname,'tif'); RemoveWhiteSpace([], 'file', tmp.tifname);
+%                 system(['magick ', pngname, ' -trim ', pngname]);
+
+    close all;
+    clear lon_rho ens_u_rho ref_vec_x_range
     
     
 % start-------------------- decadal SST, SSH, SSS plot
@@ -192,6 +208,13 @@ for regionind2=1:length(all_region2)
         variable=all_var2{varind2};
         pngname=strcat(outfile, '_ENS_',regionname, '_clim_',variable, '_', num2str(min(inputyear1),'%04i'), ...
             '_',num2str(max(inputyear1),'%04i'), '.tif'); %% ~_year_month.jpg
+        dirs.figdir=[dirs.figrawdir,'surface', tmp.fs, tmp.regionname, tmp.fs, variable, tmp.fs, ...
+            num2str(min(RCM_info.years)), '_', num2str(max(RCM_info.years)), tmp.fs];
+        if (exist(strcat(dirs.figdir) , 'dir') ~= 7)
+            mkdir(strcat(dirs.figdir));
+        end 
+        tmp.tifname=strcat(dirs.figdir, 'RCM_ENS', '_clim_', variable, '_',num2str(min(RCM_info.years),'%04i'), ...
+                     '_',num2str(max(RCM_info.years),'%04i'), '.tif'); %% ~_year_month.jpg
         run(param_script);
         for testnameind2=1:length(all_testname2)
             testname=all_testname2{testnameind2};
@@ -253,8 +276,9 @@ for regionind2=1:length(all_region2)
         set(gcf, 'PaperSize', [hor_paper_size_x, hor_paper_size_y]);
         set(gcf,'PaperPosition', [paper_position_hor paper_position_ver paper_position_width paper_position_height]) 
         saveas(gcf,pngname,'tif'); RemoveWhiteSpace([], 'file', pngname);
+        saveas(gcf,tmp.tifname,'tif'); RemoveWhiteSpace([], 'file', tmp.tifname);
         close all;
-        clear lon_rho mean_data
+        clear lon_rho mean_data ens_data
     end
     
     

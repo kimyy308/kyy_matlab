@@ -43,7 +43,7 @@ for testnameind=1:length(all_testname)
         dl=1/20;
         % for snu_desktop
         testname=all_testname{testnameind} 
-        inputyear = [1993:2014]; % % put year which you want to plot [year year ...]
+        inputyear = [1985:2014]; % % put year which you want to plot [year year ...]
         inputmonth = [1 2 3 4 5 6 7 8 9 10 11 12]; % % put month which you want to plot [month month ...]
 
 
@@ -92,7 +92,7 @@ for testnameind=1:length(all_testname)
             param_script ='C:\Users\user\Dropbox\source\matlab\Model\ROMS\Analysis\Figure\nwp_1_20\run\fig_param\fig_param_kyy_EKB_RMS.m'
             filedir = strcat('D:\Data\Model\ROMS\nwp_1_20\backup_surf\', testname, '\run\temp\'); % % where data files are
             savedir = strcat('D:\Data\Model\ROMS\nwp_1_20\', testname, '\run\'); % % where data files are
-            griddir = strcat('E:\Data\Model\ROMS\nwp_1_20\output\', testname, '\run\packed_monthly\'); % % where data files are
+            griddir = strcat('D:\Data\Model\ROMS\nwp_1_20\output\', testname, '\run\packed_monthly\'); % % where data files are
             avhrrdir='Z:\내 드라이브\Data\Observation\OISST\monthly_kimyy\';
         elseif (strcmp(system_name,'GLNXA64'))
         end

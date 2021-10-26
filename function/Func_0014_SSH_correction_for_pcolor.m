@@ -4,39 +4,47 @@ function [ssh_correction_for_fig] = Func_0014_SSH_correction_for_pcolor(testname
 % function var=Func_0014_SSH_correction_for_pcolor(testname);
 %
 % Getting the SSH correction value for pcolor
+% GCM values set by interped netcdf data
 %
 %  input:
 %  testname             Name of the dataset (string. RCM, GCM, Observation, etc.)
 %
 %  output:
 %  ssh_correction_for_fig          correction value (string)
+% 
 %
 %  e-mail:kimyy308@snu.ac.kr
 %
 %  Updated    13-Jul-2021 by Yong-Yub Kim
+%  Updated    10-Oct-2021 by Yong-Yub Kim  % addition of SSP5-8.5 (test2107 ~ 11)
+%  Updated    14-Oct-2021 by Yong-Yub Kim  % addition of ENS3 (test2102 ~ 04)
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 switch(testname)
-        case('CMEMS')
+    case('CMEMS')
 %         ssh_correction_for_fig=-0.1096; % 1993 NWP min
         ssh_correction_for_fig=0.7207; % 1993-2014 AKP4 mean       
-    case('test2102')
+    case{'test2102', 'test2107'}
 %         ssh_correction_for_fig=-0.9915; % 1993 NWP min
         ssh_correction_for_fig=-0.3314; % 1993-2014 AKP4 mean
-    case('test2103')
+    case{'test2103', 'test2108'}
 %         ssh_correction_for_fig=-1.0469; % 1993 NWP min
         ssh_correction_for_fig=-0.2376; % 1993-2014 AKP4 mean        
-    case('test2104')
+    case{'test2104', 'test2109'}
 %         ssh_correction_for_fig=-1.0217; % 1993 NWP min
         ssh_correction_for_fig=-0.2518; % 1993-2014 AKP4 mean                
-    case('test2105')
+    case{'test2105', 'test2110'}
 %         ssh_correction_for_fig=-0.9915; % 1993 NWP min
         ssh_correction_for_fig=-0.2822; % 1993-2014 AKP4 mean                
-    case('test2106')
+    case{'test2106', 'test2111'}
 %         ssh_correction_for_fig=-1.0439; % 1993 NWP min
-        ssh_correction_for_fig=-0.1680; % 1993-2014 AKP4 mean      
+        ssh_correction_for_fig=-0.1680; % 1993-2014 AKP4 mean  
+    
     case('RCM_ENS_historical')
         ssh_correction_for_fig=-0.2542; % 1993-2014 AKP4 mean
+    case('RCM_ENS3_historical')
+        ssh_correction_for_fig=-0.2736; % 1993-2014 AKP4 mean
         
     case('CNRM-ESM2-1')
 %         ssh_correction_for_fig=-5.4472; % 1985 NWP mean
@@ -65,6 +73,8 @@ switch(testname)
         ssh_correction_for_fig=-5.7181; % 1993-2014 AKP4 mean            
     case('GCM_ENS_historical')
         ssh_correction_for_fig=-4.1331; % 1993-2014 AKP4 mean
+    case('GCM_ENS3_historical')
+        ssh_correction_for_fig=-3.2181; % 1993-2014 AKP4 mean
 end
 
 end

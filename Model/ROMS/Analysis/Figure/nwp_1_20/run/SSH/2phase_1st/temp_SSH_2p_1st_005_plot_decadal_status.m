@@ -4,18 +4,20 @@ warning off;
 % if(isempty(gcp('nocreate')))
 %     parpool(4);
 % end
-all_testname2 = {'test2102', 'test2103', 'test2104', 'test2105', 'test2106'};
+% all_testname2 = {'test2102', 'test2103', 'test2104', 'test2105', 'test2106'};
+% all_testname2 = {'test2107', 'test2108', 'test2109', 'test2110', 'test2111'};
+all_testname2 = {'test2107', 'test2108', 'test2109'};
 
 % all_region2 ={'NWP', 'YS', 'AKP2'}
 % all_region2 ={'NWP', 'AKP4'};
 % all_region2 ={'NWP', 'AKP4'};
 % all_region2 ={'AKP4'};
 
-all_region2 ={'YS'};
+all_region2 ={'AKP4'};
 
-% all_var2 = {'SST', 'SSH', 'SSS'};
+all_var2 = {'SST', 'SSH', 'SSS'};
 % all_var2 = {'SSH'};
-all_var2 = {'SST'};
+% all_var2 = {'SSH'};
 % all_var2 = {'SSS'};
 % all_var2 = {'BT'};
 
@@ -63,13 +65,13 @@ for testnameind2=1:length(all_testname2)
         % for snu_desktop
         testname=all_testname2{testnameind2}    % % need to change
 %         inputyear1 = [1993:2014]; % % put year which you want to plot [year year ...]
-        inputyear1 = [1985:2014]; % % put year which you want to plot [year year ...]
-%         inputyear1 = [1993:2014]; % % put year which you want to plot [year year ...]
+%         inputyear1 = [1985:2014]; % % put year which you want to plot [year year ...]
+        inputyear1 = [2050]; % % put year which you want to plot [year year ...]
         
 %         inputyear2 = [1985:2014]; % % put year which you want to plot [year year ...]
 %         inputmonth = [1:12]; % % put month which you want to plot [month month ...]
-%         inputmonth = [8]; % % put month which you want to plot [month month ...]
-          inputmonth = [2]; % % put month which you want to plot [month month ...]
+        inputmonth = [8]; % % put month which you want to plot [month month ...]
+%           inputmonth = [2]; % % put month which you want to plot [month month ...]
 
         for folding=1:1
             fig_flags{1,1}='earlier decadal current plot';
@@ -82,9 +84,9 @@ for testnameind2=1:length(all_testname2)
         for flagi=1:6
             fig_flags{flagi,2}=0;
         end
-        fig_flags{1,2}=0;
+        fig_flags{1,2}=2;
         fig_flags{2,2}=0;
-        fig_flags{3,2}=1;
+        fig_flags{3,2}=2;
         fig_flags{4,2}=0;
         fig_flags{5,2}=0;
         fig_flags{6,2}=0;
@@ -163,9 +165,14 @@ for testnameind2=1:length(all_testname2)
 %             figrawdir =strcat('C:\Users\User\Desktop\6th_year\figure\nwp_1_20\',testname,'\',regionname,'\'); % % where figure files will be saved
             param_script =['C:\Users\user\Dropbox\source\matlab\Model\ROMS\Analysis\Figure\nwp_1_20\run\fig_param\fig_param_kyy_', regionname, '.m'];
 %             filedir = strcat(drivename,'Data\Model\ROMS\nwp_1_20\', testname, '\run\'); % % where data files are
-            filedir = strcat(drivename,'Data\Model\ROMS\nwp_1_20\output\', testname, '\run\packed_monthly\'); % % where data files are          
+            filedir = strcat('D:\','Data\Model\ROMS\nwp_1_20\output\', testname, '\run\packed_monthly\'); % % where data files are          
             matdir = strcat('D:\Data\Model\ROMS\nwp_1_20\', testname, '\run\mean\');
-            griddir = strcat('E:\Data\Model\ROMS\nwp_1_20\output\', testname, '\run\packed_monthly\'); % % where data files are            
+            griddir = strcat('D:\Data\Model\ROMS\nwp_1_20\output\', testname, '\run\packed_monthly\'); % % where data files are            
+            dirs.figrawdir =strcat('Z:\내 드라이브\MEPL\project\SSH\6th_year\figure\nwp_1_20\'); % % where figure files will be saved
+            tmp.fs=filesep;
+            tmp.regionname=regionname;
+        %     tmp.testname=testname;
+            RCM_info.years=inputyear1;
         elseif (strcmp(system_name,'GLNXA64'))
         end
         
@@ -189,10 +196,22 @@ for testnameind2=1:length(all_testname2)
         fig_flag=fig_flags{1,2};
         while (fig_flag)
             pngname=strcat(outfile, '_', testname,'_',regionname, '_clim_uv_',num2str(min(inputyear1),'%04i'), ...
-                '_',num2str(max(inputyear1),'%04i'), '.tif'); %% ~_year_month.jpg
+                '_',num2str(max(inputyear1),'%04i'), ...
+                    '_', num2str(min(inputmonth),'%04i'), '-', num2str(max(inputmonth),'%04i'),'.tif'); %% ~_year_month.jpg
             variable='UV';
+            dirs.figdir=[dirs.figrawdir,'surface', tmp.fs, tmp.regionname, tmp.fs, variable, tmp.fs, ...
+                    num2str(min(RCM_info.years)), '_', num2str(max(RCM_info.years)), tmp.fs];
+            if (exist(strcat(dirs.figdir) , 'dir') ~= 7)
+                mkdir(strcat(dirs.figdir));
+            end 
+            tmp.tifname=strcat(dirs.figdir, testname, '_clim_uv_', '_',num2str(min(RCM_info.years),'%04i'), ...
+                 '_',num2str(max(RCM_info.years),'%04i'), ...
+                '_', num2str(min(inputmonth),'%04i'), '-', num2str(max(inputmonth),'%04i'),'.tif'); %% ~_year_month.jpg
+                
             if (exist(pngname , 'file') ~= 2 || fig_flag==2)      
-                matname = [matdir, testname, '_', regionname, '_', variable, '_mean_', num2str(min(inputyear1),'%04i'), '-', num2str(max(inputyear1),'%04i'), '.mat'];
+                matname = [matdir, testname, '_', regionname, '_', variable, '_mean_', ...
+                    num2str(min(inputyear1),'%04i'), '-', num2str(max(inputyear1),'%04i'), ...
+                    '_', num2str(min(inputmonth),'%04i'), '-', num2str(max(inputmonth),'%04i'), '.mat'];
                 if (exist(matname , 'file') ~= 2 || fig_flag==2)
                     for yearij=1:length(inputyear1)
                         tempyear=inputyear1(yearij);
@@ -268,6 +287,7 @@ for testnameind2=1:length(all_testname2)
                 set(gcf, 'PaperSize', [hor_paper_size_x, hor_paper_size_y]);
                 set(gcf,'PaperPosition', [paper_position_hor paper_position_ver paper_position_width paper_position_height]) 
                 saveas(gcf,pngname,'tif'); RemoveWhiteSpace([], 'file', pngname);
+                saveas(gcf,tmp.tifname,'tif'); RemoveWhiteSpace([], 'file', tmp.tifname);                    
 %                 system(['magick ', pngname, ' -trim ', pngname]);
                 
                 close all;
@@ -371,10 +391,21 @@ for testnameind2=1:length(all_testname2)
             for varind2=1:length(all_var2)
                 variable=all_var2{varind2};
                 pngname=strcat(outfile, '_', testname,'_',regionname, '_clim_', variable,'_',num2str(min(inputyear1),'%04i'), ...
-                    '_',num2str(max(inputyear1),'%04i'), '.tif'); %% ~_year_month.jpg
+                    '_',num2str(max(inputyear1),'%04i'), ...
+                    '_', num2str(min(inputmonth),'%04i'), '-', num2str(max(inputmonth),'%04i'),'.tif'); %% ~_year_month.jpg
+                dirs.figdir=[dirs.figrawdir,'surface', tmp.fs, tmp.regionname, tmp.fs, variable, tmp.fs, ...
+                    num2str(min(RCM_info.years)), '_', num2str(max(RCM_info.years)), tmp.fs];
+                if (exist(strcat(dirs.figdir) , 'dir') ~= 7)
+                    mkdir(strcat(dirs.figdir));
+                end 
+                tmp.tifname=strcat(dirs.figdir, testname, '_clim_', variable, '_',num2str(min(RCM_info.years),'%04i'), ...
+                     '_',num2str(max(RCM_info.years),'%04i'), ...
+                    '_', num2str(min(inputmonth),'%04i'), '-', num2str(max(inputmonth),'%04i'),'.tif'); %% ~_year_month.jpg
 %                 if (exist(pngname , 'file') ~= 2 || fig_flag==2)      
                     run(param_script);
-                    matname = [matdir, testname, '_', regionname, '_', variable, '_mean_', num2str(min(inputyear1),'%04i'), '-', num2str(max(inputyear1),'%04i'), '.mat'];
+                    matname = [matdir, testname, '_', regionname, '_', variable, '_mean_', ...
+                        num2str(min(inputyear1),'%04i'), '-', num2str(max(inputyear1),'%04i'), ...
+                    '_', num2str(min(inputmonth),'%04i'), '-', num2str(max(inputmonth),'%04i'),'.mat'];
                     if (exist(matname , 'file') ~= 2 || fig_flag==2)
                         for yearij=1:length(inputyear1)
                             tempyear=inputyear1(yearij);
@@ -431,10 +462,10 @@ for testnameind2=1:length(all_testname2)
                     m_pcolor(cut_lon_rho',cut_lat_rho',mean_data');
                     shading(gca,m_pcolor_shading_method);   
                     if(strcmp(variable, 'SST'))
-                        [C,h2]=m_contour(cut_lon_rho',cut_lat_rho', mean_data', [2, 4, 6, 8, 10], 'color','k', ...
-                                'linewidth', 1.5, 'linestyle', '-');
-%                         [C,h2]=m_contour(cut_lon_rho',cut_lat_rho', mean_data', [10, 15, 20], 'color','k', ...
+%                         [C,h2]=m_contour(cut_lon_rho',cut_lat_rho', mean_data', [2, 4, 6, 8, 10], 'color','k', ...
 %                                 'linewidth', 1.5, 'linestyle', '-');
+                        [C,h2]=m_contour(cut_lon_rho',cut_lat_rho', mean_data', [10, 15, 20], 'color','k', ...
+                                'linewidth', 1.5, 'linestyle', '-');
                             clabel(C,h2,'FontSize',13,'Color','k', ...
                                 'labelspacing', 50000,'Rotation', 0,'fontweight', 'bold');
                     end
@@ -463,6 +494,7 @@ for testnameind2=1:length(all_testname2)
                     set(gcf, 'PaperSize', [hor_paper_size_x, hor_paper_size_y]);
                     set(gcf,'PaperPosition', [paper_position_hor paper_position_ver paper_position_width paper_position_height]) 
                     saveas(gcf,pngname,'tif'); RemoveWhiteSpace([], 'file', pngname);
+                    saveas(gcf,tmp.tifname,'tif'); RemoveWhiteSpace([], 'file', tmp.tifname);                    
                     close all;
                     clear lon_rho mean_data
 %                 end

@@ -73,6 +73,10 @@ switch(regionname)
         refpolygon=ekbpolygon;
     case('ES_KHOA') %% East Sea
         refpolygon=es_khoapolygon;
+    case('YS_KHOA') %% East Sea
+        refpolygon=ys_khoapolygon;
+    case('SS_KHOA') %% East Sea
+        refpolygon=ss_khoapolygon;
     case('TEST') %% for debugging
         refpolygon=testpolygon;
     case('SK_EEZ') %%south korea EEZ (real fishing area)

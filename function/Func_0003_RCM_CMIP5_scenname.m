@@ -1,4 +1,4 @@
-function [scenname] = RCM_CMIP5_scenname(testname)
+function [scenname, error_status] = RCM_CMIP5_scenname(testname)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % function var=RCM_CMIP5_testname_his(testname);
@@ -14,6 +14,7 @@ function [scenname] = RCM_CMIP5_scenname(testname)
 %  e-mail:kimyy308@snu.ac.kr
 %
 %  Updated    3-May-2021 by Yong-Yub Kim
+%  Updated    17-Oct-2021 by Yong-Yub Kim
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 switch(testname)
@@ -27,5 +28,6 @@ switch(testname)
         scenname='rcp85';
 end
 
+error_status=1;
 end
 

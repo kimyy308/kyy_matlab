@@ -35,22 +35,34 @@ tmp.totlap= (length(RCM_info.years)*length(RCM_info.months));
 tmp.nchar(1)= fprintf(' %.0f sec. (%.0f sec. left)', tmp.elapsed, tmp.elapsed*(tmp.totlap-1+1)/1);
 
 
-if (exist(RCM_info.matname , 'file') ~= 2 || flags.fig_switch(1)==2)   
+if (exist(RCM_info.matname , 'file') ~= 2 || flags.fig_tmp==2)   
     for yearij = 1:length(RCM_info.years)
         for monthij = 1:length(RCM_info.months)
+            
+            %             disp([num2str(yearij), 'y_',num2str(monthij),'m'])
             tmp.elapsed=toc(tmp.lap_time_j);
-            tmp.templap= yearij*length(RCM_info.months)+monthij;
+            tmp.templap= (yearij-1)*length(RCM_info.months)+monthij-1;
             fprintf(repmat('\b',1,sum(tmp.nchar)))  % remove printed time
             tmp.nchar(1)= fprintf(' %.0f sec. (%.0f sec. left)', tmp.elapsed, tmp.elapsed*(tmp.totlap-tmp.templap+1)/tmp.templap);
-            %             disp([num2str(yearij), 'y_',num2str(monthij),'m'])
-
 
             tmp.year = RCM_info.years(yearij);
             tmp.month = RCM_info.months(monthij);
             % ex : rootdir\test37\data\2001\test37_monthly_2001_01.nc
-            RCM_info.filename = strcat(RCM_info.filedir, num2str(tmp.year,'%04i'), tmp.fs, ...
+            switch(RCM_info.testname)
+                case {'test2102', 'test2103', 'test2104', 'test2105', 'test2106'}
+                    RCM_info.filename = strcat(RCM_info.filedir, num2str(tmp.year,'%04i'), tmp.fs, ...
                     'pck_', RCM_info.testname, '_', tmp.variable, '_monthly_', num2str(tmp.year,'%04i'), ...
                     '_', num2str(tmp.month,'%02i'), '.nc');
+                case {'test2107', 'test2108', 'test2109', 'test2110', 'test2111'}
+                    RCM_info.filename = strcat(RCM_info.filedir, num2str(tmp.year,'%04i'), tmp.fs, ...
+                    'NWP_pck_', RCM_info.testname, '_', tmp.variable, '_monthly_', num2str(tmp.year,'%04i'), ...
+                    '_', num2str(tmp.month,'%02i'), '.nc');
+                otherwise
+                    RCM_info.filename = strcat(RCM_info.filedir, num2str(tmp.year,'%04i'), tmp.fs, ...
+                    'NWP_pck_', RCM_info.testname, '_', tmp.variable, '_monthly_', num2str(tmp.year,'%04i'), ...
+                    '_', num2str(tmp.month,'%02i'), '.nc');
+            end
+            
 % %             get RCM_grid
             if (yearij == 1 && monthij == 1)
                 RCM_grid.filename_lon_rho = [RCM_info.dataroot, 'NWP_pck_ocean_lon_rho_NWP.nc'];
@@ -104,12 +116,12 @@ if (exist(RCM_info.matname , 'file') ~= 2 || flags.fig_switch(1)==2)
 
             if (yearij == 1 && monthij == 1)
                 RCM_data.clim_mean=(zeros([RCM_grid.size_lon_rho,RCM_grid.size_lat_rho,12]));
-                RCM_data.annual_mean=(zeros([RCM_grid.size_lon_rho,RCM_grid.size_lat_rho,length(RCM_info.years)]));
+                RCM_data.yearly_mean=(zeros([RCM_grid.size_lon_rho,RCM_grid.size_lat_rho,length(RCM_info.years)]));
             end
             RCM_data.all(:,:,tmp.ind_for) = single(RCM_data.tmp_data);
             RCM_data.clim_mean(:,:,monthij)=RCM_data.clim_mean(:,:,monthij) + ...
                 RCM_data.tmp_data / double(length(RCM_info.years));
-            RCM_data.annual_mean(:,:,yearij)=RCM_data.annual_mean(:,:,yearij) + ...
+            RCM_data.yearly_mean(:,:,yearij)=RCM_data.yearly_mean(:,:,yearij) + ...
                 RCM_data.tmp_data / double(length(RCM_info.months));
 
 % % % % % get GCM grid
@@ -130,9 +142,9 @@ if (exist(RCM_info.matname , 'file') ~= 2 || flags.fig_switch(1)==2)
             end
             if (yearij == 1 && monthij == 1)
                 GCM_grid.filename_lon = [GCM_info.filedir, ...
-                    GCM_grid.lonname, '_Omon_', GCM_info.scenario, '_', GCM_info.testname, '.nc'];
+                    'lon', '_Omon_', GCM_info.scenario, '_', GCM_info.testname, '.nc'];
                 GCM_grid.filename_lat = [GCM_info.filedir, ...
-                    GCM_grid.latname, '_Omon_', GCM_info.scenario, '_', GCM_info.testname, '.nc'];
+                    'lat', '_Omon_', GCM_info.scenario, '_', GCM_info.testname, '.nc'];
                 GCM_grid.domain = RCM_grid.domain;
                 GCM_grid.refpolygon=RCM_grid.refpolygon;
                 GCM_grid.lon_whole = ncread(GCM_grid.filename_lon,GCM_grid.lonname,[1 1],[inf,1]);
@@ -164,15 +176,27 @@ if (exist(RCM_info.matname , 'file') ~= 2 || flags.fig_switch(1)==2)
             GCM_data.tmp_data = ncread(GCM_info.filename, tmp.variable_GCM, [GCM_grid.ind_w GCM_grid.ind_s, monthij], ...
                     [GCM_grid.size_lon GCM_grid.size_lat, 1]);
             GCM_data.tmp_data=GCM_data.tmp_data.*GCM_grid.mask_region;
-
+            
+% %            mass contribution
+            load(['D:\Data\Model\CMIP6\zos_correction\GCM_corr_', RCM_info.scenario, '.mat']);
+            switch(RCM_info.scenario)
+                case 'historical'
+                    tmp.gcm_corrind=(tmp.year-1985)*12+tmp.month;
+                otherwise
+                    tmp.gcm_corrind=(tmp.year-2014)*12+tmp.month;                    
+            end
+            GCM_correction=GCM_corr(testnameind).ts(tmp.gcm_corrind);
+            GCM_data.tmp_data=GCM_data.tmp_data + GCM_correction;
+            
+% %             save
             if (yearij == 1 && monthij == 1)
                 GCM_data.clim_mean=(zeros([GCM_grid.size_lon,GCM_grid.size_lat,12]));
-                GCM_data.annual_mean=(zeros([GCM_grid.size_lon,GCM_grid.size_lat,length(GCM_info.years)]));                
+                GCM_data.yearly_mean=(zeros([GCM_grid.size_lon,GCM_grid.size_lat,length(GCM_info.years)]));                
             end
             GCM_data.all(:,:,tmp.ind_for) = single(GCM_data.tmp_data);
             GCM_data.clim_mean(:,:,monthij)=GCM_data.clim_mean(:,:,monthij) + ...
                 GCM_data.tmp_data / double(length(GCM_info.years));
-            GCM_data.annual_mean(:,:,yearij)=GCM_data.annual_mean(:,:,yearij) + ...
+            GCM_data.yearly_mean(:,:,yearij)=GCM_data.yearly_mean(:,:,yearij) + ...
                 GCM_data.tmp_data / double(length(GCM_info.months));    
 %         pcolor(GCM_grid.lon', GCM_grid.lat', GCM_data.tmp_data'); shading flat; colorbar; 
                 
@@ -181,11 +205,14 @@ if (exist(RCM_info.matname , 'file') ~= 2 || flags.fig_switch(1)==2)
             tmp.variable_CMEMS_daily=[tmp.variable_CMEMS, '_daily'];
             tmp.variable_CMEMS_all=[tmp.variable_CMEMS, '_all'];
             tmp.variable_CMEMS_clim_mean=[tmp.variable_CMEMS, '_clim_mean'];
-            tmp.variable_CMEMS_annual_mean=[tmp.variable_CMEMS, '_annual_mean'];
-
-            CMEMS_info.filename = strcat(CMEMS_info.filedir,'cmems_nwp_ssh_', num2str(tmp.year,'%04i'),'.nc');
+            tmp.variable_CMEMS_yearly_mean=[tmp.variable_CMEMS, '_yearly_mean'];
+            
+            if (tmp.year>=1993 && tmp.year <=2018)
+                CMEMS_info.filename = strcat(CMEMS_info.filedir,'cmems_nwp_ssh_', num2str(tmp.year,'%04i'),'.nc');
+            else
+                CMEMS_info.filename = strcat(CMEMS_info.filedir,'cmems_nwp_ssh_', num2str(1993,'%04i'),'.nc');
+            end
             if (yearij == 1 && monthij == 1)
-                
                 CMEMS_info.file_info=ncinfo(CMEMS_info.filename);
                 CMEMS_info.lonname='longitude';
                 CMEMS_info.latname='latitude';
@@ -207,13 +234,13 @@ if (exist(RCM_info.matname , 'file') ~= 2 || flags.fig_switch(1)==2)
                 CMEMS_grid.refpolygon=RCM_grid.refpolygon;
                 CMEMS_data.adt_clim_mean=(zeros([CMEMS_grid.size_lon, CMEMS_grid.size_lat,12]));
                 CMEMS_data.(tmp.variable_CMEMS_clim_mean)=(zeros([CMEMS_grid.size_lon, CMEMS_grid.size_lat,12]));
-                CMEMS_data.adt_annual_mean=(zeros([CMEMS_grid.size_lon, CMEMS_grid.size_lat,length(RCM_info.years)]));
-                CMEMS_data.(tmp.variable_CMEMS_annual_mean)=(zeros([CMEMS_grid.size_lon, CMEMS_grid.size_lat,length(RCM_info.years)]));
+                CMEMS_data.adt_yearly_mean=(zeros([CMEMS_grid.size_lon, CMEMS_grid.size_lat,length(RCM_info.years)]));
+                CMEMS_data.(tmp.variable_CMEMS_yearly_mean)=(zeros([CMEMS_grid.size_lon, CMEMS_grid.size_lat,length(RCM_info.years)]));
 
                 RCM_data_interped.clim_mean=(zeros([CMEMS_grid.size_lon, CMEMS_grid.size_lat,12]));
                 GCM_data_interped.clim_mean=(zeros([CMEMS_grid.size_lon, CMEMS_grid.size_lat,12]));
-                RCM_data_interped.annual_mean=(zeros([CMEMS_grid.size_lon, CMEMS_grid.size_lat,length(RCM_info.years)]));
-                GCM_data_interped.annual_mean=(zeros([CMEMS_grid.size_lon, CMEMS_grid.size_lat,length(RCM_info.years)]));
+                RCM_data_interped.yearly_mean=(zeros([CMEMS_grid.size_lon, CMEMS_grid.size_lat,length(RCM_info.years)]));
+                GCM_data_interped.yearly_mean=(zeros([CMEMS_grid.size_lon, CMEMS_grid.size_lat,length(RCM_info.years)]));
                 
                 CMEMS_grid.mask_region = double(inpolygon(CMEMS_grid.lon2, CMEMS_grid.lat2, ...
                     CMEMS_grid.refpolygon(:,1),CMEMS_grid.refpolygon(:,2)));
@@ -231,33 +258,45 @@ if (exist(RCM_info.matname , 'file') ~= 2 || flags.fig_switch(1)==2)
                 CMEMS_data.adt_daily=ncread(CMEMS_info.filename,'adt',[CMEMS_grid.ind_w CMEMS_grid.ind_s 1], [CMEMS_grid.size_lon CMEMS_grid.size_lat 31]);
                 CMEMS_data.(tmp.variable_CMEMS_daily)=ncread(CMEMS_info.filename,tmp.variable_CMEMS,[CMEMS_grid.ind_w CMEMS_grid.ind_s 1], [CMEMS_grid.size_lon CMEMS_grid.size_lat 31]);
             else
-                CMEMS_data.adt_daily=ncread(CMEMS_info.filename,'adt', ...
-                    [CMEMS_grid.ind_w CMEMS_grid.ind_s sum(eomday(tmp.year,1:tmp.month-1))+1], ...
-                    [CMEMS_grid.size_lon CMEMS_grid.size_lat eomday(tmp.year,tmp.month)]);
-                CMEMS_data.(tmp.variable_CMEMS_daily)=ncread(CMEMS_info.filename,tmp.variable_CMEMS, ...
-                    [CMEMS_grid.ind_w CMEMS_grid.ind_s sum(eomday(tmp.year,1:tmp.month-1))+1], ...
-                    [CMEMS_grid.size_lon CMEMS_grid.size_lat eomday(tmp.year,tmp.month)]);
+                if (tmp.year>=1993 && tmp.year <=2018)
+                    CMEMS_data.adt_daily=ncread(CMEMS_info.filename,'adt', ...
+                        [CMEMS_grid.ind_w CMEMS_grid.ind_s sum(eomday(tmp.year,1:tmp.month-1))+1], ...
+                        [CMEMS_grid.size_lon CMEMS_grid.size_lat eomday(tmp.year,tmp.month)]);
+                    CMEMS_data.(tmp.variable_CMEMS_daily)=ncread(CMEMS_info.filename,tmp.variable_CMEMS, ...
+                        [CMEMS_grid.ind_w CMEMS_grid.ind_s sum(eomday(tmp.year,1:tmp.month-1))+1], ...
+                        [CMEMS_grid.size_lon CMEMS_grid.size_lat eomday(tmp.year,tmp.month)]);
+                else
+                    CMEMS_data.adt_daily=ncread(CMEMS_info.filename,'adt', ...
+                        [CMEMS_grid.ind_w CMEMS_grid.ind_s sum(eomday(1993,1:tmp.month-1))+1], ...
+                        [CMEMS_grid.size_lon CMEMS_grid.size_lat eomday(1993,tmp.month)]);
+                    CMEMS_data.(tmp.variable_CMEMS_daily)=ncread(CMEMS_info.filename,tmp.variable_CMEMS, ...
+                        [CMEMS_grid.ind_w CMEMS_grid.ind_s sum(eomday(1993,1:tmp.month-1))+1], ...
+                        [CMEMS_grid.size_lon CMEMS_grid.size_lat eomday(1993,tmp.month)]);
+                end
             end
             CMEMS_data.adt = mean(CMEMS_data.adt_daily,3,'omitnan');
             CMEMS_data.adt = CMEMS_data.adt .* CMEMS_grid.mask_region;
             CMEMS_data.(tmp.variable_CMEMS) = mean(CMEMS_data.(tmp.variable_CMEMS_daily), 3, 'omitnan');
             CMEMS_data.(tmp.variable_CMEMS)=CMEMS_data.(tmp.variable_CMEMS) .* CMEMS_grid.mask_region;
 
-%             cmems_data = ncread(CMEMS_info.filename,varname,[cmems_lon_min(1) cmems_lat_min(1) tmp.month], [cmems_lon_max(1)-cmems_lon_min(1) cmems_lat_max(1)-cmems_lat_min(1) 1]);
-%             cmems_data(cmems_data<-1000)=NaN;
-%             cmems_data(cmems_data>1000)=NaN;
-
             CMEMS_data.adt_all(:,:,tmp.ind_for) = CMEMS_data.adt;
             CMEMS_data.(tmp.variable_CMEMS_all)(:,:,tmp.ind_for) = CMEMS_data.(tmp.variable_CMEMS);
-            
+
             CMEMS_data.adt_clim_mean(:,:,monthij)= ...
                 CMEMS_data.adt_clim_mean(:,:,monthij) + CMEMS_data.adt / double(length(RCM_info.years));
             CMEMS_data.(tmp.variable_CMEMS_clim_mean)(:,:,monthij) = ...
                 CMEMS_data.(tmp.variable_CMEMS_clim_mean)(:,:,monthij) + CMEMS_data.(tmp.variable_CMEMS)/double(length(RCM_info.years));
-            CMEMS_data.adt_annual_mean(:,:,yearij)=CMEMS_data.adt_annual_mean(:,:,yearij) + ...
+            CMEMS_data.adt_yearly_mean(:,:,yearij)=CMEMS_data.adt_yearly_mean(:,:,yearij) + ...
                 CMEMS_data.adt / double(length(RCM_info.months));
-            CMEMS_data.(tmp.variable_CMEMS_annual_mean)(:,:,yearij)=CMEMS_data.(tmp.variable_CMEMS_annual_mean)(:,:,yearij) + ...
+            CMEMS_data.(tmp.variable_CMEMS_yearly_mean)(:,:,yearij)=CMEMS_data.(tmp.variable_CMEMS_yearly_mean)(:,:,yearij) + ...
                 CMEMS_data.(tmp.variable_CMEMS) / double(length(RCM_info.months));
+            
+            if (tmp.year<1993 && tmp.year>2018)
+                CMEMS_data.adt_clim_mean(:,:,monthij)=NaN;
+                CMEMS_data.(tmp.variable_CMEMS_clim_mean)(:,:,monthij) = NaN;
+                 CMEMS_data.adt_yearly_mean(:,:,yearij) = NaN;
+                 CMEMS_data.(tmp.variable_CMEMS_yearly_mean)(:,:,yearij) = NaN;
+            end
             
             RCM_data_interped.tmp_data = ...
                 griddata(double(RCM_grid.lon_rho), double(RCM_grid.lat_rho), RCM_data.tmp_data, ...
@@ -274,10 +313,10 @@ if (exist(RCM_info.matname , 'file') ~= 2 || flags.fig_switch(1)==2)
             GCM_data_interped.clim_mean(:,:,monthij) = ...
                 GCM_data_interped.clim_mean(:,:,monthij) + GCM_data_interped.tmp_data/double(length(RCM_info.years));
             
-            RCM_data_interped.annual_mean(:,:,yearij) = ...
-                RCM_data_interped.annual_mean(:,:,yearij) + RCM_data_interped.tmp_data/double(length(RCM_info.months));
-            GCM_data_interped.annual_mean(:,:,yearij) = ...
-                GCM_data_interped.annual_mean(:,:,yearij) + GCM_data_interped.tmp_data/double(length(RCM_info.months));
+            RCM_data_interped.yearly_mean(:,:,yearij) = ...
+                RCM_data_interped.yearly_mean(:,:,yearij) + RCM_data_interped.tmp_data/double(length(RCM_info.months));
+            GCM_data_interped.yearly_mean(:,:,yearij) = ...
+                GCM_data_interped.yearly_mean(:,:,yearij) + GCM_data_interped.tmp_data/double(length(RCM_info.months));
             
             
             if (yearij == 1 && monthij == 1)
@@ -292,6 +331,8 @@ if (exist(RCM_info.matname , 'file') ~= 2 || flags.fig_switch(1)==2)
             end
             
             tmp.ind_for = tmp.ind_for + 1;
+            
+            
         end
     end
 %     save(matname, 'RCM_grid.mask_region', 'len_lon_model', 'len_lat_model', 'comb_spatial_meanmodel', 'comb_data', ...
