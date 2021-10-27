@@ -2,8 +2,8 @@ close all; clear all;  clc;
 warning off;
 
 all_testname2 = {'CNRM-ESM2-1', 'EC-Earth3-Veg', 'ACCESS-CM2', 'CNRM-CM6-1-HR', 'CMCC-ESM2'};
-% scenname ='historical';
-scenname ='ssp585';
+scenname ='historical';
+% scenname ='ssp585';
 
 % all_region2 ={'NWP', 'YS', 'AKP2'}
 all_region2 ={'AKP4'}
@@ -55,8 +55,9 @@ for regionind2=1:length(all_region2)
     sshdifflev = [40 70];
 
     % for snu_desktopd
-    inputyear1 = [2015]; % % put year which you want to plot [year year ...]
+%     inputyear1 = [2015]; % % put year which you want to plot [year year ...]
 %     inputyear1 = [1985:2014]; % % put year which you want to plot [year year ...]
+    inputyear1 = [1993:2014]; % % put year which you want to plot [year year ...]
     inputmonth = [1 2 3 4 5 6 7 8 9 10 11 12]; % % put month which you want to plot [month month ...]
 %     inputmonth = [8]; % % put month which you want to plot [month month ...]
 

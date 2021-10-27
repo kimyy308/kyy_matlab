@@ -8,11 +8,11 @@ all_testname2 = {'CNRM-ESM2-1', 'EC-Earth3-Veg', 'ACCESS-CM2', 'CNRM-CM6-1-HR', 
 
 % all_region2 ={'NWP', 'YS', 'AKP2'}
 % all_region2 ={'NWP', 'AKP4'};
-all_region2 ={'AKP4'};
+all_region2 ={'NWP', 'AKP4'};
 
 % all_region2 ={'YS'};
+all_var2 = {'SSH'};
 % all_var2 = {'SST', 'SSS', 'SSH'};
-all_var2 = {'SST', 'SSS', 'SSH'};
 % all_var2 = {'BT'};
 
 % all_region2 ={'NWP'}
@@ -58,8 +58,8 @@ for testnameind2=1:length(all_testname2)
         % for snu_desktopd
         testname=all_testname2{testnameind2}    % % need to change
 %         inputyear1 = [2020]; % % put year which you want to plot [year year ...]
-%         inputyear1 = [1993:2014]; % % put year which you want to plot [year year ...]
-        inputyear1 = [1985:2014]; % % put year which you want to plot [year year ...]
+        inputyear1 = [1993:2014]; % % put year which you want to plot [year year ...]
+%         inputyear1 = [1985:2014]; % % put year which you want to plot [year year ...]
 %         inputyear1 = [1993:1993]; % % put year which you want to plot [year year ...]
         
         season='all';
