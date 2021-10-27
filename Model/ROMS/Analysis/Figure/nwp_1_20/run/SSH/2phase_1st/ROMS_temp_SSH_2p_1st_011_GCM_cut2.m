@@ -41,9 +41,9 @@ for testnameind2=1:length(all_testname2)
         % for snu_desktopd
         testname=all_testname2{testnameind2}    % % need to change
 %         inputyear = [1985:2014]; % % put year which you want to plot [year year ...]
-        inputyear = [1985:2014]; % % put year which you want to plot [year year ...]
+        inputyear = [2015:2050]; % % put year which you want to plot [year year ...]
         inputmonth = [1 2 3 4 5 6 7 8 9 10 11 12]; % % put month which you want to plot [month month ...]
-        scenname ='historical';
+        scenname ='ssp585';
 %         variable ='zeta'
         run('nwp_polygon_point.m');
         regionname=all_region2{regionind2};
@@ -70,7 +70,7 @@ for testnameind2=1:length(all_testname2)
             % % for windows
 
         elseif (strcmp(system_name,'GLNXA64'))
-            cmip6dir = ['/data1/CMIP/cmip6/', scenname, '_extHDD/'];
+            cmip6dir = ['/data2/CMIP6/', scenname, '/'];
             saverootdir = ['/data1/kimyy/Model/CMIP6/'];
         end
         
@@ -86,8 +86,14 @@ for testnameind2=1:length(all_testname2)
             for yearij=1:length(inputyear)
                 tempyear=inputyear(yearij);
                 yearstr=num2str(tempyear, '%04i');
-
-                filedir = strcat(cmip6dir, variable, '/historical/Omon/', testname, filesep); % % where data files are
+                
+                switch testname
+                    case {'CNRM-ESM2-1', 'CNRM-CM6-1-HR'}
+                        ensname='r1i1p1f2';
+                    case {'ACCESS-CM2', 'EC-Earth3-Veg', 'CMCC-ESM2'}
+                        ensname='r1i1p1f1';
+                end
+                filedir = strcat(cmip6dir, variable, '/Omon/', testname, filesep, ensname, filesep, 'gn', filesep); % % where data files are
                 flag_file_in = false;
                 list = dir( [ filedir, filesep, variable, '*' ]); 
                 for kk = 1 : length( list )
@@ -99,7 +105,7 @@ for testnameind2=1:length(all_testname2)
                     if( tempyear >= fyear_start && tempyear <= fyear_end &&     ...                 
                             strcmp( fname_split{2}, 'Omon' ) &&         ...
                             strcmp( fname_split{3}, testname ) &&      ...                 
-                            strcmp( fname_split{4}, 'historical' ) )
+                            strcmp( fname_split{4}, 'ssp585' ) )
                         flag_file_in = true;            break;
                     end         
                 end         
@@ -178,10 +184,10 @@ for testnameind2=1:length(all_testname2)
                     end
 %                 end
                 
-%                system(['ncks --overwrite -C -v ', variable, ' -d time,',num2str(tind_min),',',num2str(tind_max), ...
-%                    ' -d ', xname, ',', lon_min_str, ',', lon_max_str, ' -d ', yname, ',', lat_min_str, ',', lat_max_str, ' ', ...
-%                    filename, ' ', savefilename]);
-%                 disp([variable, ', ', yearstr])
+               system(['ncks --overwrite -C -v ', variable, ' -d time,',num2str(tind_min),',',num2str(tind_max), ...
+                   ' -d ', xname, ',', lon_min_str, ',', lon_max_str, ' -d ', yname, ',', lat_min_str, ',', lat_max_str, ' ', ...
+                   filename, ' ', savefilename]);
+                disp([variable, ', ', yearstr])
             end
         end
     end
