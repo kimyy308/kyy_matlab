@@ -112,7 +112,7 @@ for regionind2=1:length(all_region2)
 
     figrawdir =strcat('Z:\내 드라이브\MEPL\project\SSH\6th_year\figure\CMIP6\','ENS','\',scenname, filesep, regionname,'\'); % % where figure files will be saved
     param_script =['C:\Users\User\Dropbox\source\matlab\Model\ROMS\Analysis\Figure\nwp_1_20\run\fig_param\fig_param_kyy_CMIP6_interped_', regionname, '.m'];
-    cmip6dir = strcat('D:\Data\Model\CMIP6\'); % % where data files are
+    cmip6dir = strcat('D:\Data\Model\CMIP6\NWP\'); % % where data files are
     dirs.figrawdir =strcat('Z:\내 드라이브\MEPL\project\SSH\6th_year\figure\nwp_1_20\'); % % where figure files will be saved
     tmp.fs=filesep;
     tmp.regionname=regionname;
@@ -165,8 +165,8 @@ for regionind2=1:length(all_region2)
                         fyear_end   = str2num( fyear_str{1}(1:4) );
                         if( tempyear >= fyear_start && tempyear <= fyear_end &&     ...                 
                                 strcmp( fname_split{2}, 'interp' ) &&         ...
-                                strcmp( fname_split{3}, testname ) &&      ...                 
-                                strcmp( fname_split{4}, scenname ) )
+                                strcmp( fname_split{3}, scenname ) &&      ...                 
+                                strcmp( fname_split{4}, testname ) )
                             flag_file_in = true;            break;
                         end         
                     end         
@@ -188,8 +188,8 @@ for regionind2=1:length(all_region2)
                         fyear_end   = str2num( fyear_str{1}(1:4) );
                         if( tempyear >= fyear_start && tempyear <= fyear_end &&     ...                 
                                 strcmp( fname_split{2}, 'interp' ) &&         ...
-                                strcmp( fname_split{3}, testname ) &&      ...                 
-                                strcmp( fname_split{4}, scenname ) )
+                                strcmp( fname_split{3}, scenname ) &&      ...                 
+                                strcmp( fname_split{4}, testname ) )
                             flag_file_in = true;            break;
                         end         
                     end         
@@ -316,8 +316,8 @@ for regionind2=1:length(all_region2)
                             fyear_end   = str2num( fyear_str{1}(1:4) );
                             if( tempyear >= fyear_start && tempyear <= fyear_end &&     ...                 
                                     strcmp( fname_split{2}, 'interp' ) &&         ...
-                                    strcmp( fname_split{3}, testname ) &&      ...                 
-                                    strcmp( fname_split{4}, scenname ) )
+                                    strcmp( fname_split{3}, scenname ) &&      ...                 
+                                    strcmp( fname_split{4}, testname ) )
                                 flag_file_in = true;            break;
                             end         
                         end         
@@ -328,8 +328,10 @@ for regionind2=1:length(all_region2)
                         tind_u=tempmonth;
 
                         if (exist('lon_rho' , 'var') ~= 1)
-                            lon_gcm=ncread(ufilename, 'lon');
-                            lat_gcm=ncread(ufilename, 'lat');
+                            lonfilename=[filedir, 'lon_interp_', scenname, '_', testname, '.nc'];
+                            latfilename=[filedir, 'lat_interp_', scenname, '_', testname, '.nc'];
+                            lon_gcm=ncread(lonfilename, 'lon');
+                            lat_gcm=ncread(latfilename, 'lat');
                             [lat_rho, lon_rho]= meshgrid(lat_gcm, lon_gcm);                          
                             [lon_min, lon_max, lat_min, lat_max] = findind_Y(1/20, lonlat(1:4), lon_rho, lat_rho, 1);
                             cut_lon_rho = lon_rho(lon_min(1):lon_max(1), lat_min(1):lat_max(1));

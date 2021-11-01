@@ -5,8 +5,8 @@ all_testname2 = {'test2102', 'test2103', 'test2104', 'test2105', 'test2106'};
 % all_testname2 = {'test2102'};
 
 % all_region2 ={'NWP','AKP4'};
-all_region2 ={'NWP'};
-% all_region2 ={'AKP4'};
+% all_region2 ={'NWP'};
+all_region2 ={'AKP4'};
 
 % all_region2 ={'TEST'};
 
@@ -159,7 +159,7 @@ for testnameind2=1:length(all_testname2)
             fig_flags{32,2}=1;
             fig_flags{37,2}=1;
             fig_flags{49,2}=1;
-            fig_flags{50,2}=1;
+            fig_flags{50,2}=2;
             fig_flags{51,2}=0;
             fig_flags{52,2}=0;
             fig_flags{53,2}=1;
@@ -2108,7 +2108,7 @@ for testnameind2=1:length(all_testname2)
                 colormap(wrmap);
                 set(h,'fontsize',colorbar_fontsize);
     %             title(h,'mm/y','fontsize',colorbar_title_fontsize);
-                caxis([2 7]);
+                caxis([0 10]);
 
                 % set grid
                 m_grid('fontsize', m_grid_fontsize, 'box', m_grid_box_type, 'tickdir', m_grid_tickdir_type);
@@ -2124,9 +2124,10 @@ for testnameind2=1:length(all_testname2)
                 disp(' ')
                 disp([' File path is : ',jpgname])
                 disp(' ')
-
+                
                 hold off
-                close all;
+                close all;  
+                
             end
             fig_flag=0;
         end

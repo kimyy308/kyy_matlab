@@ -1,9 +1,9 @@
 close all; clear all;  clc;
 warning off;
 
-% all_testname2 = {'test2102', 'test2103', 'test2104', 'test2105', 'test2106'};
+all_testname2 = {'test2102', 'test2103', 'test2104', 'test2105', 'test2106'};
 % all_testname2 = {'test2107', 'test2108', 'test2109', 'test2110', 'test2111'};
-all_testname2 = {'test2117', 'test2118', 'test2119', 'test2120', 'test2121'};
+% all_testname2 = {'test2117', 'test2118', 'test2119', 'test2120', 'test2121'};
 % all_testname2 = {'test2102'};
 
 % all_region2 ={'NWP','AKP4'};

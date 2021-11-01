@@ -122,7 +122,7 @@ for testnameind=1:length(RCM_info.name)
             end
             flags.fig_switch(1)=1;
             flags.fig_switch(2)=1;
-            flags.fig_switch(3)=1;
+            flags.fig_switch(3)=2;
             flags.fig_switch(4)=1;
             flags.fig_switch(5)=0;
         end
