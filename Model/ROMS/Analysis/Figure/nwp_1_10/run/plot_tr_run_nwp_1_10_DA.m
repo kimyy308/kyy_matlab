@@ -26,15 +26,15 @@ elseif (linux==1)
 end
 
 testname = 'test06';
-refyear = 1982;
-year = [1982:2016];
+refyear = 1983;
+year = [1997:2007];
 month = [1:12]; % % put month which you want to plot [month month ...]
-% inputdir = strcat(['E:\Data\Model\ROMS\nwp_1_10\test37\input\']);
-% outputdir = strcat(['E:\Data\Model\ROMS\nwp_1_10\',testname,'\DA\',num2str(year,'%04i'),'\']); % % where data files are
+% inputdir = strcat(['D:\Data\Model\ROMS\nwp_1_10\test37\input\']);
+% outputdir = strcat(['D:\Data\Model\ROMS\nwp_1_10\',testname,'\DA\',num2str(year,'%04i'),'\']); % % where data files are
 
 for i=1:length(year)
     tempyear=num2str(year(i),'%04i');
-    filename = ['E:\Data\Model\ROMS\nwp_1_10\',testname,'\DA\',tempyear,'\nwp_1_10_monthly_',testname,'_',tempyear,'.txt'];
+    filename = ['D:\Data\Model\ROMS\nwp_1_10\',testname,'\DA\',tempyear,'\nwp_1_10_monthly_',testname,'_',tempyear,'.txt'];
     startRow = 2;
     formatSpec = '%8f%9f%9f%9f%9f%9f%s%[^\n\r]';
     fileID = fopen(filename,'r');
@@ -63,7 +63,7 @@ ES_diff=korea-tsugaru-soya;
 ECS_diff=korea-taiwan+onshore-yellow;
 % % get observation data (from .xls)
 
-[~, ~, raw] = xlsread('E:\Data\Observation\Transport_Korea\obs_tsushima_197001_201209_ORIGIN.xls','TWC','A2:H553');
+[~, ~, raw] = xlsread('D:\Data\Observation\Transport_Korea\obs_tsushima_197001_201209_ORIGIN_new.xls','TWC','A2:H553');
 raw(cellfun(@(x) ~isempty(x) && isnumeric(x) && isnan(x),raw)) = {''};
 
 R = cellfun(@(x) ~isnumeric(x) && ~islogical(x),raw); % 숫자형이 아닌 셀 찾기
@@ -100,7 +100,7 @@ Fuk=obs_ks(find(obs_ks(:,1)<=year(end) & obs_ks(:,1)>=year(1)),8);
 
 
 %% get hycom transport data, 1993.01 - 2015.12
-% filename = 'E:\Data\Observation\Transport_Korea\hycom_trans.dat';
+% filename = 'D:\Data\Observation\Transport_Korea\hycom_trans.dat';
 % formatSpec = '%16f%16f%f%[^\n\r]';
 % fileID = fopen(filename,'r');
 % dataArray = textscan(fileID, formatSpec, 'Delimiter', '', 'WhiteSpace', '', 'TextType', 'string',  'ReturnOnError', false);
@@ -176,7 +176,7 @@ set(gca,'FontSize',13);
 grid on;
 
 for i=1:length(year)
-    figdir =strcat('E:\Data\Model\ROMS\nwp_1_10\',testname,'\DA\',tempyear,'\figures\transport\'); % % where figure files will be saved
+    figdir =strcat('D:\Data\Model\ROMS\nwp_1_10\',testname,'\DA\',tempyear,'\figures\transport\'); % % where figure files will be saved
     if (exist(strcat(figdir) , 'dir') ~= 7)
         mkdir(strcat(figdir));
     end 
@@ -216,7 +216,7 @@ datetick('x','yy','keeplimits')
 axis tight;
 set(gca,'YLim',[0 5]);
 set(es1plot,'LineWidth',2);
-set(es2plot,'LineWidth',1.5);
+% set(es2plot,'LineWidth',1.5);
 set(es3plot,'LineWidth',1.5);
 set(es4plot,'LineWidth',1.5);
 title(['Model monthly mean EJS transports(',testname,')'],'fontsize',17);
@@ -232,7 +232,7 @@ grid on;
 grid minor;
 
 % for i=1:length(year)
-    figdir =strcat('E:\Data\Model\ROMS\nwp_1_10\',testname,'\DA\',tempyear,'\figures\transport\'); % % where figure files will be saved
+    figdir =strcat('D:\Data\Model\ROMS\nwp_1_10\',testname,'\DA\',tempyear,'\figures\transport\'); % % where figure files will be saved
     if (exist(strcat(figdir) , 'dir') ~= 7)
         mkdir(strcat(figdir));
     end 
@@ -282,7 +282,7 @@ hold off;
 % grid on;
 % 
 % for i=1:length(year)
-%     figdir =strcat('E:\Data\Model\ROMS\nwp_1_10\',testname,'\DA\',tempyear,'\figures\transport\'); % % where figure files will be saved
+%     figdir =strcat('D:\Data\Model\ROMS\nwp_1_10\',testname,'\DA\',tempyear,'\figures\transport\'); % % where figure files will be saved
 %     if (exist(strcat(figdir) , 'dir') ~= 7)
 %         mkdir(strcat(figdir));
 %     end 

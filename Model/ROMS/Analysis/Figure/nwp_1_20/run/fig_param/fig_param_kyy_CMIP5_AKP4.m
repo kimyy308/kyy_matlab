@@ -5,9 +5,12 @@
 if (exist('refdepth' , 'var') ~= 1)
 % % set part of the m_quiver parameter 
 %     m_quiver_vector_size = 12;
-    m_quiver_vector_size = 6;
+%     m_quiver_vector_size = 6;
+    m_quiver_vector_size = 4.5;
+
 %     m_quiver_ref_u_value = 0.2;
-    m_quiver_ref_u_value = 0.5;
+%     m_quiver_ref_u_value = 0.5;
+    m_quiver_ref_u_value = 1;
 elseif (refdepth >= -100)
     m_quiver_vector_size = 1.5;
     m_quiver_ref_u_value = 2;

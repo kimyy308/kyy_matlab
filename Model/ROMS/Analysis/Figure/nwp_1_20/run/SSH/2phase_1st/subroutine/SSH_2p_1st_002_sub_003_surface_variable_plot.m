@@ -1,4 +1,5 @@
 % %  Updated 10-Oct-2021 by Yong-Yub Kim, structure
+% %  Updated 10-Nov-2021 by Yong-Yub Kim, colorbar
 
 % start-------------------- earlier decadal SST, SSS plot
             for varind2=1:length(RCM_info.vars)
@@ -50,11 +51,17 @@
                                 if (strcmp(tmp.variable,'SST')==1 || strcmp(tmp.variable,'SSS')==1)
                                     tmp.data = ncread(tmp.filename,param.varname,[RCM_grid.lon_min(1) RCM_grid.lat_min(1) 1 1], ...
                                         [RCM_grid.lon_max(1)-RCM_grid.lon_min(1)+1 RCM_grid.lat_max(1)-RCM_grid.lat_min(1)+1 1 1]);  %% cut horizontal area [x,y,z] (wider than target area) 
-                                elseif (strcmp(tmp.variable,'SSH')==1 || strcmp(tmp.variable,'Uwind')==1 || strcmp(tmp.variable,'Vwind')==1)
+                                elseif (strcmp(tmp.variable,'SSH')==1 || strcmp(tmp.variable,'Uwind')==1 || strcmp(tmp.variable,'Vwind')==1 || strcmp(tmp.variable,'shflux')==1)
                                     tmp.data = ncread(tmp.filename,param.varname,[RCM_grid.lon_min(1) RCM_grid.lat_min(1) 1], ...
                                         [RCM_grid.lon_max(1)-RCM_grid.lon_min(1)+1 RCM_grid.lat_max(1)-RCM_grid.lat_min(1)+1 1]);  %% cut horizontal area [x,y,z] (wider than target area)
-%                                 elseif (strcmp(tmp.variable,'BT')==1)
-%                                     tmp.data = ncread(tmp.filename,param.varname,[RCM_grid.lon_min(1) RCM_grid.lat_min(1) 1 1], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1 1 1]);  %% cut horizontal area [x,y,z] (wider than target area) 
+                                elseif (strcmp(tmp.variable,'u')==1)
+                                   tmp.data = ncread(tmp.filename,param.varname,[RCM_grid.lon_min(1) RCM_grid.lat_min(1) 1 1], ...
+                                        [RCM_grid.lon_max(1)-RCM_grid.lon_min(1) RCM_grid.lat_max(1)-RCM_grid.lat_min(1)+1 1 1]);  %% cut horizontal area [x,y,z] (wider than target area) 
+                                   tmp.data = u2rho_2d(tmp.data')';
+                                elseif (strcmp(tmp.variable,'v')==1)
+                                   tmp.data = ncread(tmp.filename,param.varname,[RCM_grid.lon_min(1) RCM_grid.lat_min(1) 1 1], ...
+                                        [RCM_grid.lon_max(1)-RCM_grid.lon_min(1)+1 RCM_grid.lat_max(1)-RCM_grid.lat_min(1) 1 1]);  %% cut horizontal area [x,y,z] (wider than target area) 
+                                   tmp.data = v2rho_2d(tmp.data')';
                                 end
                                 if (exist('mean_data', 'var') ~= 1)
                                     mean_data=zeros(size(tmp.data));
@@ -118,9 +125,14 @@
 
                     set(h,'fontsize',param.colorbar_fontsize);
                     title(h,param.colorbar_title,'fontsize',param.colorbar_title_fontsize);
-                    caxis(param.colorbar_lev);
+                    switch tmp.variable
+                        case {'SST', 'SSH', 'SSS'}
+                            caxis(param.colorbar_lev);
+                    end
                     
                     disp(['M = ', num2str(tmp.m_value)]);
+                    m_text(param.m_quiver_ref_text_x_location, param.m_quiver_ref_text_y_location, ['M = ', num2str(tmp.m_value)], 'FontSize', param.m_quiver_ref_text_fontsize); 
+                    
                     set(gcf, 'PaperUnits', 'points');
                     set(gcf, 'PaperSize', [param.hor_paper_size_x, param.hor_paper_size_y]);
                     set(gcf,'PaperPosition', [param.paper_position_hor param.paper_position_ver param.paper_position_width param.paper_position_height]) 

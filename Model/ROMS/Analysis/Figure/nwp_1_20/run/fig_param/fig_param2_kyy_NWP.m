@@ -1,10 +1,12 @@
 % % this script is for north western pacific region figure
 % %  Updated 30-Sep-2021 by Yong-Yub Kim
+% %  Updated 10-Nov-2021 by Yong-Yub Kim, wind parameter
 
 if (exist('refdepth' , 'var') ~= 1)
 % % set part of the m_quiver parameter 
     param.m_quiver_vector_size = 1.5;
     param.m_quiver_ref_u_value = 2;
+    param.m_quiver_wind_vector_size = 0.3;
 elseif (refdepth >= -100)
     param.m_quiver_vector_size = 1.5;
     param.m_quiver_ref_u_value = 2;
@@ -116,8 +118,11 @@ param.m_quiver_LineWidth = 0.5;
 param.m_quiver_AutoScale = 'off';
 param.m_quiver_ref_vec_x_range = 200:205;
 param.m_quiver_ref_vec_y_range = 700:705;
+param.m_quiver_ref_uwind_value = 5;
+param.m_quiver_ref_vwind_value = param.m_quiver_ref_uwind_value/10000.0;
 param.m_quiver_ref_v_value = param.m_quiver_ref_u_value/10000.0;
 param.m_quiver_ref_text = [num2str(param.m_quiver_ref_u_value),' m/s'];
+param.m_quiver_wind_ref_text = [num2str(param.m_quiver_ref_uwind_value),' m/s'];
 param.m_quiver_ref_text_fontsize = 15;
 param.m_quiver_ref_text_x_location = 125;
 param.m_quiver_ref_text_y_location = 45.7;

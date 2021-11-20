@@ -38,6 +38,8 @@ for testnameind2=1:length(all_testname2)
     inputyear = [1993:2014]; % % put year which you want to plot [year year ...]
     inputmonth = [1 2 3 4 5 6 7 8 9 10 11 12]; % % put month which you want to plot [month month ...]
     filedir = strcat('D:\Data\Model\ROMS\nwp_1_20\', testname, '\run\'); % % where data files are
+    dirs.figrawdir =strcat('Z:\내 드라이브\MEPL\project\SSH\6th_year\figure\nwp_1_20\'); % % where figure files will be saved
+
         varname ='temp';
         run('nwp_polygon_point.m');
         regionname=all_region2{regionind2};
@@ -74,7 +76,15 @@ for testnameind2=1:length(all_testname2)
         lonlat(3)=min(refpolygon(:,2));
         lonlat(4)=max(refpolygon(:,2));
         cmemsfilename = strcat(filedir, testname,'_',regionname, 'cmems_ssh_trend_',num2str(min(inputyear),'%04i'),'_',num2str(max(inputyear),'%04i'), '.nc');
-
+        
+        tmp.fs=filesep;
+        tmp.regionname=regionname;
+        variable='SSH';
+        RCM_info.years=inputyear;
+        dirs.figdir=[dirs.figrawdir,'surface', tmp.fs, tmp.regionname, tmp.fs, variable, tmp.fs, ...
+            num2str(min(RCM_info.years)), '_', num2str(max(RCM_info.years)), tmp.fs];
+        
+        
   % start-------------------- earlier decadal SST, SSS plot
 
 %         for varind2=1:length(all_var2)
@@ -93,6 +103,18 @@ for testnameind2=1:length(all_testname2)
             pngname=strcat(outfile, '_', testname,'_',regionname, '_clim_', variable,'_',num2str(min(inputyear),'%04i'), ...
                 '_',num2str(max(inputyear),'%04i'), '.tif'); %% ~_year_month.jpg
     %                 if (exist(pngname , 'file') ~= 2 || fig_flag==2)      
+            
+            dirs.figdir=[dirs.figrawdir,'surface', tmp.fs, tmp.regionname, tmp.fs, variable, tmp.fs, ...
+                num2str(min(RCM_info.years)), '_', num2str(max(RCM_info.years)), tmp.fs];
+            if (exist(strcat(dirs.figdir) , 'dir') ~= 7)
+                mkdir(strcat(dirs.figdir));
+            end 
+            tmp.tifname=strcat(dirs.figdir, 'CMEMS', '_clim_', variable, '_', num2str(min(RCM_info.years),'%04i'), ...
+            '_',num2str(max(RCM_info.years),'%04i'), '.tif'); %% ~_year_month.jpg
+            
+ 
+        
+        
             run(param_script);
             matname = [filedir, 'CMEMS_', regionname, '_', variable, '_mean_', num2str(min(inputyear),'%04i'), '-', num2str(max(inputyear),'%04i'), '.mat'];
                 
@@ -101,8 +123,10 @@ for testnameind2=1:length(all_testname2)
             cmems_adt=ncread(cmemsfilename, 'cmems_adt');
 
             mean_data=mean(cmems_adt,3);
+%             mean_data=mean(cmems_adt(:,:,25:end),3);
             [m_value, error_status] = Func_0011_get_area_weighted_mean(mean_data, cut_lon_rho, cut_lat_rho)
-            ssh_correction_for_fig = Func_0014_SSH_correction_for_pcolor('CMEMS');
+%             ssh_correction_for_fig = Func_0014_SSH_correction_for_pcolor('CMEMS');
+            ssh_correction_for_fig = Func_0017_SSH_correction_for_CMIP6_RMSE('CMEMS');
             mean_data=mean_data-ssh_correction_for_fig;
             save(matname, 'mean_data', 'cut_lon_rho', 'cut_lat_rho');
 
@@ -121,7 +145,7 @@ for testnameind2=1:length(all_testname2)
             m_gshhs_i('patch',m_gshhs_land_color);   % gray colored land
 
             m_grid('fontsize', m_grid_fontsize, 'box', m_grid_box_type, 'tickdir', m_grid_tickdir_type);
-            titlename = strcat(variable, ' mean, ',testname,',(',num2str(min(inputyear),'%04i'),'-',num2str(max(inputyear),'%04i'),') ');  %% + glacier contribution
+            titlename = strcat(variable, ' mean, ','CMEMS',',(',num2str(min(inputyear),'%04i'),'-',num2str(max(inputyear),'%04i'),') ');  %% + glacier contribution
             title(titlename,'fontsize',m_pcolor_title_fontsize);  %%title
 
             % set colorbar 
@@ -136,6 +160,7 @@ for testnameind2=1:length(all_testname2)
             set(gcf, 'PaperSize', [hor_paper_size_x, hor_paper_size_y]);
             set(gcf,'PaperPosition', [paper_position_hor paper_position_ver paper_position_width paper_position_height]) 
             saveas(gcf,pngname,'tif'); RemoveWhiteSpace([], 'file', pngname);
+            saveas(gcf, tmp.tifname,'tif'); RemoveWhiteSpace([], 'file', tmp.tifname);
             close all;
             clear lon_rho mean_data
 %         end

@@ -17,9 +17,9 @@ RCM_info.dataroot = ['D:', filesep, 'Data', filesep, 'Model', filesep, ...
 RCM_info.saveroot = ['D:', filesep, 'Data', filesep, 'Model', filesep, ...
     'ROMS', filesep, 'nwp_1_20', filesep, 'backup_surf', filesep];
 RCM_info.phase = 'run';
-RCM_info.region = {'NWP', 'AKP4'};
-% RCM_info.region = {'AKP4'};
-RCM_info.years = 1993:2014;
+% RCM_info.region = {'NWP', 'AKP4'};
+RCM_info.region = {'AKP4'};
+RCM_info.years = 1989:2014;
 % RCM_info.years = 2015:2050;
 RCM_info.months = 1:12;
 RCM_grid.dl = 1/20;

@@ -3,11 +3,14 @@ warning off;
 % all_region2 ={'NWP','NWP2'}
 % all_region2 ={'ES', 'YS', 'SS', 'NWP2'}
 
-all_testname3 = {'test2102', 'test2103', 'test2104', 'test2105', 'test2106'};
-all_testname2 = {'CNRM-ESM2-1', 'EC-Earth3-Veg', 'ACCESS-CM2', 'CNRM-CM6-1-HR', 'CMCC-ESM2'};
+% all_testname3 = {'test2102', 'test2103', 'test2104', 'test2105', 'test2106'};
+% all_testname2 = {'CNRM-ESM2-1', 'EC-Earth3-Veg', 'ACCESS-CM2', 'CNRM-CM6-1-HR', 'CMCC-ESM2'};
 
-scenname = 'historical';
-% scenname = 'rcp85';
+all_testname3 = {'test2107', 'test2108', 'test2109'};
+all_testname2 = {'CNRM-ESM2-1', 'EC-Earth3-Veg', 'ACCESS-CM2'};
+
+% scenname = 'historical';
+scenname = 'ssp585';
 
 
 close all;
@@ -43,7 +46,8 @@ meanplotlev =[-0.3 0.3];
 meanplotlev2 =[0 4];
 % for snu_desktopd
 %         testname=all_testname2{testnameind2}    % % need to change
-inputyear = [1985:2014]; % % put year which you want to plot [year year ...]
+% inputyear = [1985:2014]; % % put year which you want to plot [year year ...]
+inputyear = [2015:2050]; % % put year which you want to plot [year year ...]
 inputmonth = [1 2 3 4 5 6 7 8 9 10 11 12]; % % put month which you want to plot [month month ...]
 regionname = 'KS';
 cmip5dir='D:\Data\Model\CMIP5\';
@@ -78,7 +82,11 @@ for testind=1:length(all_testname2)
 % %             get RCM transport
     for i=1:length(inputyear)
         tempyear=num2str(inputyear(i),'%04i');
-        filename2 = ['D:\Data\Model\ROMS\nwp_1_20\cmip6_transport\',all_testname3{testind},'\',all_testname3{testind},'_transport_',tempyear,'.txt'];
+%         filename2 = ['D:\Data\Model\ROMS\nwp_1_20\cmip6_transport\',all_testname3{testind},'\',all_testname3{testind},'_transport_',tempyear,'.txt'];
+        filename2 = ['D:\Data\Model\ROMS\nwp_1_20\cmip6_transport\',all_testname3{testind},'\','nwp_1_20_monthly_', all_testname3{testind},'_',tempyear,'.txt'];
+        
+%         nwp_1_20_monthly_test2107_2015
+        
         startRow = 2;
         formatSpec = '%8f%9f%9f%9f%9f%9f%s%[^\n\r]';
         fileID = fopen(filename2,'r');

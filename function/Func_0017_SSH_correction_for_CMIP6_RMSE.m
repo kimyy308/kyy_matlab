@@ -19,7 +19,8 @@ function [ssh_correction_for_fig] = Func_0017_SSH_correction_for_CMIP6_RMSE(test
 
 switch(testname)
     case('CMEMS')
-        ssh_correction_for_fig=0.5843; % 1995-2014 AKP4 mean       
+%     ssh_correction_for_fig=0.5843; % 1995-2014 AKP4 mean       
+    ssh_correction_for_fig=0.7244; % 1995-2014 AKP4 mean       
     case{'test2102', 'test2107'}
         ssh_correction_for_fig=-0.3279; % 1995-2014 AKP4 mean
     case{'test2103', 'test2108'}
@@ -48,16 +49,17 @@ switch(testname)
         
         
     case('CNRM-ESM2-1')
-        ssh_correction_for_fig=-5.6232; % 1995-2014 AKP4 mean           
+        ssh_correction_for_fig=-5.4511; % 1995-2014 AKP4 mean           
     case('EC-Earth3-Veg')
-        ssh_correction_for_fig=-5.4209; % 1995-2014 AKP4 mean           
+        ssh_correction_for_fig=-5.2266; % 1995-2014 AKP4 mean           
     case('ACCESS-CM2')
-        ssh_correction_for_fig=0.8417; % 1995-2014 AKP4 mean                   
+        ssh_correction_for_fig=0.9015; % 1995-2014 AKP4 mean                   
     case('CNRM-CM6-1-HR')
-        ssh_correction_for_fig=-5.6777; % 1995-2014 AKP4 mean                           
+        ssh_correction_for_fig=-5.5332; % 1995-2014 AKP4 mean                           
     case('CMCC-ESM2')
-        ssh_correction_for_fig=-5.6199; % 1995-2014 AKP4 mean
-        
+        ssh_correction_for_fig=-5.4682; % 1995-2014 AKP4 mean
+    case('GCM_ENS')
+        ssh_correction_for_fig=-4.1189; % 1995-2014 AKP4 mean
 %     case('CMEMS')
 %         ssh_correction_for_fig=0.6222; % 2014 AKP4 mean       
 %     case{'test2102'}

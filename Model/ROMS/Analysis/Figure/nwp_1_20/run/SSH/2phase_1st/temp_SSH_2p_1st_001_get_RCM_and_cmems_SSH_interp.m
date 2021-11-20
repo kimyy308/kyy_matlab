@@ -8,7 +8,8 @@ close all; clear all;  clc;
 all_region ={'AKP4'}
 % all_testname = {'test11', 'test12'};
 % all_testname = {'test2102'};
-all_testname = {'test2102', 'test2103', 'test2104', 'test2105', 'test2106'};
+% all_testname = {'test2102', 'test2103', 'test2104', 'test2105', 'test2106'};
+all_testname = {'test2102'};
 
 % all_testname = {'ens03'};
 
@@ -44,7 +45,7 @@ for testnameind=1:length(all_testname)
 
         % for snu_desktop
         testname=all_testname{testnameind} 
-        inputyear = [1993:2014]; % % put year which you want to plot [year year ...]
+        inputyear = [1995:2014]; % % put year which you want to plot [year year ...]
         inputmonth = [1 2 3 4 5 6 7 8 9 10 11 12]; % % put month which you want to plot [month month ...]
         variable = 'zeta';
         varname ='zeta';
@@ -117,10 +118,10 @@ for testnameind=1:length(all_testname)
             param_script ='C:\Users\USER\Dropbox\source\matlab\Model\ROMS\Analysis\Figure\nwp_1_20\run\fig_param\fig_param_kyy_EKB_RMS.m'
 %             filedir = strcat('E:\Data\Model\ROMS\nwp_1_20\output\', testname, '\run\packed_monthly\'); % % where data files are
             filedir = strcat('D:\Data\Model\ROMS\nwp_1_20\backup_surf\', testname, '\run\zeta\'); % % where data files are
-            monfiledir = strcat('E:\Data\Model\ROMS\nwp_1_20\output\', testname, '\run\packed_monthly\');
-            griddir = strcat('E:\Data\Model\ROMS\nwp_1_20\output\', testname, '\run\packed_monthly\'); % % where data files are
+            monfiledir = strcat('D:\Data\Model\ROMS\nwp_1_20\output\', testname, '\run\packed_monthly\');
+            griddir = strcat('D:\Data\Model\ROMS\nwp_1_20\output\', testname, '\run\packed_monthly\'); % % where data files are
             savedir = strcat('D:\Data\Model\ROMS\nwp_1_20\', testname, '\run\'); % % where data files are
-            cmemsdir='Z:\내 드라이브\Data\Observation\CMEMS\';
+            cmemsdir='D:\Data\Observation\CMEMS\';
         elseif (strcmp(system_name,'GLNXA64'))
         end
         

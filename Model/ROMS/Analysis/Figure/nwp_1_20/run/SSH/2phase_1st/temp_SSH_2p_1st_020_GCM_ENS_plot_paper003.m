@@ -142,7 +142,7 @@ all_region2 ={'AKP4'};
                 fig_flags{flagi,2}=0;
             end
             fig_flags{12,2}=1;
-            fig_flags{70,2}=2;
+            fig_flags{77,2}=2;
         end
 
             % % for windows
@@ -151,7 +151,12 @@ all_region2 ={'AKP4'};
             param_script =['C:\Users\user\Dropbox\source\matlab\Model\ROMS\Analysis\Figure\nwp_1_20\run\fig_param\fig_param_kyy_', regionname, '.m'];
 %             gcmfiledir = strcat('D:\Data\Model\CMIP5\zos\', scenname, '\interp\', gcmtestname, '\'); % % where data files are
             cmip6dir = strcat('D:\Data\Model\CMIP5\'); % % where data files are
-
+            dirs.figrawdir =strcat('Z:\내 드라이브\MEPL\project\SSH\6th_year\figure\nwp_1_20\'); % % where figure files will be saved
+            dirs.enssavedir =strcat('D:\Data\Model\ROMS\nwp_1_20\2phase_1st\GCM_ENS3\mean\');
+            tmp.fs=filesep;
+            tmp.regionname=regionname;
+        %     tmp.testname=testname;
+            GCM_info.years=inputyear;
 
 %         modelfilename = strcat(filedir, testname,'_',regionname, '_ssh_trend_',num2str(min(inputyear),'%04i'),'_',num2str(max(inputyear),'%04i'), '.nc');
 %         cmemsfilename = strcat(filedir, testname,'_',regionname, 'cmems_ssh_trend_',num2str(min(inputyear),'%04i'),'_',num2str(max(inputyear),'%04i'), '.nc');
@@ -210,8 +215,15 @@ all_region2 ={'AKP4'};
 % start-------------------- absolute trend plot
         fig_flag=fig_flags{12,2};
         while (fig_flag)
-            jpgname=strcat(trendoutfile, '_', 'ENS','_',regionname, '_absolute_ssh_trend_', ...
+            jpgname=strcat(trendoutfile, '_', 'ENS','_',regionname, '_absolute_ssh_yearly_trend_', ...
                 num2str(min(inputyear),'%04i'),'_',num2str(max(inputyear),'%04i'), '.tif'); %% ~_year_month.jpg
+            dirs.figdir=[dirs.figrawdir,'surface', tmp.fs, tmp.regionname, tmp.fs, 'SSH', tmp.fs, ...
+                num2str(min(GCM_info.years)), '_', num2str(max(GCM_info.years)), tmp.fs];
+            if (exist(strcat(dirs.figdir) , 'dir') ~= 7)
+                mkdir(strcat(dirs.figdir));
+            end 
+            tmp.tifname=strcat(dirs.figdir, 'ENS', '_abs_yearly_trend_',num2str(min(GCM_info.years),'%04i'), ...
+            '_',num2str(max(GCM_info.years),'%04i'), '.tif'); %% ~_year_month.jpg
             if (exist(jpgname , 'file') ~= 2 || fig_flag==2)            
                 for testnameind2=1:length(all_testname2)
                     testname=all_testname2{testnameind2}    % % need to change
@@ -227,24 +239,24 @@ all_region2 ={'AKP4'};
                     end
                     cut_lon_rho= ncread(interpedfilename, 'lon_cmems');
                     cut_lat_rho= ncread(interpedfilename, 'lat_cmems');
-                    interped_trend_filtered = ncread(interpedfilename,'interped_trend_filtered');
-                    if (exist('ens_interped_trend_filtered' , 'var') ~= 1)
-                        ens_interped_trend_filtered=interped_trend_filtered;
+                    interped_trend_yearly = ncread(interpedfilename,'interped_trend_yearly');
+                    if (exist('ens_interped_trend_yearly' , 'var') ~= 1)
+                        ens_interped_trend_yearly=interped_trend_yearly;
                     else
-                        ens_interped_trend_filtered=ens_interped_trend_filtered+interped_trend_filtered;
+                        ens_interped_trend_yearly=ens_interped_trend_yearly+interped_trend_yearly;
                     end
                 end
-                ens_interped_trend_filtered=ens_interped_trend_filtered/length(all_testname2);
-                interped_trend_filtered = ens_interped_trend_filtered;
+                ens_interped_trend_yearly=ens_interped_trend_yearly/length(all_testname2);
+                interped_trend_yearly = ens_interped_trend_yearly;
                 m_proj(m_proj_name,'lon',[lonlat(1)-0.5 lonlat(2)+0.5],'lat',[lonlat(3)-0.5 lonlat(4)+0.5]);
                 hold on;
                  
                 
-                m_pcolor(double(cut_lon_rho)',cut_lat_rho',squeeze(interped_trend_filtered(:,:)'));
+                m_pcolor(double(cut_lon_rho)',cut_lat_rho',squeeze(interped_trend_yearly(:,:)'));
                 shading(gca,m_pcolor_shading_method);
                 m_gshhs_i('color',m_gshhs_line_color);
                 m_gshhs_i('patch',m_gshhs_land_color);   % gray colored land
-                [m_value, error_status] = Func_0011_get_area_weighted_mean(interped_trend_filtered, lon_cmems, lat_cmems);
+                [m_value, error_status] = Func_0011_get_area_weighted_mean(interped_trend_yearly, lon_cmems, lat_cmems);
                 titlename = strcat('SSH trend(abs), ','ENS', ',(',num2str(min(inputyear),'%04i'),'-', ...
                     num2str(max(inputyear),'%04i'),'), ','M=',num2str(round(m_value,2)), ' mm/y');  %% + glacier contribution
 
@@ -264,6 +276,7 @@ all_region2 ={'AKP4'};
                 set(gcf,'PaperPosition', [paper_position_hor paper_position_ver paper_position_width paper_position_height]) 
 
                 saveas(gcf,jpgname,'tif'); RemoveWhiteSpace([], 'file', jpgname); 
+                saveas(gcf, tmp.tifname,'tif'); RemoveWhiteSpace([], 'file', tmp.tifname);
 
                 disp(' ')
                 disp(['clim_', 'absolute_ssh_trend', ' plot is created.'])
@@ -273,13 +286,13 @@ all_region2 ={'AKP4'};
 
                 hold off
                 close all;
-                clear ens_interped_trend_filtered lon_min
+                clear ens_interped_trend_yearly lon_min
             end
             fig_flag=0;
         end
             
         
-        % start-------------------- std_model_yearly_sla_exp_fit_detrended_plot
+% start-------------------- std_model_yearly_sla_exp_fit_detrended_plot
         fig_flag=fig_flags{70,2};
         while (fig_flag)
             jpgname=strcat(trendoutfile, '_', 'ENS','_',regionname, '_cmems_interped_yearly_detrended_std_', ...
@@ -362,4 +375,76 @@ all_region2 ={'AKP4'};
             end
             fig_flag=0;
         end
-    end
+        
+% start-------------------- CMEMS absolute trend plot
+        fig_flag=fig_flags{77,2};
+        while (fig_flag)
+            jpgname=strcat(trendoutfile, '_', 'CMEMS','_',regionname, '_absolute_ssh_yearly_trend_', ...
+                num2str(min(inputyear),'%04i'),'_',num2str(max(inputyear),'%04i'), '.tif'); %% ~_year_month.jpg
+            dirs.figdir=[dirs.figrawdir,'surface', tmp.fs, tmp.regionname, tmp.fs, 'SSH', tmp.fs, ...
+                num2str(min(GCM_info.years)), '_', num2str(max(GCM_info.years)), tmp.fs];
+            if (exist(strcat(dirs.figdir) , 'dir') ~= 7)
+                mkdir(strcat(dirs.figdir));
+            end 
+            tmp.tifname=strcat(dirs.figdir, 'CMEMS', '_abs_yearly_trend_',num2str(min(GCM_info.years),'%04i'), ...
+            '_',num2str(max(GCM_info.years),'%04i'), '.tif'); %% ~_year_month.jpg
+            if (exist(jpgname , 'file') ~= 2 || fig_flag==2)            
+                testname=all_testname2{1}    % % need to change
+                filedir = strcat('D:\Data\Model\CMIP6\zos\', scenname, '\interp\', testname, '\'); % % where data files are
+                matdir = strcat('D:\Data\Model\CMIP6\zos\', scenname, '\interp\', testname, '\run\analysis\');
+                interpedfilename = strcat(filedir, testname,'_',regionname, 'cmems_ssh_trend_',num2str(min(inputyear),'%04i'),'_',num2str(max(inputyear),'%04i'), '.nc');
+                if (exist('lon_min' , 'var') ~= 1)
+                    lon_cmems=ncread(interpedfilename, 'lon_cmems');
+                    lat_cmems=ncread(interpedfilename, 'lat_cmems');
+                    [lon_min, lon_max, lat_min, lat_max] = findind_Y(1/20, lonlat(1:4), lon_cmems, lat_cmems);
+                    cut_lon_rho = lon_cmems(lon_min(1):lon_max(1), lat_min(1):lat_max(1));
+                    cut_lat_rho = lat_cmems(lon_min(1):lon_max(1), lat_min(1):lat_max(1));
+                end
+                cut_lon_rho= ncread(interpedfilename, 'lon_cmems');
+                cut_lat_rho= ncread(interpedfilename, 'lat_cmems');
+                cmems_trend_yearly = ncread(interpedfilename,'cmems_trend_yearly');
+                m_proj(m_proj_name,'lon',[lonlat(1)-0.5 lonlat(2)+0.5],'lat',[lonlat(3)-0.5 lonlat(4)+0.5]);
+                hold on;
+                 
+                
+                m_pcolor(double(cut_lon_rho)',cut_lat_rho',squeeze(cmems_trend_yearly(:,:)'));
+                shading(gca,m_pcolor_shading_method);
+                m_gshhs_i('color',m_gshhs_line_color);
+                m_gshhs_i('patch',m_gshhs_land_color);   % gray colored land
+                [m_value, error_status] = Func_0011_get_area_weighted_mean(cmems_trend_yearly, lon_cmems, lat_cmems);
+                titlename = strcat('SSH trend(abs), ','ENS', ',(',num2str(min(inputyear),'%04i'),'-', ...
+                    num2str(max(inputyear),'%04i'),'), ','M=',num2str(round(m_value,2)), ' mm/y');  %% + glacier contribution
+
+                title(titlename,'fontsize',m_pcolor_title_fontsize);  %%title
+
+                % set colorbar 
+                h = colorbar;
+                colormap(wrmap);
+                set(h,'fontsize',colorbar_fontsize);
+                caxis(abstrendlev);
+
+                % set grid
+                m_grid('fontsize', m_grid_fontsize, 'box', m_grid_box_type, 'tickdir', m_grid_tickdir_type);
+
+                set(gcf, 'PaperUnits', 'points');
+                set(gcf, 'PaperSize', [hor_paper_size_x, hor_paper_size_y]);
+                set(gcf,'PaperPosition', [paper_position_hor paper_position_ver paper_position_width paper_position_height]) 
+
+                saveas(gcf,jpgname,'tif'); RemoveWhiteSpace([], 'file', jpgname); 
+                saveas(gcf, tmp.tifname,'tif'); RemoveWhiteSpace([], 'file', tmp.tifname);
+
+                disp(' ')
+                disp(['clim_', 'absolute_ssh_trend', ' plot is created.'])
+                disp(' ')
+                disp([' File path is : ',jpgname])
+                disp(' ')
+
+                hold off
+                close all;
+                clear cmems_trend_yearly lon_min
+            end
+            fig_flag=0;
+        end
+        
+        
+end

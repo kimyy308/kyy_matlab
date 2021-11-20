@@ -6,13 +6,15 @@ warning off;
 % end
 
 % % % % % % % % Ensemble of 5 members (GCM initial)
-all_testname2 = {'test2117', 'test2118', 'test2119', 'test2120', 'test2121'};
+% all_testname2 = {'test2117', 'test2118', 'test2119', 'test2120', 'test2121'};
+all_testname2 = {'test2127', 'test2128', 'test2129', 'test2130', 'test2131'};
 
 % scenname='historical';
 scenname='ssp585';
 
-all_region2 ={'NWP', 'AKP4'};
+% all_region2 ={'NWP', 'AKP4'};
 % all_region2 ={'NWP'}
+all_region2 ={'AKP4'};
 % all_region2 ={'YS'};
 
 % all_var2 = {'SST', 'SSH', 'SSS'};
@@ -62,9 +64,9 @@ for regionind2=1:length(all_region2)
     sshdifflev = [40 70];
 
     % for snu_desktop
-    inputyear1 = [1993:2014]; % % put year which you want to plot [year year ...]
+%     inputyear1 = [1993:2014]; % % put year which you want to plot [year year ...]
 %     inputyear1 = [1985:2014]; % % put year which you want to plot [year year ...]
-%     inputyear1 = [2015]; % % put year which you want to plot [year year ...]
+    inputyear1 = [2030]; % % put year which you want to plot [year year ...]
 
 %     inputmonth = [1:12]; % % put month which you want to plot [month month ...]
     inputmonth = [1:12]; % % put month which you want to plot [month month ...]
@@ -127,7 +129,7 @@ for regionind2=1:length(all_region2)
     figrawdir =strcat('Z:\내 드라이브\MEPL\project\SSH\6th_year\figure\nwp_1_20\ENS\',scenname, filesep, regionname,filesep); % % where figure files will be saved
     param_script =['C:\Users\user\Dropbox\source\matlab\Model\ROMS\Analysis\Figure\nwp_1_20\run\fig_param\fig_param_kyy_', regionname, '.m'];
     dirs.figrawdir =strcat('Z:\내 드라이브\MEPL\project\SSH\6th_year\figure\nwp_1_20\'); % % where figure files will be saved
-    dirs.enssavedir =strcat('D:\Data\Model\ROMS\nwp_1_20\2phase_1st\RCM_ENS_gcminit\mean\');
+    dirs.enssavedir =strcat('D:\Data\Model\ROMS\nwp_1_20\2phase_1st\RCM_ENSg\mean\');
     tmp.fs=filesep;
     tmp.regionname=regionname;
 %     tmp.testname=testname;

@@ -2,24 +2,28 @@ close all; clear all;  clc;
 warning off;
 
 all_testname2 = {'CNRM-ESM2-1', 'EC-Earth3-Veg', 'ACCESS-CM2', 'CNRM-CM6-1-HR', 'CMCC-ESM2'};
+all_abb2 = {'GCM-CNE', 'GCM-ECV', 'GCM-ACC', 'GCM-CNH', 'GCM-CMC'};
+
 % all_testname2 = {'ACCESS-CM2'};
 
 % all_testname2 = {'ens03'};
 
 % all_region2 ={'NWP', 'YS', 'AKP2'}
 % all_region2 ={'NWP', 'AKP4'};
-all_region2 ={'NWP', 'AKP4'};
+% all_region2 ={'NWP', 'AKP4'};
+all_region2 ={'AKP4'};
 
 % all_region2 ={'YS'};
-all_var2 = {'SSH'};
+% all_var2 = {'SSH'};
 % all_var2 = {'SST', 'SSS', 'SSH'};
+all_var2 = {'SSH'};
 % all_var2 = {'BT'};
 
 % all_region2 ={'NWP'}
 for testnameind2=1:length(all_testname2)
     for regionind2=1:length(all_region2)
         close all;
-        clearvars '*' -except regionind2 testnameind2 all_region2 all_testname2 all_var2
+        clearvars '*' -except regionind2 testnameind2 all_region2 all_testname2 all_var2 all_abb2
         % % % 
         % % % Read Model SST
         % % % interp
@@ -57,11 +61,16 @@ for testnameind2=1:length(all_testname2)
 
         % for snu_desktopd
         testname=all_testname2{testnameind2}    % % need to change
+        abbname=all_abb2{testnameind2};
 %         inputyear1 = [2020]; % % put year which you want to plot [year year ...]
-        inputyear1 = [1993:2014]; % % put year which you want to plot [year year ...]
+%         inputyear1 = [1993:2014]; % % put year which you want to plot [year year ...]
+%         inputyear1 = [1995:2014]; % % put year which you want to plot [year year ...]
 %         inputyear1 = [1985:2014]; % % put year which you want to plot [year year ...]
 %         inputyear1 = [1993:1993]; % % put year which you want to plot [year year ...]
-        
+%         inputyear1 = [2015:2015]; % % put year which you want to plot [year year ...]
+        inputyear1 = [2050:2050]; % % put year which you want to plot [year year ...]
+
+
         season='all';
         switch(season)
             case 'all'
@@ -71,8 +80,11 @@ for testnameind2=1:length(all_testname2)
             case 'winter'
                 inputmonth = [1 2 12]; % % put month which you want to plot [month month ...]
         end
-        scenname ='historical';
-%         scenname ='ssp585';
+        if max(inputyear1)<=2014
+            scenname ='historical';
+        else
+            scenname ='ssp585';
+        end
 
 %         varname ='zeta'
         run('nwp_polygon_point.m');
@@ -151,113 +163,117 @@ for testnameind2=1:length(all_testname2)
         end 
         outfile = strcat(figdir,regionname);
         
-% start-------------------- earlier decadal current plot
-        pngname=strcat(outfile, '_', testname,'_',regionname, '_clim_uv_',num2str(min(inputyear1),'%04i'), ...
-            '_',num2str(max(inputyear1),'%04i'), '.tif'); %% ~_year_month.jpg
-        dirs.figdir=[dirs.figrawdir,'surface', tmp.fs, tmp.regionname, tmp.fs, 'vec', tmp.fs, ...
-            num2str(min(RCM_info.years)), '_', num2str(max(RCM_info.years)), tmp.fs];
-        if (exist(strcat(dirs.figdir) , 'dir') ~= 7)
-            mkdir(strcat(dirs.figdir));
-        end 
-        tmp.tifname=strcat(dirs.figdir, tmp.testname, '_clim_uv_',num2str(min(RCM_info.years),'%04i'), ...
-            '_',num2str(max(RCM_info.years),'%04i'), '.tif'); %% ~_year_month.jpg
-%         if (exist(pngname , 'file') ~= 2)        
-            for yearij=1:length(inputyear1)
-                tempyear=inputyear1(yearij);
-                yearstr=num2str(tempyear, '%04i');
-                for monthij=1:length(inputmonth)
-                    tempmonth=inputmonth(monthij);
-                    monthstr=num2str(tempmonth, '%02i');
-                    
-                    varname='uo';
-                    filedir = strcat(cmip6dir, varname, filesep, scenname, '\Omon\', testname, filesep); % % where data files are
-                    ufilename=[filedir, filesep, varname, '_Omon_', scenname, '_', testname, '_', yearstr, '.nc'];
-                    tind_u=tempmonth;
-                    
-                    varname='vo';
-                    filedir = strcat(cmip6dir, varname, filesep, scenname, '\Omon\', testname, filesep); % % where data files are
-                    vfilename=[filedir, filesep, varname, '_Omon_', scenname, '_', testname, '_', yearstr, '.nc'];
-                    tind_v=tempmonth;
-                    if (exist('lon_rho' , 'var') ~= 1)
-                        lonfilename=[filedir, filesep, 'lon_Omon_', scenname, '_', testname, '.nc'];
-                        latfilename=[filedir, filesep, 'lat_Omon_', scenname, '_', testname, '.nc'];
-                        switch(testname)
-                            case{'CNRM-ESM2-1', 'CNRM-CM6-1-HR'}
-                                lonname='lon';
-                                latname='lat';
-                                xname = 'x';
-                                yname = 'y';
-                            case{'EC-Earth3-Veg', 'ACCESS-CM2', 'CMCC-ESM2'}
-                                lonname='longitude';
-                                latname='latitude';
-                                xname = 'i';
-                                yname = 'j';
-                        end
-                        lon_rho=ncread(lonfilename, lonname);
-                        lat_rho=ncread(latfilename, latname);
-                        [lon_min, lon_max, lat_min, lat_max] = findind_Y(1/20, lonlat(1:4), lon_rho, lat_rho, 1);
-                        cut_lon_rho = lon_rho(lon_min(1):lon_max(1), lat_min(1):lat_max(1));
-                        cut_lat_rho = lat_rho(lon_min(1):lon_max(1), lat_min(1):lat_max(1));
-                    end
-                    
-                    data_info = ncinfo(ufilename, 'uo'); 
-                    u = ncread(ufilename,'uo',[lon_min(1) lat_min(1) 1 tind_u], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1 1 1]);  %% cut horizontal area [x,y,z] (wider than target area)
-                    v = ncread(vfilename,'vo',[lon_min(1) lat_min(1) 1 tind_v], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1 1 1]);  %% cut horizontal area [x,y,z] (wider than target area)
-
-                    if (exist('mean_u' , 'var') ~= 1)
-                        mean_u=zeros(size(u));
-                        mean_v=zeros(size(v));
-                    end
-                    mean_u=mean_u + (u / (length(inputyear1) * length(inputmonth)));
-                    mean_v=mean_v + (v / (length(inputyear1) * length(inputmonth)));
-                end
-            end
-%             u_rho = u2rho_2d(mean_u')';
-%             v_rho = v2rho_2d(mean_v')';
-            u_rho = mean_u;
-            v_rho = mean_v;
-            
-            mask_model = double(inpolygon(cut_lon_rho,cut_lat_rho,refpolygon(:,1),refpolygon(:,2)));
-            mask_model(mask_model==0)=NaN;
-            u_rho=u_rho.*mask_model;
-            v_rho=v_rho.*mask_model;
-            
-            if (exist('ref_vec_x_range' , 'var') ~= 1)
-                ref_vec_x_ind = find(abs(cut_lon_rho(:,1)-m_quiver_ref_text_x_location) == min(abs(cut_lon_rho(:,1)-m_quiver_ref_text_x_location)));
-                ref_vec_y_ind = find(abs(cut_lat_rho(1,:)-m_quiver_ref_text_y_location) == min(abs(cut_lat_rho(1,:)-m_quiver_ref_text_y_location)))+m_quiver_y_interval;
-%                 ref_vec_x_range = round(ref_vec_x_ind-(m_quiver_x_interval/2)) : round(ref_vec_x_ind-(m_quiver_x_interval/2))+m_quiver_x_interval;
-%                 ref_vec_y_range = round(ref_vec_y_ind-(m_quiver_y_interval/2)) : round(ref_vec_y_ind-(m_quiver_y_interval/2))+m_quiver_y_interval;
-                ref_vec_x_range = round(ref_vec_x_ind-(m_quiver_x_interval/2)) : round(ref_vec_x_ind-(m_quiver_x_interval/2));
-                ref_vec_y_range = round(ref_vec_y_ind-(m_quiver_y_interval/2)) : round(ref_vec_y_ind-(m_quiver_y_interval/2));
-            end
-            u_rho(ref_vec_x_range,ref_vec_y_range)=m_quiver_ref_u_value;
-            v_rho(ref_vec_x_range,ref_vec_y_range)=m_quiver_ref_v_value;     
-
-            m_proj(m_proj_name,'lon',[lonlat(1) lonlat(2)],'lat',[lonlat(3) lonlat(4)]);
-            hold on;
-            m_gshhs_i('color',m_gshhs_line_color)  
-            m_gshhs_i('patch',m_gshhs_land_color);   % gray colored land
-
-            uvplot=m_quiver(cut_lon_rho(1:m_quiver_x_interval:end,1:m_quiver_y_interval:end)', ...
-                            cut_lat_rho(1:m_quiver_x_interval:end,1:m_quiver_y_interval:end)', ...
-                            u_rho(1:m_quiver_x_interval:end,1:m_quiver_y_interval:end)' * m_quiver_vector_size, ...
-                            v_rho(1:m_quiver_x_interval:end,1:m_quiver_y_interval:end)' * m_quiver_vector_size, ...
-                            'color',m_quiver_vector_color, 'AutoScale','off','LineWidth', m_quiver_LineWidth);
-
-            m_text(m_quiver_ref_text_x_location, m_quiver_ref_text_y_location, m_quiver_ref_text, 'FontSize', m_quiver_ref_text_fontsize); 
-            m_grid('fontsize', m_grid_fontsize, 'box', m_grid_box_type, 'tickdir', m_grid_tickdir_type);
-            titlename = strcat('UV mean, ',testname,',(',num2str(min(inputyear1),'%04i'),'-',num2str(max(inputyear1),'%04i'),') ');  %% + glacier contribution
-            title(titlename,'fontsize',m_pcolor_title_fontsize);  %%title
-
-            set(gcf, 'PaperUnits', 'points');
-            set(gcf, 'PaperSize', [hor_paper_size_x, hor_paper_size_y]);
-            set(gcf,'PaperPosition', [paper_position_hor paper_position_ver paper_position_width paper_position_height]) 
-            saveas(gcf,pngname,'tif'); RemoveWhiteSpace([], 'file', pngname);
-            saveas(gcf, tmp.tifname,'tif'); RemoveWhiteSpace([], 'file', tmp.tifname);
-            close all;
-            clear lon_rho mean_u ref_vec_x_range
-%         end
-% end-------------------- earlier decadal current plot
+% % % % start-------------------- earlier decadal current plot
+% % %         pngname=strcat(outfile, '_', testname,'_',regionname, '_clim_uv_',num2str(min(inputyear1),'%04i'), ...
+% % %             '_',num2str(max(inputyear1),'%04i'), '.tif'); %% ~_year_month.jpg
+% % %         dirs.figdir=[dirs.figrawdir,'surface', tmp.fs, tmp.regionname, tmp.fs, 'vec', tmp.fs, ...
+% % %             num2str(min(RCM_info.years)), '_', num2str(max(RCM_info.years)), tmp.fs];
+% % %         if (exist(strcat(dirs.figdir) , 'dir') ~= 7)
+% % %             mkdir(strcat(dirs.figdir));
+% % %         end 
+% % %         tmp.tifname=strcat(dirs.figdir, tmp.testname, '_clim_uv_',num2str(min(RCM_info.years),'%04i'), ...
+% % %             '_',num2str(max(RCM_info.years),'%04i'), '.tif'); %% ~_year_month.jpg
+% % % %         if (exist(pngname , 'file') ~= 2)        
+% % %             for yearij=1:length(inputyear1)
+% % %                 tempyear=inputyear1(yearij);
+% % %                 yearstr=num2str(tempyear, '%04i');
+% % %                 for monthij=1:length(inputmonth)
+% % %                     tempmonth=inputmonth(monthij);
+% % %                     monthstr=num2str(tempmonth, '%02i');
+% % %                     
+% % %                     varname='uo';
+% % %                     filedir = strcat(cmip6dir, varname, filesep, scenname, '\Omon\', testname, filesep); % % where data files are
+% % %                     ufilename=[filedir, filesep, varname, '_Omon_', scenname, '_', testname, '_', yearstr, '.nc'];
+% % %                     tind_u=tempmonth;
+% % %                     
+% % %                     varname='vo';
+% % %                     filedir = strcat(cmip6dir, varname, filesep, scenname, '\Omon\', testname, filesep); % % where data files are
+% % %                     vfilename=[filedir, filesep, varname, '_Omon_', scenname, '_', testname, '_', yearstr, '.nc'];
+% % %                     tind_v=tempmonth;
+% % %                     if (exist('lon_rho' , 'var') ~= 1)
+% % %                         lonfilename=[filedir, filesep, 'lon_Omon_', scenname, '_', testname, '.nc'];
+% % %                         latfilename=[filedir, filesep, 'lat_Omon_', scenname, '_', testname, '.nc'];
+% % %                         switch(testname)
+% % %                             case{'CNRM-ESM2-1', 'CNRM-CM6-1-HR'}
+% % %                                 lonname='lon';
+% % %                                 latname='lat';
+% % %                                 xname = 'x';
+% % %                                 yname = 'y';
+% % %                             case{'EC-Earth3-Veg', 'ACCESS-CM2', 'CMCC-ESM2'}
+% % %                                 lonname='longitude';
+% % %                                 latname='latitude';
+% % %                                 xname = 'i';
+% % %                                 yname = 'j';
+% % %                         end
+% % %                         lon_rho=ncread(lonfilename, lonname);
+% % %                         lat_rho=ncread(latfilename, latname);
+% % %                         [lon_min, lon_max, lat_min, lat_max] = findind_Y(1/20, lonlat(1:4), lon_rho, lat_rho, 1);
+% % %                         cut_lon_rho = lon_rho(lon_min(1):lon_max(1), lat_min(1):lat_max(1));
+% % %                         cut_lat_rho = lat_rho(lon_min(1):lon_max(1), lat_min(1):lat_max(1));
+% % %                     end
+% % %                     
+% % %                     data_info = ncinfo(ufilename, 'uo'); 
+% % %                     u = ncread(ufilename,'uo',[lon_min(1) lat_min(1) 1 tind_u], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1 1 1]);  %% cut horizontal area [x,y,z] (wider than target area)
+% % %                     v = ncread(vfilename,'vo',[lon_min(1) lat_min(1) 1 tind_v], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1 1 1]);  %% cut horizontal area [x,y,z] (wider than target area)
+% % % 
+% % %                     if (exist('mean_u' , 'var') ~= 1)
+% % %                         mean_u=zeros(size(u));
+% % %                         mean_v=zeros(size(v));
+% % %                     end
+% % %                     mean_u=mean_u + (u / (length(inputyear1) * length(inputmonth)));
+% % %                     mean_v=mean_v + (v / (length(inputyear1) * length(inputmonth)));
+% % %                 end
+% % %             end
+% % % %             u_rho = u2rho_2d(mean_u')';
+% % % %             v_rho = v2rho_2d(mean_v')';
+% % %             u_rho = mean_u;
+% % %             v_rho = mean_v;
+% % %             
+% % %             mask_model = double(inpolygon(cut_lon_rho,cut_lat_rho,refpolygon(:,1),refpolygon(:,2)));
+% % %             mask_model(mask_model==0)=NaN;
+% % %             u_rho=u_rho.*mask_model;
+% % %             v_rho=v_rho.*mask_model;
+% % %             
+% % %             if (exist('ref_vec_x_range' , 'var') ~= 1)
+% % %                 ref_vec_x_ind = find(abs(cut_lon_rho(:,1)-m_quiver_ref_text_x_location) == min(abs(cut_lon_rho(:,1)-m_quiver_ref_text_x_location)));
+% % %                 ref_vec_y_ind = find(abs(cut_lat_rho(1,:)-m_quiver_ref_text_y_location) == min(abs(cut_lat_rho(1,:)-m_quiver_ref_text_y_location)))+m_quiver_y_interval;
+% % % %                 ref_vec_x_range = round(ref_vec_x_ind-(m_quiver_x_interval/2)) : round(ref_vec_x_ind-(m_quiver_x_interval/2))+m_quiver_x_interval;
+% % % %                 ref_vec_y_range = round(ref_vec_y_ind-(m_quiver_y_interval/2)) : round(ref_vec_y_ind-(m_quiver_y_interval/2))+m_quiver_y_interval;
+% % %                 ref_vec_x_range = round(ref_vec_x_ind-(m_quiver_x_interval/2)) : round(ref_vec_x_ind-(m_quiver_x_interval/2));
+% % %                 ref_vec_y_range = round(ref_vec_y_ind-(m_quiver_y_interval/2)) : round(ref_vec_y_ind-(m_quiver_y_interval/2));
+% % %             end
+% % %             u_rho(ref_vec_x_range,ref_vec_y_range)=m_quiver_ref_u_value;
+% % %             v_rho(ref_vec_x_range,ref_vec_y_range)=m_quiver_ref_v_value;     
+% % % 
+% % %             m_proj(m_proj_name,'lon',[lonlat(1) lonlat(2)],'lat',[lonlat(3) lonlat(4)]);
+% % %             hold on;
+% % %             m_gshhs_i('color',m_gshhs_line_color)  
+% % %             m_gshhs_i('patch',m_gshhs_land_color);   % gray colored land
+% % % 
+% % %             uvplot=m_quiver(cut_lon_rho(1:m_quiver_x_interval:end,1:m_quiver_y_interval:end)', ...
+% % %                             cut_lat_rho(1:m_quiver_x_interval:end,1:m_quiver_y_interval:end)', ...
+% % %                             u_rho(1:m_quiver_x_interval:end,1:m_quiver_y_interval:end)' * m_quiver_vector_size, ...
+% % %                             v_rho(1:m_quiver_x_interval:end,1:m_quiver_y_interval:end)' * m_quiver_vector_size, ...
+% % %                             'color',m_quiver_vector_color, 'AutoScale','off','LineWidth', m_quiver_LineWidth);
+% % % 
+% % %             m_text(m_quiver_ref_text_x_location, m_quiver_ref_text_y_location, m_quiver_ref_text, 'FontSize', m_quiver_ref_text_fontsize); 
+% % %             m_grid('fontsize', m_grid_fontsize, 'box', m_grid_box_type, 'tickdir', m_grid_tickdir_type);
+% % %             if (min(inputyear1) == max(inputyear1))
+% % %                 titlename = strcat('UV mean, ',abbname,',(',num2str(min(inputyear1),'%04i'),') ');  %% + glacier contribution
+% % %             else
+% % %                 titlename = strcat('UV mean, ',abbname,',(',num2str(min(inputyear1),'%04i'),'-',num2str(max(inputyear1),'%04i'),') ');  %% + glacier contribution
+% % %             end
+% % %             title(titlename,'fontsize',m_pcolor_title_fontsize);  %%title
+% % % 
+% % %             set(gcf, 'PaperUnits', 'points');
+% % %             set(gcf, 'PaperSize', [hor_paper_size_x, hor_paper_size_y]);
+% % %             set(gcf,'PaperPosition', [paper_position_hor paper_position_ver paper_position_width paper_position_height]) 
+% % %             saveas(gcf,pngname,'tif'); RemoveWhiteSpace([], 'file', pngname);
+% % %             saveas(gcf, tmp.tifname,'tif'); RemoveWhiteSpace([], 'file', tmp.tifname);
+% % %             close all;
+% % %             clear lon_rho mean_u ref_vec_x_range
+% % % %         end
+% % % % end-------------------- earlier decadal current plot
 
 
 % start-------------------- earlier decadal SST, SSS, SSH plot
@@ -322,7 +338,7 @@ for testnameind2=1:length(all_testname2)
                     if(strcmp(variable, 'SST'))
                         mean_data=mean_data;
                     elseif (strcmp(variable,'SSH')==1)
-                        mean_data=mean_data-mean(mean_data(:),'omitnan');
+%                         mean_data=mean_data-mean(mean_data(:),'omitnan');
                         load(['D:\Data\Model\CMIP6\zos_correction\GCM_corr_', scenname, '.mat']);
                         if strcmp(scenname, 'historical')
                             GCM_correction=GCM_corr(testnameind2).ts((min(inputyear1)-1985)*12+1:(max(inputyear1)-1985)*12+12);
@@ -336,7 +352,8 @@ for testnameind2=1:length(all_testname2)
 %                         mean(mean_data(:), 'omitnan')
                         [m_value, error_status] = Func_0011_get_area_weighted_mean(mean_data, cut_lon_rho, cut_lat_rho)
 %                         -5.5537; -5.4880; 0.5504; -5.5819; -5.8024; mean
-                        ssh_correction_for_fig = Func_0014_SSH_correction_for_pcolor(testname);
+%                         ssh_correction_for_fig = Func_0014_SSH_correction_for_pcolor(testname);
+                        ssh_correction_for_fig = Func_0017_SSH_correction_for_CMIP6_RMSE(testname);
                         mean_data=mean_data-ssh_correction_for_fig;
                     end
                     mask_model = double(inpolygon(cut_lon_rho,cut_lat_rho,refpolygon(:,1),refpolygon(:,2)));
@@ -360,7 +377,11 @@ for testnameind2=1:length(all_testname2)
                     m_gshhs_i('patch',m_gshhs_land_color);   % gray colored land
 
                     m_grid('fontsize', m_grid_fontsize, 'box', m_grid_box_type, 'tickdir', m_grid_tickdir_type);
-                    titlename = strcat(variable, ' mean, ',testname,',(',num2str(min(inputyear1),'%04i'),'-',num2str(max(inputyear1),'%04i'),') ');  %% + glacier contribution
+                    if (min(inputyear1) == max(inputyear1))
+                        titlename = strcat(variable, ' mean, ',abbname,',(',num2str(min(inputyear1),'%04i'),') ');  %% + glacier contribution
+                    else
+                        titlename = strcat(variable, ' mean, ',abbname,',(',num2str(min(inputyear1),'%04i'),'-',num2str(max(inputyear1),'%04i'),') ');  %% + glacier contribution
+                    end
                     title(titlename,'fontsize',m_pcolor_title_fontsize);  %%title
 
                     % set colorbar 

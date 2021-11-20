@@ -10,8 +10,8 @@ all_region2 ={'AKP4'}
 % all_region2 ={'AKP4'};
 % all_region2 ={'YS'};
 
-all_var2 = {'SST', 'SSS', 'SSH'};
-% all_var2 = {'SSH'};
+% all_var2 = {'SST', 'SSS', 'SSH'};
+all_var2 = {'SSH'};
 
 % all_var2 = {'BT'};
 
@@ -55,9 +55,9 @@ for regionind2=1:length(all_region2)
     sshdifflev = [40 70];
 
     % for snu_desktopd
-%     inputyear1 = [2015]; % % put year which you want to plot [year year ...]
+    inputyear1 = [2015]; % % put year which you want to plot [year year ...]
 %     inputyear1 = [1985:2014]; % % put year which you want to plot [year year ...]
-    inputyear1 = [1993:2014]; % % put year which you want to plot [year year ...]
+%     inputyear1 = [1993:2014]; % % put year which you want to plot [year year ...]
     inputmonth = [1 2 3 4 5 6 7 8 9 10 11 12]; % % put month which you want to plot [month month ...]
 %     inputmonth = [8]; % % put month which you want to plot [month month ...]
 
@@ -199,8 +199,10 @@ for regionind2=1:length(all_region2)
                     vfilename=[filedir, '\', fname_in];
 
                     if (exist('lon_rho' , 'var') ~= 1)
-                        lon_gcm=ncread(ufilename, 'lon');
-                        lat_gcm=ncread(ufilename, 'lat');
+                        lonfilename=[filedir, 'lon_interp_', scenname, '_', testname, '.nc'];
+                        latfilename=[filedir, 'lat_interp_', scenname, '_', testname, '.nc'];
+                        lon_gcm=ncread(lonfilename, 'lon');
+                        lat_gcm=ncread(latfilename, 'lat');
                         [lat_rho, lon_rho]= meshgrid(lat_gcm, lon_gcm);                          
                         [lon_min, lon_max, lat_min, lat_max] = findind_Y(1/20, lonlat(1:4), lon_rho, lat_rho, 1);
                         cut_lon_rho = lon_rho(lon_min(1):lon_max(1), lat_min(1):lat_max(1));
@@ -369,7 +371,8 @@ for regionind2=1:length(all_region2)
         mean_data=ens_data;
         if (strcmp(variable,'SSH')==1)
             [m_value, error_status] = Func_0011_get_area_weighted_mean(mean_data, cut_lon_rho, cut_lat_rho)
-            ssh_correction_for_fig = Func_0014_SSH_correction_for_pcolor('GCM_ENS_historical');
+%             ssh_correction_for_fig = Func_0014_SSH_correction_for_pcolor('GCM_ENS_historical');
+            ssh_correction_for_fig = Func_0017_SSH_correction_for_CMIP6_RMSE('GCM_ENS');
             mean_data=mean_data-ssh_correction_for_fig;
         end
         mask_model = double(inpolygon(cut_lon_rho,cut_lat_rho,refpolygon(:,1),refpolygon(:,2)));
