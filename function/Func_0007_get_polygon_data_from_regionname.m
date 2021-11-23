@@ -81,6 +81,40 @@ switch(regionname)
         refpolygon=testpolygon;
     case('SK_EEZ') %%south korea EEZ (real fishing area)
         refpolygon=SK_EEZ_polygon;
+    case('SK_coastal') %%south korea coastal area
+        refpolygon=SK_coastal_polygon;
+    case('adm_div_all') %% south korea administrative ocean division
+        refpolygon=adm_div_all_polygon;
+    case('adm_div_YS') %% south korea administrative ocean division (Yellow Sea)
+        refpolygon=adm_div_YS_polygon;
+    case('adm_div_SS') %% south korea administrative ocean division (South Sea)
+        refpolygon=adm_div_SS_polygon;
+    case('adm_div_ES') %% south korea administrative ocean division (East Sea)
+        refpolygon=adm_div_ES_polygon;
+    case('adm_div_GGD') %% south korea administrative ocean division (Gyeonggi-do)
+        refpolygon=adm_div_GGD_polygon;
+    case('adm_div_CCND') %% south korea administrative ocean division (Chungcheongnam-do)
+        refpolygon=adm_div_CCND_polygon;
+    case('adm_div_JBD') %% south korea administrative ocean division (Jeollabuk-do)
+        refpolygon=adm_div_JBD_polygon;
+    case('adm_div_JND') %% south korea administrative ocean division (Jeollabuk-do)
+        refpolygon=adm_div_JND_polygon;
+    case('adm_div_JJD') %% south korea administrative ocean division (Jeju-do)
+        refpolygon=adm_div_JJD_polygon;
+    case('adm_div_GSND') %% south korea administrative ocean division (Gyeongsangnam-do)
+        refpolygon=adm_div_GSND_polygon;
+    case('adm_div_GSBD') %% south korea administrative ocean division (Gyeongsangbuk-do)
+        refpolygon=adm_div_GSBD_polygon;
+    case('adm_div_GSBD_coastal') %% south korea administrative ocean division (Gyeongsangbuk-do, ulleung-do and dok-do are excluded)
+        refpolygon=adm_div_GSBD_coastal_polygon;
+    case('adm_div_ULD') %% south korea administrative ocean division (Ulleung-do and dok-do)
+        refpolygon=adm_div_ULD_polygon;
+    case('adm_div_ULD_only') %% south korea administrative ocean division (Ulleung-do only)
+        refpolygon=adm_div_ULD_only_polygon;
+    case('adm_div_DD_only') %% south korea administrative ocean division (Dok-do only)
+        refpolygon=adm_div_DD_only_polygon;
+    case('adm_div_GWD') %% south korea administrative ocean division (Ulleung-do and dok-do)
+        refpolygon=adm_div_GWD_polygon;
     otherwise
         ('?')
 end

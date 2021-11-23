@@ -7,6 +7,7 @@ warning off;
 % all_testname2 = {'test2102', 'test2103', 'test2104', 'test2105', 'test2106'};
 % all_testname2 = {'test2107', 'test2108', 'test2109', 'test2110', 'test2111'};
 all_testname2 = {'test2107', 'test2108', 'test2109'};
+% all_testname2 = {'test2127', 'test2128', 'test2129', 'test2130', 'test2131'};
 
 % all_region2 ={'NWP', 'YS', 'AKP2'}
 % all_region2 ={'NWP', 'AKP4'};
@@ -66,11 +67,11 @@ for testnameind2=1:length(all_testname2)
         testname=all_testname2{testnameind2}    % % need to change
 %         inputyear1 = [1993:2014]; % % put year which you want to plot [year year ...]
 %         inputyear1 = [1985:2014]; % % put year which you want to plot [year year ...]
-        inputyear1 = [2050]; % % put year which you want to plot [year year ...]
+        inputyear1 = [2030]; % % put year which you want to plot [year year ...]
         
 %         inputyear2 = [1985:2014]; % % put year which you want to plot [year year ...]
-%         inputmonth = [1:12]; % % put month which you want to plot [month month ...]
-        inputmonth = [8]; % % put month which you want to plot [month month ...]
+        inputmonth = [1:12]; % % put month which you want to plot [month month ...]
+%         inputmonth = [8]; % % put month which you want to plot [month month ...]
 %           inputmonth = [2]; % % put month which you want to plot [month month ...]
 
         for folding=1:1

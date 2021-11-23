@@ -294,8 +294,6 @@ ysecspolygon = ...
 	127.0, 41.0;
 	127.0, 38.5];
 
-
-
 % %  Around Korea Peninsula polygon for SSH
    akppolygon = ...
        [117.0, 32.0;
@@ -533,3 +531,308 @@ JP_EEZ_polygon = ...
     133.0, 38.0;
     132.6, 38.7;
     133.0, 39.0];
+
+
+% %  SK_coastal (Most of islands are excluded, 
+% %  but islands connected by bridge are not excluded.)
+% % 'Gyeonggi-do', 'Chungcheongnam-do', 'Jeollabuk-do', 'Jeollanam-do', ...
+% % 'Gyeongsangnam-do', 'Gyeongsangbuk-do', 'Gangwon-do', 'Jeju-do', ...
+% % 'Ulleung-do', 'Dok-do', 'Ulleng-Dok'
+SK_coastal_polygon = ...
+    [126.34, 37.84; %%% Gyeonggi-do (northwestern edge)
+    126.12, 37.7;
+    126.36, 37.62;
+    126.36, 37.46;
+    126.40, 36.37;
+    126.42, 37.23;
+    126.35, 37.11;
+    126.36, 37.08; %%% Gyeonggi-do (southwestern edge),'Chungcheongnam-do' (northwestern edge)
+    126.00, 36.68;
+    126.40, 36.08; 
+    126.50, 36.08; 
+    126.58, 36.06;
+    126.60, 35.99; %%% 'Chungcheongnam-do' (southwestern edge), 'Jeollabuk-do' (northwestern edge)
+    126.65, 35.99;
+    126.45, 35.98;
+    126.24, 35.86;
+    126.38, 35.60;
+    126.37, 35.45; %%% 'Jeollabuk-do' (southwestern edge), 'Jeollanam-do' (northwestern edge)
+    126.22, 35.23;
+    126.25, 35.20;
+    125.98, 35.12;
+    125.55, 34.63;
+    125.98, 33.99; %%% 'Jeollanam-do' (southwestern edge)
+    126.09, 33.26; %%% 'Jeju-do', (western edge)
+    126.57, 32.11; %%% 'Jeju-do', (southern edge)
+    127.10, 33.44; %%% 'Jeju-do', (eastern edge)
+    127.10, 34.26; %%% 'Jeollanam-do' (southern edge)
+    127.87, 34.37; %%% 'Jeollanam-do' (southeastern edge), 'Gyeongsangnam-do' (southwestern edge)
+    128.88, 34.75;
+    129.65, 35.59;
+    129.49, 35.63; %%% 'Gyeongsangnam-do' (northeastern edge), 'Gyeongsangbuk-do' (southeastern edge)
+    129.69, 36.13;
+    129.50, 37.18; %%% 'Gyeongsangbuk-do' (northeastern edge) 'Gangwon-do' (southeastern edge)
+    130.93, 36.02; %%% 'Ulleung-do' (southern edge)
+    133.04, 37.63;
+    128.40, 38.64; %%% 'Gangwon-do' (northwestern edge)
+    126.68, 37.85; 
+    126.61, 37.77];
+
+adm_div_all_polygon = ...
+    [126.66, 37.79; %%% Han river estuary
+    126.34, 37.84; 
+    126.19, 37.81;
+    126.19, 37.73;
+    126.12, 37.7;
+    125.70, 37.70;
+    125.35, 37.70;
+    125.15, 37.60;
+    124.95, 37.65;
+    124.75, 37.80;
+    124.75, 38.00;
+    124.50, 38.15;
+    123.35, 38.15;  %%% Gyeonggi-do (northwestern edge)
+    123.50, 37.70;  
+    123.80, 37.08;  %%% Gyeonggi-do (southwestern edge), 'Chungcheongnam-do' (northwestern edge)
+    123.90, 36.70;
+    123.75, 35.99;  %%% 'Chungcheongnam-do' (southwestern edge), 'Jeollabuk-do' (northwestern edge)
+    123.73, 35.80;
+    123.30, 35.45;  %%% 'Jeollabuk-do' (southwestern edge) 'Jeollanam-do' (northwestern edge)
+    122.55, 34.50;
+    122.70, 33.75;
+    122.85, 33.40;
+    123.60, 32.65;
+    123.95, 32.45;
+    126.05, 30.35; %%% 'Jeju-do' (southern edge)
+    126.80, 31.00;
+    127.30, 32.35;
+    127.80, 33.25;
+    128.95, 34.30;
+    129.10, 34.80;
+    129.49, 35.00; %%% 'Gyeongsangnam-do' (southeastern edge),
+    130.25, 35.15;
+    130.55, 35.63; %%% 'Gyeongsangnam-do' (northeastern edge), 'Gyeongsangbuk-do' (southeastern edge)
+    131.20, 36.10;
+    131.40, 36.10;
+    131.55, 36.05;
+    132.50, 36.70;
+    132.95, 37.18; %%% 'Gyeongsangbuk-do' (northeastern edge) 'Gangwon-do' (southeastern edge)
+    134.25, 38.50; 
+    134.20, 38.62; %%% 'Gangwon-do' (northwestern edge)
+    128.36, 38.62; %%% 'Gangwon-do' (land, northwestern edge)
+    128.17, 37.92];
+
+adm_div_YS_polygon = ...
+    [126.66, 37.79; %%% Han river estuary
+    126.34, 37.84; 
+    126.19, 37.81;
+    126.19, 37.73;
+    126.12, 37.7;
+    125.70, 37.70;
+    125.35, 37.70;
+    125.15, 37.60;
+    124.95, 37.65;
+    124.75, 37.80;
+    124.75, 38.00;
+    124.50, 38.15;
+    123.35, 38.15;  %%% Gyeonggi-do (northwestern edge)
+    123.50, 37.70;  
+    123.80, 37.08;  %%% Gyeonggi-do (southwestern edge), 'Chungcheongnam-do' (northwestern edge)
+    123.90, 36.70;
+    123.75, 35.99;  %%% 'Chungcheongnam-do' (southwestern edge), 'Jeollabuk-do' (northwestern edge)
+    123.73, 35.80;
+    123.30, 35.45;  %%% 'Jeollabuk-do' (southwestern edge) 'Jeollanam-do' (northwestern edge)
+    122.55, 34.50;
+    122.70, 33.75;
+    122.85, 33.40;
+    123.60, 32.65;
+    123.95, 32.45;
+    124.05, 32.25;
+    126.52, 34.29; %%% Haenam tower
+    128.36, 38.62]; %%% 'Gangwon-do' (land, northwestern edge)
+
+adm_div_SS_polygon = ...
+    [126.52, 34.29; %%% haenam tower
+    124.05, 32.25;
+    126.05, 30.35; %%% 'Jeju-do' (southern edge)
+    126.80, 31.00;
+    127.30, 32.35;
+    127.80, 33.25;
+    128.95, 34.30;
+    129.10, 34.80;
+    129.49, 35.00; %%% 'Jeollanam-do' (southeastern edge), 'Gyeongsangnam-do' (southeastern edge),
+    129.17, 35.15; %%% Haeundae Moontan hill
+    128.36, 38.62]; %%% 'Gangwon-do' (land, northwestern edge)
+
+adm_div_ES_polygon = ...
+    [129.17, 35.15; %%% Haeundae Moontan hill
+    129.49, 35.00; %%% 'Jeollanam-do' (southeastern edge), 'Gyeongsangnam-do' (southeastern edge),
+    130.25, 35.15;
+    130.55, 35.63; %%% 'Gyeongsangnam-do' (northeastern edge), 'Gyeongsangbuk-do' (southeastern edge)
+    131.20, 36.10;
+    131.40, 36.10;
+    131.55, 36.05;
+    132.50, 36.70;
+    132.95, 37.18; %%% 'Gyeongsangbuk-do' (northeastern edge) 'Gangwon-do' (southeastern edge)
+    134.25, 38.50; 
+    134.20, 38.62; %%% 'Gangwon-do' (northwestern edge)
+    128.36, 38.62]; %%% 'Gangwon-do' (land, northwestern edge)
+    
+    
+adm_div_GGD_polygon = ...
+    [126.66, 37.79; %%% Han river estuary
+    126.34, 37.84; 
+    126.19, 37.81;
+    126.19, 37.73;
+    126.12, 37.7;
+    125.70, 37.70;
+    125.35, 37.70;
+    125.15, 37.60;
+    124.95, 37.65;
+    124.75, 37.80;
+    124.75, 38.00;
+    124.50, 38.15;
+    123.35, 38.15;  %%% Gyeonggi-do (northwestern edge)
+    123.50, 37.70;  
+    123.80, 37.08;  %%% Gyeonggi-do (southwestern edge), 'Chungcheongnam-do' (northwestern edge)
+    127.90, 37.08];  %%% Choongju city (center)
+
+adm_div_CCND_polygon = ...
+    [127.90, 37.08;  %%% Choongju city (center)
+    123.80, 37.08;  %%% Gyeonggi-do (southwestern edge), 'Chungcheongnam-do' (northwestern edge)
+    123.90, 36.70;
+    123.75, 35.99;  %%% 'Chungcheongnam-do' (southwestern edge), 'Jeollabuk-do' (northwestern edge)
+    126.73, 35.99; 
+    127.20, 36.17];
+    
+adm_div_JBD_polygon = ...
+    [126.73, 35.99; 
+    123.75, 35.99;  %%% 'Chungcheongnam-do' (southwestern edge), 'Jeollabuk-do' (northwestern edge)
+    123.73, 35.80;
+    123.30, 35.45;  %%% 'Jeollabuk-do' (southwestern edge) 'Jeollanam-do' (northwestern edge)
+    127.08, 35.45];
+    
+% adm_div_JND_polygon = ...   % Chuja island is included
+%     [127.08, 35.45;
+%     123.30, 35.45;  %%% 'Jeollabuk-do' (southwestern edge) 'Jeollanam-do' (northwestern edge)
+%     122.55, 34.50;
+%     122.65, 34.15;
+%     125.05, 34.15;
+%     126.20, 33.90;
+%     126.90, 34.05;
+%     127.81, 34.05;
+%     127.81, 35.45];
+
+adm_div_JND_polygon = ...   % considering 30 km range
+    [127.08, 35.45;
+    123.30, 35.45;  %%% 'Jeollabuk-do' (southwestern edge) 'Jeollanam-do' (northwestern edge)
+    122.55, 34.50;
+    122.65, 33.69;
+    125.05, 33.69;
+    126.20, 33.69;
+    126.90, 33.78;
+    127.81, 33.78;
+    127.81, 35.45];    
+
+% adm_div_JJD_polygon = ...
+%     [122.65, 34.15;
+%     125.05, 34.15;
+%     126.20, 33.90;
+%     126.90, 34.05;
+%     127.81, 34.05;
+%     127.80, 33.25;
+%     127.30, 32.35;
+%     126.80, 31.00;    
+%     126.05, 30.35; %%% 'Jeju-do' (southern edge)
+%     123.95, 32.45;
+%     123.60, 32.65;
+%     122.85, 33.40;
+%     122.70, 33.75];
+
+
+adm_div_JJD_polygon = ...   % considering 30 km range
+    [122.65, 33.69;
+    125.05, 33.69;
+    126.20, 33.69;
+    126.90, 33.78;
+    127.81, 33.78;
+    127.80, 33.25;
+    127.30, 32.35;
+    126.80, 31.00;    
+    126.05, 30.35; %%% 'Jeju-do' (southern edge)
+    123.95, 32.45;
+    123.60, 32.65;
+    122.85, 33.40;
+    122.70, 33.78];
+
+
+adm_div_GSND_polygon = ...
+    [127.81, 35.63;
+    127.80, 33.25;
+    128.95, 34.30;
+    129.10, 34.80;
+    129.49, 35.00; %%% 'Gyeongsangnam-do' (southeastern edge),
+    130.25, 35.15;
+    130.55, 35.63]; %%% 'Gyeongsangnam-do' (northeastern edge), 'Gyeongsangbuk-do' (southeastern edge)
+
+adm_div_GSBD_polygon = ...
+    [127.81, 35.63;
+    130.55, 35.63;
+    131.20, 36.10;
+    131.40, 36.10;
+    131.55, 36.05;
+    132.50, 36.70;
+    132.95, 37.18; %%% 'Gyeongsangbuk-do' (northeastern edge) 'Gangwon-do' (southeastern edge)
+    127.81, 37.18]; %%% 'Gyeongsangnam-do' (northeastern edge), 'Gyeongsangbuk-do' (southeastern edge)
+
+adm_div_GSBD_coastal_polygon = ...
+    [127.81, 35.63;
+    130.20, 35.63;
+    130.20, 37.18;
+    127.81, 37.18]; %%% 'Gyeongsangnam-do' (northeastern edge), 'Gyeongsangbuk-do' (southeastern edge)
+
+adm_div_ULD_polygon = ...
+    [130.20, 35.63;
+    130.20, 38.62;
+    134.25, 38.62;
+    132.95, 37.18;
+    132.50, 36.70;
+    131.55, 36.05;
+    131.40, 36.10;
+    131.20, 36.10]; %%% 'Gyeongsangnam-do' (northeastern edge), 'Gyeongsangbuk-do' (southeastern edge)
+
+adm_div_ULD_only_polygon = ...
+    [130.20, 35.63;
+    130.20, 38.62;
+    131.40, 38.62;
+    131.40, 36.10]; %%% 'Gyeongsangnam-do' (northeastern edge), 'Gyeongsangbuk-do' (southeastern edge)
+
+adm_div_DD_only_polygon = ...
+    [131.40, 36.10;
+    131.55, 36.05;
+    132.50, 36.70;
+    132.95, 37.18; %%% 'Gyeongsangbuk-do' (northeastern edge) 'Gangwon-do' (southeastern edge)
+    134.25, 38.50; 
+    134.20, 38.62;
+    131.40, 38.62]; %%% 'Gyeongsangnam-do' (northeastern edge), 'Gyeongsangbuk-do' (southeastern edge)
+
+adm_div_GWD_polygon = ...
+    [130.20, 37.18; %%% 'Gyeongsangbuk-do' (northeastern edge) 'Gangwon-do' (southeastern edge)
+    130.20, 38.50; 
+    130.20, 38.62; %%% 'Gangwon-do' (northwestern edge)
+    128.36, 38.62; %%% 'Gangwon-do' (land, northwestern edge)
+    128.17, 37.92;
+    127.80, 37.92;
+    127.80, 37.18]; 
+
+
+
+%     130.55, 35.63; %%% 'Gyeongsangnam-do' (northeastern edge), 'Gyeongsangbuk-do' (southeastern edge)
+%     131.20, 36.10;
+%     131.40, 36.10;
+%     131.55, 36.05;
+%     132.50, 36.70;
+%     132.95, 37.18; %%% 'Gyeongsangbuk-do' (northeastern edge) 'Gangwon-do' (southeastern edge)
+%     134.25, 38.50; 
+%     134.20, 38.62; %%% 'Gangwon-do' (northwestern edge)
+%     128.36, 38.62]; %%% 'Gangwon-do' (land, northwestern edge)

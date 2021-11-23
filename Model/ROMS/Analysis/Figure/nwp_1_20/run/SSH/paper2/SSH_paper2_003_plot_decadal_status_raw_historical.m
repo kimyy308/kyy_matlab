@@ -127,7 +127,7 @@ for testnameind2=1:length(all_testname2)
 
         if (strcmp(system_name,'PCWIN64'))
             % % for windows
-            figrawdir =strcat('Z:\내 드라이브\MEPL\project\SSH\5th_year\figure\CMIP5\',testname,'\',regionname,'\'); % % where figure files will be saved
+            figrawdir =strcat('D:\MEPL\project\SSH\5th_year\figure\CMIP5\',testname,'\',regionname,'\'); % % where figure files will be saved
             param_script =['C:\Users\user\Dropbox\source\matlab\Model\ROMS\Analysis\Figure\nwp_1_20\run\fig_param\fig_param_kyy_CMIP5_', regionname, '.m'];
 %             cmip5dir = strcat('G:\Data\Model\CMIP5\'); % % where data files are
             cmip5dir = strcat('D:\Data\Model\CMIP5\'); % % where data files are

@@ -6,7 +6,7 @@ warning off;
 all_testname2 = {'test2117', 'test2118', 'test2119', 'test2120', 'test2121'};
 % all_testname2 = {'test2102'};
 
-% all_region2 ={'NWP','AKP4'};
+% all_region2 ={'NWP'};
 all_region2 ={'NWP', 'AKP4'};
 % all_region2 ={'AKP4'};
 
@@ -55,7 +55,7 @@ for testnameind2=1:length(all_testname2)
 
         % for snu_desktopd
         testname=all_testname2{testnameind2}    % % need to change
-        inputyear = [1993:2014]; % % put year which you want to plot [year year ...]
+        inputyear = [1985:2014]; % % put year which you want to plot [year year ...]
 %         inputmonth = [1 2 3 4 5 6 7 8 9 10 11 12]; % % put month which you want to plot [month month ...]
         inputmonth = [1:12]; % % put month which you want to plot [month month ...]
         gcmtestname = Func_0004_get_GCMname_from_RCM(testname);

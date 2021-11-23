@@ -9,7 +9,7 @@ function [indw, inde, inds, indn]=Func_0012_findind_Y(dl,section,lon_rho,lat_rho
 % % section --> (lon1, lon2, lat1, lat2) or (lon1, lat1)
 % % lon_rho --> [y x]
 % % lat_rho --> [y x]
-% % all == 1 : judge valid grid from all of them
+% % all == 1 : judge valid grid from all of them (2-dimension)
 
     if length(section)==2
         section(3:4)=section(2);
