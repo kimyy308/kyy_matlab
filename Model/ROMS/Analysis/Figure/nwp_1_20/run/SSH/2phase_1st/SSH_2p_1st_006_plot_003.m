@@ -3,7 +3,9 @@ close all; clear all;  clc;
 
 % % % configuration of RCM
 % RCM_info.name={'test2102', 'test2103', 'test2104', 'test2105', 'test2106'};
-RCM_info.name={'test2107', 'test2108', 'test2109', 'test2110', 'test2111'};
+% RCM_info.name={'test2107', 'test2108', 'test2109', 'test2110', 'test2111'};
+RCM_info.name={'test2127', 'test2128', 'test2129', 'test2130', 'test2131'};
+
 RCM_info.abbs = {'RCM-CNRM', 'RCM-EC-Veg', 'RCM-ACC', 'RCM-CNRM-HR', 'RCM-CMCC'};
 % RCM_info.name={  'test2107'};
 % RCM_info.abbs = {  'RCM-CNRM'};
@@ -17,7 +19,7 @@ RCM_info.phase = 'run';
 % RCM_info.region = {'NWP', 'AKP4'};
 RCM_info.region = {'AKP4'};
 % RCM_info.years = 1985:2014;
-RCM_info.years = 2021:2050;
+RCM_info.years = 2015:2050;
 RCM_info.months = 1:12;
 RCM_grid.dl = 1/20;
 

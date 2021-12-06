@@ -9,7 +9,8 @@ warning off;
 %     parpool(4);
 % end
 
-years_group=[1990, 2000, 2010];
+% years_group=[1990, 2000, 2010];
+years_group=[2040, 2050];
 % years_group=[2020, 2030, 2040, 2050];
 seasons_group={'all', 'summer', 'winter'};
 
@@ -17,10 +18,10 @@ for years_groupi=1:length(years_group)
     for seasons_groupi=1:length(seasons_group)
 
         % % % configuration of RCM
-        RCM_info.name={'test2102', 'test2103', 'test2104', 'test2105', 'test2106'};
+%         RCM_info.name={'test2102', 'test2103', 'test2104', 'test2105', 'test2106'};
 %         RCM_info.name={'test2107', 'test2108', 'test2109', 'test2110', 'test2111'};
 %         RCM_info.name={'test2117', 'test2118', 'test2119', 'test2120', 'test2121'};
-%         RCM_info.name={'test2127', 'test2128', 'test2129', 'test2130', 'test2131'};
+        RCM_info.name={'test2127', 'test2128', 'test2129', 'test2130', 'test2131'};
 
         RCM_info.abbs = {'RCM-CNRM', 'RCM-EC-Veg', 'RCM-ACC', 'RCM-CNRM-HR', 'RCM-CMCC'};
         RCM_info.model = 'nwp_1_20';
@@ -33,8 +34,8 @@ for years_groupi=1:length(years_group)
         RCM_info.phase = 'run';
 %         RCM_info.region = {'AKP4'};
         RCM_info.region = {'NWP', 'AKP4'};
-%         RCM_info.vars = {'SST', 'SSH', 'SSS', 'Uwind', 'Vwind', 'shflux', 'u', 'v'};
-        RCM_info.vars = {'SST', 'SSH', 'SSS', 'u', 'v'};
+        RCM_info.vars = {'SST', 'SSH', 'SSS', 'Uwind', 'Vwind', 'shflux', 'u', 'v'};
+%         RCM_info.vars = {'SST', 'SSH', 'SSS', 'u', 'v'};
 %         RCM_info.vars = { 'shflux', 'u', 'v'};
 %         RCM_info.vars = {'Uwind'};
 
@@ -138,7 +139,7 @@ for years_groupi=1:length(years_group)
                 cmaps.wrmap = cmaps.bwrmap(51:100,:);
                 [cmaps.yrmap, tmp.error_status] = Func_0009_get_colormaps('yr', tmp.dropboxpath);
 
-                dirs.figrawdir =strcat('Z:\내 드라이브\MEPL\project\SSH\6th_year\figure\nwp_1_20\'); % % where figure files will be saved
+                dirs.figrawdir =strcat('D:\MEPL\project\SSH\6th_year\figure\nwp_1_20\'); % % where figure files will be saved
                 tmp.param_script =['C:\Users\user\Dropbox\source\matlab\Model\ROMS\Analysis\Figure\nwp_1_20\run\fig_param\fig_param2_kyy_', tmp.regionname, '.m'];
                 dirs.filedir = strcat('D:\Data\Model\ROMS\nwp_1_20\backup_surf\', tmp.testname, '\run\'); % % where data files are          
                 dirs.matdir = strcat('D:\Data\Model\ROMS\nwp_1_20\', tmp.testname, '\run\mean\');

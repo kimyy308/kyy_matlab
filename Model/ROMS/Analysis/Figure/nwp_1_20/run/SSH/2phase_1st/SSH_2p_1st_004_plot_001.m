@@ -3,8 +3,9 @@ warning off;
 
 % all_testname2 = {'test2102', 'test2103', 'test2104', 'test2105', 'test2106'};
 % all_testname2 = {'test2107', 'test2108', 'test2109', 'test2110', 'test2111'};
-all_testname2 = {'test2117', 'test2118', 'test2119', 'test2120', 'test2121'};
-% all_testname2 = {'test2102'};
+% all_testname2 = {'test2117', 'test2118', 'test2119', 'test2120', 'test2121'};
+% all_testname2 = {'test2127', 'test2128', 'test2129', 'test2130', 'test2131'};
+all_testname2 = {'test2129', 'test2130', 'test2131'};
 
 % all_region2 ={'NWP'};
 all_region2 ={'NWP', 'AKP4'};
@@ -55,7 +56,8 @@ for testnameind2=1:length(all_testname2)
 
         % for snu_desktopd
         testname=all_testname2{testnameind2}    % % need to change
-        inputyear = [1985:2014]; % % put year which you want to plot [year year ...]
+%         inputyear = [1985:2014]; % % put year which you want to plot [year year ...]
+        inputyear = [2015:2050]; % % put year which you want to plot [year year ...]
 %         inputmonth = [1 2 3 4 5 6 7 8 9 10 11 12]; % % put month which you want to plot [month month ...]
         inputmonth = [1:12]; % % put month which you want to plot [month month ...]
         gcmtestname = Func_0004_get_GCMname_from_RCM(testname);
@@ -196,14 +198,14 @@ for testnameind2=1:length(all_testname2)
 
         if (strcmp(system_name,'PCWIN64'))
             % % for windows
-            figrawdir =strcat('Z:\내 드라이브\MEPL\project\SSH\6th_year\figure\nwp_1_20\',testname,'\',regionname,'\'); % % where figure files will be saved
+            figrawdir =strcat('D:\MEPL\project\SSH\6th_year\figure\nwp_1_20\',testname,'\',regionname,'\'); % % where figure files will be saved
 %             param_script='C:\Users\kyy\Dropbox\source\matlab\Model\ROMS\Analysis\Figure\nwp_1_10\run\fig_param\fig_param_kyy_EKB_RMS.m';
             param_script =['C:\Users\user\Dropbox\source\matlab\Model\ROMS\Analysis\Figure\nwp_1_20\run\fig_param\fig_param_kyy_', regionname, '.m'];
             filedir = strcat('D:\Data\Model\ROMS\nwp_1_20\', testname, '\run\'); % % where data files are
             cmip5dir = strcat('D:\Data\Model\CMIP5\'); % % where data files are
             gcmfiledir = strcat('D:\Data\Model\CMIP5\zos\', scenname, '\interp\', gcmtestname, '\'); % % where data files are
             matdir = strcat('D:\Data\Model\ROMS\nwp_1_20\', testname, '\run\analysis\');
-            dirs.figrawdir =strcat('Z:\내 드라이브\MEPL\project\SSH\6th_year\figure\nwp_1_20\'); % % where figure files will be saved
+            dirs.figrawdir =strcat('D:\MEPL\project\SSH\6th_year\figure\nwp_1_20\'); % % where figure files will be saved
             tmp.variable=variable;
             tmp.fs=filesep;
             tmp.regionname=regionname;
@@ -316,7 +318,7 @@ for testnameind2=1:length(all_testname2)
                 [m_value, error_status] = Func_0011_get_area_weighted_mean(RCM_data_trend.yearly_trend, RCM_grid.lon_rho, RCM_grid.lat_rho);
 %                 titlename = strcat('SSH trend(abs), ',RCM_info.abbs{testnameind2}, ',(',num2str(min(inputyear),'%04i'),'-', ...
 %                     num2str(max(inputyear),'%04i'),'), ','M=',num2str(round(m_value,2)), ' mm/y');  %% + glacier contribution
-                titlename = strcat(RCM_info.abbs{testnameind2}, ',(',num2str(min(inputyear),'%04i'),'-', ...
+                titlename = strcat(RCM_info.abb, ',(',num2str(min(inputyear),'%04i'),'-', ...
                     num2str(max(inputyear),'%04i'),'), ','M=',num2str(round(m_value,2)), ' mm/y');  %% + glacier contribution
 
                 title(titlename,'fontsize',m_pcolor_title_fontsize);  %%title

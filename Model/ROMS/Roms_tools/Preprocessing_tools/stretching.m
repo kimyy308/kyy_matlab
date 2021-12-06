@@ -175,11 +175,13 @@ elseif (Vstretching == 4),
     lev=(1:N)-0.5;
     s=(lev-N).*ds;
   end
+  
   if (theta_s > 0),
     Csur=(1.0-cosh(theta_s.*s))/(cosh(theta_s)-1.0);
   else
     Csur=-s.^2;
   end
+  
   if (theta_b > 0),
     Cbot=(exp(theta_b.*Csur)-1.0)/(1.0-exp(-theta_b));
     C=Cbot;

@@ -14,6 +14,8 @@ addpath(genpath([tmp.dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', tmp.fs, 'M
 
 % % % configuration of RCM
 RCM_info.name={'test2117', 'test2118', 'test2119', 'test2120', 'test2121'};
+% RCM_info.name={'test2127', 'test2128', 'test2129', 'test2130', 'test2131'};
+
 % RCM_info.name={'test2107', 'test2108', 'test2109'};
 RCM_info.abbs = {'RCM-CNE', 'RCM-ECV', 'RCM-ACC', 'RCM-CNH', 'RCM-CMC'};
 % RCM_info.name={  'test2107'};
@@ -27,7 +29,8 @@ RCM_info.saveroot = ['D:', filesep, 'Data', filesep, 'Model', filesep, ...
 RCM_info.phase = 'run';
 % RCM_info.region = {'NWP', 'AKP4'};
 RCM_info.region = {'AKP4'};
-RCM_info.years = 1989:2014;
+RCM_info.years = 1985:2014;
+% RCM_info.years = 1989:2014;
 % RCM_info.years = 2015:2050;
 RCM_info.months = 1:12;
 RCM_grid.dl = 1/20;
@@ -150,7 +153,7 @@ ylabel('Trend (mm/yr)')
 xlabel('Region (station)');
 set(gcf,'PaperPosition', [0 0 30 15]) 
 hold off
-tifname= ['Z:\내 드라이브\MEPL\project\SSH\6th_year\figure\nwp_1_20\all\station\RCM_station_trend_ENSg_hist_',...
+tifname= ['D:\MEPL\project\SSH\6th_year\figure\nwp_1_20\all\station\RCM_station_trend_ENSg_hist_',...
     num2str(min(RCM_info.years),'%04i'),'_',num2str(max(RCM_info.years),'%04i'), '.tif'];
 saveas(gcf,tifname,'tif'); RemoveWhiteSpace([], 'file', tifname);
 close all;
@@ -164,7 +167,7 @@ ylabel('Trend (mm/yr)')
 xlabel('Region (station)');
 set(gcf,'PaperPosition', [0 0 30 15]) 
 hold off
-tifname= ['Z:\내 드라이브\MEPL\project\SSH\6th_year\figure\nwp_1_20\all\station\GCM_station_trend_hist_',...
+tifname= ['D:\MEPL\project\SSH\6th_year\figure\nwp_1_20\all\station\GCM_station_trend_hist_',...
     num2str(min(RCM_info.years),'%04i'),'_',num2str(max(RCM_info.years),'%04i'), '.tif'];
 saveas(gcf,tifname,'tif'); RemoveWhiteSpace([], 'file', tifname);
 close all;

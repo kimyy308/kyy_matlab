@@ -4,10 +4,11 @@ close all; clear all;  clc;
 % % % configuration of RCM
 % RCM_info.name={'test2102', 'test2103', 'test2104', 'test2105', 'test2106'};
 % RCM_info.name={'test2107', 'test2108', 'test2109', 'test2110', 'test2111'};
-RCM_info.name={'test2117', 'test2118', 'test2119', 'test2120', 'test2121'};
-RCM_info.abbs = {'RCM-CNRM', 'RCM-EC-Veg', 'RCM-ACC', 'RCM-CNRM-HR', 'RCM-CMCC'};
-% RCM_info.name={  'test2107'};
-% RCM_info.abbs = {  'RCM-CNRM'};
+% RCM_info.name={'test2117', 'test2118', 'test2119', 'test2120', 'test2121'};
+RCM_info.name={'test2127', 'test2128', 'test2129', 'test2130', 'test2131'};
+RCM_info.abbs = {'RCM-CNE', 'RCM-ECV', 'RCM-ACC', 'RCM-CNH', 'RCM-CMC'};
+% RCM_info.name={  'test2129'};
+% RCM_info.abbs = { 'RCM-ACC'};
 
 RCM_info.model = 'nwp_1_20';
 % RCM_info.dataroot = '/data1/RCM/CMIP6/';
@@ -17,10 +18,10 @@ RCM_info.dataroot = ['D:', filesep, 'Data', filesep, 'Model', filesep, ...
 RCM_info.saveroot = ['D:', filesep, 'Data', filesep, 'Model', filesep, ...
     'ROMS', filesep, 'nwp_1_20', filesep, 'backup_surf', filesep];
 RCM_info.phase = 'run';
-% RCM_info.region = {'NWP', 'AKP4'};
+% RCM_info.region = {'NWP'};
 RCM_info.region = {'AKP4'};
-RCM_info.years = 1989:2014;
-% RCM_info.years = 2015:2050;
+% RCM_info.years = 1989:2014;
+RCM_info.years = 2015:2050;
 RCM_info.months = 1:12;
 RCM_grid.dl = 1/20;
 
@@ -56,6 +57,9 @@ param.fig_lev_rms = [0 4];
 
 [tmp.dropboxpath, tmp.error_status] = Func_0008_set_dropbox_path(computer);
 
+% RCM_info2=RCM_info;
+% GCM_info2=GCM_info;
+
 % %  working
 for testnameind=1:length(RCM_info.name)
     for regionind=1:length(RCM_info.region)
@@ -74,7 +78,10 @@ for testnameind=1:length(RCM_info.name)
             tmp.dropboxpath = '/home/kimyy/Dropbox';
         end
         addpath(genpath([tmp.dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', tmp.fs, 'function']));
-
+        
+%         RCM_info=RCM_info2;
+%         GCM_info=GCM_info2;
+        
 % %     set temporary variables (testname, regionname, filesep, ...)
         RCM_info.testname = RCM_info.name{testnameind};
         RCM_info.regionname = RCM_info.region{regionind};
@@ -123,10 +130,9 @@ for testnameind=1:length(RCM_info.name)
             flags.fig_switch(1)=1;
             flags.fig_switch(2)=1;
             flags.fig_switch(3)=2;
-            flags.fig_switch(4)=1;
+            flags.fig_switch(4)=2;
             flags.fig_switch(5)=0;
         end
-        
         if flags.fig_switch(1) > 0
             flags.fig_tmp = flags.fig_switch(1);
             SSH_2p_1st_001_sub_001_get_SSH;

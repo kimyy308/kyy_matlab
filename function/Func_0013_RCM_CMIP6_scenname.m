@@ -23,6 +23,8 @@ switch(testname)
         scenname='ssp585';
     case {'test2117', 'test2118', 'test2119', 'test2120', 'test2121'}
         scenname='historical';
+    case {'test2127', 'test2128', 'test2129', 'test2130', 'test2131'}
+        scenname='ssp585';
 end
 
 error_status = 1;
