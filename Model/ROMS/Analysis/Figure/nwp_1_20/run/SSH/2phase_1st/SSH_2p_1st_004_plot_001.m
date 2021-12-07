@@ -4,12 +4,12 @@ warning off;
 % all_testname2 = {'test2102', 'test2103', 'test2104', 'test2105', 'test2106'};
 % all_testname2 = {'test2107', 'test2108', 'test2109', 'test2110', 'test2111'};
 % all_testname2 = {'test2117', 'test2118', 'test2119', 'test2120', 'test2121'};
-% all_testname2 = {'test2127', 'test2128', 'test2129', 'test2130', 'test2131'};
-all_testname2 = {'test2129', 'test2130', 'test2131'};
+all_testname2 = {'test2127', 'test2128', 'test2129', 'test2130', 'test2131'};
+% all_testname2 = {'test2129', 'test2130', 'test2131'};
 
 % all_region2 ={'NWP'};
-all_region2 ={'NWP', 'AKP4'};
-% all_region2 ={'AKP4'};
+% all_region2 ={'NWP', 'AKP4'};
+all_region2 ={'AKP4'};
 
 % all_region2 ={'TEST'};
 
@@ -351,7 +351,9 @@ for testnameind2=1:length(all_testname2)
             
             tmp.tifname=strcat(dirs.figdir, gcmtestname, '_abs_ssh_trend_',num2str(min(RCM_info.years),'%04i'), ...
                 '_',num2str(max(RCM_info.years),'%04i'), '.tif'); %% ~_year_month.jpg
-
+            
+ 
+            
             if (exist(tmp.tifname , 'file') ~= 2 || fig_flag==2)
 %                 matname = [matdir, testname, '_', regionname, '_', '012_SSH_abs_trend', ...
 %                     '_', num2str(min(inputyear),'%04i'), '-', num2str(max(inputyear),'%04i'), '.mat'];
