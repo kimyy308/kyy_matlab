@@ -1,6 +1,6 @@
 % %  Updated 09-Oct-2021 by Yong-Yub Kim, structure
 % %  Updated 10-Nov-2021 by Yong-Yub Kim, added wind plot module
-
+% %  Updated 07-Dec-2021 by Yong-Yub Kim, added wind plot module
 
 close all; clear all;  clc;
 warning off;
@@ -10,9 +10,11 @@ warning off;
 % end
 
 % years_group=[1990, 2000, 2010];
-years_group=[2040, 2050];
+% years_group=[2040, 2050];
+years_group=[2015, 2020, 2030, 2040, 2050];
+
 % years_group=[2020, 2030, 2040, 2050];
-seasons_group={'all', 'summer', 'winter'};
+seasons_group={'all', 'spring', 'summer', 'fall', 'winter'};
 
 for years_groupi=1:length(years_group)
     for seasons_groupi=1:length(seasons_group)
@@ -23,7 +25,7 @@ for years_groupi=1:length(years_group)
 %         RCM_info.name={'test2117', 'test2118', 'test2119', 'test2120', 'test2121'};
         RCM_info.name={'test2127', 'test2128', 'test2129', 'test2130', 'test2131'};
 
-        RCM_info.abbs = {'RCM-CNRM', 'RCM-EC-Veg', 'RCM-ACC', 'RCM-CNRM-HR', 'RCM-CMCC'};
+        RCM_info.abbs = {'RCM-CNE', 'RCM-ECV', 'RCM-ACC', 'RCM-CNH', 'RCM-CMC'};
         RCM_info.model = 'nwp_1_20';
         % RCM_info.dataroot = '/data1/RCM/CMIP6/';
         RCM_info.dataroot = ['D:', filesep, 'Data', filesep, 'Model', filesep, ...
@@ -54,18 +56,20 @@ for years_groupi=1:length(years_group)
         switch(season)
             case 'all'
                 RCM_info.months =1:12;  
+            case 'spring'
+                RCM_info.months =[3,4,5];  
             case 'summer'
-                RCM_info.months =8;  
+                RCM_info.months =[6,7,8];  
+            case 'fall'
+                RCM_info.months =[9,10,11];  
             case 'winter'
-                RCM_info.months =2;  
+                RCM_info.months =[12,1,2];  
         end                
-                
                 
         RCM_grid.dl = 1/20;
         RCM_grid.gridname = {'lon_rho', 'lat_rho', 'lon_u', 'lat_u', 'lon_v', 'lat_v'};
 
         % RCM_info.testnames = {'test2102', 'test2103', 'test2104', 'test2105', 'test2106'};
-
 
         % all_region2 ={'NWP', 'YS', 'AKP2'}
 
@@ -78,7 +82,7 @@ for years_groupi=1:length(years_group)
         for testnameind2=1:length(RCM_info.name)
             for regionind2=1:length(RCM_info.region)
                 close all;
-                clearvars '*' -except RCM_info RCM_grid testnameind2 regionind2 years_groupi years_group seasons_group seasons_groupi
+                clearvars '*' -except RCM_info RCM_grid testnameind2 regionind2 years_groupi years_group seasons_group seasons_groupi season
                 tmp.fs=filesep;
                 % % % 
                 % %     set dropbox path
@@ -170,7 +174,6 @@ for years_groupi=1:length(years_group)
                     flags.fig_tmp = flags.fig_switch(7);
                     SSH_2p_1st_002_sub_007_wind_plot;
                 end
-
 
             end
         end

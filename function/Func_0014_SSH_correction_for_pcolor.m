@@ -75,6 +75,8 @@ switch(testname)
         ssh_correction_for_fig=-4.1331; % 1993-2014 AKP4 mean
     case('GCM_ENS3_historical')
         ssh_correction_for_fig=-3.2181; % 1993-2014 AKP4 mean
+    case('GCM_ENSg_historical')
+        ssh_correction_for_fig=-4.1331; % 1993-2014 AKP4 mean
 end
 
 end

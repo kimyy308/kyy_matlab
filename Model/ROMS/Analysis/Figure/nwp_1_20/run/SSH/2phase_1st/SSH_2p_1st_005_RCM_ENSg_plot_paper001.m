@@ -2,7 +2,8 @@ close all; clear all;  clc;
 warning off;
 
 % all_testname2 = {'test2102', 'test2103', 'test2104', 'test2105', 'test2106'};
-all_testname2 = {'test2117', 'test2118', 'test2119', 'test2120', 'test2121'};
+% all_testname2 = {'test2117', 'test2118', 'test2119', 'test2120', 'test2121'};
+all_testname2 = {'test2127', 'test2128', 'test2129', 'test2130', 'test2131'};
 
 % all_testname2 = {'test2102'};
 
@@ -52,8 +53,8 @@ all_region2 ={'AKP4'};
         sshdifflev = [0 20];
 
         % for snu_desktopd
-        inputyear = [1993:2014]; % % put year which you want to plot [year year ...]
-%         inputyear = [2015:2050]; % % put year which you want to plot [year year ...]        
+%         inputyear = [1993:2014]; % % put year which you want to plot [year year ...]
+        inputyear = [2015:2050]; % % put year which you want to plot [year year ...]        
         inputmonth = [1:12]; % % put month which you want to plot [month month ...]
 %         gcmtestname = Func_0004_get_GCMname_from_RCM(testname);
         scenname= Func_0013_RCM_CMIP6_scenname(all_testname2{1});
@@ -181,10 +182,10 @@ all_region2 ={'AKP4'};
         end
 
             % % for windows
-            figrawdir =strcat('Z:\내 드라이브\MEPL\project\SSH\6th_year\figure\nwp_1_20\','ENS','\',scenname,filesep,regionname,  filesep); % % where figure files will be saved
+            figrawdir =strcat('D:\MEPL\project\SSH\6th_year\figure\nwp_1_20\','ENS','\',scenname,filesep,regionname,  filesep); % % where figure files will be saved
             param_script =['C:\Users\user\Dropbox\source\matlab\Model\ROMS\Analysis\Figure\nwp_1_20\run\fig_param\fig_param_kyy_', regionname, '.m'];
 %             gcmfiledir = strcat('D:\Data\Model\CMIP5\zos\', scenname, '\interp\', gcmtestname, '\'); % % where data files are
-            dirs.figrawdir =strcat('Z:\내 드라이브\MEPL\project\SSH\6th_year\figure\nwp_1_20\'); % % where figure files will be saved
+            dirs.figrawdir =strcat('D:\MEPL\project\SSH\6th_year\figure\nwp_1_20\'); % % where figure files will be saved
             tmp.variable=variable;
             tmp.fs=filesep;
             tmp.regionname=regionname;
