@@ -107,6 +107,8 @@ m_grid_tickdir_type = 'in';
 % % set m_pcolor parameter
 m_pcolor_title_fontsize = 20;
 m_pcolor_shading_method = 'flat';
+m_pcolor_ref_text_x_location = 120.0;
+m_pcolor_ref_text_y_location = 45.6;
 
 % % set m_gshhs parameter
 m_gshhs_line_color = 'k';

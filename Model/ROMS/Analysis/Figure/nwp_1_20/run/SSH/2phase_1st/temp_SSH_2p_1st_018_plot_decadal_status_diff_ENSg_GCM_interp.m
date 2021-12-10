@@ -116,7 +116,7 @@ for regionind2=1:length(all_region2)
     param_script =['C:\Users\User\Dropbox\source\matlab\Model\ROMS\Analysis\Figure\nwp_1_20\run\fig_param\fig_param_kyy_CMIP6_interped_', regionname, '.m'];
     cmip6dir = strcat('D:\Data\Model\CMIP6\'); % % where data files are
     dirs.figrawdir =strcat('D:\MEPL\project\SSH\6th_year\figure\nwp_1_20\'); % % where figure files will be saved
-    dirs.enssavedir =strcat('D:\Data\Model\ROMS\nwp_1_20\2phase_1st\GCM_ENS\mean\');
+    dirs.enssavedir =strcat('D:\Data\Model\ROMS\nwp_1_20\2phase_1st\GCM_ENSg\mean\');
     tmp.fs=filesep;
     tmp.regionname=regionname;
 %     tmp.testname=testname;
@@ -130,14 +130,14 @@ for regionind2=1:length(all_region2)
     end 
     outfile = strcat(figdir,regionname);
 % start-------------------- earlier decadal current plot
-    pngname=strcat(outfile, '_diff_ENS_',scenname, '_interp_',regionname, '_clim_uv_',num2str(min(inputyear1),'%04i'), ...
+    pngname=strcat(outfile, '_diff_ENSg_',scenname, '_interp_',regionname, '_clim_uv_',num2str(min(inputyear1),'%04i'), ...
         '_',num2str(max(inputyear2),'%04i'), '.tif'); %% ~_year_month.jpg
     dirs.figdir=[dirs.figrawdir,'surface', tmp.fs, tmp.regionname, tmp.fs, 'vec', tmp.fs, ...
         num2str(min(RCM_info.years)), '_', num2str(max(RCM_info.years)), tmp.fs];
     if (exist(strcat(dirs.figdir) , 'dir') ~= 7)
         mkdir(strcat(dirs.figdir));
     end 
-    tmp.tifname=strcat(dirs.figdir, 'diff_GCM_ENS', '_clim_uv_',num2str(min(RCM_info.years),'%04i'), ...
+    tmp.tifname=strcat(dirs.figdir, 'diff_GCM_ENSg', '_clim_uv_',num2str(min(RCM_info.years),'%04i'), ...
     '_',num2str(max(RCM_info.years),'%04i'), '.tif'); %% ~_year_month.jpg
 
     variable='UV';
@@ -147,7 +147,7 @@ for regionind2=1:length(all_region2)
     early_u_rho=u_rho;
     early_v_rho=v_rho;
     
-    late_enssavefilename = [dirs.enssavedir, 'ENS_', regionname, '_', variable, '_mean_', num2str(min(inputyear2),'%04i'), '-', num2str(max(inputyear2),'%04i'), '.mat'];
+    late_enssavefilename = [dirs.enssavedir, 'ENSg_', regionname, '_', variable, '_mean_', num2str(min(inputyear2),'%04i'), '-', num2str(max(inputyear2),'%04i'), '.mat'];
     load(late_enssavefilename)
     late_u_rho=u_rho;
     late_v_rho=v_rho;
@@ -179,7 +179,7 @@ for regionind2=1:length(all_region2)
 
     m_text(m_quiver_ref_text_x_location, m_quiver_ref_text_y_location, '0.5 m/s', 'FontSize', m_quiver_ref_text_fontsize); 
     m_grid('fontsize', m_grid_fontsize, 'box', m_grid_box_type, 'tickdir', m_grid_tickdir_type);
-    titlename = strcat('UV diff, ','ENS',',(',num2str(min(inputyear1),'%04i'),'-',num2str(max(inputyear2),'%04i'),') ');  %% + glacier contribution
+    titlename = strcat('UV diff, ','ENSg',',(',num2str(min(inputyear1),'%04i'),'-',num2str(max(inputyear2),'%04i'),') ');  %% + glacier contribution
     title(titlename,'fontsize',m_pcolor_title_fontsize);  %%title
 
     set(gcf, 'PaperUnits', 'points');
@@ -193,22 +193,22 @@ for regionind2=1:length(all_region2)
 % start-------------------- earlier decadal SST, SSS plot
     for varind2=1:length(all_var2)
         variable=all_var2{varind2};
-        pngname=strcat(outfile, '_diff_ENS_',scenname, '_interp_',regionname, '_clim_', variable, '_',num2str(min(inputyear1),'%04i'), ...
+        pngname=strcat(outfile, '_diff_ENSg_',scenname, '_interp_',regionname, '_clim_', variable, '_',num2str(min(inputyear1),'%04i'), ...
         '_',num2str(max(inputyear2),'%04i'), '.tif'); %% ~_year_month.jpg
         dirs.figdir=[dirs.figrawdir,'surface', tmp.fs, tmp.regionname, tmp.fs, variable, tmp.fs, ...
             num2str(min(RCM_info.years)), '_', num2str(max(RCM_info.years)), tmp.fs];
         if (exist(strcat(dirs.figdir) , 'dir') ~= 7)
             mkdir(strcat(dirs.figdir));
         end 
-        tmp.tifname=strcat(dirs.figdir, 'diff_GCM_ENS', '_clim_', variable, '_',num2str(min(RCM_info.years),'%04i'), ...
+        tmp.tifname=strcat(dirs.figdir, 'diff_GCM_ENSg', '_clim_', variable, '_',num2str(min(RCM_info.years),'%04i'), ...
                      '_',num2str(max(RCM_info.years),'%04i'), '.tif'); %% ~_year_month.jpg
         run(param_script);
         
-        early_enssavefilename = [dirs.enssavedir, 'ENS_', regionname, '_', variable, '_mean_', num2str(min(inputyear1),'%04i'), '-', num2str(max(inputyear1),'%04i'), '.mat'];
+        early_enssavefilename = [dirs.enssavedir, 'ENSg_', regionname, '_', variable, '_mean_', num2str(min(inputyear1),'%04i'), '-', num2str(max(inputyear1),'%04i'), '.mat'];
         load(early_enssavefilename)
         early_data=mean_data;
 
-        late_enssavefilename = [dirs.enssavedir, 'ENS_', regionname, '_', variable, '_mean_', num2str(min(inputyear2),'%04i'), '-', num2str(max(inputyear2),'%04i'), '.mat'];
+        late_enssavefilename = [dirs.enssavedir, 'ENSg_', regionname, '_', variable, '_mean_', num2str(min(inputyear2),'%04i'), '-', num2str(max(inputyear2),'%04i'), '.mat'];
         load(late_enssavefilename)
         late_data=mean_data;
 
@@ -236,7 +236,7 @@ for regionind2=1:length(all_region2)
         m_gshhs_i('patch',m_gshhs_land_color);   % gray colored land
 
         m_grid('fontsize', m_grid_fontsize, 'box', m_grid_box_type, 'tickdir', m_grid_tickdir_type);
-        titlename = strcat(variable, ' diff, ','ENS',',(',num2str(min(inputyear1),'%04i'),'-',num2str(max(inputyear2),'%04i'),') ');  %% + glacier contribution
+        titlename = strcat(variable, ' diff, ','ENSg',',(',num2str(min(inputyear1),'%04i'),'-',num2str(max(inputyear2),'%04i'),') ');  %% + glacier contribution
         title(titlename,'fontsize',m_pcolor_title_fontsize);  %%title
 
         % set colorbar 

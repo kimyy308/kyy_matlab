@@ -7,9 +7,9 @@ warning off;
 all_testname2 = {'test2127', 'test2128', 'test2129', 'test2130', 'test2131'};
 % all_testname2 = {'test2129', 'test2130', 'test2131'};
 
-% all_region2 ={'NWP'};
+all_region2 ={'NWP'};
 % all_region2 ={'NWP', 'AKP4'};
-all_region2 ={'AKP4'};
+% all_region2 ={'AKP4'};
 
 % all_region2 ={'TEST'};
 
@@ -56,7 +56,7 @@ for testnameind2=1:length(all_testname2)
 
         % for snu_desktopd
         testname=all_testname2{testnameind2}    % % need to change
-%         inputyear = [1985:2014]; % % put year which you want to plot [year year ...]
+%         inputyear = [1993:2014]; % % put year which you want to plot [year year ...]
         inputyear = [2015:2050]; % % put year which you want to plot [year year ...]
 %         inputmonth = [1 2 3 4 5 6 7 8 9 10 11 12]; % % put month which you want to plot [month month ...]
         inputmonth = [1:12]; % % put month which you want to plot [month month ...]
@@ -347,13 +347,24 @@ for testnameind2=1:length(all_testname2)
 
                 hold off
                 close all;
+                
+                % % %         get grid (adm_div_all)
+                [RCM_grid.(['polygon_', 'adm_div_all']), RCM_grid.(['domain_', 'adm_div_all']), tmp.error_status] = ...
+                        Func_0007_get_polygon_data_from_regionname('adm_div_all');
+                RCM_grid.(['mask_', 'adm_div_all']) = ...
+                    double(inpolygon(RCM_grid.lon_rho,RCM_grid.lat_rho, ...
+                    RCM_grid.(['polygon_', 'adm_div_all'])(:,1), ...
+                    RCM_grid.(['polygon_', 'adm_div_all'])(:,2)));
+                RCM_grid.(['mask_', 'adm_div_all'])(RCM_grid.(['mask_', 'adm_div_all'])==0)=NaN;
+                RCM_data_trend.yearly_trend_adm_div_all=RCM_data_trend.yearly_trend .* RCM_grid.(['mask_', 'adm_div_all']);
+                [tmp.m_value, tmp.error_status] = ...
+                    Func_0011_get_area_weighted_mean(RCM_data_trend.yearly_trend_adm_div_all, RCM_grid.lon_rho, RCM_grid.lat_rho);
+                disp(['RCM adm_div_all trend: ', num2str(tmp.m_value), ])
             end
             
             tmp.tifname=strcat(dirs.figdir, gcmtestname, '_abs_ssh_trend_',num2str(min(RCM_info.years),'%04i'), ...
                 '_',num2str(max(RCM_info.years),'%04i'), '.tif'); %% ~_year_month.jpg
-            
- 
-            
+
             if (exist(tmp.tifname , 'file') ~= 2 || fig_flag==2)
 %                 matname = [matdir, testname, '_', regionname, '_', '012_SSH_abs_trend', ...
 %                     '_', num2str(min(inputyear),'%04i'), '-', num2str(max(inputyear),'%04i'), '.mat'];
@@ -376,13 +387,16 @@ for testnameind2=1:length(all_testname2)
 
 %                 mean_trend_filtered=mean(trend_filtered(:),'omitnan');
                 shading(gca,m_pcolor_shading_method);
+                
                 m_gshhs_i('color',m_gshhs_line_color);
                 m_gshhs_i('patch',m_gshhs_land_color);   % gray colored land
+                
+                
         %         titlename = strcat(regionname,', SSH trend, ','Mean=',num2str(round(mean_trend_filtered,2)),'mm/y');
                 [m_value, error_status] = Func_0011_get_area_weighted_mean(GCM_data_trend.yearly_trend, GCM_grid.lon, GCM_grid.lat);
 %                 titlename = strcat('SSH trend(abs), ',GCM_info.abbs{testnameind2}, ',(',num2str(min(inputyear),'%04i'),'-', ...
 %                     num2str(max(inputyear),'%04i'),'), ','M=',num2str(round(m_value,2)), ' mm/y');  %% + glacier contribution
-                titlename = strcat(GCM_info.abbs{testnameind2}, ',(',num2str(min(inputyear),'%04i'),'-', ...
+                titlename = strcat(GCM_info.abb, ',(',num2str(min(inputyear),'%04i'),'-', ...
                     num2str(max(inputyear),'%04i'),'), ','M=',num2str(round(m_value,2)), ' mm/y');  %% + glacier contribution
 
                 title(titlename,'fontsize',m_pcolor_title_fontsize);  %%title
@@ -393,6 +407,7 @@ for testnameind2=1:length(all_testname2)
                 set(h,'fontsize',colorbar_fontsize);
     %             title(h,'mm/y','fontsize',colorbar_title_fontsize);
                 caxis(abstrendlev);
+%                 caxis([3 7]);
 
                 % set grid
                 m_grid('fontsize', m_grid_fontsize, 'box', m_grid_box_type, 'tickdir', m_grid_tickdir_type);
@@ -410,9 +425,33 @@ for testnameind2=1:length(all_testname2)
 
                 hold off
                 close all;
+                % % %         get grid (adm_div_all)
+                [RCM_grid.(['polygon_', 'adm_div_all']), RCM_grid.(['domain_', 'adm_div_all']), tmp.error_status] = ...
+                        Func_0007_get_polygon_data_from_regionname('adm_div_all');
+                GCM_grid.(['mask_', 'adm_div_all']) = ...
+                    double(inpolygon(GCM_grid.lon,GCM_grid.lat, ...
+                    RCM_grid.(['polygon_', 'adm_div_all'])(:,1), ...
+                    RCM_grid.(['polygon_', 'adm_div_all'])(:,2)));
+                GCM_grid.(['mask_', 'adm_div_all'])(GCM_grid.(['mask_', 'adm_div_all'])==0)=NaN;
+                GCM_data_trend.yearly_trend_adm_div_all=GCM_data_trend.yearly_trend .* GCM_grid.(['mask_', 'adm_div_all']);
+                [tmp.m_value, tmp.error_status] = ...
+                    Func_0011_get_area_weighted_mean(GCM_data_trend.yearly_trend_adm_div_all, GCM_grid.lon, GCM_grid.lat);
+                disp(['GCM adm_div_all trend: ', num2str(tmp.m_value), ])
             end
             
-            
+            CMEMS_info.matname_trends = [RCM_info.savedir, RCM_info.regionname, '_CMEMS_ssh_trend_', ...
+                    num2str(min(RCM_info.years),'%04i'),'_',num2str(max(RCM_info.years),'%04i'),'.mat'];
+            load(CMEMS_info.matname_trends);
+            CMEMS_grid.(['mask_', 'adm_div_all']) = ...
+                double(inpolygon(CMEMS_grid.lon2,CMEMS_grid.lat2, ...
+                RCM_grid.(['polygon_', 'adm_div_all'])(:,1), ...
+                RCM_grid.(['polygon_', 'adm_div_all'])(:,2)));
+            CMEMS_grid.(['mask_', 'adm_div_all'])(CMEMS_grid.(['mask_', 'adm_div_all'])==0)=NaN;
+            CMEMS_data_trend.yearly_trend_adm_div_all=CMEMS_data_trend.yearly_trend .* CMEMS_grid.(['mask_', 'adm_div_all']);
+            [tmp.m_value, tmp.error_status] = ...
+                Func_0011_get_area_weighted_mean(CMEMS_data_trend.yearly_trend_adm_div_all, CMEMS_grid.lon2, CMEMS_grid.lat2);
+            disp(['CMEMS adm_div_all trend: ', num2str(tmp.m_value), ])
+            pcolor(CMEMS_grid.lon2', CMEMS_grid.lat2', CMEMS_data_trend.yearly_trend_adm_div_all'); shading flat; colorbar;
             fig_flag=0;
         end
  

@@ -26,58 +26,58 @@ param.colorbar_title_fontsize = 15;
 param.colormap_style = jet;  % % default
 
 % % set varname
-if (exist('variable' , 'var') == 1)
-    switch(variable)
+if (isfield(tmp, 'variable') == 1)
+    switch(tmp.variable)
         case('SST')
-            varname = 'temp'
+            param.varname = 'temp';
             param.colorbar_title = '(^oC)';
             param.colorbar_lev = [-2 33];
             param.colorbar_lev_meanplot = [12 22];
             param.colorbar_diff_lev = [0 6];
         case('BT')
-            varname = 'temp'
+            param.varname = 'temp';
             param.colorbar_title = '(^oC)';
             param.colorbar_lev = [-2 33];
         case('SSS')
-            varname = 'salt'
+            param.varname = 'salt';
             param.colorbar_title = ' ';
             param.colorbar_lev = [25 35];
         case('SSH')
-            varname = 'zeta'
+            param.varname = 'zeta';
             param.colorbar_title = '(m)';
             param.colormap_style = bwrmap;
 %             colorbar_lev = [-0.2 1.0];
             param.colorbar_lev = [0 1.3];
             param.colorbar_diff_lev = [0 0.8];
         case('vert_temp')
-            varname = 'temp'
+            param.varname = 'temp';
             param.colorbar_title = '(^oC)';
             param.colormap_style = jet;
         case('vert_salt')
-            varname = 'salt'
+            param.varname = 'salt';
             param.colorbar_title = ' ';
             param.colormap_style = jet;
         case('vert_u')
-            varname = 'u'
+            param.varname = 'u';
             param.colorbar_title = '(m/s)';
             param.colormap_style = bwrmap;
         case('vert_v')
-            varname = 'v'
+            param.varname = 'v';
             param.colorbar_title = '(m/s)';
             param.colormap_style = bwrmap;
         case('vert_rho')
-            varname = 'zeta'
+            param.varname = 'zeta';
             param.colorbar_title = '(kg/m^3)';
         case('speed')
-            varname = 'speed'
+            param.varname = 'speed';
             param.colorbar_title = '(m/s)';
             param.colorbar_lev_meanplot = [0.03 0.18];
         case('H')
-            varname = 'h'
+            param.varname = 'h';
             param.colorbar_title = '(m)';
             param.colorbar_lev = [-3000 0];
         otherwise
-            varname = variable;
+            param.varname = tmp.variable;
             param.colorbar_title = ' ';
     end
 end

@@ -12,12 +12,12 @@ for varind2=1:length(RCM_info.vars)
 
     tmp.tifname=strcat(dirs.figdir, tmp.testname, '_clim_', tmp.variable, '_', ...
         num2str(min(RCM_info.years),'%04i'), '_',num2str(max(RCM_info.years),'%04i'), ...
-        '_', num2str(min(RCM_info.months),'%04i'), '-', num2str(max(RCM_info.months),'%04i'),'.tif'); %% ~_year_month.jpg
+        '_', num2str(RCM_info.months(1),'%04i'), '-', num2str(RCM_info.months(end),'%04i'),'.tif'); %% ~_year_month.jpg
     if (exist(tmp.tifname , 'file') ~= 2 || flags.fig_switch(3)==2)      
         run(tmp.param_script);
         tmp.matname = [dirs.matdir, tmp.testname, '_', tmp.regionname, '_', tmp.variable,...
             '_mean_', num2str(min(RCM_info.years),'%04i'), '-', num2str(max(RCM_info.years),'%04i'),...
-        '_', num2str(min(RCM_info.months),'%04i'), '-', num2str(max(RCM_info.months),'%04i'), '.mat'];
+        '_', num2str(RCM_info.months(1),'%04i'), '-', num2str(RCM_info.months(end),'%04i'), '.mat'];
         if (exist(tmp.matname , 'file') ~= 2 || flags.fig_switch(3)==2)
             for yearij=1:length(RCM_info.years)
                 tmp.tempyear=RCM_info.years(yearij);
@@ -109,9 +109,9 @@ for varind2=1:length(RCM_info.vars)
 
         m_grid('fontsize', param.m_grid_fontsize, 'box', param.m_grid_box_type, 'tickdir', param.m_grid_tickdir_type);
         if min(RCM_info.years) == max(RCM_info.years)
-            tmp.titlename = strcat(tmp.variable, ', ',tmp.abb,',(',num2str(max(RCM_info.years),'%04i'),') ');                        
+            tmp.titlename = strcat(tmp.variable, ', ', season(1:2), ', ', tmp.abb,',(',num2str(max(RCM_info.years),'%04i'),') ');                        
         else
-            tmp.titlename = strcat(tmp.variable, ', ',tmp.abb,',(',num2str(min(RCM_info.years),'%04i'),'-',num2str(max(RCM_info.years),'%04i'),') ');
+            tmp.titlename = strcat(tmp.variable, ', ', season(1:2), ', ', tmp.abb,',(',num2str(min(RCM_info.years),'%04i'),'-',num2str(max(RCM_info.years),'%04i'),') ');
         end
         title(tmp.titlename,'fontsize',param.m_pcolor_title_fontsize);  %%title
 
@@ -131,7 +131,7 @@ for varind2=1:length(RCM_info.vars)
         end
 
         disp(['M = ', num2str(tmp.m_value)]);
-        m_text(param.m_quiver_ref_text_x_location, param.m_quiver_ref_text_y_location, ['M = ', num2str(tmp.m_value)], 'FontSize', param.m_quiver_ref_text_fontsize); 
+        m_text(param.m_pcolor_ref_text_x_location, param.m_pcolor_ref_text_y_location, ['M = ', num2str(tmp.m_value)], 'FontSize', param.m_quiver_ref_text_fontsize); 
 
         set(gcf, 'PaperUnits', 'points');
         set(gcf, 'PaperSize', [param.hor_paper_size_x, param.hor_paper_size_y]);

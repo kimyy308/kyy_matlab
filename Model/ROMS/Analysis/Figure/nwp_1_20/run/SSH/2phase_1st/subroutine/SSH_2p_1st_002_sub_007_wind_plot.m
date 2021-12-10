@@ -12,12 +12,12 @@ end
 
 tmp.tifname=strcat(dirs.figdir, tmp.testname, '_clim_wind_',num2str(min(RCM_info.years),'%04i'), ...
     '_',num2str(max(RCM_info.years),'%04i'), ...
-                    '_', num2str(min(RCM_info.months),'%04i'), '-', num2str(max(RCM_info.months),'%04i'),'.tif'); %% ~_year_month.jpg
+                    '_', num2str(RCM_info.months(1),'%04i'), '-', num2str(RCM_info.months(end),'%04i'),'.tif'); %% ~_year_month.jpg
 tmp.variable='wind';
 if (exist(tmp.tifname , 'file') ~= 2 || flags.fig_switch(7)==2)      
     tmp.matname = [dirs.matdir, tmp.testname, '_', tmp.regionname, '_', tmp.variable, ...
         '_mean_', num2str(min(RCM_info.years),'%04i'), '-', num2str(max(RCM_info.years),'%04i'), ...
-                    '_', num2str(min(RCM_info.months),'%04i'), '-', num2str(max(RCM_info.months),'%04i'),'.mat'];
+                    '_', num2str(RCM_info.months(1),'%04i'), '-', num2str(RCM_info.months(end),'%04i'),'.mat'];
     if (exist(tmp.matname , 'file') ~= 2 || flags.fig_switch(7)==2)
         for yearij=1:length(RCM_info.years)
             tmp.tempyear=RCM_info.years(yearij);
@@ -110,9 +110,9 @@ if (exist(tmp.tifname , 'file') ~= 2 || flags.fig_switch(7)==2)
     m_text(param.m_quiver_ref_text_x_location, param.m_quiver_ref_text_y_location, param.m_quiver_wind_ref_text, 'FontSize', param.m_quiver_ref_text_fontsize); 
     m_grid('fontsize', param.m_grid_fontsize, 'box', param.m_grid_box_type, 'tickdir', param.m_grid_tickdir_type);
     if min(RCM_info.years) == max(RCM_info.years)
-        param.titlename = strcat('Wind, ', tmp.abb,',(',num2str(min(RCM_info.years),'%04i'),') ');  %% + glacier contribution
+        param.titlename = strcat('Wind, ',  season(1:2), ', ', tmp.abb,',(',num2str(min(RCM_info.years),'%04i'),') ');  %% + glacier contribution
     else
-        param.titlename = strcat('Wind, ', tmp.abb,',(',num2str(min(RCM_info.years),'%04i'),'-',num2str(max(RCM_info.years),'%04i'),') ');  %% + glacier contribution
+        param.titlename = strcat('Wind, ',  season(1:2), ', ', tmp.abb,',(',num2str(min(RCM_info.years),'%04i'),'-',num2str(max(RCM_info.years),'%04i'),') ');  %% + glacier contribution
     end
     title(param.titlename,'fontsize',param.m_pcolor_title_fontsize);  %%title
 
