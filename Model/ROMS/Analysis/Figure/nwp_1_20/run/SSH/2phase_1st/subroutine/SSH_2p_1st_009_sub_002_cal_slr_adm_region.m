@@ -103,7 +103,7 @@ m_gshhs_i('color',[0.8 0.8 0.8])
 m_gshhs_i('patch',[0.8 0.8 0.8]);   % gray colored land
 
 set(cmap, 'Ticks', (1:3))
-set(cmap, 'TickLabels', {'황해', '남해', '동해'})
+set(cmap, 'TickLabels', {'서해안', '남해안', '동해안'})
 set(cmap, 'Fontsize', 25)
 
 

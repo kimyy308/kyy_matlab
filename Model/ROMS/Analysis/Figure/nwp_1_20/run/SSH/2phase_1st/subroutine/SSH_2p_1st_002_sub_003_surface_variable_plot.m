@@ -33,6 +33,14 @@ for varind2=1:length(RCM_info.vars)
                         otherwise
                             tmp.filename=[dirs.filedir, param.varname, tmp.fs, tmp.yearstr, filesep, ...
                                 'NWP_pck_', tmp.testname, '_', param.varname, '_monthly_', tmp.yearstr, '_', tmp.monthstr, '.nc'];
+                            tmp.uwindfilename=[dirs.filedir, 'Uwind', tmp.fs, tmp.yearstr, filesep, ...
+                                'NWP_pck_', tmp.testname, '_', 'Uwind', '_monthly_', tmp.yearstr, '_', tmp.monthstr, '.nc'];
+                            tmp.vwindfilename=[dirs.filedir, 'Vwind', tmp.fs, tmp.yearstr, filesep, ...
+                                'NWP_pck_', tmp.testname, '_', 'Vwind', '_monthly_', tmp.yearstr, '_', tmp.monthstr, '.nc'];
+                            tmp.sustrfilename=[dirs.filedir, 'sustr', tmp.fs, tmp.yearstr, filesep, ...
+                                'NWP_pck_', tmp.testname, '_', 'sustr', '_monthly_', tmp.yearstr, '_', tmp.monthstr, '.nc'];
+                            tmp.svstrfilename=[dirs.filedir, 'svstr', tmp.fs, tmp.yearstr, filesep, ...
+                                'NWP_pck_', tmp.testname, '_', 'svstr', '_monthly_', tmp.yearstr, '_', tmp.monthstr, '.nc'];
                     end
                     if (isfield(RCM_grid, 'lon_rho') ~= 1)
                         for gridi=1:length(RCM_grid.gridname)
@@ -45,8 +53,18 @@ for varind2=1:length(RCM_info.vars)
                             RCM_grid.lon_rho(RCM_grid.lon_min(1):RCM_grid.lon_max(1), RCM_grid.lat_min(1):RCM_grid.lat_max(1));
                         cut_lat_rho = ...
                             RCM_grid.lat_rho(RCM_grid.lon_min(1):RCM_grid.lon_max(1), RCM_grid.lat_min(1):RCM_grid.lat_max(1));
+                        cut_lon_psi = ...
+                            RCM_grid.lon_rho(RCM_grid.lon_min(1):RCM_grid.lon_max(1)-1, RCM_grid.lat_min(1):RCM_grid.lat_max(1)-1);
+                        cut_lat_psi = ...
+                            RCM_grid.lat_rho(RCM_grid.lon_min(1):RCM_grid.lon_max(1)-1, RCM_grid.lat_min(1):RCM_grid.lat_max(1)-1);
+                        RCM_grid.xdist=1./RCM_grid.pm;
+                        RCM_grid.ydist=1./RCM_grid.pn;
+                        cut_xdist= ...
+                            RCM_grid.xdist(RCM_grid.lon_min(1):RCM_grid.lon_max(1), RCM_grid.lat_min(1):RCM_grid.lat_max(1));
+                        cut_ydist= ...
+                            RCM_grid.ydist(RCM_grid.lon_min(1):RCM_grid.lon_max(1), RCM_grid.lat_min(1):RCM_grid.lat_max(1));
                     end
-                    tmp.data_info = ncinfo(tmp.filename, param.varname); 
+%                     tmp.data_info = ncinfo(tmp.filename, param.varname); 
 
                     if (strcmp(tmp.variable,'SST')==1 || strcmp(tmp.variable,'SSS')==1)
                         tmp.data = ncread(tmp.filename,param.varname,[RCM_grid.lon_min(1) RCM_grid.lat_min(1) 1 1], ...
@@ -62,6 +80,19 @@ for varind2=1:length(RCM_info.vars)
                        tmp.data = ncread(tmp.filename,param.varname,[RCM_grid.lon_min(1) RCM_grid.lat_min(1) 1 1], ...
                             [RCM_grid.lon_max(1)-RCM_grid.lon_min(1)+1 RCM_grid.lat_max(1)-RCM_grid.lat_min(1) 1 1]);  %% cut horizontal area [x,y,z] (wider than target area) 
                        tmp.data = v2rho_2d(tmp.data')';
+                   elseif (strcmp(tmp.variable,'wcurl')==1)
+                        tmp.uwind = ncread(tmp.uwindfilename,'Uwind',[RCM_grid.lon_min(1) RCM_grid.lat_min(1) 1], ...
+                            [RCM_grid.lon_max(1)-RCM_grid.lon_min(1)+1 RCM_grid.lat_max(1)-RCM_grid.lat_min(1)+1 1]);  %% cut horizontal area [x,y,z] (wider than target area)
+                        tmp.vwind = ncread(tmp.vwindfilename,'Vwind',[RCM_grid.lon_min(1) RCM_grid.lat_min(1) 1], ...
+                            [RCM_grid.lon_max(1)-RCM_grid.lon_min(1)+1 RCM_grid.lat_max(1)-RCM_grid.lat_min(1)+1 1]);  %% cut horizontal area [x,y,z] (wider than target area)
+                        tmp.data=get_curl(tmp.uwind, tmp.vwind, cut_xdist, cut_ydist);
+                    elseif (strcmp(tmp.variable,'wstrcurl')==1)
+                        tmp.sustr = ncread(tmp.sustrfilename,'sustr',[RCM_grid.lon_min(1) RCM_grid.lat_min(1) 1], ...
+                            [RCM_grid.lon_max(1)-RCM_grid.lon_min(1) RCM_grid.lat_max(1)-RCM_grid.lat_min(1)+1 1]);  %% cut horizontal area [x,y,z] (wider than target area)
+                        tmp.svstr = ncread(tmp.svstrfilename,'svstr',[RCM_grid.lon_min(1) RCM_grid.lat_min(1) 1], ...
+                            [RCM_grid.lon_max(1)-RCM_grid.lon_min(1)+1 RCM_grid.lat_max(1)-RCM_grid.lat_min(1) 1]);  %% cut horizontal area [x,y,z] (wider than target area)
+                        tmp.wstrcurl=get_curl(tmp.sustr, tmp.svstr, cut_xdist, cut_ydist);
+                        tmp.data=griddata(cut_lon_psi,cut_lat_psi,tmp.wstrcurl,cut_lon_rho,cut_lat_rho);
                     end
                     if (exist('mean_data', 'var') ~= 1)
                         mean_data=zeros(size(tmp.data));
@@ -73,9 +104,9 @@ for varind2=1:length(RCM_info.vars)
             save(tmp.matname, 'mean_data', 'cut_lon_rho', 'cut_lat_rho');
         else
             load(tmp.matname);
-        end
+        end 
 
-%                     [m_value, error_status] = Func_0011_get_area_weighted_mean(mean_data, cut_lon_rho, cut_lat_rho)
+        [m_value, error_status] = Func_0011_get_area_weighted_mean(mean_data, cut_lon_rho, cut_lat_rho)
 
         if(strcmp(tmp.variable, 'SST'))
             mean_data=mean_data;
@@ -128,6 +159,9 @@ for varind2=1:length(RCM_info.vars)
         switch tmp.variable
             case {'SST', 'SSH', 'SSS'}
                 caxis(param.colorbar_lev);
+            case {'wstrcurl', 'wcurl'}
+                caxis([-max(abs(mean_data(:))), max(abs(mean_data(:)))]);
+                colormap(cmaps.byrmap);
         end
 
         disp(['M = ', num2str(tmp.m_value)]);
@@ -140,5 +174,43 @@ for varind2=1:length(RCM_info.vars)
         close all;
         clear mean_data
         RCM_grid=rmfield(RCM_grid, 'lon_rho');
+    end
+end
+
+function wstrcurl=get_curl(uwstr, vwstr, xdist, ydist)
+    loncount=size(uwstr,1);
+    latcount=size(uwstr,2);
+    if (size(uwstr,1) == size(vwstr,1))
+        wstrcurl=NaN(loncount, latcount);
+        for i=1:loncount-2
+            for j=1:latcount-2
+                wstrcurl(i+1,j+1) = (vwstr(i+2,j+1)-vwstr(i,j+1)) ...
+                    / (xdist(i+1, j+1)*2) + ...
+                    (uwstr(i+1,j+2)-uwstr(i+1,j)) ...
+                    / (ydist(i+1, j+1)*2);
+            end
+        end
+        wstrcurl(1,2:latcount-2)=wstrcurl(2,2:latcount-2);
+        wstrcurl(loncount, 2:latcount-2) =wstrcurl(loncount-1,2:latcount-2);
+        wstrcurl(2:loncount-2,1)=wstrcurl(2:loncount-2,2);
+        wstrcurl(2:loncount-2,latcount)=wstrcurl(2:loncount-2,latcount-1);
+        wstrcurl(1,1)=wstrcurl(2,2);
+        wstrcurl(1,latcount)=wstrcurl(2,latcount-1);
+        wstrcurl(loncount,1)=wstrcurl(loncount-1,2);
+        wstrcurl(loncount,latcount)=wstrcurl(loncount-1,latcount-1);
+    elseif (size(uwstr,1) ~= size(vwstr,1))
+        uloncount=size(uwstr,1);
+        ulatcount=size(uwstr,2);
+        vloncount=size(vwstr,1);
+        vlatcount=size(vwstr,2);
+        wstrcurl=NaN(uloncount, vlatcount);
+        for i=1:uloncount-1
+            for j=1:vlatcount-1
+                wstrcurl(i,j) = (vwstr(i+1,j)-vwstr(i,j)) ...
+                    / (xdist(i, j)*2) + ...
+                    (uwstr(i,j+1)-uwstr(i,j)) ...
+                    / (ydist(i, j)*2);  % N m-2 m-1
+            end
+        end
     end
 end

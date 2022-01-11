@@ -14,7 +14,13 @@ nwppolygon = ...
      164.0, 52.0;
      164.0, 15.0];
 
-
+% % southern Northwest Pacific polygon
+snwppolygon = ...
+    [120.0, 15.0;
+     120.0, 20.0;
+     164.0, 20.0;
+     164.0, 15.0];
+ 
 % % East Sea polygon for masking
 espolygon = ...
     [130.2, 33.3;
@@ -260,9 +266,14 @@ ysecspolygon = ...
         150.0, 32.0];
 
 % % EKWC for masking (for DA)
-   ekwcpolygon = ...
+    ekwcpolygon = ...
        [128.0, 40.0;
         133.0, 40.0
+        133.0, 35.0;
+        128.0, 35.0];
+    ekwc2polygon = ...
+       [127.0, 42.0;
+        133.0, 42.0
         133.0, 35.0;
         128.0, 35.0];
  

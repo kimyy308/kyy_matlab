@@ -117,7 +117,7 @@ GCM_fig.tot_trend_rand=[GCM_mean_trend.ens.(['adm_div_all','_rand'])'];
 
 
 RCM_info.subregions = {'adm_div_YS', 'adm_div_SS', 'adm_div_ES'};
-RCM_info.subregions_korean = {'황해', '남해', '동해'};
+RCM_info.subregions_korean = {'서해안', '남해안', '동해안'};
 for i=1:length(RCM_info.subregions)
     tmp.subregion=RCM_info.subregions{i};
     RCM_fig.tot_trend_rand = [RCM_fig.tot_trend_rand;  RCM_mean_trend.ens.([tmp.subregion,'_rand'])' ];
@@ -131,7 +131,7 @@ end
 
 
 RCM_fig.trend_rand_name = ...
-    repmat({'한반도 주변'},length(RCM_mean_trend.ens.([RCM_info.regionname,'_rand'])),1);
+    repmat({'관할해역 전체'},length(RCM_mean_trend.ens.([RCM_info.regionname,'_rand'])),1);
 RCM_fig.tot_trend_rand_name = RCM_fig.trend_rand_name;
 for i=1:length(RCM_info.subregions)
     tmp.subregion=RCM_info.subregions_korean{i};

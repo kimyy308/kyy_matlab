@@ -16,7 +16,7 @@ clc
 run('./../Run/start');
 % run('./../Run/start_damo');
 romstools_param
-testname='test53';
+testname='test2117';
 system_name=computer;
 if (strcmp(system_name,'PCWIN64'))
     % % for windows
@@ -32,7 +32,7 @@ warning off
 % season_cycle=[9650 9257.5 11632.5 21150 32450 41425 ...
 % 	      47300 36925 33025 27000 19350 11215];
 
-year=[2006:2014];  %% if year == 0, make climate data!
+year=[2015:2020];  %% if year == 0, make climate data!
 
 year2 = year;
 
@@ -44,7 +44,7 @@ year2 = year;
 
 % riv = load('cal_discharge_all.txt');
 % riv = load('cal_discharge_all9210.txt');
-riv = load('datong_1961_2018.txt');
+riv = load('datong_1961_2020.txt');
 
 
 % riv2= riv(12:end-1,:);

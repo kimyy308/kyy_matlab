@@ -35,31 +35,46 @@ switch(testname)
         ssh_correction_for_fig=-0.2507; %mean of test2102~2106
         
     case{'test2117', 'test2127'}
-        ssh_correction_for_fig=-0.3295; % 1995-2014 AKP4 mean
+%         ssh_correction_for_fig=-0.3295; % 1995-2014 AKP4 mean (from SSH_2p_1st_002 decadal function)
+        ssh_correction_for_fig=-0.4473; % 1995-2014 AKP4 mean (from AKP4 yearly mean, SSH_2p_1st_012 from raw sea-level)
     case{'test2118', 'test2128'}
-        ssh_correction_for_fig=-0.2384; % 1995-2014 AKP4 mean   
+%         ssh_correction_for_fig=-0.2384; % 1995-2014 AKP4 mean 
+        ssh_correction_for_fig=-0.4044; % 1995-2014 AKP4 mean (from AKP4 yearly mean, SSH_2p_1st_012 from raw sea-level)        
     case{'test2119', 'test2129'}
-        ssh_correction_for_fig=-0.2835; % 1995-2014 AKP4 mean  
+%         ssh_correction_for_fig=-0.2835; % 1995-2014 AKP4 mean
+        ssh_correction_for_fig=-0.3875; % 1995-2014 AKP4 mean (from AKP4 yearly mean, SSH_2p_1st_012 from raw sea-level)                
     case{'test2120', 'test2130'}
-        ssh_correction_for_fig=-0.2898; % 1995-2014 AKP4 mean  
+%         ssh_correction_for_fig=-0.2898; % 1995-2014 AKP4 mean  
+        ssh_correction_for_fig=-0.3914; % 1995-2014 AKP4 mean (from AKP4 yearly mean, SSH_2p_1st_012 from raw sea-level)                        
     case{'test2121', 'test2131'}
-        ssh_correction_for_fig=-0.1346; % 1995-2014 AKP4 mean  
+%         ssh_correction_for_fig=-0.1346; % 1995-2014 AKP4 mean  
+        ssh_correction_for_fig=-0.3204; % 1995-2014 AKP4 mean (from AKP4 yearly mean, SSH_2p_1st_012 from raw sea-level)                                
     case{'RCM_ENSg_historical'}
-        ssh_correction_for_fig=-0.2552; %mean of test2117~2121
-        
+%         ssh_correction_for_fig=-0.2552; %mean of test2117~2121
+        ssh_correction_for_fig=-0.3902; %mean of test2117~2121
+    case{'v04'}
+        ssh_correction_for_fig=0.3107; % SODA + ERA5
+    case{'v05'}
+        ssh_correction_for_fig=0.3191; % GLORYS + ERA5
         
     case('CNRM-ESM2-1')
-        ssh_correction_for_fig=-5.4511; % 1995-2014 AKP4 mean           
+%         ssh_correction_for_fig=-5.4511; % 1995-2014 AKP4 mean    
+        ssh_correction_for_fig=-5.6232; % 1995-2014 AKP4 mean (from AKP4 yearly mean, SSH_2p_1st_012 from raw sea-level)
     case('EC-Earth3-Veg')
-        ssh_correction_for_fig=-5.2266; % 1995-2014 AKP4 mean           
+%         ssh_correction_for_fig=-5.2266; % 1995-2014 AKP4 mean  
+        ssh_correction_for_fig=-5.4209; % 1995-2014 AKP4 mean (from AKP4 yearly mean, SSH_2p_1st_012 from raw sea-level)        
     case('ACCESS-CM2')
-        ssh_correction_for_fig=0.9015; % 1995-2014 AKP4 mean                   
+%         ssh_correction_for_fig=0.9015; % 1995-2014 AKP4 mean
+        ssh_correction_for_fig=0.8417; % 1995-2014 AKP4 mean (from AKP4 yearly mean, SSH_2p_1st_012 from raw sea-level)                
     case('CNRM-CM6-1-HR')
-        ssh_correction_for_fig=-5.5332; % 1995-2014 AKP4 mean                           
+%         ssh_correction_for_fig=-5.5332; % 1995-2014 AKP4 mean 
+        ssh_correction_for_fig=-5.6777; % 1995-2014 AKP4 mean (from AKP4 yearly mean, SSH_2p_1st_012 from raw sea-level)                        
     case('CMCC-ESM2')
-        ssh_correction_for_fig=-5.4682; % 1995-2014 AKP4 mean
+%         ssh_correction_for_fig=-5.4682; % 1995-2014 AKP4 mean
+        ssh_correction_for_fig=-5.6199; % 1995-2014 AKP4 mean (from AKP4 yearly mean, SSH_2p_1st_012 from raw sea-level)                                
     case('GCM_ENS')
-        ssh_correction_for_fig=-4.1189; % 1995-2014 AKP4 mean
+%         ssh_correction_for_fig=-4.1189; % 1995-2014 AKP4 mean
+        ssh_correction_for_fig=-4.3; % 1995-2014 AKP4 mean   from interpolated ensemble   (from AKP4 yearly mean, SSH_2p_1st_012 from raw sea-level)     
 %     case('CMEMS')
 %         ssh_correction_for_fig=0.6222; % 2014 AKP4 mean       
 %     case{'test2102'}

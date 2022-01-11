@@ -31,8 +31,12 @@ switch(regionname)
         refpolygon(2,1)=lonlat(2);
         refpolygon(1,2)=lonlat(3);
         refpolygon(2,2)=lonlat(4);
+    case('SNWP') %% southern northwest Pacific
+        refpolygon=snwppolygon;
     case('ES') %% East Sea
         refpolygon=espolygon;
+    case('EKWC2') %% East Korean Warm Current
+        refpolygon=ekwc2polygon;
     case('NES') %% Northern East Sea
         refpolygon=nespolygon;
     case('SES') %% Southern East Sea

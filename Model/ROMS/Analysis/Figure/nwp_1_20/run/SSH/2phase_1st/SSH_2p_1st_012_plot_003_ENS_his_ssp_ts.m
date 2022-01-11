@@ -51,9 +51,9 @@ RCM_info.regionname = RCM_info.region{regionind};
 
 RCM_info.savedir = [RCM_info.dataroot, RCM_info.name{end}, tmp.fs, 'run', tmp.fs, ...
             tmp.variable, tmp.fs];
-RCM_info.matname_mean_data_trend = [RCM_info.savedir,'ENSg','_',RCM_info.regionname, '_RCM_ssh_mean_data_trend_', ...
+RCM_info.matname_mean_data_trend = [RCM_info.savedir,'ENS_adm','_',RCM_info.regionname, '_RCM_ssh_mean_data_trend_', ...
     num2str(min(RCM_info.years),'%04i'),'_',num2str(max(RCM_info.years),'%04i'),'.mat'];
-GCM_info.matname_mean_data_trend = [RCM_info.savedir,'ENSg','_',RCM_info.regionname, '_GCM_ssh_mean_data_trend_', ...
+GCM_info.matname_mean_data_trend = [RCM_info.savedir,'ENS_adm','_',RCM_info.regionname, '_GCM_ssh_mean_data_trend_', ...
     num2str(min(RCM_info.years),'%04i'),'_',num2str(max(RCM_info.years),'%04i'),'.mat'];
 
 
@@ -105,9 +105,9 @@ RCM_info.name={'test2117', 'test2118', 'test2119', 'test2120', 'test2121'};
 RCM_info.years = 1985:2014;
 RCM_info.savedir = [RCM_info.dataroot, RCM_info.name{end}, tmp.fs, 'run', tmp.fs, ...
             tmp.variable, tmp.fs];
-RCM_info.matname_mean_data_trend = [RCM_info.savedir,'ENSg','_',RCM_info.regionname, '_RCM_ssh_mean_data_trend_', ...
+RCM_info.matname_mean_data_trend = [RCM_info.savedir,'ENS_adm','_',RCM_info.regionname, '_RCM_ssh_mean_data_trend_', ...
     num2str(min(RCM_info.years),'%04i'),'_',num2str(max(RCM_info.years),'%04i'),'.mat'];
-GCM_info.matname_mean_data_trend = [RCM_info.savedir,'ENSg','_',RCM_info.regionname, '_GCM_ssh_mean_data_trend_', ...
+GCM_info.matname_mean_data_trend = [RCM_info.savedir,'ENS_adm','_',RCM_info.regionname, '_GCM_ssh_mean_data_trend_', ...
     num2str(min(RCM_info.years),'%04i'),'_',num2str(max(RCM_info.years),'%04i'),'.mat'];
 load(RCM_info.matname_mean_data_trend);
 load(GCM_info.matname_mean_data_trend);
@@ -127,13 +127,35 @@ GCM_mean_data_all.ens.(RCM_info.regionname)(1:length(RCM_info_historical.years))
     GCM_mean_data_historical.ens.(RCM_info.regionname);
 GCM_mean_data_all.ens.(RCM_info.regionname)(length(RCM_info_historical.years)+1:length(RCM_info_historical.years)+length(RCM_info_ssp585.years)) = ...
     GCM_mean_data_ssp585.ens.(RCM_info.regionname);
+for j=1:length(RCM_info.name)
+    RCM_mean_data_all.(RCM_info.name{j}).(RCM_info.regionname)(1:length(RCM_info_historical.years)) = ...
+        RCM_mean_data_historical.(RCM_info.name{j}).(RCM_info.regionname);
+    RCM_mean_data_all.(RCM_info.name{j}).(RCM_info.regionname)(length(RCM_info_historical.years)+1:length(RCM_info_historical.years)+length(RCM_info_ssp585.years)) = ...
+        RCM_mean_data_ssp585.(RCM_info_ssp585.name{j}).(RCM_info.regionname);
+    GCM_mean_data_all.(RCM_info.name{j}).(RCM_info.regionname)(1:length(RCM_info_historical.years)) = ...
+        GCM_mean_data_historical.(RCM_info.name{j}).(RCM_info.regionname);
+    GCM_mean_data_all.(RCM_info.name{j}).(RCM_info.regionname)(length(RCM_info_historical.years)+1:length(RCM_info_historical.years)+length(RCM_info_ssp585.years)) = ...
+        GCM_mean_data_ssp585.(RCM_info_ssp585.name{j}).(RCM_info.regionname);
+end
+
+
 
 RCM_mean_data_all.ens.([RCM_info.regionname, '_95_14'])= mean(RCM_mean_data_all.ens.(RCM_info.regionname)(11:30));
 GCM_mean_data_all.ens.([RCM_info.regionname, '_95_14'])= mean(GCM_mean_data_all.ens.(RCM_info.regionname)(11:30));
 RCM_mean_data_all.ens.([RCM_info.regionname, '_slr_50'])= RCM_mean_data_all.ens.(RCM_info.regionname)(end) - RCM_mean_data_all.ens.([RCM_info.regionname, '_95_14']);
 GCM_mean_data_all.ens.([RCM_info.regionname, '_slr_50'])= GCM_mean_data_all.ens.(RCM_info.regionname)(end) - GCM_mean_data_all.ens.([RCM_info.regionname, '_95_14']);
+for i=1:length(RCM_info.name)
+    RCM_mean_data_all.(RCM_info.name{i}).([RCM_info.regionname, '_95_14'])= mean(RCM_mean_data_all.(RCM_info.name{i}).(RCM_info.regionname)(11:30));
+    GCM_mean_data_all.(RCM_info.name{i}).([RCM_info.regionname, '_95_14'])= mean(GCM_mean_data_all.(RCM_info.name{i}).(RCM_info.regionname)(11:30));
+    RCM_mean_data_all.(RCM_info.name{i}).([RCM_info.regionname, '_slr_50'])= RCM_mean_data_all.(RCM_info.name{i}).(RCM_info.regionname)(end) - RCM_mean_data_all.(RCM_info.name{i}).([RCM_info.regionname, '_95_14']);
+    GCM_mean_data_all.(RCM_info.name{i}).([RCM_info.regionname, '_slr_50'])= GCM_mean_data_all.(RCM_info.name{i}).(RCM_info.regionname)(end) - GCM_mean_data_all.(RCM_info.name{i}).([RCM_info.regionname, '_95_14']);
+end
 
-RCM_info_all.subregions = {'ES_KHOA', 'YS_KHOA', 'SS_KHOA'};
+
+% RCM_info_all.subregions = {'ES_KHOA', 'YS_KHOA', 'SS_KHOA'};
+RCM_info_all.subregions = {'adm_div_all', 'adm_div_ES', 'adm_div_YS', 'adm_div_SS'};
+% RCM_info_all.subregions = {'NWP'};
+
 for i=1:length(RCM_info_all.subregions)
     tmp.subregion=RCM_info_all.subregions{i};
     RCM_mean_data_all.ens.(tmp.subregion)(1:length(RCM_info_historical.years)) = ...
@@ -144,10 +166,50 @@ for i=1:length(RCM_info_all.subregions)
         GCM_mean_data_historical.ens.(tmp.subregion);
     GCM_mean_data_all.ens.(tmp.subregion)(length(RCM_info_historical.years)+1:length(RCM_info_historical.years)+length(RCM_info_ssp585.years)) = ...
         GCM_mean_data_ssp585.ens.(tmp.subregion);
+    for j=1:length(RCM_info.name)
+        RCM_mean_data_all.(RCM_info.name{j}).(tmp.subregion)(1:length(RCM_info_historical.years)) = ...
+            RCM_mean_data_historical.(RCM_info.name{j}).(tmp.subregion);
+        RCM_mean_data_all.(RCM_info.name{j}).(tmp.subregion)(length(RCM_info_historical.years)+1:length(RCM_info_historical.years)+length(RCM_info_ssp585.years)) = ...
+            RCM_mean_data_ssp585.(RCM_info_ssp585.name{j}).(tmp.subregion);
+        GCM_mean_data_all.(RCM_info.name{j}).(tmp.subregion)(1:length(RCM_info_historical.years)) = ...
+            GCM_mean_data_historical.(RCM_info.name{j}).(tmp.subregion);
+        GCM_mean_data_all.(RCM_info.name{j}).(tmp.subregion)(length(RCM_info_historical.years)+1:length(RCM_info_historical.years)+length(RCM_info_ssp585.years)) = ...
+            GCM_mean_data_ssp585.(RCM_info_ssp585.name{j}).(tmp.subregion);
+    end
+    
     RCM_mean_data_all.ens.([tmp.subregion, '_95_14'])= mean(RCM_mean_data_all.ens.(tmp.subregion)(11:30));
     GCM_mean_data_all.ens.([tmp.subregion, '_95_14'])= mean(GCM_mean_data_all.ens.(tmp.subregion)(11:30));
     RCM_mean_data_all.ens.([tmp.subregion, '_slr_50'])= RCM_mean_data_all.ens.(tmp.subregion)(end) - RCM_mean_data_all.ens.([tmp.subregion, '_95_14']);
     GCM_mean_data_all.ens.([tmp.subregion, '_slr_50'])= GCM_mean_data_all.ens.(tmp.subregion)(end) - GCM_mean_data_all.ens.([tmp.subregion, '_95_14']);
+    for j=1:length(RCM_info.name)
+        RCM_mean_data_all.(RCM_info.name{j}).([tmp.subregion, '_95_14'])= mean(RCM_mean_data_all.(RCM_info.name{j}).(tmp.subregion)(11:30));
+        GCM_mean_data_all.(RCM_info.name{j}).([tmp.subregion, '_95_14'])= mean(GCM_mean_data_all.(RCM_info.name{j}).(tmp.subregion)(11:30));
+        RCM_mean_data_all.(RCM_info.name{j}).([tmp.subregion, '_slr_50'])= RCM_mean_data_all.(RCM_info.name{j}).(tmp.subregion)(end) - RCM_mean_data_all.(RCM_info.name{j}).([tmp.subregion, '_95_14']);
+        GCM_mean_data_all.(RCM_info.name{j}).([tmp.subregion, '_slr_50'])= GCM_mean_data_all.(RCM_info.name{j}).(tmp.subregion)(end) - GCM_mean_data_all.(RCM_info.name{j}).([tmp.subregion, '_95_14']);
+    end
+end
+
+
+switch (RCM_info.regionname)
+    case({'NWP', 'AKP4'})
+        % %  tidal station
+        RCM_mean_data_all.ens.tidal_station(:,1:length(RCM_info_historical.years)) = ...
+            RCM_mean_data_historical.ens.tidal_station(:,1:length(RCM_info_historical.years));
+        RCM_mean_data_all.ens.tidal_station(:,length(RCM_info_historical.years)+1:length(RCM_info_historical.years)+length(RCM_info_ssp585.years)) = ...
+            RCM_mean_data_ssp585.ens.tidal_station;
+        GCM_mean_data_all.ens.tidal_station(:,1:length(RCM_info_historical.years)) = ...
+            GCM_mean_data_historical.ens.tidal_station(:,1:length(RCM_info_historical.years));
+        GCM_mean_data_all.ens.tidal_station(:,length(RCM_info_historical.years)+1:length(RCM_info_historical.years)+length(RCM_info_ssp585.years)) = ...
+            GCM_mean_data_ssp585.ens.tidal_station;
+
+        for i=1:length(RCM_info.tidal_name)
+            RCM_mean_data_all.ens.tidal_station_95_14(i)= mean(RCM_mean_data_all.ens.tidal_station(i,11:30));
+            GCM_mean_data_all.ens.tidal_station_95_14(i)= mean(GCM_mean_data_all.ens.tidal_station(i,11:30));
+            RCM_mean_data_all.ens.tidal_station_slr_50(i)= RCM_mean_data_all.ens.tidal_station(i,end) - RCM_mean_data_all.ens.tidal_station_95_14(i);
+            GCM_mean_data_all.ens.tidal_station_slr_50(i)= GCM_mean_data_all.ens.tidal_station(i,end) - GCM_mean_data_all.ens.tidal_station_95_14(i);
+        end
+    otherwise
+        disp(RCM_info.regionname)
 end
 
 
@@ -205,9 +267,10 @@ GCM_mean_data_all.ens.([RCM_info.regionname, '_slr_lower_50'])= ...
     GCM_mean_data_all.ens.([RCM_info.regionname, '_rand_lower_limit'])(end) - ...
     GCM_mean_data_all.ens.([RCM_info.regionname, '_95_14']);
 
+
 for i=1:length(RCM_info_all.subregions)
     tmp.subregion=RCM_info_all.subregions{i};
-     RCM_mean_data_all.ens.([tmp.subregion, '_slr_upper_50'])= ...
+    RCM_mean_data_all.ens.([tmp.subregion, '_slr_upper_50'])= ...
         RCM_mean_data_all.ens.([tmp.subregion, '_rand_upper_limit'])(end) - ...
         RCM_mean_data_all.ens.([tmp.subregion, '_95_14']);
     RCM_mean_data_all.ens.([tmp.subregion, '_slr_lower_50'])= ...
@@ -220,7 +283,6 @@ for i=1:length(RCM_info_all.subregions)
         GCM_mean_data_all.ens.([tmp.subregion, '_rand_lower_limit'])(end) - ...
         GCM_mean_data_all.ens.([tmp.subregion, '_95_14']);
 end
-
 
 val_transparent = 0.2;
 figure_ts.RCM_cmap = [0,0,1]; % blue  [1 0 0] -> red
@@ -235,39 +297,188 @@ figure_ts.GCM_cmap_range = hsv2rgb(figure_ts.GCM_cmap_range);
 
 
 
-% % %  RCM time series with confident range
+% % %  RCM time series with confident range (AKP4)
 figure_ts.fig_RCM_range=fill([RCM_info_ssp585.years, flip(RCM_info_ssp585.years)], ...
-    [RCM_mean_data_ssp585.ens.AKP4_rand_lower_limit, flip(RCM_mean_data_ssp585.ens.AKP4_rand_upper_limit)].*100.0, figure_ts.RCM_cmap_range);
+    [RCM_mean_data_ssp585.ens.([RCM_info.regionname,'_rand_lower_limit']), flip(RCM_mean_data_ssp585.ens.([RCM_info.regionname,'_rand_upper_limit']))].*100.0, figure_ts.RCM_cmap_range);
 figure_ts.fig_RCM_range.FaceColor = figure_ts.RCM_cmap_range;
 figure_ts.fig_RCM_range.EdgeColor = 'none';
 hold on
-figure_ts.fig_RCM=plot(RCM_info_all.years, RCM_mean_data_all.ens.AKP4.*100.0, 'color', figure_ts.RCM_cmap);
+figure_ts.fig_RCM=plot(RCM_info_all.years, RCM_mean_data_all.ens.(RCM_info.regionname).*100.0, 'color', figure_ts.RCM_cmap);
 figure_ts.fig_RCM.LineWidth= 2;
 hold off
 xlabel('Year')
 ylabel('Sea-level (cm)')
 set(gca,'fontsize',15)
-ylim([40 100])
+% ylim([60 110])
 xlim([min(RCM_info_all.years) max(RCM_info_all.years)])
-tifname= ['D:\MEPL\project\SSH\6th_year\figure\nwp_1_20\all\ts\RCM_ssh_ts_hist_', 'ssp585', '_', ...
+tifname= ['D:\MEPL\project\SSH\6th_year\figure\nwp_1_20\all\ts\RCM_', RCM_info.regionname, '_ssh_ts_hist_', 'ssp585', '_', ...
     num2str(min(RCM_info.years),'%04i'),'_',num2str(max(RCM_info.years),'%04i'), '.tif'];
 saveas(gcf,tifname,'tif'); RemoveWhiteSpace([], 'file', tifname);
+close all;
 
-% % %  GCM time series with confident range
+% % %  GCM time series with confident range (AKP4)
 figure_ts.fig_GCM_range=fill([RCM_info_ssp585.years, flip(RCM_info_ssp585.years)], ...
-    [GCM_mean_data_ssp585.ens.AKP4_rand_lower_limit, flip(GCM_mean_data_ssp585.ens.AKP4_rand_upper_limit)].*100.0, figure_ts.RCM_cmap_range);
+    [GCM_mean_data_ssp585.ens.([RCM_info.regionname,'_rand_lower_limit']), flip(GCM_mean_data_ssp585.ens.([RCM_info.regionname,'_rand_upper_limit']))].*100.0, figure_ts.RCM_cmap_range);
 figure_ts.fig_GCM_range.FaceColor = figure_ts.GCM_cmap_range;
 figure_ts.fig_GCM_range.EdgeColor = 'none';
 hold on
-figure_ts.fig_GCM=plot(RCM_info_all.years, GCM_mean_data_all.ens.AKP4.*100.0, 'color', figure_ts.GCM_cmap);
+figure_ts.fig_GCM=plot(RCM_info_all.years, GCM_mean_data_all.ens.(RCM_info.regionname).*100.0, 'color', figure_ts.GCM_cmap);
 figure_ts.fig_GCM.LineWidth= 2;
 hold off
 xlabel('Year')
 ylabel('Sea-level (cm)')
 set(gca,'fontsize',15)
-ylim([40 100])
+% ylim([60 110])
 xlim([min(RCM_info_all.years) max(RCM_info_all.years)])
-tifname= ['D:\MEPL\project\SSH\6th_year\figure\nwp_1_20\all\ts\GCM_ssh_ts_hist_', 'ssp585', '_', ...
+tifname= ['D:\MEPL\project\SSH\6th_year\figure\nwp_1_20\all\ts\GCM_', RCM_info.regionname, '_ssh_ts_hist_', 'ssp585', '_', ...
     num2str(min(RCM_info.years),'%04i'),'_',num2str(max(RCM_info.years),'%04i'), '.tif'];
 saveas(gcf,tifname,'tif'); RemoveWhiteSpace([], 'file', tifname);
 close all;
+
+
+switch (RCM_info.regionname)
+    case({'AKP4'})       
+        % % %  RCM time series with confident range adm_div_all
+        figure_ts.fig_RCM_range=fill([RCM_info_ssp585.years, flip(RCM_info_ssp585.years)], ...
+            [RCM_mean_data_ssp585.ens.adm_div_all_rand_lower_limit, flip(RCM_mean_data_ssp585.ens.adm_div_all_rand_upper_limit)].*100.0, figure_ts.RCM_cmap_range);
+        figure_ts.fig_RCM_range.FaceColor = figure_ts.RCM_cmap_range;
+        figure_ts.fig_RCM_range.EdgeColor = 'none';
+        hold on
+        figure_ts.fig_RCM=plot(RCM_info_all.years, RCM_mean_data_all.ens.adm_div_all.*100.0, 'color', figure_ts.RCM_cmap);
+        figure_ts.fig_RCM.LineWidth= 2;
+        hold off
+        xlabel('Year')
+        ylabel('Sea-level (cm)')
+        set(gca,'fontsize',15)
+        % ylim([60 110])
+        xlim([min(RCM_info_all.years) max(RCM_info_all.years)])
+        tifname= ['D:\MEPL\project\SSH\6th_year\figure\nwp_1_20\all\ts\RCM_adm_div_all_ssh_ts_hist_', 'ssp585', '_', ...
+            num2str(min(RCM_info.years),'%04i'),'_',num2str(max(RCM_info.years),'%04i'), '.tif'];
+        saveas(gcf,tifname,'tif'); RemoveWhiteSpace([], 'file', tifname);
+        close all;
+
+        % % %  GCM time series with confident range adm_div_all
+        figure_ts.fig_GCM_range=fill([RCM_info_ssp585.years, flip(RCM_info_ssp585.years)], ...
+            [GCM_mean_data_ssp585.ens.adm_div_all_rand_lower_limit, flip(GCM_mean_data_ssp585.ens.adm_div_all_rand_upper_limit)].*100.0, figure_ts.RCM_cmap_range);
+        figure_ts.fig_GCM_range.FaceColor = figure_ts.GCM_cmap_range;
+        figure_ts.fig_GCM_range.EdgeColor = 'none';
+        hold on
+        figure_ts.fig_GCM=plot(RCM_info_all.years, GCM_mean_data_all.ens.adm_div_all.*100.0, 'color', figure_ts.GCM_cmap);
+        figure_ts.fig_GCM.LineWidth= 2;
+        hold off
+        xlabel('Year')
+        ylabel('Sea-level (cm)')
+        set(gca,'fontsize',15)
+        % ylim([60 110])
+        xlim([min(RCM_info_all.years) max(RCM_info_all.years)])
+        tifname= ['D:\MEPL\project\SSH\6th_year\figure\nwp_1_20\all\ts\GCM_adm_div_all_ssh_ts_hist_', 'ssp585', '_', ...
+            num2str(min(RCM_info.years),'%04i'),'_',num2str(max(RCM_info.years),'%04i'), '.tif'];
+        saveas(gcf,tifname,'tif'); RemoveWhiteSpace([], 'file', tifname);
+        close all;
+    otherwise
+end
+
+% % %  RCMs time series
+close all;
+hold on
+figure_ts.fig_RCM=plot(RCM_info_all.years, ...
+    [RCM_mean_data_historical.test2117.(RCM_info.regionname), RCM_mean_data_ssp585.test2127.(RCM_info.regionname)].*100.0);
+figure_ts.fig_RCM=plot(RCM_info_all.years, ...
+    [RCM_mean_data_historical.test2118.(RCM_info.regionname), RCM_mean_data_ssp585.test2128.(RCM_info.regionname)].*100.0);
+figure_ts.fig_RCM=plot(RCM_info_all.years, ...
+    [RCM_mean_data_historical.test2119.(RCM_info.regionname), RCM_mean_data_ssp585.test2129.(RCM_info.regionname)].*100.0);
+figure_ts.fig_RCM=plot(RCM_info_all.years, ...
+    [RCM_mean_data_historical.test2120.(RCM_info.regionname), RCM_mean_data_ssp585.test2130.(RCM_info.regionname)].*100.0);
+figure_ts.fig_RCM=plot(RCM_info_all.years, ...
+    [RCM_mean_data_historical.test2121.(RCM_info.regionname), RCM_mean_data_ssp585.test2131.(RCM_info.regionname)].*100.0);
+figure_ts.fig_RCM.LineWidth= 2;
+hold off
+
+% hold on
+% [s_c_fig] = Func_0017_SSH_correction_for_CMIP6_RMSE('test2117');
+% figure_ts.fig_RCM=plot(RCM_info_all.years, ...
+%     ([RCM_mean_data_historical.test2117.(RCM_info.regionname), RCM_mean_data_ssp585.test2127.(RCM_info.regionname)]-s_c_fig).*100.0);
+% [s_c_fig] = Func_0017_SSH_correction_for_CMIP6_RMSE('test2118');
+% figure_ts.fig_RCM=plot(RCM_info_all.years, ...
+%     ([RCM_mean_data_historical.test2118.(RCM_info.regionname), RCM_mean_data_ssp585.test2128.(RCM_info.regionname)]-s_c_fig).*100.0);
+% [s_c_fig] = Func_0017_SSH_correction_for_CMIP6_RMSE('test2119');
+% figure_ts.fig_RCM=plot(RCM_info_all.years, ...
+%     ([RCM_mean_data_historical.test2119.(RCM_info.regionname), RCM_mean_data_ssp585.test2129.(RCM_info.regionname)]-s_c_fig).*100.0);
+% [s_c_fig] = Func_0017_SSH_correction_for_CMIP6_RMSE('test2120');
+% figure_ts.fig_RCM=plot(RCM_info_all.years, ...
+%     ([RCM_mean_data_historical.test2120.(RCM_info.regionname), RCM_mean_data_ssp585.test2130.(RCM_info.regionname)]-s_c_fig).*100.0);
+% [s_c_fig] = Func_0017_SSH_correction_for_CMIP6_RMSE('test2121');
+% figure_ts.fig_RCM=plot(RCM_info_all.years, ...
+%     ([RCM_mean_data_historical.test2121.(RCM_info.regionname), RCM_mean_data_ssp585.test2131.(RCM_info.regionname)]-s_c_fig).*100.0);
+% hold off
+
+xlabel('Year')
+ylabel('Sea-level (cm)')
+set(gca,'fontsize',15)
+% ylim([60 110])
+xlim([min(RCM_info_all.years) max(RCM_info_all.years)])
+grid minor
+legend('RCM-CNRM', 'RCM-ECV', 'RCM-ACC', 'RCM-CNH', 'RCM-CMC', 'Location', 'northwest')
+tifname= ['D:\MEPL\project\SSH\6th_year\figure\nwp_1_20\all\ts\RCM_', RCM_info.regionname, '_alltest_ssh_ts_hist_', 'ssp585', '_', ...
+    num2str(min(RCM_info.years),'%04i'),'_',num2str(max(RCM_info.years),'%04i'), '.tif'];
+saveas(gcf,tifname,'tif'); RemoveWhiteSpace([], 'file', tifname);
+close all;
+
+% % %  GCMs time series
+close all;
+hold on
+figure_ts.fig_GCM=plot(RCM_info_all.years, ...
+    [GCM_mean_data_historical.test2117.(RCM_info.regionname), GCM_mean_data_ssp585.test2127.(RCM_info.regionname)].*100.0);
+figure_ts.fig_GCM=plot(RCM_info_all.years, ...
+    [GCM_mean_data_historical.test2118.(RCM_info.regionname), GCM_mean_data_ssp585.test2128.(RCM_info.regionname)].*100.0);
+figure_ts.fig_GCM=plot(RCM_info_all.years, ...
+    [GCM_mean_data_historical.test2119.(RCM_info.regionname), GCM_mean_data_ssp585.test2129.(RCM_info.regionname)].*100.0);
+figure_ts.fig_GCM=plot(RCM_info_all.years, ...
+    [GCM_mean_data_historical.test2120.(RCM_info.regionname), GCM_mean_data_ssp585.test2130.(RCM_info.regionname)].*100.0);
+figure_ts.fig_GCM=plot(RCM_info_all.years, ...
+    [GCM_mean_data_historical.test2121.(RCM_info.regionname), GCM_mean_data_ssp585.test2131.(RCM_info.regionname)].*100.0);
+figure_ts.fig_GCM.LineWidth= 2;
+hold off
+xlabel('Year')
+ylabel('Sea-level (cm)')
+set(gca,'fontsize',15)
+% ylim([60 110])
+xlim([min(RCM_info_all.years) max(RCM_info_all.years)])
+grid minor
+legend('GCM-CNRM', 'GCM-ECV', 'GCM-ACC', 'GCM-CNH', 'GCM-CMC', 'Location', 'northwest')
+tifname= ['D:\MEPL\project\SSH\6th_year\figure\nwp_1_20\all\ts\GCM_', RCM_info.regionname, '_alltest_ssh_ts_hist_', 'ssp585', '_', ...
+    num2str(min(RCM_info.years),'%04i'),'_',num2str(max(RCM_info.years),'%04i'), '.tif'];
+saveas(gcf,tifname,'tif'); RemoveWhiteSpace([], 'file', tifname);
+close all;
+
+
+
+% % % trends
+% for i=1:5
+%     RCM_YS(i)=RCM_mean_trend_ssp585.(RCM_info_ssp585.name{i}).adm_div_YS
+%     RCM_ES(i)=RCM_mean_trend_ssp585.(RCM_info_ssp585.name{i}).adm_div_ES
+%     RCM_SS(i)=RCM_mean_trend_ssp585.(RCM_info_ssp585.name{i}).adm_div_SS
+% end
+% 
+% for i=1:5
+%     GCM_YS(i)=GCM_mean_trend_ssp585.(RCM_info_ssp585.name{i}).adm_div_YS
+%     GCM_ES(i)=GCM_mean_trend_ssp585.(RCM_info_ssp585.name{i}).adm_div_ES
+%     GCM_SS(i)=GCM_mean_trend_ssp585.(RCM_info_ssp585.name{i}).adm_div_SS
+% end
+
+% % % % slr
+% for i=1:5
+%     RCM_all(i)=RCM_mean_data_all.(RCM_info_historical.name{i}).adm_div_all_slr_50
+%     RCM_AKP4(i)=RCM_mean_data_all.(RCM_info_historical.name{i}).AKP4_slr_50    
+%     RCM_YS(i)=RCM_mean_data_all.(RCM_info_historical.name{i}).adm_div_YS_slr_50
+%     RCM_ES(i)=RCM_mean_data_all.(RCM_info_historical.name{i}).adm_div_ES_slr_50
+%     RCM_SS(i)=RCM_mean_data_all.(RCM_info_historical.name{i}).adm_div_SS_slr_50
+% end
+% 
+% for i=1:5
+%     GCM_all(i)=GCM_mean_data_all.(RCM_info_historical.name{i}).adm_div_all_slr_50
+%     GCM_AKP4(i)=GCM_mean_data_all.(RCM_info_historical.name{i}).AKP4_slr_50  
+%     GCM_YS(i)=GCM_mean_data_all.(RCM_info_historical.name{i}).adm_div_YS_slr_50
+%     GCM_ES(i)=GCM_mean_data_all.(RCM_info_historical.name{i}).adm_div_ES_slr_50
+%     GCM_SS(i)=GCM_mean_data_all.(RCM_info_historical.name{i}).adm_div_SS_slr_50
+% end

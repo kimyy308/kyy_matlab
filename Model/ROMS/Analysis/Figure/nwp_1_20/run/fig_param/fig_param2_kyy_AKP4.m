@@ -148,6 +148,7 @@ param.m_quiver_ref_vwind_value = param.m_quiver_ref_uwind_value/10000.0;
 param.m_quiver_ref_v_value = param.m_quiver_ref_u_value/10000.0;
 param.m_quiver_ref_text = [num2str(param.m_quiver_ref_u_value),' m/s'];
 param.m_quiver_wind_ref_text = [num2str(param.m_quiver_ref_uwind_value),' m/s'];
+param.m_quiver_ekman_ref_text = [num2str(param.m_quiver_ref_u_value),' m^3/s'];
 param.m_quiver_ref_text_fontsize = 15;
 param.m_quiver_ref_text_x_location = 124.5;
 param.m_quiver_ref_text_y_location = 45.6;

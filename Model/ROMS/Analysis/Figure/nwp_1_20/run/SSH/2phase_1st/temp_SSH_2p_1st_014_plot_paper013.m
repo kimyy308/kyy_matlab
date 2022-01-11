@@ -1,7 +1,7 @@
 close all; clear all;  clc;
 warning off;
 % all_region2 ={'NWP','AKP2'}
-all_region2 ={'NWP'}
+all_region2 ={'NWP', 'AKP4'}
 
 for regionind2=1:length(all_region2)
     close all;
@@ -44,7 +44,7 @@ for regionind2=1:length(all_region2)
     % for snu_desktopd
     testname='cmems';    % % need to change
     inputyear1 = [1993:2014]; % % put year which you want to plot [year year ...]
-    inputmonth = [1 2 3 4 5 6 7 8 9 10 11 12]; % % put month which you want to plot [month month ...]
+%     inputmonth = [1 2 3 4 5 6 7 8 9 10 11 12]; % % put month which you want to plot [month month ...]
 
 %         varname ='zeta'
     run('nwp_polygon_point.m');
@@ -94,8 +94,7 @@ for regionind2=1:length(all_region2)
     % regionname='EKB';
     % lonlat = [127, 129.5, 38, 40.5];
 
-        load(['Z:\내 드라이브\Data\Observation\CMEMS\',regionname, ...
-            'cmems_gos_',num2str(min(inputyear1),'%04i'),'_',num2str(max(inputyear1),'%04i'),'.mat']);
+        
 %         filename = ['G:\Data\Model\ROMS\nwp_1_20\',testname,'\run\',testname,'_',regionname, ...
 %                     '_ssh_analysis_',num2str(min(inputyear),'%04i'),'_',num2str(max(inputyear),'%04i'),'.nc'];
 
@@ -105,22 +104,53 @@ for regionind2=1:length(all_region2)
 
     if (strcmp(system_name,'PCWIN64'))
         % % for windows
-        figrawdir =strcat('Z:\내 드라이브\MEPL\project\SSH\6th_year\figure\CMEMS\',regionname,'\'); % % where figure files will be saved
+        figrawdir =strcat('D:\MEPL\project\SSH\6th_year\figure\CMEMS\',regionname,'\'); % % where figure files will be saved
         param_script =['C:\Users\user\Dropbox\source\matlab\Model\ROMS\Analysis\Figure\nwp_1_20\run\fig_param\fig_param_kyy_cmems_', regionname, '.m'];
 %         filedir = strcat('H:\Data\Model\ROMS\nwp_1_20\', testname, '\run\'); % % where data files are
     elseif (strcmp(system_name,'GLNXA64'))
     end
 
-    run(param_script);
 
     figdir=[figrawdir,'CLIM\'];
     if (exist(strcat(figdir) , 'dir') ~= 7)
         mkdir(strcat(figdir));
     end 
     outfile = strcat(figdir,regionname);
+
+    seasons_group={'all', 'spring', 'summer', 'fall', 'winter'};
+          
+    for seasons_groupi=1:length(seasons_group)
+        season=seasons_group{seasons_groupi};
+        switch(season)
+            case 'all'
+                inputmonth =1:12;  
+            case 'spring'
+                inputmonth =[3,4,5];  
+            case 'summer'
+                inputmonth =[6,7,8];  
+            case 'fall'
+                inputmonth =[9,10,11];  
+            case 'winter'
+                inputmonth =[12,1,2];  
+        end  
+    
 % start-------------------- earlier decadal current plot
-    pngname=strcat(outfile, '_', testname,'_',regionname, '_clim_uv_',num2str(min(inputyear1),'%04i'), ...
-        '_',num2str(max(inputyear1),'%04i'), '.tif'); %% ~_year_month.jpg
+%         pngname=strcat(outfile, '_', testname,'_',regionname, '_clim_uv_',num2str(min(inputyear1),'%04i'), ...
+%             '_',num2str(max(inputyear1),'%04i'), '.tif'); %% ~_year_month.jpg
+    load(['D:\Data\Observation\CMEMS\',regionname, ...
+            'cmems_gos_',num2str(min(inputyear1),'%04i'),'_',num2str(max(inputyear1),'%04i'), ...
+            '_', num2str(inputmonth(1),'%02i'), '-', num2str(inputmonth(end),'%02i'), '.mat']);
+        
+        run(param_script);
+
+        
+        pngname=strcat(outfile, '_', testname,'_',regionname, '_clim_uv_',num2str(min(inputyear1),'%04i'), ...
+            '_',num2str(max(inputyear1),'%04i'), ...
+            '_', num2str(inputmonth(1),'%02i'), '-', num2str(inputmonth(end),'%02i'), '.tif'); %% ~_year_month.jpg
+%         tmp.tifname=strcat(dirs.figdir, tmp.testname, '_clim_uv_',num2str(min(RCM_info.years),'%04i'), ...
+%             '_',num2str(max(RCM_info.years),'%04i'), ...
+%             '_', num2str(RCM_info.months(1),'%04i'), '-', num2str(RCM_info.months(end),'%04i'),'.tif'); %% ~_year_month.jpg
+
 %     if (exist(pngname , 'file') ~= 2)        
         
         cut_lon_rho = cmems_lon2;
@@ -139,7 +169,8 @@ for regionind2=1:length(all_region2)
 
         yearstr_min=num2str(inputyear1(1));
         yearstr_max=num2str(inputyear1(end));
-        save(['Z:\내 드라이브\Data\Observation\CMEMS\',regionname, '_cmems_', 'vec','_',yearstr_min, '_', yearstr_max, '.mat'], 'cut_lon_rho', 'cut_lat_rho', 'u_rho','v_rho');
+        save(['D:\Data\Observation\CMEMS\',regionname, '_cmems_', 'vec','_',yearstr_min, '_', yearstr_max, ...
+            num2str(inputmonth(1), '%02i'), '_', num2str(inputmonth(end), '%02i'), '.mat'], 'cut_lon_rho', 'cut_lat_rho', 'u_rho','v_rho');
 
         m_proj(m_proj_name,'lon',[lonlat(1) lonlat(2)],'lat',[lonlat(3) lonlat(4)]);
         hold on;
@@ -155,7 +186,12 @@ for regionind2=1:length(all_region2)
 
         m_text(m_quiver_ref_text_x_location, m_quiver_ref_text_y_location, m_quiver_ref_text, 'FontSize', m_quiver_ref_text_fontsize); 
         m_grid('fontsize', m_grid_fontsize, 'box', m_grid_box_type, 'tickdir', m_grid_tickdir_type);
-        titlename = strcat('UV mean, ',testname,',(',num2str(min(inputyear1),'%04i'),'-',num2str(max(inputyear1),'%04i'),') ');  %% + glacier contribution
+%         titlename = strcat('UV mean, ',testname,',(',num2str(min(inputyear1),'%04i'),'-',num2str(max(inputyear1),'%04i'),') ');  %% + glacier contribution
+        if min(inputyear1) == max(inputyear1)
+            titlename = strcat('UV, ', season(1:2), ', ', testname,',(',num2str(min(inputyear1),'%04i'),') ');  %% + glacier contribution
+        else
+            titlename = strcat('UV, ', season(1:2), ', ', testname, ',(',num2str(min(inputyear1),'%04i'),'-',num2str(max(inputyear1),'%04i'),') ');  %% + glacier contribution
+        end
         title(titlename,'fontsize',m_pcolor_title_fontsize);  %%title
 
         set(gcf, 'PaperUnits', 'points');
@@ -164,6 +200,7 @@ for regionind2=1:length(all_region2)
         saveas(gcf,pngname,'tif'); RemoveWhiteSpace([], 'file', pngname);
         close all;
         clear lon_rho mean_u ref_vec_x_range
+    end
 %     end
 % end-------------------- earlier decadal current plot
 end

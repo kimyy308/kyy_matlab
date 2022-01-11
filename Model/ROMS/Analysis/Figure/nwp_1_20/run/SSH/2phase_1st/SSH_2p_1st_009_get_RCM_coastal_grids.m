@@ -104,8 +104,8 @@ for testnameind=1:length(RCM_info.name)
             for flagi=1:length(flags.fig_name)
                 flags.fig_switch(flagi)=0;
             end
-            flags.fig_switch(1)=2;
-            flags.fig_switch(2)=1;
+            flags.fig_switch(1)=1;
+            flags.fig_switch(2)=2;
         end
         
         if flags.fig_switch(1) > 0
