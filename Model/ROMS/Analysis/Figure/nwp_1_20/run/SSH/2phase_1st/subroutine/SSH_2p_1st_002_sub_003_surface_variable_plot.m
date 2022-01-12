@@ -157,7 +157,7 @@ for varind2=1:length(RCM_info.vars)
         set(h,'fontsize',param.colorbar_fontsize);
         title(h,param.colorbar_title,'fontsize',param.colorbar_title_fontsize);
         switch tmp.variable
-            case {'SST', 'SSH', 'SSS'}
+            case {'SST', 'SSH', 'SSS', 'Uwind', 'Vwind', 'u', 'v'}
                 caxis(param.colorbar_lev);
             case {'wstrcurl', 'wcurl'}
                 caxis([-max(abs(mean_data(:))), max(abs(mean_data(:)))]);

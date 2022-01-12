@@ -26,12 +26,12 @@ RCM_info.dataroot = ['D:', filesep, 'Data', filesep, 'Model', filesep, ...
 RCM_info.saveroot = ['D:', filesep, 'Data', filesep, 'Model', filesep, ...
     'ROMS', filesep, 'nwp_1_20', filesep, 'backup_surf', filesep];
 RCM_info.phase = 'run';
-RCM_info.region = {'AKP4'};
+RCM_info.region = {'EKWC2'};
 % RCM_info.region = {'NWP', 'AKP4'};
-% RCM_info.vars = {'SST', 'SSH', 'SSS', 'Uwind', 'Vwind', 'shflux', 'u', 'v'};
-%         RCM_info.vars = {'SST', 'SSH', 'SSS', 'u', 'v'};
-%         RCM_info.vars = { 'shflux', 'u', 'v'};
-RCM_info.vars = {'wstrcurl'};
+RCM_info.vars = {'SST', 'SSH', 'SSS', 'Uwind', 'Vwind', 'shflux', 'u', 'v'};
+% RCM_info.vars = {'u', 'v'};
+% RCM_info.vars = { 'Uwind', 'Vwind'};
+% RCM_info.vars = {'wstrcurl'};
 % RCM_info.vars = {'wcurl'};
 
 % RCM_info.vars = {'Uwind', 'Vwind'};
@@ -144,12 +144,12 @@ for seasons_groupi=1:length(seasons_group)
             end
             flags.fig_switch(1)=0;  %1 or 2
             flags.fig_switch(2)=0; 
-            flags.fig_switch(3)=0;
+            flags.fig_switch(3)=2;
             flags.fig_switch(4)=0;
             flags.fig_switch(5)=0;
             flags.fig_switch(6)=0;
             flags.fig_switch(7)=0;
-            flags.fig_switch(8)=2;
+            flags.fig_switch(8)=0;
 
             tmp.variable ='zeta';
     %         run('nwp_polygon_point.m');
