@@ -1,7 +1,7 @@
 close all; clear all;  clc;
 warning off;
-% all_region2 ={'NWP','AKP2'}
-all_region2 ={'NWP', 'AKP4'}
+all_region2 ={'EKWC2'}
+% all_region2 ={'NWP', 'AKP4'}
 
 for regionind2=1:length(all_region2)
     close all;
@@ -82,6 +82,8 @@ for regionind2=1:length(all_region2)
             refpolygon=capolygon;
         case('EKB') %% Around Korea Peninsula
             refpolygon=akp2polygon;
+        case('EKWC2')
+            refpolygon=ekwc2polygon;
         otherwise
             ('?')
     end
