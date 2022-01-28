@@ -28,6 +28,7 @@ if (strcmp(system_name,'PCWIN64'))
     addpath(genpath([dropboxpath '\source\matlab\Model\ROMS\Grid_kyy']));
     addpath(genpath([dropboxpath '\source\matlab\Model\ROMS\Roms_tools\Preprocessing_tools']));
     addpath(genpath([dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', tmp.fs, 'function']));
+    addpath(genpath([dropboxpath '\source\matlab\Common\gsw_matlab_v3_06_14']));
     error_status=1;
 elseif (strcmp(system_name,'GLNXA64'))
     dropboxpath='/home/kimyy/Dropbox';

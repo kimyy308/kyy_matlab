@@ -135,14 +135,15 @@ for varind2=1:length(RCM_info.vars)
                     'labelspacing', 50000,'Rotation', 0,'fontweight', 'bold');
         end
 
+        
         m_gshhs_i('color',param.m_gshhs_line_color)  
         m_gshhs_i('patch',param.m_gshhs_land_color);   % gray colored land
 
         m_grid('fontsize', param.m_grid_fontsize, 'box', param.m_grid_box_type, 'tickdir', param.m_grid_tickdir_type);
         if min(RCM_info.years) == max(RCM_info.years)
-            tmp.titlename = strcat(tmp.variable, ', ', season(1:2), ', ', tmp.abb,',(',num2str(max(RCM_info.years),'%04i'),') ');                        
+            tmp.titlename = strcat(tmp.variable, ', ', season(1:3), ', ', tmp.abb,',(',num2str(max(RCM_info.years),'%04i'),') ');                        
         else
-            tmp.titlename = strcat(tmp.variable, ', ', season(1:2), ', ', tmp.abb,',(',num2str(min(RCM_info.years),'%04i'),'-',num2str(max(RCM_info.years),'%04i'),') ');
+            tmp.titlename = strcat(tmp.variable, ', ', season(1:3), ', ', tmp.abb,',(',num2str(min(RCM_info.years),'%04i'),'-',num2str(max(RCM_info.years),'%04i'),') ');
         end
         title(tmp.titlename,'fontsize',param.m_pcolor_title_fontsize);  %%title
 

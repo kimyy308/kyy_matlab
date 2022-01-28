@@ -80,7 +80,7 @@ trdata2_temp=cell2mat(trdata2);
 trdata2{testind+1}=mean(trdata2_temp,2);     % ens   
 
 % % get observation transport
-[~, ~, raw] = xlsread('Z:\내 드라이브\Data\Observation\Transport_Korea\obs_tsushima_197001_201209_ORIGIN.xls','TWC','A2:H553');
+[~, ~, raw] = xlsread('D:\Data\Observation\Transport_Korea\obs_tsushima_197001_201209_ORIGIN_new.xls','TWC','A2:H553');
 raw(cellfun(@(x) ~isempty(x) && isnumeric(x) && isnan(x),raw)) = {''};
 
 R = cellfun(@(x) ~isnumeric(x) && ~islogical(x),raw); % 숫자형이 아닌 셀 찾기
@@ -101,8 +101,8 @@ corrcoef(trdata2{5}(isfinite(ADCP)), ADCP(isfinite(ADCP)))
 
 if (strcmp(system_name,'PCWIN64'))
     % % for windows
-    figrawdir =strcat('Z:\내 드라이브\MEPL\project\SSH\5th_year\figure\nwp_1_20\','all','\'); % % where figure files will be saved
-    param_script ='C:\Users\USER\Dropbox\source\matlab\Model\ROMS\Analysis\Figure\nwp_1_20\run\fig_param\fig_param_kyy_EKB_RMS.m'
+    figrawdir =strcat('D:\MEPL\project\SSH\5th_year\figure\nwp_1_20\','all','\'); % % where figure files will be saved
+    param_script ='C:\Users\USER\Dropbox\source\matlab\Model\ROMS\Analysis\Figure\nwp_1_20\run\fig_param\fig_param_kyy_EKB_RMS.m';
 elseif (strcmp(system_name,'GLNXA64'))
 end
 
@@ -177,3 +177,53 @@ close all;
 % cmap_b(:,2) = cmap_b(:,2)*.3;
 % cmap_b(:,3) = cmap_b(:,3)*.3+.7;
 % cmap_b = hsv2rgb(cmap_b);
+
+
+%% without each model
+hold on
+
+for i=length(trdata):length(trdata)
+    trplot{i}=plot(xData,trdata{i},'b');
+    if i<length(trdata)
+        trplot{i}.Color(4) = .1;
+        set(get(get(trplot{i},'Annotation'),'LegendInformation'),'IconDisplayStyle','off');
+    else
+    end
+    set(trplot{i},'LineWidth',4);
+
+end
+
+for i=length(trdata2):length(trdata2)
+    trplot2{i}=plot(xData,trdata2{i},'r');
+    if i<length(trdata2)
+        trplot2{i}.Color(4) = .1;
+        set(get(get(trplot2{i},'Annotation'),'LegendInformation'),'IconDisplayStyle','off');
+    else
+    end
+    set(trplot2{i},'LineWidth',4);
+end
+
+trplot3{1}=plot(xData,SLD,'k');
+trplot3{2}=plot(xData,Fuk,'k');
+set(get(get(trplot3{2},'Annotation'),'LegendInformation'),'IconDisplayStyle','off');
+set(trplot3{1},'LineWidth',4);
+set(trplot3{2},'LineWidth',4);
+
+jpgname=strcat(outfile, '_', 'all', '_tr_hist_ens_only_',num2str(min(inputyear),'%04i'),'_',num2str(max(inputyear),'%04i'), '.jpg'); %% ~_year_month.jpg
+xlabel('Year')
+ylabel('Transport (Sv)')
+title([regionname, ', Transport(',num2str(min(inputyear),'%04i'),'-',num2str(max(inputyear),'%04i'),') '])
+datetick('x','yyyy','keepticks')
+axis tight;
+lgd=legend(['GCM Model Ensemble'], ['RCM Model Ensemble'], ['Observation']);
+set(gca,'FontSize',20);
+grid on
+hold off
+%         constant_cor=corrcoef(tr{5},recon_tr);
+%         txt1=text(xData(5), min(meanplotlev)+diff(meanplotlev)/16.0 ,['R = ', num2str(round(constant_cor(1,2),2))], 'FontSize', 20); 
+set(gcf,'PaperPosition', [0 0 40 18]) 
+saveas(gcf,jpgname,'jpg');
+grid off
+
+
+close all;

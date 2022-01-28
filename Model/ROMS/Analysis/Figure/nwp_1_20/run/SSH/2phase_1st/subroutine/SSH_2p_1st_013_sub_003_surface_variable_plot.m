@@ -58,9 +58,9 @@
 
                 m_grid('fontsize', param.m_grid_fontsize, 'box', param.m_grid_box_type, 'tickdir', param.m_grid_tickdir_type);
                 if min(RCM_info.years) == max(RCM_info.years)
-                    tmp.titlename = strcat(tmp.variable, ', ', season(1:2), ', ', tmp.abb,',(',num2str(max(RCM_info.years),'%04i'),') ');                        
+                    tmp.titlename = strcat(tmp.variable, ', ', season(1:3), ', ', tmp.abb,',(',num2str(max(RCM_info.years),'%04i'),') ');                        
                 else
-                    tmp.titlename = strcat(tmp.variable, ', ', season(1:2), ', ', tmp.abb,',(',num2str(min(RCM_info.years),'%04i'),'-',num2str(max(RCM_info.years),'%04i'),') ');
+                    tmp.titlename = strcat(tmp.variable, ', ', season(1:3), ', ', tmp.abb,',(',num2str(min(RCM_info.years),'%04i'),'-',num2str(max(RCM_info.years),'%04i'),') ');
                 end
                 title(tmp.titlename,'fontsize',param.m_pcolor_title_fontsize);  %%title
 

@@ -1,7 +1,7 @@
  close all; clear all;  clc;   
 % all_region ={'NWP','ES', 'SS', 'YS', 'ECS'}
-% all_region ={'NWP', 'AKP2'}
-all_region ={'NWP', 'AKP4'}
+all_region ={'EKWC2'}
+% all_region ={'NWP', 'AKP4'}
 
 for regionind=1:length(all_region)
     clearvars '*' -except regionind all_region
@@ -43,7 +43,6 @@ for regionind=1:length(all_region)
             addpath(genpath([dropboxpath '/source/matlab/Common/netcdf_old']));
             addpath(genpath([dropboxpath '/source/matlab/Model/ROMS/Grid_kyy']));
         end
-
 
         shadlev = [0 35];
         rms_shadlev = [0 4];
@@ -91,6 +90,8 @@ for regionind=1:length(all_region)
                 refpolygon=akp3polygon;
             case('AKP4') %% Around Korea Peninsula
                 refpolygon=akp4polygon;
+            case('EKWC2')
+                refpolygon=ekwc2polygon;
             otherwise
                 ('?')
         end

@@ -57,7 +57,7 @@
             m_gshhs_i('patch',param.m_gshhs_land_color);   % gray colored land
 
             m_grid('fontsize', param.m_grid_fontsize, 'box', param.m_grid_box_type, 'tickdir', param.m_grid_tickdir_type);
-            tmp.titlename = strcat(tmp.variable, ' diff, ', season(1:2), ', ', RCM_info.ensname, ',(', num2str(RCM_info.inputyear2(1),'%04i'),'-',num2str(RCM_info.inputyear1(end),'%04i'),') ');  %% + glacier contribution
+            tmp.titlename = strcat(tmp.variable, ' diff, ', season(1:3), ', ', RCM_info.ensname, ',(', num2str(RCM_info.inputyear2(1),'%04i'),'-',num2str(RCM_info.inputyear1(end),'%04i'),') ');  %% + glacier contribution
             title(tmp.titlename,'fontsize',param.m_pcolor_title_fontsize);  %%title
 
             % set colorbar 

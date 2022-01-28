@@ -49,7 +49,7 @@
 
     m_text(param.m_quiver_ref_text_x_location, param.m_quiver_ref_text_y_location, '0.5 m/s', 'FontSize', param.m_quiver_ref_text_fontsize); 
     m_grid('fontsize', param.m_grid_fontsize, 'box', param.m_grid_box_type, 'tickdir', param.m_grid_tickdir_type);
-    tmp.titlename = strcat('UV diff, ', season(1:2), ', ', RCM_info.ensname,',(',num2str(RCM_info.inputyear2(1),'%04i'),'-',num2str(RCM_info.inputyear1(end),'%04i'),') ');  %% + glacier contribution
+    tmp.titlename = strcat('UV diff, ', season(1:3), ', ', RCM_info.ensname,',(',num2str(RCM_info.inputyear2(1),'%04i'),'-',num2str(RCM_info.inputyear1(end),'%04i'),') ');  %% + glacier contribution
     title(tmp.titlename,'fontsize',param.m_pcolor_title_fontsize);  %%title
 
     set(gcf, 'PaperUnits', 'points');

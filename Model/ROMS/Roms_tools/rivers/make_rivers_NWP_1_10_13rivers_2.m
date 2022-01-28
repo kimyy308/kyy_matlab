@@ -33,7 +33,8 @@ warning off
 % season_cycle=[9650 9257.5 11632.5 21150 32450 41425 ...
 % 	      47300 36925 33025 27000 19350 11215];
 
-year=[1993:2017];  %% if year == 0, make climate data!
+% year=[1993:2017];  %% if year == 0, make climate data!
+year=[1983:2018];  %% if year == 0, make climate data!
 
 year2 = year;
 
@@ -99,6 +100,9 @@ River.flow_mean(r)=mean(dis);
 River.trans(r,1:14)=dis;
 
 season_cycle=[ 378  296  299  209  216  271  907  1481  1345  1084  619  440  629  378  629];
+% % % season_cycle_CRD= [226 207 355 438 638 791 1208 1227 1156 756 559 391 226 391];93-17
+% % % season_cycle_CRD= [258 270 432 528 750 868 1266 1023 891 870 620 268 258 268];83-18
+
 avgflow=mean(season_cycle); %25031.7
 season_cycle=season_cycle./avgflow;
 
