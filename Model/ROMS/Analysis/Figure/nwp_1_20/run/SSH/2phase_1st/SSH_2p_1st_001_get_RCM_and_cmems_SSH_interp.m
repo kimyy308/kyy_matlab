@@ -4,8 +4,8 @@ close all; clear all;  clc;
 % % % configuration of RCM
 % RCM_info.name={'test2102', 'test2103', 'test2104', 'test2105', 'test2106'};
 % RCM_info.name={'test2107', 'test2108', 'test2109', 'test2110', 'test2111'};
-% RCM_info.name={'test2117', 'test2118', 'test2119', 'test2120', 'test2121'};
-RCM_info.name={'test2127', 'test2128', 'test2129', 'test2130', 'test2131'};
+RCM_info.name={'test2117', 'test2118', 'test2119', 'test2120', 'test2121'};
+% RCM_info.name={'test2127', 'test2128', 'test2129', 'test2130', 'test2131'};
 RCM_info.abbs = {'RCM-CNE', 'RCM-ECV', 'RCM-ACC', 'RCM-CNH', 'RCM-CMC'};
 % RCM_info.name={  'test2129'};
 % RCM_info.abbs = { 'RCM-ACC'};
@@ -18,12 +18,12 @@ RCM_info.dataroot = ['D:', filesep, 'Data', filesep, 'Model', filesep, ...
 RCM_info.saveroot = ['D:', filesep, 'Data', filesep, 'Model', filesep, ...
     'ROMS', filesep, 'nwp_1_20', filesep, 'backup_surf', filesep];
 RCM_info.phase = 'run';
-RCM_info.region = {'SNWP'};
+RCM_info.region = {'EKWC2'};
 % RCM_info.region = {'AKP4'};
-% RCM_info.years = 1985:2014;
+RCM_info.years = 1985:2014;
 % RCM_info.years = 1989:2014;
-RCM_info.years = 2015:2050;
-RCM_info.months = 1:12;
+% RCM_info.years = 2015:2050;
+RCM_info.months = [12, 1, 2];
 RCM_grid.dl = 1/20;
 
 % % % configuration of GCM
@@ -69,7 +69,7 @@ for testnameind=1:length(RCM_info.name)
         
         tmp.variable = 'zeta';
         tmp.variable_GCM = 'zos';
-        tmp.variable_CMEMS = 'vgos';
+        tmp.variable_CMEMS = 'sla';
         tmp.fs = filesep; % file separator win = '\', linux = '/'
 
         % %     set dropbox path
@@ -129,9 +129,9 @@ for testnameind=1:length(RCM_info.name)
                 flags.fig_switch(flagi)=0;
             end
             flags.fig_switch(1)=1;
-            flags.fig_switch(2)=1;
-            flags.fig_switch(3)=2;
-            flags.fig_switch(4)=2;
+            flags.fig_switch(2)=0;
+            flags.fig_switch(3)=0;
+            flags.fig_switch(4)=0;
             flags.fig_switch(5)=0;
         end
         
@@ -141,7 +141,7 @@ for testnameind=1:length(RCM_info.name)
 %% get meridional velocity  
         if flags.fig_switch(1) > 0
             flags.fig_tmp = flags.fig_switch(1);
-            SSH_2p_2nd_001_sub_001_get_v;
+            SSH_2p_1st_001_sub_001_get_SSH;
         end
 
         if flags.fig_switch(2) > 0

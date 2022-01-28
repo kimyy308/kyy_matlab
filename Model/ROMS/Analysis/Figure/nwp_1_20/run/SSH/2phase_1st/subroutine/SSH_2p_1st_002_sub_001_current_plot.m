@@ -109,9 +109,9 @@ if (exist(tmp.tifname , 'file') ~= 2 || flags.fig_switch(1)==2)
     m_text(param.m_quiver_ref_text_x_location, param.m_quiver_ref_text_y_location, param.m_quiver_ref_text, 'FontSize', param.m_quiver_ref_text_fontsize); 
     m_grid('fontsize', param.m_grid_fontsize, 'box', param.m_grid_box_type, 'tickdir', param.m_grid_tickdir_type);
     if min(RCM_info.years) == max(RCM_info.years)
-        param.titlename = strcat('UV, ', season(1:2), ', ', tmp.abb,',(',num2str(min(RCM_info.years),'%04i'),') ');  %% + glacier contribution
+        param.titlename = strcat('UV, ', season(1:3), ', ', tmp.abb,',(',num2str(min(RCM_info.years),'%04i'),') ');  %% + glacier contribution
     else
-        param.titlename = strcat('UV, ', season(1:2), ', ', tmp.abb, ',(',num2str(min(RCM_info.years),'%04i'),'-',num2str(max(RCM_info.years),'%04i'),') ');  %% + glacier contribution
+        param.titlename = strcat('UV, ', season(1:3), ', ', tmp.abb, ',(',num2str(min(RCM_info.years),'%04i'),'-',num2str(max(RCM_info.years),'%04i'),') ');  %% + glacier contribution
     end
     title(param.titlename,'fontsize',param.m_pcolor_title_fontsize);  %%title
 

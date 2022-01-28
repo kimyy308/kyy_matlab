@@ -190,9 +190,9 @@ for regionind2=1:length(all_region2)
         m_grid('fontsize', m_grid_fontsize, 'box', m_grid_box_type, 'tickdir', m_grid_tickdir_type);
 %         titlename = strcat('UV mean, ',testname,',(',num2str(min(inputyear1),'%04i'),'-',num2str(max(inputyear1),'%04i'),') ');  %% + glacier contribution
         if min(inputyear1) == max(inputyear1)
-            titlename = strcat('UV, ', season(1:2), ', ', testname,',(',num2str(min(inputyear1),'%04i'),') ');  %% + glacier contribution
+            titlename = strcat('UV, ', season(1:3), ', ', testname,',(',num2str(min(inputyear1),'%04i'),') ');  %% + glacier contribution
         else
-            titlename = strcat('UV, ', season(1:2), ', ', testname, ',(',num2str(min(inputyear1),'%04i'),'-',num2str(max(inputyear1),'%04i'),') ');  %% + glacier contribution
+            titlename = strcat('UV, ', season(1:3), ', ', testname, ',(',num2str(min(inputyear1),'%04i'),'-',num2str(max(inputyear1),'%04i'),') ');  %% + glacier contribution
         end
         title(titlename,'fontsize',m_pcolor_title_fontsize);  %%title
 

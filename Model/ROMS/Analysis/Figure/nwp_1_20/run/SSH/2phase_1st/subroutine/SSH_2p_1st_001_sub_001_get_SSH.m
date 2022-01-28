@@ -1,5 +1,6 @@
 % %         get model data and cmems data      
 % %  Updated 05-Jul-2021 by Yong-Yub Kim, modified to Func_0012
+% %  Updated 18-Jan-2022 by Yong-Yub Kim, optimized for seasonal calc
 
 
 disp('subroutine SSH_2p_1st_001_sub_001_get_SSH') 
@@ -20,15 +21,20 @@ tmp.lap_time_j=tic;
 run(tmp.param_script);
 tmp.ind_for=1;
 RCM_info.matname = [RCM_info.savedir,RCM_info.testname,'_',RCM_info.regionname, '_RCM_ssh_', ...
-    num2str(min(RCM_info.years),'%04i'),'_',num2str(max(RCM_info.years),'%04i'),'.mat'];
+    num2str(min(RCM_info.years),'%04i'),'_',num2str(max(RCM_info.years),'%04i'),'_', ...
+    num2str(RCM_info.months(1),'%04i'),'_',num2str(RCM_info.months(end),'%04i'), '.mat'];
 RCM_info.matname_interped = [RCM_info.savedir,RCM_info.testname,'_',RCM_info.regionname, '_RCM_cmems_interped_ssh_', ...
-    num2str(min(RCM_info.years),'%04i'),'_',num2str(max(RCM_info.years),'%04i'),'.mat'];
+    num2str(min(RCM_info.years),'%04i'),'_',num2str(max(RCM_info.years),'%04i'),'_', ...
+    num2str(RCM_info.months(1),'%04i'),'_',num2str(RCM_info.months(end),'%04i'), '.mat'];
 GCM_info.matname = [RCM_info.savedir,RCM_info.testname,'_',RCM_info.regionname, '_GCM_ssh_', ...
-    num2str(min(RCM_info.years),'%04i'),'_',num2str(max(RCM_info.years),'%04i'),'.mat'];
+    num2str(min(RCM_info.years),'%04i'),'_',num2str(max(RCM_info.years),'%04i'),'_', ...
+    num2str(RCM_info.months(1),'%04i'),'_',num2str(RCM_info.months(end),'%04i'), '.mat'];
 GCM_info.matname_interped = [RCM_info.savedir,RCM_info.testname,'_',RCM_info.regionname, '_GCM_cmems_interped_ssh_', ...
-    num2str(min(RCM_info.years),'%04i'),'_',num2str(max(RCM_info.years),'%04i'),'.mat'];
+    num2str(min(RCM_info.years),'%04i'),'_',num2str(max(RCM_info.years),'%04i'),'_', ...
+    num2str(RCM_info.months(1),'%04i'),'_',num2str(RCM_info.months(end),'%04i'), '.mat'];
 CMEMS_info.matname = [RCM_info.savedir,RCM_info.testname,'_',RCM_info.regionname, '_CMEMS_ssh_', ...
-    num2str(min(RCM_info.years),'%04i'),'_',num2str(max(RCM_info.years),'%04i'),'.mat'];
+    num2str(min(RCM_info.years),'%04i'),'_',num2str(max(RCM_info.years),'%04i'),'_', ...
+    num2str(RCM_info.months(1),'%04i'),'_',num2str(RCM_info.months(end),'%04i'), '.mat'];
 
 tmp.elapsed=toc(tmp.lap_time_j);
 tmp.totlap= (length(RCM_info.years)*length(RCM_info.months));
@@ -115,7 +121,7 @@ if (exist(RCM_info.matname , 'file') ~= 2 || flags.fig_tmp==2)
             RCM_data.tmp_data=RCM_data.tmp_data.*RCM_grid.mask_region;
 
             if (yearij == 1 && monthij == 1)
-                RCM_data.clim_mean=(zeros([RCM_grid.size_lon_rho,RCM_grid.size_lat_rho,12]));
+                RCM_data.clim_mean=(zeros([RCM_grid.size_lon_rho,RCM_grid.size_lat_rho,length(RCM_info.months)]));
                 RCM_data.yearly_mean=(zeros([RCM_grid.size_lon_rho,RCM_grid.size_lat_rho,length(RCM_info.years)]));
             end
             RCM_data.all(:,:,tmp.ind_for) = single(RCM_data.tmp_data);
@@ -190,7 +196,7 @@ if (exist(RCM_info.matname , 'file') ~= 2 || flags.fig_tmp==2)
             
 % %             save
             if (yearij == 1 && monthij == 1)
-                GCM_data.clim_mean=(zeros([GCM_grid.size_lon,GCM_grid.size_lat,12]));
+                GCM_data.clim_mean=(zeros([GCM_grid.size_lon,GCM_grid.size_lat,length(RCM_info.months)]));
                 GCM_data.yearly_mean=(zeros([GCM_grid.size_lon,GCM_grid.size_lat,length(GCM_info.years)]));                
             end
             GCM_data.all(:,:,tmp.ind_for) = single(GCM_data.tmp_data);
@@ -232,13 +238,13 @@ if (exist(RCM_info.matname , 'file') ~= 2 || flags.fig_tmp==2)
                 CMEMS_grid.size_lon=CMEMS_grid.ind_e-CMEMS_grid.ind_w+1;
                 CMEMS_grid.size_lat=CMEMS_grid.ind_n-CMEMS_grid.ind_s+1;
                 CMEMS_grid.refpolygon=RCM_grid.refpolygon;
-                CMEMS_data.adt_clim_mean=(zeros([CMEMS_grid.size_lon, CMEMS_grid.size_lat,12]));
-                CMEMS_data.(tmp.variable_CMEMS_clim_mean)=(zeros([CMEMS_grid.size_lon, CMEMS_grid.size_lat,12]));
+                CMEMS_data.adt_clim_mean=(zeros([CMEMS_grid.size_lon, CMEMS_grid.size_lat,length(RCM_info.months)]));
+                CMEMS_data.(tmp.variable_CMEMS_clim_mean)=(zeros([CMEMS_grid.size_lon, CMEMS_grid.size_lat,length(RCM_info.months)]));
                 CMEMS_data.adt_yearly_mean=(zeros([CMEMS_grid.size_lon, CMEMS_grid.size_lat,length(RCM_info.years)]));
                 CMEMS_data.(tmp.variable_CMEMS_yearly_mean)=(zeros([CMEMS_grid.size_lon, CMEMS_grid.size_lat,length(RCM_info.years)]));
 
-                RCM_data_interped.clim_mean=(zeros([CMEMS_grid.size_lon, CMEMS_grid.size_lat,12]));
-                GCM_data_interped.clim_mean=(zeros([CMEMS_grid.size_lon, CMEMS_grid.size_lat,12]));
+                RCM_data_interped.clim_mean=(zeros([CMEMS_grid.size_lon, CMEMS_grid.size_lat,length(RCM_info.months)]));
+                GCM_data_interped.clim_mean=(zeros([CMEMS_grid.size_lon, CMEMS_grid.size_lat,length(RCM_info.months)]));
                 RCM_data_interped.yearly_mean=(zeros([CMEMS_grid.size_lon, CMEMS_grid.size_lat,length(RCM_info.years)]));
                 GCM_data_interped.yearly_mean=(zeros([CMEMS_grid.size_lon, CMEMS_grid.size_lat,length(RCM_info.years)]));
                 
