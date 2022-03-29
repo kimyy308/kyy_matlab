@@ -10,9 +10,9 @@ addpath(genpath([matlabroot,'\toolbox\matlab\imagesci\'])); %% add new netcdf pa
 
 all_region2 ={'AKP4'};
 
-all_testname2 = {'test57', 'test58', 'test59', 'test60', 'test65', 'test66', 'test67', 'test68'};
+% all_testname2 = {'test57', 'test58', 'test59', 'test60', 'test65', 'test66', 'test67', 'test68'};
 % all_testname2 = {'test57', 'test58', 'test59', 'test60'};
-% all_testname2 = {'test65', 'test66', 'test67', 'test68'};
+all_testname2 = {'test65', 'test66', 'test67', 'test68'};
 % all_testname2 = {'test53', 'test54', 'test55', 'test56'};
 
 % inputyear=[2100];
@@ -55,14 +55,40 @@ for testnameind2=1:length(all_testname2)
             for flagi=1:25
                 fig_flags{flagi,2}=0;
             end
-
-            fig_flags{1,2}=0;
+% 
+%             fig_flags{1,2}=0;
+%             fig_flags{2,2}=0;
+%             fig_flags{3,2}=0;
+%             fig_flags{4,2}=0;
+%             fig_flags{5,2}=2;
+%             fig_flags{6,2}=0;
+%             fig_flags{7,2}=2;
+%             fig_flags{8,2}=0;
+%             fig_flags{9,2}=0;
+%             fig_flags{10,2}=0;
+%             fig_flags{11,2}=0;
+%             fig_flags{12,2}=0;
+%             fig_flags{13,2}=0;
+%             fig_flags{14,2}=0;
+%             fig_flags{15,2}=0;
+%             fig_flags{16,2}=0;
+%             fig_flags{17,2}=0;
+%             fig_flags{18,2}=0;
+%             fig_flags{19,2}=0;
+%             fig_flags{20,2}=0;
+%             fig_flags{21,2}=0;
+%             fig_flags{22,2}=0;
+%             fig_flags{23,2}=0;
+%             fig_flags{24,2}=2;
+%             fig_flags{25,2}=2;
+            
+           fig_flags{1,2}=0;
             fig_flags{2,2}=0;
             fig_flags{3,2}=0;
-            fig_flags{4,2}=0;
-            fig_flags{5,2}=2;
+            fig_flags{4,2}=2;
+            fig_flags{5,2}=0;
             fig_flags{6,2}=0;
-            fig_flags{7,2}=2;
+            fig_flags{7,2}=0;
             fig_flags{8,2}=0;
             fig_flags{9,2}=0;
             fig_flags{10,2}=0;
@@ -79,8 +105,8 @@ for testnameind2=1:length(all_testname2)
             fig_flags{21,2}=0;
             fig_flags{22,2}=0;
             fig_flags{23,2}=0;
-            fig_flags{24,2}=2;
-            fig_flags{25,2}=2;
+            fig_flags{24,2}=0;
+            fig_flags{25,2}=0;
             
             testname=all_testname2{testnameind2};
             tempyear=inputyear(yearind2);
@@ -144,7 +170,7 @@ for testnameind2=1:length(all_testname2)
             end
 
             % % for windows
-            figrawdir =strcat('Z:\내 드라이브\MEPL\project\SSH\5th_year\figure\nwp_1_20\',testname,'\',regionname,'\'); % % where figure files will be saved
+            figrawdir =strcat('D:\MEPL\project\SSH\5th_year\figure\nwp_1_20\',testname,'\',regionname,'\'); % % where figure files will be saved
 %             param_script ='C:\Users\kyy\Dropbox\source\matlab\Model\ROMS\Analysis\Figure\nwp_1_10\run\fig_param\fig_param_kyy_EKB_RMS.m'
             param_script =['C:\Users\User\Dropbox\source\matlab\Model\ROMS\Analysis\Figure\nwp_1_20\run\fig_param\fig_param_kyy_', regionname, '.m'];
             filedir = strcat('D:\Data\Model\ROMS\nwp_1_20\', testname, '\run\'); % % where data files are
@@ -1690,7 +1716,7 @@ for testnameind2=1:length(all_testname2)
  % start-------------------- 4con amp validiation scatter (all test)
             fig_flag=fig_flags{22,2};
             figname=fig_flags{22,1};
-            figalldir =strcat('Z:\내 드라이브\MEPL\project\SSH\5th_year\figure\nwp_1_20\','all','\',regionname,'\Tide\'); % % where figure files will be saved
+            figalldir =strcat('D:\MEPL\project\SSH\5th_year\figure\nwp_1_20\','all','\',regionname,'\Tide\'); % % where figure files will be saved
             if (exist(strcat(figalldir) , 'dir') ~= 7)
                 mkdir(strcat(figalldir));
             end 

@@ -1,4 +1,4 @@
-function [gcmtestname] = get_GCMname_from_RCM(testname)
+function [gcmtestname] = Func_0004_get_GCMname_from_RCM(testname)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % function var=get_GCMname_from_RCM(testname);

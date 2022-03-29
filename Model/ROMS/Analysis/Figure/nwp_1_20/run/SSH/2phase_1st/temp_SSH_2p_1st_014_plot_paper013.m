@@ -1,7 +1,8 @@
 close all; clear all;  clc;
 warning off;
-all_region2 ={'EKWC2'}
+% all_region2 ={'EKWC2'}
 % all_region2 ={'NWP', 'AKP4'}
+all_region2 ={'ES_KHOA'}
 
 for regionind2=1:length(all_region2)
     close all;
@@ -49,48 +50,12 @@ for regionind2=1:length(all_region2)
 %         varname ='zeta'
     run('nwp_polygon_point.m');
     regionname=all_region2{regionind2};
-    switch(regionname)
-        case('NWP') %% North western Pacific
-            lonlat = [115, 164, 15, 52];  %% whole data area
-            refpolygon(1,1)=lonlat(1);
-            refpolygon(2,1)=lonlat(2);
-            refpolygon(1,2)=lonlat(3);
-            refpolygon(2,2)=lonlat(4);
-        case('NWP2') %% North western Pacific
-            lonlat = [115, 145, 25, 52];  %% whole data area
-            refpolygon(1,1)=lonlat(1);
-            refpolygon(2,1)=lonlat(2);
-            refpolygon(1,2)=lonlat(3);
-            refpolygon(2,2)=lonlat(4);
-        case('ES') %% East Sea
-            refpolygon=espolygon;
-        case('SS') %% South Sea
-            refpolygon=sspolygon;
-        case('YS') %% Yellow Sea
-            refpolygon=yspolygon;
-        case('ECS') %% East China Sea
-            refpolygon=ecspolygon;
-        case('AKP') %% Around Korea Peninsula
-            refpolygon=akppolygon;
-        case('AKP2') %% Around Korea Peninsula
-            refpolygon=akp2polygon;
-        case('AKP3') %% Around Korea Peninsula
-            refpolygon=akp3polygon;
-        case('AKP4') %% Around Korea Peninsula
-            refpolygon=akp4polygon;
-        case('CA') %% Around Korea Peninsula
-            refpolygon=capolygon;
-        case('EKB') %% Around Korea Peninsula
-            refpolygon=akp2polygon;
-        case('EKWC2')
-            refpolygon=ekwc2polygon;
-        otherwise
-            ('?')
-    end
-    lonlat(1)=min(refpolygon(:,1));
-    lonlat(2)=max(refpolygon(:,1));
-    lonlat(3)=min(refpolygon(:,2));
-    lonlat(4)=max(refpolygon(:,2));
+            [refpolygon, lonlat, tmp.error_status] = Func_0007_get_polygon_data_from_regionname(regionname);
+% 
+%     lonlat(1)=min(refpolygon(:,1));
+%     lonlat(2)=max(refpolygon(:,1));
+%     lonlat(3)=min(refpolygon(:,2));
+%     lonlat(4)=max(refpolygon(:,2));
 
     % % % for EKB
     % regionname='EKB';
@@ -119,30 +84,33 @@ for regionind2=1:length(all_region2)
     end 
     outfile = strcat(figdir,regionname);
 
-    seasons_group={'all', 'spring', 'summer', 'fall', 'winter'};
+    seasons_group={'all', 'spring', 'summer', 'fall', 'winter', 'February', 'August'};
           
     for seasons_groupi=1:length(seasons_group)
         season=seasons_group{seasons_groupi};
-        switch(season)
-            case 'all'
-                inputmonth =1:12;  
-            case 'spring'
-                inputmonth =[3,4,5];  
-            case 'summer'
-                inputmonth =[6,7,8];  
-            case 'fall'
-                inputmonth =[9,10,11];  
-            case 'winter'
-                inputmonth =[12,1,2];  
-        end  
-    
+%         switch(season)
+%             case 'all'
+%                 inputmonth =1:12;  
+%             case 'spring'
+%                 inputmonth =[3,4,5];  
+%             case 'summer'
+%                 inputmonth =[6,7,8];  
+%             case 'fall'
+%                 inputmonth =[9,10,11];  
+%             case 'winter'
+%                 inputmonth =[12,1,2];  
+%         end  
+        [inputmonth, tmp.error_status]=Func_0019_get_month_from_season(season);
+
 % start-------------------- earlier decadal current plot
 %         pngname=strcat(outfile, '_', testname,'_',regionname, '_clim_uv_',num2str(min(inputyear1),'%04i'), ...
 %             '_',num2str(max(inputyear1),'%04i'), '.tif'); %% ~_year_month.jpg
+%     load(['D:\Data\Observation\CMEMS\',regionname, ...
+%             'cmems_gos_',num2str(min(inputyear1),'%04i'),'_',num2str(max(inputyear1),'%04i'), ...
+%             '_', num2str(inputmonth(1),'%02i'), '-', num2str(inputmonth(end),'%02i'), '.mat']);
     load(['D:\Data\Observation\CMEMS\',regionname, ...
             'cmems_gos_',num2str(min(inputyear1),'%04i'),'_',num2str(max(inputyear1),'%04i'), ...
-            '_', num2str(inputmonth(1),'%02i'), '-', num2str(inputmonth(end),'%02i'), '.mat']);
-        
+            '_', season, '.mat']);
         run(param_script);
 
         
