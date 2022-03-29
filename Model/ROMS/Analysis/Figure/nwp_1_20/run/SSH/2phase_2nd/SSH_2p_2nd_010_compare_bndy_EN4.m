@@ -24,8 +24,8 @@ RCM_info.bndy_directions={'north', 'east', 'south', 'west'};
 % RCM_info.vars = {'Uwind', 'Vwind'};
 
 % RCM_info.vars = {'SSH'};
-RCM_info.years = 1985:2014;  
-% RCM_info.years = 1993:2014;  
+% RCM_info.years = 1985:2014;  
+RCM_info.years = 1993:2014;  
 % RCM_info.years = 1995:2014;  
 %         RCM_info.years = 2030:2030;  
 % RCM_info.years = years_group(years_groupi);  
@@ -93,15 +93,16 @@ for seasons_groupi=1:length(seasons_group)
 %         RCM_info.years = [1985:2014]; % % put year which you want to plot [year year ...]
 %           RCM_info.months = [1:12]; % % put month which you want to plot [month month ...]
 
-        flags.fig_name{1}='RCM_bndy_get_data_stddepth';
+        flags.fig_name{2}='GCM_bndy_get_data_stddepth';
 
         for flagi=1:7
             fig_flags{flagi,2}=0;
         end
         flags.fig_switch(1)=0;  %1 or 2
-        flags.fig_switch(1)=2;  %1 or 2
+        flags.fig_switch(2)=2;  %1 or 2
 
-        tmp.variable ='salt';
+        tmp.variable ='temp';
+        tmp.variable_GCM = 'thetao';
 %         run('nwp_polygon_point.m');
 %         tmp.regionname=RCM_info.region{regionind2};
         tmp.regionname='NWP';
@@ -113,15 +114,17 @@ for seasons_groupi=1:length(seasons_group)
         [cmaps.yrmap, tmp.error_status] = Func_0009_get_colormaps('yr', tmp.dropboxpath);
         [cmaps.byrmap, tmp.error_status] = Func_0009_get_colormaps('byr', tmp.dropboxpath);
 
-        dirs.figrawdir =strcat('D:\MEPL\project\SSH\7th_year(2022)\figure\nwp_1_20\'); % % where figure files will be saved
-        tmp.param_script =['C:\Users\user\Dropbox\source\matlab\Model\ROMS\Analysis\Figure\nwp_1_20\run\fig_param\fig_param2_kyy_', tmp.regionname, '.m'];
+%         dirs.figrawdir =strcat('D:\MEPL\project\SSH\7th_year(2022)\figure\nwp_1_20\'); % % where figure files will be saved
+%         tmp.param_script =['C:\Users\user\Dropbox\source\matlab\Model\ROMS\Analysis\Figure\nwp_1_20\run\fig_param\fig_param2_kyy_', tmp.regionname, '.m'];
+        tmp.param_script =['/home/kimyy/Dropbox/source/matlab/Model/ROMS/Analysis/Figure/nwp_1_20/run/fig_param/fig_param2_kyy_', tmp.regionname, '.m'];
         dirs.filedir = strcat('D:\Data\Model\ROMS\nwp_1_20\backup_surf\', tmp.testname, '\run\'); % % where data files are          
         dirs.matdir = strcat('D:\Data\Model\ROMS\nwp_1_20\', tmp.testname, '\run\mean\');
 %         dirs.griddir = strcat('D:\Data\Model\ROMS\nwp_1_20\backup_surf\'); % % where grid data files are     
         dirs.griddir = strcat('D:\Data\Model\ROMS\nwp_1_20\input\test2117\'); % % where grid data files are     
         dirs.vert_filedir = strcat('D:\Data\Model\ROMS\nwp_1_20\cut_ES_stddepth\', tmp.testname, '\'); % % where data files are          
         dirs.bndyfiledir = strcat('D:\Data\Model\ROMS\nwp_1_20\input\OBC\', tmp.scenname, '\', tmp.testname_GCM, '\'); % % where data files are          
-
+        dirs.glorysdir = ['/data2/ykang/data/MYOCEAN/'];
+        
         RCM_grid.filename = [dirs.griddir, filesep, 'roms_grid_nwp_1_20_test2117.nc'];
         for gridi=1:length(RCM_grid.gridname)
             RCM_grid.(['filename_', RCM_grid.gridname{gridi}])=[dirs.griddir, 'NWP_pck_ocean_', RCM_grid.gridname{gridi}, '_NWP.nc'];
