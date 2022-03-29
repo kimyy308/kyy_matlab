@@ -98,6 +98,7 @@ for seasons_groupi=1:length(seasons_group)
         for flagi=1:7
             fig_flags{flagi,2}=0;
         end
+        flags.fig_switch(1)=0;  %1 or 2
         flags.fig_switch(1)=2;  %1 or 2
 
         tmp.variable ='salt';
@@ -136,5 +137,11 @@ for seasons_groupi=1:length(seasons_group)
             flags.fig_tmp = flags.fig_switch(1);
             SSH_2p_2nd_010_sub_001_get_bndy;
         end
+        
+        if flags.fig_switch(2) > 0
+            flags.fig_tmp = flags.fig_switch(1);
+            SSH_2p_2nd_010_sub_002_get_bndy_GLORYS;
+        end
+        
     end
 end
