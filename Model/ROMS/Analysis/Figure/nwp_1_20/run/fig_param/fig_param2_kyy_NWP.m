@@ -73,6 +73,14 @@ if (isfield(tmp, 'variable') == 1)
             param.varname = 'h';
             param.colorbar_title = '(m)';
             param.colorbar_lev = [-5000 0];
+        case('salt')
+            param.varname = 'salt';
+            param.colorbar_title = ' ';
+            param.colorbar_lev = [30 35];
+        case('temp')
+            param.varname = 'temp';
+            param.colorbar_title = '(^oC)';
+            param.colorbar_lev = [0 35];
         otherwise
             param.varname = tmp.variable;
             param.colorbar_title = ' ';

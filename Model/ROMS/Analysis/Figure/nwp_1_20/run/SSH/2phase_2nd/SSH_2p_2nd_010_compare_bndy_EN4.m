@@ -2,7 +2,7 @@ close all; clc; clear all;
 
 % % % configuration of RCM
  
-RCM_info.name={'test2117', 'test2118', 'test2119', 'test2120', 'test2121', 'v04'};
+RCM_info.name={'test2117', 'test2118', 'test2119', 'test2120', 'test2121'};
 RCM_info.model = 'nwp_1_20';
 
 % RCM_info.dataroot = '/data1/RCM/CMIP6/';
@@ -24,8 +24,8 @@ RCM_info.bndy_directions={'north', 'east', 'south', 'west'};
 % RCM_info.vars = {'Uwind', 'Vwind'};
 
 % RCM_info.vars = {'SSH'};
-% RCM_info.years = 1985:2014;  
-RCM_info.years = 1993:2014;  
+RCM_info.years = 1985:2014;  
+% RCM_info.years = 1993:2014;  
 % RCM_info.years = 1995:2014;  
 %         RCM_info.years = 2030:2030;  
 % RCM_info.years = years_group(years_groupi);  
@@ -34,8 +34,8 @@ RCM_info.years = 1993:2014;
 
 % seasons_group={'all'};
 
-seasons_group={ 'all', 'February', 'August', 'July'};
-% seasons_group={ 'all'};
+% seasons_group={ 'all', 'February', 'August', 'July'};
+seasons_group={ 'all'};
 
 RCM_grid.dl = 1/20;
 RCM_grid.gridname = {'lon_rho', 'lat_rho', 'lon_u', 'lat_u', 'lon_v', 'lat_v', 'lon_psi', 'lat_psi', 'pm', 'pn', 'f', 'h', ...
@@ -98,11 +98,17 @@ for seasons_groupi=1:length(seasons_group)
         for flagi=1:7
             fig_flags{flagi,2}=0;
         end
-        flags.fig_switch(1)=0;  %1 or 2
-        flags.fig_switch(2)=2;  %1 or 2
+        flags.fig_switch(1)=2;  %1 or 2
+        flags.fig_switch(2)=0;  %1 or 2
+        flags.fig_switch(3)=0;  %1 or 2
+        flags.fig_switch(4)=0;  %1 or 2
 
+%         tmp.variable ='salt';
+%         tmp.variable_GCM = 'so';
+        
         tmp.variable ='temp';
         tmp.variable_GCM = 'thetao';
+        
 %         run('nwp_polygon_point.m');
 %         tmp.regionname=RCM_info.region{regionind2};
         tmp.regionname='NWP';
@@ -114,17 +120,17 @@ for seasons_groupi=1:length(seasons_group)
         [cmaps.yrmap, tmp.error_status] = Func_0009_get_colormaps('yr', tmp.dropboxpath);
         [cmaps.byrmap, tmp.error_status] = Func_0009_get_colormaps('byr', tmp.dropboxpath);
 
-%         dirs.figrawdir =strcat('D:\MEPL\project\SSH\7th_year(2022)\figure\nwp_1_20\'); % % where figure files will be saved
-%         tmp.param_script =['C:\Users\user\Dropbox\source\matlab\Model\ROMS\Analysis\Figure\nwp_1_20\run\fig_param\fig_param2_kyy_', tmp.regionname, '.m'];
-        tmp.param_script =['/home/kimyy/Dropbox/source/matlab/Model/ROMS/Analysis/Figure/nwp_1_20/run/fig_param/fig_param2_kyy_', tmp.regionname, '.m'];
+        dirs.figrawdir =strcat('D:\MEPL\project\SSH\7th_year(2022)\figure\nwp_1_20\'); % % where figure files will be saved
+        tmp.param_script =['C:\Users\user\Dropbox\source\matlab\Model\ROMS\Analysis\Figure\nwp_1_20\run\fig_param\fig_param2_kyy_', tmp.regionname, '.m'];
+%         tmp.param_script =['/home/kimyy/Dropbox/source/matlab/Model/ROMS/Analysis/Figure/nwp_1_20/run/fig_param/fig_param2_kyy_', tmp.regionname, '.m'];
         dirs.filedir = strcat('D:\Data\Model\ROMS\nwp_1_20\backup_surf\', tmp.testname, '\run\'); % % where data files are          
         dirs.matdir = strcat('D:\Data\Model\ROMS\nwp_1_20\', tmp.testname, '\run\mean\');
 %         dirs.griddir = strcat('D:\Data\Model\ROMS\nwp_1_20\backup_surf\'); % % where grid data files are     
         dirs.griddir = strcat('D:\Data\Model\ROMS\nwp_1_20\input\test2117\'); % % where grid data files are     
         dirs.vert_filedir = strcat('D:\Data\Model\ROMS\nwp_1_20\cut_ES_stddepth\', tmp.testname, '\'); % % where data files are          
         dirs.bndyfiledir = strcat('D:\Data\Model\ROMS\nwp_1_20\input\OBC\', tmp.scenname, '\', tmp.testname_GCM, '\'); % % where data files are          
-        dirs.glorysdir = ['/data2/ykang/data/MYOCEAN/'];
-        
+%         dirs.glorysdir = ['/data2/ykang/data/MYOCEAN/'];
+        dirs.glorysdir = ['D:\Data\Reanalysis\MyOcean'];
         RCM_grid.filename = [dirs.griddir, filesep, 'roms_grid_nwp_1_20_test2117.nc'];
         for gridi=1:length(RCM_grid.gridname)
             RCM_grid.(['filename_', RCM_grid.gridname{gridi}])=[dirs.griddir, 'NWP_pck_ocean_', RCM_grid.gridname{gridi}, '_NWP.nc'];
@@ -142,8 +148,18 @@ for seasons_groupi=1:length(seasons_group)
         end
         
         if flags.fig_switch(2) > 0
-            flags.fig_tmp = flags.fig_switch(1);
+            flags.fig_tmp = flags.fig_switch(2);
             SSH_2p_2nd_010_sub_002_get_bndy_GLORYS;
+        end
+        
+        if flags.fig_switch(3) > 0
+            flags.fig_tmp = flags.fig_switch(3);
+            SSH_2p_2nd_010_sub_003_get_RMS_bndy_GLORYS;
+        end
+        
+        if flags.fig_switch(4) > 0
+            flags.fig_tmp = flags.fig_switch(4);
+            SSH_2p_2nd_010_sub_004_plot_bndy_RCM_GLORYS;
         end
         
     end

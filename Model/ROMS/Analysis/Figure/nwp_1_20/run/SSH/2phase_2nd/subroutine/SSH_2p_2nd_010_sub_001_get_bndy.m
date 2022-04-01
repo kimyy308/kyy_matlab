@@ -104,11 +104,11 @@ for bndyij=1:length(RCM_info.bndy_directions)
             end
             
             for indi=1:size(RCM_data.([tmp.variable,'_', RCM_info.bndy_directions{bndyij}]), 1)
-                tmp.data(2:RCM_grid.N+1)=RCM_data.([tmp.variable,'_', RCM_info.bndy_directions{bndyij}])(indi,:,yearij,monthij);
-                tmp.data(1)=tmp.data(2);
+                tmp.data(1:RCM_grid.N)=RCM_data.([tmp.variable,'_', RCM_info.bndy_directions{bndyij}])(indi,:,yearij,monthij);
+%                 tmp.data(1)=tmp.data(2);
                 tmp.data(end+1)=tmp.data(end);
-                tmp.z(2:RCM_grid.N+1) = RCM_data.(['z_', RCM_info.bndy_directions{bndyij}])(indi,:,yearij,monthij);
-                tmp.z(1) = -5500;
+                tmp.z(1:RCM_grid.N) = RCM_data.(['z_', RCM_info.bndy_directions{bndyij}])(indi,:,yearij,monthij);
+%                 tmp.z(1) = -5500;
                 tmp.z(end+1)=100;
                 RCM_data.([tmp.variable,'_stddepth_', RCM_info.bndy_directions{bndyij}])(indi,:,yearij, monthij) = ...
                     interp1(tmp.z, tmp.data, RCM_grid.stddepth);
@@ -123,7 +123,7 @@ for bndyij=1:length(RCM_info.bndy_directions)
             
             end
             
-            RCM_data.([tmp.variable,'_stddepth_', RCM_info.bndy_directions{bndyij}])(find(RCM_grid.mask_rho_north==0),:,yearij,monthij) = NaN;
+            RCM_data.([tmp.variable,'_stddepth_', RCM_info.bndy_directions{bndyij}])(find(RCM_grid.(['mask_rho_', RCM_info.bndy_directions{bndyij}])==0),:,yearij,monthij) = NaN;
             
 %             RCM_data.([tmp.variable,'_stddepth_', RCM_info.bndy_directions{bndyij}])= griddata( ...
 %                 tmp.lonlat_2d, RCM_data.(['z','_', RCM_info.bndy_directions{bndyij}]), ...
@@ -160,7 +160,7 @@ for bndyij=1:length(RCM_info.bndy_directions)
     end
 end
 abc=1
-
+% pcolor(RCM_data.temp_stddepth_north(:,:,1,1)'); shading flat; colorbar;
 tmp.matsavefile=[dirs.matdir, filesep, tmp.testname, '_', tmp.variable, '_', ...
     num2str(min(RCM_info.years),'%04i'),'_',num2str(max(RCM_info.years),'%04i'), '_', ...
     RCM_info.season, '.mat'];
