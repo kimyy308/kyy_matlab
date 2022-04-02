@@ -23,7 +23,8 @@ for testnameind2=1:length(RCM_info.name)
         tmp.yearstr=num2str(tmp.tempyear);
         tmp.testname=RCM_info.name{testnameind2};   % % need to change
 %         dirs.stadir = strcat('D:\Data\Model\ROMS\nwp_1_20\', tmp.testname, '\run\',tmp.yearstr, filesep);
-        dirs.stadir = strcat('D:\Data\Model\ROMS\nwp_1_20\', tmp.testname, '\run\',tmp.yearstr, '_test_03', filesep);
+%         dirs.stadir = strcat('D:\Data\Model\ROMS\nwp_1_20\', tmp.testname, '\run\',tmp.yearstr, '_test_05', filesep);
+        dirs.stadir = strcat('D:\MEPL\project\SSH\7th_year(2022)\tide_byun\test_05', filesep);
         tmp.staname = [dirs.stadir, 'sta.nc'];
         
 %         ncinfo(tmp.staname)
@@ -64,7 +65,7 @@ for testnameind2=1:length(RCM_info.name)
     end
 end
 
-save('D:\Data\Model\ROMS\nwp_1_20\test2201\run\2015_test_04\output.mat');
+save('D:\MEPL\project\SSH\7th_year(2022)\tide_byun\test_05\output.mat');
 
 % tmp.ampm2(1)=Model_amp.test2127_2015.M2;
 % tmp.ampm2(2)=Model_amp.test2127_2020.M2;
