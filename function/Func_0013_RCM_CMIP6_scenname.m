@@ -1,4 +1,4 @@
-function [scenname, error_status] = RCM_CMIP6_scenname(testname)
+function [scenname, error_status] = Func_0013_RCM_CMIP6_scenname(testname)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % function var=RCM_CMIP6_testname_his(testname);

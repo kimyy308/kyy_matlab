@@ -232,8 +232,9 @@ for testnameind=1:length(all_testname)
         for flagi=1:100
             fig_flags{flagi,2}=0;
         end
-        fig_flags{63,2}=2; 
-        
+%         fig_flags{63,2}=2; 
+        fig_flags{43,2}=2; 
+
         
         figdir=[figrawdir,LTRANS_testname, '\', regionname, '\spawn\'];
         if (exist(strcat(figdir) , 'dir') ~= 7)

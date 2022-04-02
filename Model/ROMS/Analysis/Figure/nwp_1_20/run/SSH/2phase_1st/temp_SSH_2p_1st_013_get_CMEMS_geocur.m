@@ -1,28 +1,29 @@
  close all; clear all;  clc;   
 % all_region ={'NWP','ES', 'SS', 'YS', 'ECS'}
-all_region ={'EKWC2'}
+% all_region ={'EKWC2'}
 % all_region ={'NWP', 'AKP4'}
+all_region ={'ES_KHOA'}
 
 for regionind=1:length(all_region)
     clearvars '*' -except regionind all_region
     
-    seasons_group={'all', 'spring', 'summer', 'fall', 'winter'};
+    seasons_group={'all', 'spring', 'summer', 'fall', 'winter', 'February', 'August'};
           
     for seasons_groupi=1:length(seasons_group)
         season=seasons_group{seasons_groupi};
-        switch(season)
-            case 'all'
-                inputmonth =1:12;  
-            case 'spring'
-                inputmonth =[3,4,5];  
-            case 'summer'
-                inputmonth =[6,7,8];  
-            case 'fall'
-                inputmonth =[9,10,11];  
-            case 'winter'
-                inputmonth =[12,1,2];  
-        end  
-    
+%         switch(season)
+%             case 'all'
+%                 inputmonth =1:12;  
+%             case 'spring'
+%                 inputmonth =[3,4,5];  
+%             case 'summer'
+%                 inputmonth =[6,7,8];  
+%             case 'fall'
+%                 inputmonth =[9,10,11];  
+%             case 'winter'
+%                 inputmonth =[12,1,2];  
+%         end  
+    [inputmonth, tmp.error_status]=Func_0019_get_month_from_season(season);
         % % % 
         % % % Read Model ssh
         % % % interp
@@ -56,49 +57,9 @@ for regionind=1:length(all_region)
 
         varname ='sla';  %% reference variable -> temperature
         run('nwp_polygon_point.m');
-        regionname=all_region{regionind}
-        switch(regionname)
-            case('NWP') %% North western Pacific
-                lonlat = [115, 164, 15, 52];  %% whole data area
-                refpolygon(1,1)=lonlat(1);
-                refpolygon(2,1)=lonlat(2);
-                refpolygon(1,2)=lonlat(3);
-                refpolygon(2,2)=lonlat(4);
-            case('NWP2') %% North western Pacific
-                lonlat = [115, 145, 25, 52];  %% whole data area
-                refpolygon(1,1)=lonlat(1);
-                refpolygon(2,1)=lonlat(2);
-                refpolygon(1,2)=lonlat(3);
-                refpolygon(2,2)=lonlat(4);
-            case('ES') %% East Sea
-                refpolygon=espolygon;
-            case('SS') %% South Sea
-                refpolygon=sspolygon;
-            case('YS') %% Yellow Sea
-                refpolygon=yspolygon;
-            case('ECS') %% East China Sea
-                refpolygon=ecspolygon;
-            case('EKB') %% North western Pacific
-                lonlat = [127, 131, 37, 42];  %% East Korea Bay
-                refpolygon(1,1)=lonlat(1);
-                refpolygon(2,1)=lonlat(2);
-                refpolygon(1,2)=lonlat(3);
-                refpolygon(2,2)=lonlat(4);
-            case('AKP2') %% Around Korean Peninsula (except kuroshio)
-                refpolygon=akp2polygon;
-            case('AKP3') %% Around Korea Peninsula
-                refpolygon=akp3polygon;
-            case('AKP4') %% Around Korea Peninsula
-                refpolygon=akp4polygon;
-            case('EKWC2')
-                refpolygon=ekwc2polygon;
-            otherwise
-                ('?')
-        end
-        lonlat(1)=min(refpolygon(:,1));
-        lonlat(2)=max(refpolygon(:,1));
-        lonlat(3)=min(refpolygon(:,2));
-        lonlat(4)=max(refpolygon(:,2));
+          regionname=all_region{regionind};
+            [refpolygon, lonlat, tmp.error_status] = Func_0007_get_polygon_data_from_regionname(regionname);
+
         % % % for EKB
         % regionname='EKB';
         % lonlat = [127, 129.5, 38, 40.5];
@@ -198,12 +159,16 @@ for regionind=1:length(all_region)
         if (exist(strcat(figdir) , 'dir') ~= 7)
             mkdir(strcat(figdir));
         end 
-
+% 
+%         save([filedir,regionname,'cmems_gos_',num2str(min(inputyear),'%04i'),'_',num2str(max(inputyear),'%04i'), ...
+%             '_', num2str(inputmonth(1),'%02i'), '-', num2str(inputmonth(end),'%02i'), '.mat']);
         save([filedir,regionname,'cmems_gos_',num2str(min(inputyear),'%04i'),'_',num2str(max(inputyear),'%04i'), ...
-            '_', num2str(inputmonth(1),'%02i'), '-', num2str(inputmonth(end),'%02i'), '.mat']);
-
+            '_', season, '.mat']);
+        
+%         ncid = netcdf.create(strcat(filedir,regionname,'cmems_gos_',num2str(min(inputyear),'%04i'),'_',num2str(max(inputyear),'%04i'), ...
+%             '_', num2str(inputmonth(1),'%02i'), '-', num2str(inputmonth(end),'%02i'), '.nc'),'NETCDF4');
         ncid = netcdf.create(strcat(filedir,regionname,'cmems_gos_',num2str(min(inputyear),'%04i'),'_',num2str(max(inputyear),'%04i'), ...
-            '_', num2str(inputmonth(1),'%02i'), '-', num2str(inputmonth(end),'%02i'), '.nc'),'NETCDF4');
+            '_', season, '.nc'),'NETCDF4');
 
         onedimid = netcdf.defDim(ncid,'one', 1);
         lon_dimid = netcdf.defDim(ncid, 'lon', len_lon);

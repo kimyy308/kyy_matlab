@@ -1,6 +1,5 @@
 % % this script is for north western pacific region figure
-% %  Updated 30-Sep-2021 by Yong-Yub Kim
-% %  Updated 10-Nov-2021 by Yong-Yub Kim, wind parameter
+% %  Updated 14-Dec-2021 by Yong-Yub Kim
 
 if (exist('refdepth' , 'var') ~= 1)
 % % set part of the m_quiver parameter 
@@ -73,14 +72,6 @@ if (isfield(tmp, 'variable') == 1)
             param.varname = 'h';
             param.colorbar_title = '(m)';
             param.colorbar_lev = [-5000 0];
-        case('salt')
-            param.varname = 'salt';
-            param.colorbar_title = ' ';
-            param.colorbar_lev = [30 35];
-        case('temp')
-            param.varname = 'temp';
-            param.colorbar_title = '(^oC)';
-            param.colorbar_lev = [0 35];
         otherwise
             param.varname = tmp.variable;
             param.colorbar_title = ' ';

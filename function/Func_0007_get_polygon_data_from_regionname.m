@@ -39,6 +39,8 @@ switch(regionname)
         refpolygon=ekwc2polygon;
     case('NES') %% Northern East Sea
         refpolygon=nespolygon;
+    case('NES2') %% Northern East Sea
+        refpolygon=nes2polygon;
     case('SES') %% Southern East Sea
         refpolygon=sespolygon;
     case('SS') %% South Sea
