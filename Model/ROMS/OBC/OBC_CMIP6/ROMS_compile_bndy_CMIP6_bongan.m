@@ -28,14 +28,16 @@ end
 
 % testnames ={'test2101', 'test2102', 'test2103', 'test2104', 'test2105'};
 % testnames ={'test2102', 'test2103', 'test2104', 'test2105', 'test2106'};
-testnames ={'test2107', 'test2108', 'test2109', 'test2110', 'test2111'};
+% testnames ={'test2107', 'test2108', 'test2109', 'test2110', 'test2111'};
+testnames ={'test2208', 'test2209', 'test2210', 'test2211', 'test2212'};
+
 % testnames ={'test2107', 'test2108'};
 
 % testnames ={'test2108'};
 
 % % CMIP6 Model name
 % model_names = {'CMCC-CM2-HR4', 'CNRM-ESM2-1', 'EC-Earth3-Veg', 'ACCESS-CM2', 'CNRM-CM6-1-HR'};
-model_names = {'CNRM-ESM2-1', 'EC-Earth3-Veg', 'ACCESS-CM2', 'CNRM-CM6-1-HR', 'CMCC-ESM2'}; % 2102, 3, 4, 5, 6
+% model_names = {'CNRM-ESM2-1', 'EC-Earth3-Veg', 'ACCESS-CM2', 'CNRM-CM6-1-HR', 'CMCC-ESM2'}; % 2102, 3, 4, 5, 6
 
 
 
@@ -44,14 +46,17 @@ model_names = {'CNRM-ESM2-1', 'EC-Earth3-Veg', 'ACCESS-CM2', 'CNRM-CM6-1-HR', 'C
 
 
 
-scenario_name='ssp585'; % historical, ssp585
+% scenario_name='ssp585'; % historical, ssp585
+scenario_name='historical'; % historical, ssp585
 
 
-for model_names_index=1:length(model_names)
+for model_names_index=1:length(testnames)
     
     testname = testnames{model_names_index};
-    model_name = model_names{model_names_index};
-    year = 2051:2100;
+%     model_name = model_names{model_names_index};
+    model_name = Func_0004_get_GCMname_from_RCM(testname);
+
+    year = 1985;
     mm = 1:12;
     casename = 'nwp_1_20';
     addpath(genpath('/home/kimyy/Dropbox/source/matlab/Common/netcdf_old/'))

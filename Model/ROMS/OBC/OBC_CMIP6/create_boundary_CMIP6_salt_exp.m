@@ -33,19 +33,21 @@ end
 % % RCM Model name
 % testnames ={'test2101', 'test2102', 'test2103', 'test2104', 'test2105'};
 % testnames ={'test2102', 'test2103', 'test2104', 'test2105', 'test2106'};
-testnames ={'test2107', 'test2108', 'test2109', 'test2110', 'test2111'};
+% testnames ={'test2107', 'test2108', 'test2109', 'test2110', 'test2111'};
+testnames ={'test2208', 'test2209', 'test2210', 'test2211', 'test2212'};
 
 % testnames ={'test2108'};
 
 % % CMIP6 Model name
 % model_names = {'CMCC-CM2-HR4', 'CNRM-ESM2-1', 'EC-Earth3-Veg', 'ACCESS-CM2', 'CNRM-CM6-1-HR'};
 
-model_names = {'CNRM-ESM2-1', 'EC-Earth3-Veg', 'ACCESS-CM2', 'CNRM-CM6-1-HR', 'CMCC-ESM2'}; %  test 2102 3 4 5 6
+% model_names = {'CNRM-ESM2-1', 'EC-Earth3-Veg', 'ACCESS-CM2', 'CNRM-CM6-1-HR', 'CMCC-ESM2'}; %  test 2102 3 4 5 6
 
 % model_names = {'EC-Earth3-Veg'};
 
 % model_names = {'IPSL-CM5A-MR'};
-scenario_name='ssp585'; % historical, ssp585
+% scenario_name='ssp585'; % historical, ssp585
+scenario_name='historical'; % historical, ssp585
 
 % ensemble_name='r1i1p1f1';  % CMCC-CM2-HR4, EC-Earth3-Veg, ACCESS-CM2, 
 % ensemble_name='r1i1p1f2';  % CNRM-ESM2-1, CNRM-CM6-1-HR
@@ -64,12 +66,11 @@ end
 
 tmp_bry_prefix='/data1/RCM/CMIP6/input_hdd/nwp_1_20/input/OBC/';
 
-for model_names_index=1:length(model_names)
+for model_names_index=1:length(testnames)
 
     testname = testnames{model_names_index};
 %     model_name = model_names{model_names_index};
     model_name = Func_0004_get_GCMname_from_RCM(testname);
-    model_name_s = 
     
     switch(testname)
         case {'test2208', 'test2209'}
@@ -151,7 +152,7 @@ for model_names_index=1:length(model_names)
     % Get the OGCM grid
 %     tmp_OGCM_path=OGCM_path;
 %     OGCM_path=[tmp_OGCM_path,'thetao/historical/interp/ensemble/'];
-    OGCM_path=[tmp_OGCM_path,'thetao/',scenario_name,'/interp/',model_name,'/'];
+    OGCM_path=[tmp_OGCM_path,scenario_name,'/thetao','/interp/',model_name,'/', ensemble_name,'/', 'gn/', ];
 
 %     grid_name = [OGCM_path, 'thetao_interp_ensemble_historical_r1i1p1_', num2str(Ymin,'%04i'), '.nc'];
     grid_name = [OGCM_path, 'thetao_interp_',model_name,'_',scenario_name,'_', ensemble_name, '_', num2str(Ymin,'%04i'), '.nc'];
