@@ -2,7 +2,9 @@ close all; clc; clear all;
 
 % % % configuration of RCM
  
-RCM_info.name={'test2117', 'test2118', 'test2119', 'test2120', 'test2121'};
+% RCM_info.name={'test2117', 'test2118', 'test2119', 'test2120', 'test2121'};
+RCM_info.name={'test2117'};
+
 RCM_info.model = 'nwp_1_20';
 
 % RCM_info.dataroot = '/data1/RCM/CMIP6/';
@@ -24,8 +26,8 @@ RCM_info.bndy_directions={'north', 'east', 'south', 'west'};
 % RCM_info.vars = {'Uwind', 'Vwind'};
 
 % RCM_info.vars = {'SSH'};
-RCM_info.years = 1985:2014;  
-% RCM_info.years = 1993:2014;  
+% RCM_info.years = 1985:2014;  
+RCM_info.years = 1993:2014;  
 % RCM_info.years = 1995:2014;  
 %         RCM_info.years = 2030:2030;  
 % RCM_info.years = years_group(years_groupi);  
@@ -98,16 +100,17 @@ for seasons_groupi=1:length(seasons_group)
         for flagi=1:7
             fig_flags{flagi,2}=0;
         end
-        flags.fig_switch(1)=2;  %1 or 2
+        flags.fig_switch(1)=0;  %1 or 2
         flags.fig_switch(2)=0;  %1 or 2
         flags.fig_switch(3)=0;  %1 or 2
         flags.fig_switch(4)=0;  %1 or 2
+        flags.fig_switch(5)=2;  %1 or 2
 
-%         tmp.variable ='salt';
-%         tmp.variable_GCM = 'so';
+        tmp.variable ='salt';
+        tmp.variable_GCM = 'so';
         
-        tmp.variable ='temp';
-        tmp.variable_GCM = 'thetao';
+%         tmp.variable ='temp';
+%         tmp.variable_GCM = 'thetao';
         
 %         run('nwp_polygon_point.m');
 %         tmp.regionname=RCM_info.region{regionind2};
@@ -121,6 +124,7 @@ for seasons_groupi=1:length(seasons_group)
         [cmaps.byrmap, tmp.error_status] = Func_0009_get_colormaps('byr', tmp.dropboxpath);
 
         dirs.figrawdir =strcat('D:\MEPL\project\SSH\7th_year(2022)\figure\nwp_1_20\'); % % where figure files will be saved
+        dirs.figrawdir_GLORYS =strcat('D:\MEPL\project\SSH\7th_year(2022)\figure\GLORYS\'); % % where figure files will be saved
         tmp.param_script =['C:\Users\user\Dropbox\source\matlab\Model\ROMS\Analysis\Figure\nwp_1_20\run\fig_param\fig_param2_kyy_', tmp.regionname, '.m'];
 %         tmp.param_script =['/home/kimyy/Dropbox/source/matlab/Model/ROMS/Analysis/Figure/nwp_1_20/run/fig_param/fig_param2_kyy_', tmp.regionname, '.m'];
         dirs.filedir = strcat('D:\Data\Model\ROMS\nwp_1_20\backup_surf\', tmp.testname, '\run\'); % % where data files are          
@@ -160,6 +164,11 @@ for seasons_groupi=1:length(seasons_group)
         if flags.fig_switch(4) > 0
             flags.fig_tmp = flags.fig_switch(4);
             SSH_2p_2nd_010_sub_004_plot_bndy_RCM_GLORYS;
+        end
+        
+        if flags.fig_switch(5) > 0
+            flags.fig_tmp = flags.fig_switch(5);
+            SSH_2p_2nd_010_sub_005_plot_bndy_GLORYS;
         end
         
     end
