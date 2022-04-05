@@ -1,5 +1,10 @@
 close all; clc; clear all;
 
+
+
+    error_status=1;
+
+
 % % % configuration of RCM
  
 % RCM_info.name={'test2117', 'test2118', 'test2119', 'test2120', 'test2121'};
@@ -48,7 +53,7 @@ for seasons_groupi=1:length(seasons_group)
     for testnameind2=1:length(RCM_info.name)
         close all;
         clearvars '*' -except RCM_info RCM_grid testnameind2 regionind2 years_groupi years_group seasons_group seasons_groupi season
-        tmp.fs=filesep;  
+        filesep=filesep;  
 
         % % % 
         % %     set dropbox path
@@ -57,11 +62,11 @@ for seasons_groupi=1:length(seasons_group)
         else
             tmp.dropboxpath = '/home/kimyy/Dropbox';
         end
-        addpath(genpath([tmp.dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', tmp.fs, 'function']));
+        addpath(genpath([tmp.dropboxpath, filesep, 'source', filesep, 'matlab', filesep, 'function']));
         [tmp.dropboxpath, tmp.error_status] = Func_0008_set_dropbox_path(computer);
-        addpath(genpath([tmp.dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', tmp.fs, 'Model' ...
-            tmp.fs, 'ROMS', tmp.fs, 'Analysis', tmp.fs, 'Figure', tmp.fs, 'nwp_1_20', tmp.fs ...
-            'run', tmp.fs, 'SSH', tmp.fs, '2phase_2nd', tmp.fs, 'subroutine']));
+        addpath(genpath([tmp.dropboxpath, filesep, 'source', filesep, 'matlab', filesep, 'Model' ...
+            filesep, 'ROMS', filesep, 'Analysis', filesep, 'Figure', filesep, 'nwp_1_20', filesep ...
+            'run', filesep, 'SSH', filesep, '2phase_2nd', filesep, 'subroutine']));
         RCM_grid.stddepth=[0, -10,-20,-30, -40, -50, ...
         -60, -70, -80, -90, -100, ...
         -110, -120, -130, -140, -150, ...

@@ -1,12 +1,16 @@
 clc; close all; clear all;
-
+dropboxpath='C:\Users\User\Dropbox';
+%     addpath(genpath([dropboxpath '\source\matlab\Common\netcdf_old']));
+    addpath(genpath([matlabroot,'\toolbox\matlab\imagesci\'])); %% add new netcdf path
+    addpath(genpath([dropboxpath, filesep, 'source', filesep, 'matlab', filesep, 'function']));
+    
 RCM_info.years = [2015];
 % RCM_info.years = [2015, 2020, 2025, 2030];
 
 % tmp.variable = 'wstrcurl';
 % % RCM_info.name = {'test2127', 'test2201'};
-RCM_info.name = {'test2201'};
-% RCM_info.name = {'test2127'};
+% RCM_info.name = {'test2201'};
+RCM_info.name = {'test2127'};
 
 dropboxpath='C:\Users\User\Dropbox';
 addpath(genpath([dropboxpath '/source/matlab/Common/t_tide_v1.3beta']));
@@ -22,10 +26,11 @@ for testnameind2=1:length(RCM_info.name)
         tmp.tempyear=RCM_info.years(yeari);
         tmp.yearstr=num2str(tmp.tempyear);
         tmp.testname=RCM_info.name{testnameind2};   % % need to change
-%         dirs.stadir = strcat('D:\Data\Model\ROMS\nwp_1_20\', tmp.testname, '\run\',tmp.yearstr, filesep);
+        dirs.stadir = strcat('D:\Data\Model\ROMS\nwp_1_20\', tmp.testname, '\run\',tmp.yearstr, filesep);
 %         dirs.stadir = strcat('D:\Data\Model\ROMS\nwp_1_20\', tmp.testname, '\run\',tmp.yearstr, '_test_05', filesep);
-        dirs.stadir = strcat('D:\MEPL\project\SSH\7th_year(2022)\tide_byun\test_05', filesep);
-        tmp.staname = [dirs.stadir, 'sta.nc'];
+%         dirs.stadir = strcat('D:\MEPL\project\SSH\7th_year(2022)\tide_byun\test_06', filesep);
+        
+        tmp.staname = [dirs.stadir, 'sta_raw.nc'];
         
 %         ncinfo(tmp.staname)
 %         mean_data=ncread(tmp.staname, 'zeta');
@@ -65,7 +70,7 @@ for testnameind2=1:length(RCM_info.name)
     end
 end
 
-save('D:\MEPL\project\SSH\7th_year(2022)\tide_byun\test_05\output.mat');
+save('D:\MEPL\project\SSH\7th_year(2022)\tide_byun\test_06\output_raw.mat');
 
 % tmp.ampm2(1)=Model_amp.test2127_2015.M2;
 % tmp.ampm2(2)=Model_amp.test2127_2020.M2;
