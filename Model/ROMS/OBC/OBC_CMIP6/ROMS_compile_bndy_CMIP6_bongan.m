@@ -29,11 +29,11 @@ end
 % testnames ={'test2101', 'test2102', 'test2103', 'test2104', 'test2105'};
 % testnames ={'test2102', 'test2103', 'test2104', 'test2105', 'test2106'};
 % testnames ={'test2107', 'test2108', 'test2109', 'test2110', 'test2111'};
-testnames ={'test2208', 'test2209', 'test2210', 'test2211', 'test2212'};
+% testnames ={'test2208', 'test2209', 'test2210', 'test2211', 'test2212'};
 
 % testnames ={'test2107', 'test2108'};
 
-% testnames ={'test2108'};
+testnames ={'test2213'};
 
 % % CMIP6 Model name
 % model_names = {'CMCC-CM2-HR4', 'CNRM-ESM2-1', 'EC-Earth3-Veg', 'ACCESS-CM2', 'CNRM-CM6-1-HR'};

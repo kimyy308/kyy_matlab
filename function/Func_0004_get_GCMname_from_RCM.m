@@ -27,7 +27,7 @@ switch(testname)
         gcmtestname='MPI-ESM-LR';
     case {'test2102', 'test2107', 'test2117', 'test2127', 'test2210'}
         gcmtestname='CNRM-ESM2-1';
-    case {'test2103', 'test2108', 'test2118', 'test2128', 'test2211'}
+    case {'test2103', 'test2108', 'test2118', 'test2128', 'test2211', 'test2213'}
         gcmtestname='EC-Earth3-Veg';
     case {'test2104', 'test2109', 'test2119', 'test2129', 'test2208'}
         gcmtestname='ACCESS-CM2';
