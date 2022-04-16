@@ -61,11 +61,21 @@ sina = sin(angle);
 % Open the OGCM file
 %
 
-OGCM_tdir=[OGCM_dir,'thetao/',scenario_name,'/interp/',model_name,'/'];
-OGCM_sdir=[OGCM_dir,'so/',scenario_name,'/interp/',model_name_s,'/'];
-OGCM_udir=[OGCM_dir,'uo/',scenario_name,'/interp/',model_name,'/'];
-OGCM_vdir=[OGCM_dir,'vo/',scenario_name,'/interp/',model_name,'/'];
-OGCM_zdir=[OGCM_dir,'zos/',scenario_name,'/interp/',model_name,'/'];
+%  OGCM_path=[tmp_OGCM_path,scenario_name,'/thetao','/interp/',model_name,'/', ensemble_name,'/', 'gn/', ];
+%     grid_name = [OGCM_path, 'thetao_interp_ensemble_historical_r1i1p1_', num2str(Ymin,'%04i'), '.nc'];
+%     grid_name = [OGCM_path, 'thetao_interp_',model_name,'_',scenario_name,'_', ensemble_name, '_', num2str(Ymin,'%04i'), '.nc'];
+
+OGCM_tdir=[OGCM_dir,scenario_name,'/thetao','/interp/',model_name,'/', ensemble_name,'/', 'gn/', ];
+OGCM_sdir=[OGCM_dir,scenario_name,'/so','/interp/',model_name_s,'/', ensemble_name_s,'/', 'gn/', ];
+OGCM_udir=[OGCM_dir,scenario_name,'/uo','/interp/',model_name,'/', ensemble_name,'/', 'gn/', ];
+OGCM_vdir=[OGCM_dir,scenario_name,'/vo','/interp/',model_name,'/', ensemble_name,'/', 'gn/', ];
+OGCM_zdir=[OGCM_dir,scenario_name,'/zos','/interp/',model_name,'/', ensemble_name,'/', 'gn/', ];
+
+% OGCM_tdir=[OGCM_dir,'thetao/',scenario_name,'/interp/',model_name,'/'];
+% OGCM_sdir=[OGCM_dir,'so/',scenario_name,'/interp/',model_name_s,'/'];
+% OGCM_udir=[OGCM_dir,'uo/',scenario_name,'/interp/',model_name,'/'];
+% OGCM_vdir=[OGCM_dir,'vo/',scenario_name,'/interp/',model_name,'/'];
+% OGCM_zdir=[OGCM_dir,'zos/',scenario_name,'/interp/',model_name,'/'];
 
 middle_name=['interp_',model_name,'_',scenario_name, '_', ensemble_name];
 middle_name_s=['interp_',model_name_s,'_',scenario_name, '_', ensemble_name_s];

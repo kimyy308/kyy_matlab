@@ -48,15 +48,17 @@ all_testname2 = {'test2117', 'test2118', 'test2119', 'test2120', 'test2121'};
 
 inputyear = [1985:2014];
 
-t_point= 6;  
-point_name={'korea','tsugaru','soya','taiwan','kuro_intrusion','yellowsea'};
+t_point= 8;  
+point_name={'korea','tsugaru','soya','taiwan','kuro_intrusion','yellowsea', 'west', 'east'};
 kts = [128.0  35.2   134.0  35.2   ...  
        140.5  42.0   140.54 41.0   ...
        142.0  47.0   142.04 45.0   ...
        118.65 24.6   120.2  23.75  ...
        121.95 25.1   130.15 31.35  ... 
-       121.8  31.9   126.5  34.35];
-lgd_point = ['%%korea  tsugaru   soya   taiwan  kuro_intru  yellowsea \n'];
+       121.8  31.9   126.5  34.35  ...
+       128.75 35.16  129.35 34.58  ...
+       129.35 34.58  130.4  33.53];
+lgd_point = ['%%korea  tsugaru   soya   taiwan  kuro_intru  yellowsea west   east\n'];
 
 for testnameind2=1:length(all_testname2)
 
@@ -474,7 +476,7 @@ for testnameind2=1:length(all_testname2)
             hold off
             fid = fopen(outfile,'a+');
         %     fprintf(fid,'%8.3f %8.3f %8.3f  \n', trans');
-            fprintf(fid,'%8.3f %8.3f %8.3f %8.3f %8.3f %8.3f \n', trans');
+            fprintf(fid,'%8.3f %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f \n', trans');
             fclose(fid);
         end
     end
