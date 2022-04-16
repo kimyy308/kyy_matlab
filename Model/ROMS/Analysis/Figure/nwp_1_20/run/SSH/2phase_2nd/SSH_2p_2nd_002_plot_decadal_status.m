@@ -13,8 +13,12 @@ warning off;
 %         RCM_info.name={ 'test2117', 'test2120'};
 %         RCM_info.name={ 'test2118', 'test2121'};   
 %         RCM_info.name={ 'test2119'};      
-        RCM_info.name={'test2117', 'test2118', 'test2119', 'test2120', 'test2121', 'v04'};
+%         RCM_info.name={'test2117', 'test2118', 'test2119', 'test2120', 'test2121', 'v04'};
 % RCM_info.name={'test2127', 'test2128', 'test2129', 'test2130', 'test2131'};
+% RCM_info.name={'test2127', 'test2129', 'test2130', 'test2131'};
+% RCM_info.name={ 'test2130', 'test2131'};
+RCM_info.name={ 'test2127'};
+
 %         RCM_info.name={'v04', 'v05'};
 %         RCM_info.name={'v04'};
 
@@ -42,14 +46,17 @@ RCM_info.vert_section = [129, 131, 37, 37, -200, 0]; % lonmin, lonmax, latmin, l
 % RCM_info.vars = { 'Uwind', 'Vwind'};
 % RCM_info.vars = {'wstrcurl', 'SST', 'SSS', 'SSH'};
 % RCM_info.vars = {'SSS'};
-RCM_info.vars = {'wstrcurl'};
+% RCM_info.vars = {'wstrcurl'};
+% RCM_info.vars = {'shflux', 'wstrcurl', 'SST', 'SSS', 'SSH'};
+RCM_info.vars = {'shflux', 'SST', 'SSS', 'SSH'};
 
 % RCM_info.vars = {'Uwind', 'Vwind'};
 
 % RCM_info.vars = {'SSH'};
-RCM_info.years = 1985:2014;  
+% RCM_info.years = 1985:2014;  
 % RCM_info.years = 1993:2014;  
 % RCM_info.years = 1995:2014;  
+RCM_info.years = 2081:2100;  
 %         RCM_info.years = 2030:2030;  
 % RCM_info.years = years_group(years_groupi);  
 
@@ -60,7 +67,9 @@ RCM_info.years = 1985:2014;
 % seasons_group={'winter'};
 % seasons_group={'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'};
 % seasons_group={ 'February', 'August'};
-seasons_group={ 'all', 'February', 'August', 'July'};
+% seasons_group={ 'all', 'February', 'August'};
+seasons_group={'February', 'January'};
+
 % seasons_group={ 'all'};
 
 
@@ -135,14 +144,14 @@ for seasons_groupi=1:length(seasons_group)
             for flagi=1:7
                 fig_flags{flagi,2}=0;
             end
-            flags.fig_switch(1)=0;  %1 or 2
+            flags.fig_switch(1)=1;  %1 or 2
             flags.fig_switch(2)=0; 
-            flags.fig_switch(3)=0;
+            flags.fig_switch(3)=1;
             flags.fig_switch(4)=0;
             flags.fig_switch(5)=0;
             flags.fig_switch(6)=0;
-            flags.fig_switch(7)=0;
-            flags.fig_switch(8)=2;
+            flags.fig_switch(7)=1;
+            flags.fig_switch(8)=0;
             flags.fig_switch(9)=0;
             
             tmp.variable ='zeta';

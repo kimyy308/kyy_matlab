@@ -8,9 +8,10 @@ gridname='D:\Data\Model\ROMS\nwp_1_20\input\test2117\roms_grid_nwp_1_20_test2117
 %source='NaoJ';
 source='TPXO7';
 TPXO7name=['D:\Data\Model\ROMS\nwp_1_20\etc\Roms_tools\TPXO7\TPXO7.nc'];
-% tidenum=10;
-tidenum=2; %M2, S2
-outputname=['D:\Data\Model\ROMS\nwp_1_20\input\tides\nwp_1_20_tides_byun_m2s2.nc'];
+tidenum=10;
+% tidenum=2; %M2, S2
+% outputname=['D:\Data\Model\ROMS\nwp_1_20\input\tides\nwp_1_20_tides_byun_m2s2.nc'];
+outputname=['D:\Data\Model\ROMS\nwp_1_20\input\tides\nwp_1_20_tides_byun_10con.nc'];
 
 %  source='TPXO7.2';
 % tidenum=16;
@@ -97,22 +98,22 @@ switch source
         end
     case 'TPXO7'
         if tidenum>10;tidenum=10;end
-%         comp=['m2';'s2';'n2';'k2';'k1';'o1';'p1';'q1';'mf';'mm'];
-%         components = 'm2  s2  n2  k2  k1  o1  p1  q1  mf  mm';
-%         period=[12.4206012; 12.0000000; 12.6583482; 11.9672348; 23.9344697; 25.8193417; 24.0658902; 26.8683567;...
-%             327.8589689; 661.3092049];
-        comp=['m2';'s2'];
-        components = 'm2  s2';
-        period=[12.4206012; 12.0000000];
+        comp=['m2';'s2';'n2';'k2';'k1';'o1';'p1';'q1';'mf';'mm'];
+        components = 'm2  s2  n2  k2  k1  o1  p1  q1  mf  mm';
+        period=[12.4206012; 12.0000000; 12.6583482; 11.9672348; 23.9344697; 25.8193417; 24.0658902; 26.8683567;...
+            327.8589689; 661.3092049];
+%         comp=['m2';'s2'];
+%         components = 'm2  s2';
+%         period=[12.4206012; 12.0000000];
         for ij=1:tidenum
-            if ele==1
+            if ele==1 % elevation switch
                 ur=ext_data_tpxo(TPXO7name,'ssh_r',ij,lon_rho,lat_rho,'r',0);
                 ui=ext_data_tpxo(TPXO7name,'ssh_i',ij,lon_rho,lat_rho,'r',0);
                 ei=complex(ur,ui);
                 tide_pha(ij,:,:)=mod(-180./pi.*angle(ei),360.0);
                 tide_amp(ij,:,:)=abs(ei);
             end
-            if uv==1
+            if uv==1  % current switch
                 ur=ext_data_tpxo(TPXO7name,'u_r',ij,lon_rho,lat_rho,'u',0);
                 ui=ext_data_tpxo(TPXO7name,'u_i',ij,lon_rho,lat_rho,'u',0);
                 ei=complex(ur,ui);
