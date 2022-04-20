@@ -15,9 +15,11 @@ warning off;
 %         RCM_info.name={ 'test2119'};      
 %         RCM_info.name={'test2117', 'test2118', 'test2119', 'test2120', 'test2121', 'v04'};
 % RCM_info.name={'test2127', 'test2128', 'test2129', 'test2130', 'test2131'};
-% RCM_info.name={'test2127', 'test2129', 'test2130', 'test2131'};
+% RCM_info.name={'test2127', 'test2128', 'test2130', 'test2131'};
+% RCM_info.name={'test2117', 'test2118', 'test2119', 'test2120', 'test2121'};
+
 % RCM_info.name={ 'test2130', 'test2131'};
-RCM_info.name={ 'test2127'};
+RCM_info.name={ 'test2129'};
 
 %         RCM_info.name={'v04', 'v05'};
 %         RCM_info.name={'v04'};
@@ -68,7 +70,7 @@ RCM_info.years = 2081:2100;
 % seasons_group={'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'};
 % seasons_group={ 'February', 'August'};
 % seasons_group={ 'all', 'February', 'August'};
-seasons_group={'February', 'January'};
+seasons_group={'February', 'January', 'JF-'};
 
 % seasons_group={ 'all'};
 
