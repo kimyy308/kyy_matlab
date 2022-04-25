@@ -17,6 +17,8 @@ function [abbname, error_status] = Func_0018_abbname(testname)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 switch(testname)
+    case{'test06'}
+        abbname = 'Reana';
     case {'test2117', 'test2127'}
         abbname = 'RCM-CNE';
     case {'test2118', 'test2128'}

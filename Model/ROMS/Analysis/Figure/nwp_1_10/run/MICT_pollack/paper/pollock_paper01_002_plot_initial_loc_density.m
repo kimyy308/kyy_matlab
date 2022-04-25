@@ -4,8 +4,8 @@ close all; clear all;  clc;
 
 all_testname = {'test06'};
 
+% all_region ={'pollock_egg3'};
 all_region ={'pollock_egg3'};
-% all_region ={'pollock_egg', 'pollock_egg2'};
 % all_region ={'ES'};
 % all_region ={'ES_KHOA','YS_KHOA', 'SS_KHOA'};
 
@@ -41,21 +41,21 @@ for testnameind=1:length(all_testname)
 %         inputyear = [1983:1987]; % % put year which you want to plot [year year ...]
 %         inputyear = [1983:1992]; % % put year which you want to plot [year year ...]
 %         inputyear = [1987:1990]; % % put year which you want to plot [year year ...]
-        inputyear = [1988:1992]; % % put year which you want to plot [year year ...]
+%         inputyear = [1988:1992]; % % put year which you want to plot [year year ...]
 %         inputyear = [1987:1995]; % % put year which you want to plot [year year ...]
 %         inputyear = [1987:2000]; % % put year which you want to plot [year year ...]
 %         inputyear = [1987:2019]; % % put year which you want to plot [year year ...]
 %         inputyear = [1990:1999]; % % put year which you want to plot [year year ...]
-%         inputyear = [1993:2016];
+        inputyear = [1983:2019];
 %         inputyear = [2000:2009]; % % put year which you want to plot [year year ...]
 %         inputyear = [2010:2019]; % % put year which you want to plot [year year ...]
         
 %         allyear =[1983];
 %         allyear=[1983:1990];
-        allyear=[1983:1992];
+%         allyear=[1983:1992];
 %         allyear=[1983:1995];
 %         allyear=[1983:2000];
-%         allyear=[1983:2019];
+        allyear=[1983:2019];
         
 %         refyear = [1983];
         refyear =[1983:1987];
@@ -233,7 +233,7 @@ for testnameind=1:length(all_testname)
             fig_flags{flagi,2}=0;
         end
 %         fig_flags{63,2}=2; 
-        fig_flags{43,2}=2; 
+        fig_flags{50,2}=2; 
 
         
         figdir=[figrawdir,LTRANS_testname, '\', regionname, '\spawn\'];

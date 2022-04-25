@@ -321,6 +321,12 @@ ysecspolygon = ...
 	127.0, 41.0;
 	127.0, 38.5];
 
+    ekb2polygon = ...
+       [129.5, 37.5;
+        129.5, 41.0;
+	127.0, 41.0;
+	127.0, 37.5];
+
 % %  Around Korea Peninsula polygon for SSH
    akppolygon = ...
        [117.0, 32.0;
@@ -436,6 +442,13 @@ pollock_egg3polygon = ...
     127.0, 41.0;
     133.0, 41.0;
     133.0, 36.0];
+
+% %      pollock_egg polygon
+pollock_egg4polygon = ...
+    [126.0, 34.0;
+    126.0, 41.0;
+    133.0, 41.0;
+    133.0, 34.0];
 
 % %      South Korean EEZ (East Sea, real fishing)
 SK_EEZ_polygon = ...

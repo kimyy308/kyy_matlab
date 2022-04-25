@@ -77,6 +77,8 @@ switch(regionname)
         refpolygon=capolygon;
     case('EKB') %% Coastal Area around korea peninsula
         refpolygon=ekbpolygon;
+    case('EKB2') %% Coastal Area around korea peninsula
+        refpolygon=ekb2polygon;
     case('ES_KHOA') %% East Sea
         refpolygon=es_khoapolygon;
     case('YS_KHOA') %% East Sea
