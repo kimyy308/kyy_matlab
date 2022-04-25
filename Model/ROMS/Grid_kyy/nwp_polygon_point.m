@@ -445,8 +445,8 @@ pollock_egg3polygon = ...
 
 % %      pollock_egg polygon
 pollock_egg4polygon = ...
-    [126.0, 34.0;
-    126.0, 41.0;
+    [126.1, 34.0;
+    126.1, 41.0;
     133.0, 41.0;
     133.0, 34.0];
 
