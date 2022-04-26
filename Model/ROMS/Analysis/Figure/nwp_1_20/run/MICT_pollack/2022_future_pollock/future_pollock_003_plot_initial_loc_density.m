@@ -2,8 +2,8 @@ close all; clear all;  clc;
 % %  get cmemsstructed SSH. compare model and reSSH. save. 
 
 
-% all_testname = {'test2117'};
-all_testname = {'test2127'};
+all_testname = {'test2117'};
+% all_testname = {'test2127'};
 
 all_region ={'ES_KHOA'};
 % all_region ={'pollock_egg', 'pollock_egg2'};
@@ -40,8 +40,8 @@ for testnameind=1:length(all_testname)
         % for snu_desktop
         testname=all_testname{testnameind}
         [testname_his, error_status] = Func_0023_RCM_CMIP6_testname_his(testname);
-        inputyear = [2081:2100]; % % put year which you want to plot [year year ...]
-%         inputyear = [1995:2014];
+%         inputyear = [2081:2100]; % % put year which you want to plot [year year ...]
+        inputyear = [1995:2014];
 %         inputyear = [2000:2009]; % % put year which you want to plot [year year ...]
 %         inputyear = [2010:2019]; % % put year which you want to plot [year year ...]
 
@@ -49,9 +49,9 @@ for testnameind=1:length(all_testname)
         refyear =[1995:2014];
 %         refyear =[2081:2100];
         
-%         allyear=[1995:2014];
+        allyear=[1995:2014];
 %           allyear=[2081:2100];
-        allyear = [refyear, inputyear];
+%         allyear = [refyear, inputyear];
 
 %         inputmonth = [1 2 3 4 5 6 7 8 9 10 11 12]; % % put month which you want to plot [month month ...]
         RCM_info.season='JF-';
@@ -151,7 +151,6 @@ for testnameind=1:length(all_testname)
 %             fig_flags{69,1}=coastal area (<500m) numegg(??d) time series (regime)';
 %             fig_flags{70,1}=southern coastal area (<500m, 39N) numegg(??d) time series (regime)';
 
-
             for flagi=1:100
                 fig_flags{flagi,2}=0;
             end
@@ -203,12 +202,12 @@ for testnameind=1:length(all_testname)
 %             fig_flags{46,2}=0;  %'EEZ plot';
 %             fig_flags{47,2}=0;  %'lon lat distance time series (not completed)';
 %             fig_flags{48,2}=0;  % 'egg probability (elapsed 30 days) diff plot between 80s and later';
-%             fig_flags{49,2}=1;  %'Southern Korea EEZ spawning ground time series (regime)';
+            fig_flags{49,2}=2;  %'Southern Korea EEZ spawning ground time series (regime)';
 %             fig_flags{50,2}=1;  %'Southern Korea EEZ numegg(??d) time series (regime)';
 %             fig_flags{51,2}=0;  %'Southern Korea EEZ numegg(30d) time series (regime)';
 %             fig_flags{52,2}=0;  %'probability plot for pollock location (elapsed 30 days)';
 %             fig_flags{53,2}=1;  %'particle moved distance-lat time series (regime)';
-            fig_flags{54,2}=2;  %'latitudinal particle density (horizontal bar)';
+            fig_flags{54,2}=1;  %'latitudinal particle density (horizontal bar)';
 %             fig_flags{55,2}=1;  %'latitudinal particle density (elapsed ??days, horizontal bar)';
 %             fig_flags{56,2}=1;  %'SST RMSE plot';
 %             fig_flags{57,2}=1;  %'latitudinal particle density difference (horizontal bar)';
@@ -823,10 +822,13 @@ for testnameind=1:length(all_testname)
         fig_flag=fig_flags{49,2};
         fig_name=fig_flags{49,1};
         while (fig_flag)
-            jpgname=strcat(regime_outfile, '_', testname,'_',regionname, '_SKEEZ_regime_ts_sp_ground_', ...
+%             jpgname=strcat(regime_outfile, '_', testname,'_',regionname, '_SKEEZ_regime_ts_sp_ground_', ...
+%                 num2str(min(allyear),'%04i'),'_',num2str(max(allyear),'%04i'), 'y', ...
+%                 num2str(min(inputmonth),'%02i'),'_',num2str(max(inputmonth),'%02i'), 'm', '.tif'); %% ~_year_month.jpg
+            jpgname=strcat(regime_outfile, '_', testname,'_',regionname, '_ekb2_regime_ts_sp_ground_', ...
                 num2str(min(allyear),'%04i'),'_',num2str(max(allyear),'%04i'), 'y', ...
                 num2str(min(inputmonth),'%02i'),'_',num2str(max(inputmonth),'%02i'), 'm', '.tif'); %% ~_year_month.jpg
-            pollock_paper01_002_subroutine_049;
+            future_pollock_003_subroutine_049;
             fig_flag=0;
         end
         

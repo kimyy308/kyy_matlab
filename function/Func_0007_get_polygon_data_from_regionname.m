@@ -73,6 +73,8 @@ switch(regionname)
         refpolygon=pollock_egg2polygon;
     case('pollock_egg3')
         refpolygon=pollock_egg3polygon;
+    case('pollock_egg4')
+        refpolygon=pollock_egg4polygon;
     case('CA') %% Coastal Area around korea peninsula
         refpolygon=capolygon;
     case('EKB') %% Coastal Area around korea peninsula

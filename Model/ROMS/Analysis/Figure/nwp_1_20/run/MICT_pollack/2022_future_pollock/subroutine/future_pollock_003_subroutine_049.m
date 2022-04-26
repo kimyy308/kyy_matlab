@@ -8,12 +8,13 @@
             tempmonth = inputmonth(monthij);
             ncname = [savedir,testname,'_',regionname,'model_pollock_',num2str(tempyear,'%04i'),'_',num2str(tempmonth,'%02i'),'.nc'];
             disp([num2str(yearij), 'y_',num2str(monthij),'m'])  
-            if(exist('curl_mask')==0)
+%             if(exist('curl_mask')==0)
                 lon_rho = ncread(ncname, 'lon_rho');
                 lat_rho = ncread(ncname, 'lat_rho');
-                vel_polygon=SK_EEZ_polygon;
+                vel_polygon=ekb2polygon;
+%                 vel_polygon=SK_EEZ_polygon;
                 vel_mask = double(inpolygon(lon_rho,lat_rho,vel_polygon(:,1),vel_polygon(:,2)));
-            end
+%             end
             ocean_time=ncread(ncname, 'time')+datenum(1900,12,31);
             u_rho=ncread(ncname, 'u_rho').*vel_mask;
             u_rho(u_rho==0)=NaN;
