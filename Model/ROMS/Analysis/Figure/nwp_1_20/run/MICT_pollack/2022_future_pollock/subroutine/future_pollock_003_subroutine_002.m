@@ -9,8 +9,7 @@ if (exist(jpgname , 'file') ~= 2 || fig_flag==2)
             tempmonth = inputmonth(monthij);
             ncname = [savedir,testname,'_',regionname,'model_pollock_',num2str(tempyear,'%04i'),'_',num2str(tempmonth,'%02i'),'.nc'];
             disp([num2str(yearij), 'y_',num2str(monthij),'m'])
-%             all_checktime=ncread(ncname, 'checktime');
-            all_checktime=checktime;
+            all_checktime=ncread(ncname, 'checktime');
             ind_checktime=find(all_checktime==temp_checktime);
             egg_mask=squeeze(ncread(ncname, 'mask_par', [1 1 1 ind_checktime], [inf inf inf 1]));
 %                         egg_mask=ncread(ncname, 'mask_15day');
@@ -25,13 +24,11 @@ if (exist(jpgname , 'file') ~= 2 || fig_flag==2)
     lon_rho = ncread(ncname, 'lon_rho');
     lat_rho = ncread(ncname, 'lat_rho');
 %                 pcolor(sum(comb_egg_mask,3)'/size(comb_egg_mask,3)); shading flat; colorbar
-    mean_data = sum(comb_egg_mask,3)/size(comb_egg_mask,3);
+    mean_data = sum(comb_egg_mask,3);
     mean_data(mean_data==0)=NaN;
     mask_model2 = double(inpolygon(lon_rho,lat_rho,refpolygon(:,1),refpolygon(:,2)));
     mask_model2(mask_model2==0)=NaN;
     mean_data = mean_data .* mask_model2;
-    
-    
     testnameind=1;
     m_proj(m_proj_name,'lon',[lonlat(1) lonlat(2)],'lat',[lonlat(3) lonlat(4)]);
 %                 sb{testnameind}=subplot(8,4,[1+(testnameind-1)*8 2+(testnameind-1)*8 5+(testnameind-1)*8 6+(testnameind-1)*8]);  % Auto-fitted to the figure.
@@ -49,9 +46,6 @@ if (exist(jpgname , 'file') ~= 2 || fig_flag==2)
     pc{testnameind,1}=m_pcolor(lon_rho',lat_rho', model_land','parent',ax{testnameind,1});
     colormap(ax{testnameind,1},[0.8 0.8 0.8]);
     shading(gca,m_pcolor_shading_method); 
-%                 m_grid('fontsize', m_grid_fontsize, 'tickdir', m_grid_tickdir_type, 'box', m_grid_box_type,  ...
-%                         'xticklabels', [], 'xtick',[120, 130, 140], ...
-%                         'yticklabels', [32, 36, 40, 44, 48], 'ytick',[32, 36, 40, 44, 48], 'parent', ax{testnameind,1});  
     m_grid('fontsize', m_grid_fontsize, 'tickdir', m_grid_tickdir_type, 'box', m_grid_box_type,  ...
            'parent', ax{testnameind,1});
     col_bar{testnameind,1}=colorbar;
@@ -63,7 +57,7 @@ if (exist(jpgname , 'file') ~= 2 || fig_flag==2)
     set(ax{testnameind,2},'pos',pos_ax{testnameind});
     pc{testnameind,2}=m_pcolor(lon_rho',lat_rho', mean_data','parent',ax{testnameind,2});
     colormap(ax{testnameind,2},jet);
-    caxis([0, 0.5]);
+    caxis([1, 100]);
     shading(gca,m_pcolor_shading_method);   
     m_grid('fontsize', m_grid_fontsize, 'tickdir', m_grid_tickdir_type, 'box', m_grid_box_type,  ...
            'backcolor', 'none','parent', ax{testnameind,2});
@@ -92,7 +86,7 @@ if (exist(jpgname , 'file') ~= 2 || fig_flag==2)
     set(gcf, 'PaperSize', [hor_paper_size_x, hor_paper_size_y]);
     set(gcf,'PaperPosition', [paper_position_hor paper_position_ver paper_position_width paper_position_height]) 
 
-    saveas(gcf,jpgname,'tif');RemoveWhiteSpace([], 'file', jpgname);
+    saveas(gcf,jpgname,'tif'); RemoveWhiteSpace([], 'file', jpgname);
 
     disp(' ')
     disp([fig_flags{1,1}, ' plot is created.'])

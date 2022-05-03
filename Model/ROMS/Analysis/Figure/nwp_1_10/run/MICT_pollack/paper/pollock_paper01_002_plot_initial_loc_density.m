@@ -154,7 +154,8 @@ for testnameind=1:length(all_testname)
 %             fig_flags{70,1}=southern coastal area (<500m, 39N) numegg(??d) time series (regime)';
 %             fig_flags{71,1}='spawning ground time series (regime)';
 %             fig_flags{72,1}='southern EKB (~39N) spawning ground time series (regime)';
-
+%             fig_flags{73,2}='southern EKB (~39N) numegg(??d) time series (regime)';
+%             fig_flags{74,2}='southern coastal EKB (~39N, <500m) numegg(??d) time series (regime)';
 
 %             for flagi=1:100
 %                 fig_flags{flagi,2}=0;
@@ -230,15 +231,16 @@ for testnameind=1:length(all_testname)
 %             fig_flags{69,2}=1;  %'coastal area (<500m) numegg(??d) time series (regime)';
 %             fig_flags{70,2}=1;  %'southern coastal area (<500m, 39N) numegg(??d) time series (regime)';
 %             fig_flags{71,2}=1;  %' spawning ground time series (regime)';
-            fig_flags{72,2}=1;  %' southern EKB (~39N) spawning ground time series (regime)';
-
+%             fig_flags{72,2}=1;  %' southern EKB (~39N) spawning ground time series (regime)';
+%             fig_flags{73,2}=1;  %' southern EKB (~39N) numegg(??d) time series (regime)';
+%             fig_flags{74,2}=1;  %' southern coastal EKB (~39N, <500m) numegg(??d) time series (regime)';
 %         end
 %         
         for flagi=1:100
             fig_flags{flagi,2}=0;
         end
 %         fig_flags{63,2}=2; 
-        fig_flags{72,2}=2; 
+        fig_flags{74,2}=2; 
 
         
         figdir=[figrawdir,LTRANS_testname, '\', regionname, '\spawn\'];
@@ -1131,6 +1133,35 @@ for testnameind=1:length(all_testname)
             pollock_paper01_002_subroutine_072;
             fig_flag=0;
         end
+        
+% % %       'Southern EKB numegg(??d) time series (regime)';
+        fig_flag=fig_flags{73,2};
+        fig_name=fig_flags{73,1};
+        while (fig_flag)
+            for checkti=1:length(checktime)
+                temp_checktime=checktime(checkti);
+                jpgname=strcat(regime_outfile, '_', testname,'_',regionname, '_SEKB_regime_ts_egg_',num2str(temp_checktime, '%02i'), 'd_', ...
+                    num2str(min(allyear),'%04i'),'_',num2str(max(allyear),'%04i'), 'y', ...
+                    num2str(min(inputmonth),'%02i'),'_',num2str(max(inputmonth),'%02i'), 'm', '.tif'); %% ~_year_month.jpg
+                pollock_paper01_002_subroutine_073;
+            end
+            fig_flag=0;
+        end    
+
+% % %       'Southern coastal EKB (~39N, <500m)numegg(??d) time series (regime)';
+        fig_flag=fig_flags{74,2};
+        fig_name=fig_flags{74,1};
+        while (fig_flag)
+            for checkti=1:length(checktime)
+                temp_checktime=checktime(checkti);
+                jpgname=strcat(regime_outfile, '_', testname,'_',regionname, '_coastal_SEKB_regime_ts_egg_',num2str(temp_checktime, '%02i'), 'd_', ...
+                    num2str(min(allyear),'%04i'),'_',num2str(max(allyear),'%04i'), 'y', ...
+                    num2str(min(inputmonth),'%02i'),'_',num2str(max(inputmonth),'%02i'), 'm', '.tif'); %% ~_year_month.jpg
+                pollock_paper01_002_subroutine_074;
+            end
+            fig_flag=0;
+        end    
+        
 end
 
 

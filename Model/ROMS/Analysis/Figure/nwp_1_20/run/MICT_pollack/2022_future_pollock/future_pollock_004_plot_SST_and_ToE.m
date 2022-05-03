@@ -3,14 +3,17 @@
 close all; clear all;  clc;
 warning off;
 
-RCM_info.name={ 'test06'};
-RCM_info.model = 'nwp_1_10';
+% RCM_info.name={ 'test06'};
+% RCM_info.model = 'nwp_1_10';
 
 % RCM_info.name={ 'test2127'};
 % RCM_info.name={'test2117', 'test2118', 'test2119', 'test2120', 'test2121'};
 % RCM_info.name={'test2127', 'test2128', 'test2129', 'test2130', 'test2131'};
+% RCM_info.name={'test2128', 'test2129', 'test2131'};
+% RCM_info.name={'test2131'};
+
 % 
-% RCM_info.model = 'nwp_1_20';
+RCM_info.model = 'nwp_1_20';
 
 RCM_info.dataroot = ['D:', filesep, 'Data', filesep, 'Model', filesep, ...
     'ROMS', filesep, RCM_info.model, filesep, 'backup_surf', filesep];
@@ -22,12 +25,14 @@ RCM_info.region = {'pollock_egg3'}; % NWP, AKP4, ES_KHOA, YS, ...
 
 RCM_info.vars = {'SST'};
 
-RCM_info.years = 1983:2021;  
+% RCM_info.years = 1983:2021;  
 % RCM_info.years = [2015:2050, 2081:2100];  
 % RCM_info.years = [1983:1987];  
 % RCM_info.years = [1988:1992];  
 % RCM_info.years = [1995:2014];  
+% RCM_info.years = [1993:2021];  
 % RCM_info.years = [2081:2100];  
+RCM_info.years = [2015:2100];  
 
 % seasons_group={'February', 'January', 'JF-'};
 seasons_group={'JF-'};
@@ -75,8 +80,8 @@ for seasons_groupi=1:length(seasons_group)
                 RCM_grid.(['filename_', RCM_grid.gridname{gridi}])=[dirs.griddir, 'NWP_pck_ocean_', RCM_grid.gridname{gridi}, '_NWP.nc'];
             end
             
-            flags.fig_switch(1)=1; % get data
-            flags.fig_switch(2)=1; % temporal mean pcolor
+            flags.fig_switch(1)=2; % get data
+            flags.fig_switch(2)=2; % temporal mean pcolor
             flags.fig_switch(3)=2; % yearly spatial mean time series
 
 %             1/10 SST read

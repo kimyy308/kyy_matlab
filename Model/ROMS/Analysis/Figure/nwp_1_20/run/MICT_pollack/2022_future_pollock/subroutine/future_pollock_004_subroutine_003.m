@@ -59,6 +59,8 @@ for varind2=1:length(RCM_info.vars)
 
         axis tight 
         ylim([5 18])
+%         ylim([6 11])
+%         ylim([4.5 11])
 
         set(axLH,'xcolor','k', 'box', 'off', 'FontSize',15);
         xlabel(axLH, 'Year');
