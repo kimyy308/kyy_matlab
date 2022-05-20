@@ -58,24 +58,31 @@ end
 % yearstart = str2num(modelinfo{1,1}{3,1});  %% get present year
 % yearend = str2num(modelinfo{1,1}{3,1});
 
-for yearloop=2009:2018
+for yearloop=1983:2021
 
-    testname = 'test08'
+    testname = 'test06'
     yearstart = yearloop;
     yearend = yearloop;
 
 
     foot = '.nc';
     % inputdir = strcat('/data1/kimyy/Model/ROMS/nwp_1_10/output/',testname,'/'); %% for DAMO
-    inputdir = strcat('/data2/mhan/ROMS/nwp_1_10/',testname,'/'); %% for DAMO
+    inputdir = strcat('/data2/ykang/auto_nwp/nwp_1_10/reanalysis/'); %% for DAMO
 
     % outputdir = '/data1/kimyy/Model/ROMS/roms_nwp/nwp_1_10/output/TRANSP/';  %% for DAMO
     % inputdir = ['/scratch/snu01/kimyy/roms_nwp/nwp_1_10/output/', testname, '/spinup/', num2str(yearstart, '%04i'), '/']; %% for Desktop
-    outputdir = inputdir; 
+%     outputdir = inputdir; 
+    outputdir = ['/data2/kimyy/Reanalysis/auto/transport/'];
 
     outfile = strcat(outputdir,'nwp_1_10_monthly_',testname,'_',num2str(yearstart,'%04i'),'.txt');
+    outhfile = strcat(outputdir,'nwp_1_10_monthly_heat_',testname,'_',num2str(yearstart,'%04i'),'.txt');
 
     fid = fopen(outfile,'w+');
+    % fprintf(fid,'%%korea  tsugaru   soya   taiwan kuro_intru  yellowsea \n');
+    fprintf(fid,'%%korea   tsugaru    soya \n');
+    fclose(fid);
+    
+    fid = fopen(outhfile,'w+');
     % fprintf(fid,'%%korea  tsugaru   soya   taiwan kuro_intru  yellowsea \n');
     fprintf(fid,'%%korea   tsugaru    soya \n');
     fclose(fid);
@@ -89,7 +96,7 @@ for yearloop=2009:2018
         tempmonth = num2str(month,'%02i');
         %numb ='08';
 
-        filename = strcat(inputdir,testname,'_monthly_',tempyear,'_',tempmonth,foot)
+        filename = strcat(inputdir,tempyear, filesep, testname,'_monthly_',tempyear,'_',tempmonth,foot)
 
     %     yyyy=2001;
     %     year_start = yyyy;
@@ -128,23 +135,30 @@ for yearloop=2009:2018
             selectdepth = selectdepth*-1;
         end
 
-        t_point= 3;  
+%         t_point= 3;  
     %     point_name={'korea','tsugaru','soya'};
     %     kts = [128.0 35.2 134.0 35.2 ...  
     %             140.5  42.0  140.54  41.0  ...
     %               142.0  47.0 142.04  45.0 ];
-        point_name={'korea','tsugaru','soya','taiwan','kuro_intrusion','yellowsea'};
+%         point_name={'korea','tsugaru','soya','taiwan','kuro_intrusion','yellowsea'};
     %     kts = [128.0 35.2 134.0 35.2 ...  
     %        140.5  42.0  140.54  41.0  ...
     %     142.0  47.0 142.04  45.0 ...
     %     118.65  24.6  120.2  23.75 ...
     %     121.95  25.1  130.15  31.35 ... 
     %     121.8  31.9 126.5  34.35];
+%         point_name={'korea','tsugaru','soya'};
+%         kts = [128.0 35.2 134.0 35.2 ...  
+%            140.2  41.7  140.5  41.0  ...
+%         142.0  46.2 142.2  45.0];
+
+        t_point= 3;  
         point_name={'korea','tsugaru','soya'};
-        kts = [128.0 35.2 134.0 35.2 ...  
+        kts = [129.2 35.7 130.2 35.5 ...  
            140.2  41.7  140.5  41.0  ...
         142.0  46.2 142.2  45.0];
-
+    
+    
         depth = 5000;
         sn=0;
         disp(['month ',': ',num2str(month)])
@@ -488,7 +502,16 @@ for yearloop=2009:2018
     %     fprintf(fid,'%8.3f %8.3f %8.3f %8.3f %8.3f %8.3f \n', trans');
         fclose(fid);
         trans_all(transind,:)=trans';
+        
+        fid = fopen(outhfile,'a+');
+        fprintf(fid,'%8.3f %8.3f %8.3f  \n', temp_tr');
+    %     fprintf(fid,'%8.3f %8.3f %8.3f %8.3f %8.3f %8.3f \n', trans');
+        fclose(fid);
+        transh_all(transind,:)=temp_tr';
+        
         transind=transind+1;
+
+        
         end
     end
 
