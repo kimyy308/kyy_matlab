@@ -6,8 +6,8 @@ run('C:\Users\user\Dropbox\source\matlab\Common\Figure\bwr_map')  % % set colorm
 % for i = 1:3
 %     bwrmap2(1:9901,i)=interp1((1:100)',bwrmap(1:100,i),(1:0.01:100)');
 % end
-colorbar_fontsize = 15;
-colorbar_title_fontsize = 15;
+colorbar_fontsize = 20;
+colorbar_title_fontsize = 20;
 colormap_style = jet_mod;  % % default
 
 % % % set varname
@@ -63,12 +63,12 @@ calendarname{7} = 'July'; calendarname{8} = 'August'; calendarname{9} = 'Septemb
 m_proj_name='mercator';
 
 % % set m_grid parameter
-m_grid_fontsize = 15;
+m_grid_fontsize = 20;
 m_grid_box_type = 'fancy';
 m_grid_tickdir_type = 'in';
 
 % % set m_pcolor parameter
-m_pcolor_title_fontsize = 15;
+m_pcolor_title_fontsize = 20;
 m_pcolor_shading_method = 'flat';
 
 % % set m_gshhs parameter
@@ -77,8 +77,8 @@ m_gshhs_land_color = [0.8 0.8 0.8]; % % gray
 
 % % set m_contour parameter
 m_contour_color = 'k';
-m_contour_title_fontsize = 15;
-m_contour_label_fontsize = 10;
+m_contour_title_fontsize = 20;
+m_contour_label_fontsize = 20;
 m_contour_label_color = 'k';
 m_contour_linewidth = 1.5;
 m_contour_rotation = 0;
@@ -86,7 +86,7 @@ m_contour_labelspacing = 100000;
 m_contour_fontweight = 'bold';
 
 % % set m_quiver parameter
-m_quiver_title_fontsize = 15;
+m_quiver_title_fontsize = 20;
 m_quiver_x_interval = 3;
 m_quiver_y_interval = 3;
 m_quiver_vector_size = 3;
@@ -100,7 +100,7 @@ m_quiver_ref_text = [num2str(m_quiver_ref_u_value),' m/s'];
 m_quiver_ref_u_diff_value = 0.1;
 m_quiver_ref_v_diff_value = m_quiver_ref_u_value/10000.0;
 m_quiver_ref_diff_text = [num2str(m_quiver_ref_u_diff_value),' m/s'];
-m_quiver_ref_text_fontsize = 15;
+m_quiver_ref_text_fontsize = 20;
 m_quiver_ref_text_x_location = 127.5;
 m_quiver_ref_text_y_location = 37.5;
 
@@ -111,18 +111,18 @@ m_quiver_ref_vwind_value = m_quiver_ref_uwind_value/10000.0;
 m_quiver_ref_wind_text = [num2str(m_quiver_ref_uwind_value),' m/s'];
 
 % % set vert_grid parameter
-vert_grid_fontsize = 15;
+vert_grid_fontsize = 20;
 vert_grid_tickdir_type = 'in';
 vert_grid_box = 'on';
 vert_grid_box_linewidth = 1.5;
 
 % % set vert_pcolor parameter
-vert_pcolor_title_fontsize = 15;
+vert_pcolor_title_fontsize = 20;
 vert_pcolor_shading_method = 'interp';
 
 % % set vert_contour parameter
 vert_contour_color = 'k';
-vert_contour_title_fontsize = 15;
+vert_contour_title_fontsize = 20;
 vert_contour_label_fontsize = 10;
 vert_contour_label_color = 'k';
 vert_contour_linewidth = 1;

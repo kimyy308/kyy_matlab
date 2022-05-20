@@ -14,12 +14,12 @@ warning off;
 %         RCM_info.name={ 'test2118', 'test2121'};   
 %         RCM_info.name={ 'test2119'};      
 %         RCM_info.name={'test2117', 'test2118', 'test2119', 'test2120', 'test2121', 'v04'};
-% RCM_info.name={'test2127', 'test2128', 'test2129', 'test2130', 'test2131'};
+RCM_info.name={'test2127', 'test2128', 'test2129', 'test2130', 'test2131'};
 % RCM_info.name={'test2127', 'test2128', 'test2130', 'test2131'};
 % RCM_info.name={'test2117', 'test2118', 'test2119', 'test2120', 'test2121'};
 
 % RCM_info.name={ 'test2130', 'test2131'};
-RCM_info.name={ 'test2129'};
+% RCM_info.name={ 'test2129'};
 
 %         RCM_info.name={'v04', 'v05'};
 %         RCM_info.name={'v04'};
@@ -35,8 +35,9 @@ RCM_info.saveroot = ['D:', filesep, 'Data', filesep, 'Model', filesep, ...
     'ROMS', filesep, 'nwp_1_20', filesep, 'backup_surf', filesep];
 RCM_info.phase = 'run';  % run or spinup
 % RCM_info.region = {'NES2'}; % NWP, AKP4, ES_KHOA, YS, ...
-RCM_info.region = {'ES_KHOA'}; % NWP, AKP4, ES_KHOA, YS, ...
+% RCM_info.region = {'ES_KHOA'}; % NWP, AKP4, ES_KHOA, YS, ...
 % RCM_info.region = {'EKWC2'}; % NWP, AKP4, ES_KHOA, YS, ...
+RCM_info.region = {'pollock_egg3'}; % NWP, AKP4, ES_KHOA, YS, ...
 
 % RCM_info.vars = {'SST', 'SSH', 'SSS', 'Uwind', 'Vwind', 'shflux', 'u', 'v'};  % 'SST', 'SSH', 'SSS', 'Uwind', 'Vwind', 'shflux', 'u', 'v'
 % RCM_info.vars = {'SSS'};  % 'SST', 'SSH', 'SSS', 'Uwind', 'Vwind', 'shflux', 'u', 'v'
@@ -47,10 +48,10 @@ RCM_info.vert_section = [129, 131, 37, 37, -200, 0]; % lonmin, lonmax, latmin, l
 % RCM_info.vars = {'u', 'v'};
 % RCM_info.vars = { 'Uwind', 'Vwind'};
 % RCM_info.vars = {'wstrcurl', 'SST', 'SSS', 'SSH'};
-% RCM_info.vars = {'SSS'};
+RCM_info.vars = {'SST'};
 % RCM_info.vars = {'wstrcurl'};
 % RCM_info.vars = {'shflux', 'wstrcurl', 'SST', 'SSS', 'SSH'};
-RCM_info.vars = {'shflux', 'SST', 'SSS', 'SSH'};
+% RCM_info.vars = {'shflux', 'SST', 'SSS', 'SSH'};
 
 % RCM_info.vars = {'Uwind', 'Vwind'};
 
@@ -146,13 +147,13 @@ for seasons_groupi=1:length(seasons_group)
             for flagi=1:7
                 fig_flags{flagi,2}=0;
             end
-            flags.fig_switch(1)=1;  %1 or 2
+            flags.fig_switch(1)=0;  %1 or 2
             flags.fig_switch(2)=0; 
-            flags.fig_switch(3)=1;
+            flags.fig_switch(3)=2;
             flags.fig_switch(4)=0;
             flags.fig_switch(5)=0;
             flags.fig_switch(6)=0;
-            flags.fig_switch(7)=1;
+            flags.fig_switch(7)=0; %1
             flags.fig_switch(8)=0;
             flags.fig_switch(9)=0;
             

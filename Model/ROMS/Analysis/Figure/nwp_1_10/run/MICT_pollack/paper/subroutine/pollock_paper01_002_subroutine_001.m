@@ -55,14 +55,22 @@
    pos_ax{testnameind}=get(ax{testnameind,1}, 'pos');
     col_bar{testnameind,1}=colorbar;
     set(col_bar{testnameind,1}, 'TickLabels', []);
+    
+    titlename = strcat('sp ground, ',testname, ',(', ...
+        num2str(min(inputyear),'%04i'),'-', num2str(max(inputyear),'%04i'), ',',  ...
+        num2str(min(inputmonth),'%02i'),'-', num2str(max(inputmonth),'%02i'), ')'); 
+    
+    title(titlename,'fontsize',m_pcolor_title_fontsize);  %%title
+
     hold on
 
     m_proj(m_proj_name,'lon',[lonlat(1) lonlat(2)],'lat',[lonlat(3) lonlat(4)]);
     ax{testnameind,2}=axes;
 %                 set(ax{testnameind,2},'pos',pos_ax{testnameind});
     pc{testnameind,2}=m_pcolor(lon_rho',lat_rho', mean_data','parent',ax{testnameind,2});
-    colormap(ax{testnameind,2},jet);
-    caxis([0.1, 1.0]);
+%     colormap(ax{testnameind,2},jet);
+    colormap(ax{testnameind,2},parula);
+    caxis([0, 1.0]);
     shading(gca,m_pcolor_shading_method);   
 
     m_grid('fontsize', m_grid_fontsize, 'tickdir', m_grid_tickdir_type, 'box', m_grid_box_type,  ...
@@ -82,9 +90,7 @@
 %                 txt{testnameind,2}=m_text(119, 50, test_text{testnameind}, 'FontSize', m_grid_fontsize+4); 
 %                 txt{testnameind,3}=m_text(119, 48, test_text2{testnameind}, 'FontSize', m_grid_fontsize+4); 
 
-    titlename = strcat('sp ground, ',testname, ',(', ...
-        num2str(min(inputyear),'%04i'),'-', num2str(max(inputyear),'%04i'), ',',  ...
-        num2str(min(inputmonth),'%02i'),'-', num2str(max(inputmonth),'%02i'), ')'); 
+    
 
     title(titlename,'fontsize',m_pcolor_title_fontsize);  %%title
 
@@ -99,7 +105,7 @@
     sEKB_data=mean_data(indw:inde,inds:indn);
     [sEKB_mean, error_status] = Func_0011_get_area_weighted_mean(sEKB_data, sEKB_lon, sEKB_lat)
 
-    saveas(gcf,jpgname,'tif');
+    saveas(gcf,jpgname,'tif'); RemoveWhiteSpace([], 'file', jpgname);
 
     disp(' ')
     disp([fig_flags{1,1}, ' plot is created.'])

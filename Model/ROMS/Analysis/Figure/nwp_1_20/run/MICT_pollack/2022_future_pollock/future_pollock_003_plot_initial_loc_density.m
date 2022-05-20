@@ -1,8 +1,12 @@
 close all; clear all;  clc;
 % %  get cmemsstructed SSH. compare model and reSSH. save. 
 
-% RCM_info.name = {'test2117'}; 
-RCM_info.name = {'test2127', 'test2128', 'test2129', 'test2130', 'test2131'};
+% RCM_info.name = {'prob_ens2203'}; 
+% RCM_info.name = {'ens2203'}; 
+
+% RCM_info.name = {'test2127', 'test2128', 'test2129', 'test2130', 'test2131'};
+% RCM_info.name = {'test2127', 'test2128', 'test2129', 'test2130', 'test2131'};
+RCM_info.name = {'test2128'};
 
 % RCM_info.all_regions ={'ES_KHOA'};
 % RCM_info.all_regions ={'pollock_egg', 'pollock_egg2'};
@@ -19,7 +23,7 @@ for testnameind=1:length(RCM_info.name)
         addpath(genpath('C:\Users\User\Dropbox\source\matlab\Model\ROMS\Analysis\Figure\nwp_1_20\run\MICT_pollack\2022_future_pollock\subroutine\'))
         addpath(genpath('C:\Users\User\Dropbox\source\matlab\function\'))
         [tmp.dropboxpath, error_status] = Func_0008_set_dropbox_path(computer);
-       
+        
         dl=1/10;
         
         [cmps.bcmps.yrmap3, tmp.error_status] = Func_0009_get_colormaps('byr3', tmp.dropboxpath);
@@ -36,9 +40,13 @@ for testnameind=1:length(RCM_info.name)
 %         RCM_info.years = [1995:2014];
 %         RCM_info.years = [2000:2009]; % % put year which you want to plot [year year ...]
 %         RCM_info.years = [2010:2019]; % % put year which you want to plot [year year ...]
-        
+%         RCM_info.years_ssp = [0]; % % put year which you want to plot [year year ...]
+
         RCM_info.years_his = [1995:2014];
-        
+%                 RCM_info.years_his = [2081:2100];
+%         RCM_info.years_his = [0];
+
+        RCM_info.days = [1:1000];
 %         refyear = [1983];
 %         refyear =[1995:2014];
 %         refyear =[2081:2100];
@@ -68,6 +76,8 @@ for testnameind=1:length(RCM_info.name)
         dirs.filedir_his = strcat('D:\Data\Model\ROMS\nwp_1_20\', tmp.testname_his, '\pollock\'); % % where data files are
         dirs.savedir_his = strcat('D:\Data\Model\ROMS\nwp_1_20\', tmp.testname_his, '\pollock\');
         
+        dirs.figrawdir_allmean = strcat('D:\Research\Ph_D_course\2022_pollock_future\figure\', 'allmean', '\'); % % where figure files will be saved
+        
 %         inputdir = ['/home/auto/MAMS/Data/01_NWP_1_10/Input/'];
 %         mkdir(savedir);
         tmp.LTRANS_testname='pollock1';
@@ -78,11 +88,14 @@ for testnameind=1:length(RCM_info.name)
 %                 flags.fig_switch(flagi)=0;
 %             end
 
-            flags.fig_switch(1)=1;  % 'probability plot for pollock spwaning ground';
-            flags.fig_switch(2)=2;  %'# of individual plot at each grid (elapsed ?? days)';
+            flags.fig_switch(1)=2;  % 'probability plot for pollock spwaning ground, compared to total period';
+            flags.fig_switch(2)=0;  %'# of individual plot at each grid (elapsed ?? days)';
+            flags.fig_switch(3)=0;  %'spawning ground time series (regime)';
+            flags.fig_switch(4)=0;  %'plot ensemble spawning probability at certain time (from std of RCMs)';
+            flags.fig_switch(5)=1;  %'plot SSPR mean of all test';
+            flags.fig_switch(6)=1;  %'plot # of individual plot of all test';
 
-
-            flags.fig_switch(1)=2;  % 'probability plot for pollock spwaning ground';
+%             flags.fig_switch(1)=2;  % 'probability plot for pollock spwaning ground';
 %             flags.fig_switch(2)=1;  % 'probability plot for pollock location (elapsed ?? days)';
 % % %             flags.fig_switch(3)=1;  % 'temp diff plot between 80s and later';
 %             flags.fig_switch(4)=1;  % 'vec diff plot between 80s and later';
@@ -112,7 +125,7 @@ for testnameind=1:length(RCM_info.name)
 %             flags.fig_switch(28)=0;  %'Around Vladivostok southerly & AOI time series';
 %             flags.fig_switch(29)=0;  %'Around Southern East Korean Bay2 easterly & AOI time series';
 %             flags.fig_switch(30)=0;  %'pair diff plot between 80s and later';
-%             flags.fig_switch(31)=1;  %'SST plot';
+%             flags.fig_switch(31)=2;  %'SST plot';
 %             flags.fig_switch(32)=1;  %'OISST plot';
 %             flags.fig_switch(33)=0;  %'CMEMS geostrophic vec plot';
 %             flags.fig_switch(34)=0;  %'Southern East Korean Bay2 spawning ground time series (regime)';
@@ -130,12 +143,12 @@ for testnameind=1:length(RCM_info.name)
 %             flags.fig_switch(46)=0;  %'EEZ plot';
 %             flags.fig_switch(47)=0;  %'lon lat distance time series (not completed)';
 %             flags.fig_switch(48)=0;  % 'egg probability (elapsed 30 days) diff plot between 80s and later';
-            flags.fig_switch(49)=1;  %'Southern Korea EEZ spawning ground time series (regime)';
-            flags.fig_switch(50)=1;  %'Southern Korea EEZ numegg(??d) time series (regime)';
+% % %             flags.fig_switch(49)=1;  %'Southern Korea EEZ spawning ground time series (regime)';
+% % %             flags.fig_switch(50)=1;  %'Southern Korea EEZ numegg(??d) time series (regime)';
 %             flags.fig_switch(51)=0;  %'Southern Korea EEZ numegg(30d) time series (regime)';
 %             flags.fig_switch(52)=0;  %'probability plot for pollock location (elapsed 30 days)';
 %             flags.fig_switch(53)=1;  %'particle moved distance-lat time series (regime)';
-            flags.fig_switch(54)=1;  %'latitudinal particle density (horizontal bar)';
+% % %             flags.fig_switch(54)=1;  %'latitudinal particle density (horizontal bar)';
 %             flags.fig_switch(55)=1;  %'latitudinal particle density (elapsed ??days, horizontal bar)';
 %             flags.fig_switch(56)=1;  %'SST RMSE plot';
 %             flags.fig_switch(57)=1;  %'latitudinal particle density difference (horizontal bar)';
@@ -146,9 +159,9 @@ for testnameind=1:length(RCM_info.name)
 %             flags.fig_switch(62)=1;  %'vec + isotherm(2,5) plot';
 %             flags.fig_switch(63)=1;  %'particle latitude boxplot (elapsed ?? days)';
 %             flags.fig_switch(64)=1;  %'EAWMI plot (regime)';
-            flags.fig_switch(65)=2;  %'# of individual plot at each grid (elapsed ?? days)';
+% % %             flags.fig_switch(65)=2;  %'# of individual plot at each grid (elapsed ?? days)';
 % % %             flags.fig_switch(66)=1;  %'# of individual (elapsed ?? days) diff plot between 80s and later';
-            flags.fig_switch(67)=1;  %'probability plot for pollock spwaning ground (~41N)';
+% % %             flags.fig_switch(67)=1;  %'probability plot for pollock spwaning ground (~41N)';
 %             flags.fig_switch(68)=0;  %'particle moved distance-lon time series (regime)';
 %             flags.fig_switch(69)=1;  %'coastal area (<500m) numegg(??d) time series (regime)';
 %             flags.fig_switch(70)=1;  %'southern coastal area (<500m, 39N) numegg(??d) time series (regime)';
@@ -200,10 +213,15 @@ for testnameind=1:length(RCM_info.name)
             mkdir(strcat(dirs.regime_figdir));
         end         
         
+        dirs.figdir_allmean=[dirs.figrawdir_allmean,tmp.LTRANS_testname, '\', tmp.regionname, '\spawn\'];
+        if (exist(strcat(dirs.figdir_allmean) , 'dir') ~= 7)
+            mkdir(strcat(dirs.figdir_allmean));
+        end 
+        
         
         
 % % %         run
-        for flagi=1:1
+        for flagi=1:6
             if flags.fig_switch(flagi)>=1
                 run(['future_pollock_003_subroutine_', num2str(flagi, '%03i')]);
             end

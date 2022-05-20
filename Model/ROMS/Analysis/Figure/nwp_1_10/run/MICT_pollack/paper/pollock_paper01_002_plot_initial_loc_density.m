@@ -4,8 +4,8 @@ close all; clear all;  clc;
 
 all_testname = {'test06'};
 
-% all_region ={'pollock_egg3'};
-all_region ={'pollock_egg4'};
+all_region ={'pollock_egg3'};
+% all_region ={'pollock_egg4'};
 % all_region ={'ES'};
 % all_region ={'ES_KHOA','YS_KHOA', 'SS_KHOA'};
 
@@ -46,7 +46,8 @@ for testnameind=1:length(all_testname)
 %         inputyear = [1987:2000]; % % put year which you want to plot [year year ...]
 %         inputyear = [1987:2019]; % % put year which you want to plot [year year ...]
 %         inputyear = [1990:1999]; % % put year which you want to plot [year year ...]
-        inputyear = [1983:2021];
+%         inputyear = [1983:2021];
+        inputyear = [1995:2014];
 %         inputyear = [2000:2009]; % % put year which you want to plot [year year ...]
 %         inputyear = [2010:2019]; % % put year which you want to plot [year year ...]
         
@@ -156,6 +157,7 @@ for testnameind=1:length(all_testname)
 %             fig_flags{72,1}='southern EKB (~39N) spawning ground time series (regime)';
 %             fig_flags{73,2}='southern EKB (~39N) numegg(??d) time series (regime)';
 %             fig_flags{74,2}='southern coastal EKB (~39N, <500m) numegg(??d) time series (regime)';
+%             fig_flags{75,1}=' spawning area time series (regime)';
 
 %             for flagi=1:100
 %                 fig_flags{flagi,2}=0;
@@ -234,13 +236,15 @@ for testnameind=1:length(all_testname)
 %             fig_flags{72,2}=1;  %' southern EKB (~39N) spawning ground time series (regime)';
 %             fig_flags{73,2}=1;  %' southern EKB (~39N) numegg(??d) time series (regime)';
 %             fig_flags{74,2}=1;  %' southern coastal EKB (~39N, <500m) numegg(??d) time series (regime)';
+%             fig_flags{75,2}=1;  %' spawning area time series (regime)';
+
 %         end
 %         
         for flagi=1:100
             fig_flags{flagi,2}=0;
         end
 %         fig_flags{63,2}=2; 
-        fig_flags{74,2}=2; 
+        fig_flags{1,2}=2; 
 
         
         figdir=[figrawdir,LTRANS_testname, '\', regionname, '\spawn\'];
@@ -1161,6 +1165,17 @@ for testnameind=1:length(all_testname)
             end
             fig_flag=0;
         end    
+   
+% % %       ' spawning ground time series (regime)';
+        fig_flag=fig_flags{75,2};
+        fig_name=fig_flags{75,1};
+        while (fig_flag)
+            jpgname=strcat(regime_outfile, '_', testname,'_',regionname, '_regime_ts_sp_ground_area_', ...
+                num2str(min(allyear),'%04i'),'_',num2str(max(allyear),'%04i'), 'y', ...
+                num2str(min(inputmonth),'%02i'),'_',num2str(max(inputmonth),'%02i'), 'm', '.tif'); %% ~_year_month.jpg
+            pollock_paper01_002_subroutine_075;
+            fig_flag=0;
+        end
         
 end
 

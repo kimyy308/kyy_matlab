@@ -29,6 +29,8 @@ switch(testname)
         abbname = 'RCM-CNH';
     case {'test2121', 'test2131'}
         abbname = 'RCM-CMC';
+    case {'ens2201', 'ens2202'}
+        abbname = 'RCM-ENS';
     case {'CNRM-ESM2-1'}
         abbname = 'GCM-CNE';
     case {'EC-Earth3-Veg'}

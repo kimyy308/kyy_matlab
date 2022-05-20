@@ -3075,7 +3075,7 @@ for testnameind2=1:length(all_testname2)
 
 
             
-            
+% % % % % % %             getting pattern correlation coefficient (YSECS, ES)
 %              pcolor(m_interped_ssh'-0.25); shading flat; colorbar; caxis([-0.2 1.0]); colormap jet
              aaa= movmean(m_interped_ssh(logical(~isnan(m_interped_ssh).*~isnan(m_cmems_adt))),1);
              bbb= movmean(m_cmems_adt(logical(~isnan(m_interped_ssh).*~isnan(m_cmems_adt))),1);

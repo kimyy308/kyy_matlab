@@ -206,6 +206,7 @@ for varind2=1:length(RCM_info.vars)
 % % %         close all;
         clear RCM_data.mean
         RCM_grid=rmfield(RCM_grid, 'lon_rho');
+        disp('future_pollock_004_subroutine_001');
     end
 end
 
