@@ -83,7 +83,7 @@ if nargin == 2
         grd = roms_get_grid(Vtransform,Vstretching,grd_file,scoord);
     case 'nwp_1_10_linux'
 %         vert_param
-        grd_file =['/data1/kimyy/Model/ROMS/roms_nwp/nwp_1_10/input/',testname,'/spinup/roms_grid_nwp_1_10_',testname,'.nc'] ;
+        grd_file =['/data1/kimyy/Model/ROMS/nwp_1_10/input/',testname,'/spinup/roms_grid_nwp_1_10_',testname,'.nc'] ;
         scoord = [10.0 1.0 250.0 40] % theta_s theta_b hc N
         Vtransform = 2;
         Vstretching = 4;
