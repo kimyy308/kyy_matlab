@@ -244,7 +244,7 @@ for testnameind=1:length(all_testname)
             fig_flags{flagi,2}=0;
         end
 %         fig_flags{63,2}=2; 
-        fig_flags{1,2}=2; 
+        fig_flags{65,2}=2; 
 
         
         figdir=[figrawdir,LTRANS_testname, '\', regionname, '\spawn\'];

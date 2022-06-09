@@ -104,7 +104,13 @@
     sEKB_lat=lat_rho(indw:inde,inds:indn);
     sEKB_data=mean_data(indw:inde,inds:indn);
     [sEKB_mean, error_status] = Func_0011_get_area_weighted_mean(sEKB_data, sEKB_lon, sEKB_lat)
-
+    
+    [indw, inde, inds, indn]=Func_0012_findind_Y(1/10,[128, 130, 39, 41],lon_rho,lat_rho); % southern EKB
+    nEKB_lon=lon_rho(indw:inde,inds:indn);
+    nEKB_lat=lat_rho(indw:inde,inds:indn);
+    nEKB_data=mean_data(indw:inde,inds:indn);
+    [nEKB_mean, error_status] = Func_0011_get_area_weighted_mean(nEKB_data, nEKB_lon, nEKB_lat)
+    
     saveas(gcf,jpgname,'tif'); RemoveWhiteSpace([], 'file', jpgname);
 
     disp(' ')

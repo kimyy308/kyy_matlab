@@ -24,6 +24,9 @@ switch colormapname
     case('yr')
         byrmap = customcolormap_preset('red-yellow-blue');
         colormap = byrmap(129:256,:);
+    case('by')
+        byrmap = customcolormap_preset('red-yellow-blue');
+        colormap = byrmap(1:128,:);
     case('gmt_ocn')
         load([dropboxpath, filesep, 'source', filesep, 'matlab', filesep, 'Common', ...
             filesep, 'Figure', filesep, 'gmt_ocean_mod2.mat'])  % % set colormap (gmt_ocean, nonwhite)
@@ -36,6 +39,14 @@ switch colormapname
         load([dropboxpath, filesep, 'source', filesep, 'matlab', filesep, 'Common', ...
             filesep, 'Figure', filesep, 'byrmap3.mat'])  % % set colormap (blue-yellow-red)
         colormap = byrmap3;
+    case('yr3')
+        load([dropboxpath, filesep, 'source', filesep, 'matlab', filesep, 'Common', ...
+            filesep, 'Figure', filesep, 'byrmap3.mat'])  % % set colormap (blue-yellow-red)
+        colormap = byrmap3(501:1000,:);
+    case('by3')
+        load([dropboxpath, filesep, 'source', filesep, 'matlab', filesep, 'Common', ...
+            filesep, 'Figure', filesep, 'byrmap3.mat'])  % % set colormap (blue-yellow-red)
+        colormap = byrmap3(1:500,:);
     case('jet_mod')
         load([dropboxpath, filesep, 'source', filesep, 'matlab', filesep, 'Common', ...
             filesep, 'Figure', filesep, 'jet_mod.mat'])  % % set colormap (jet_modified)

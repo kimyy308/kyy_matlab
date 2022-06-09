@@ -25,7 +25,7 @@ for regionind2=1:length(all_region2)
             load('C:\Users\User\Dropbox\source\matlab\Common\Figure\gmt_ocean_mod2.mat')  % % set colormap (gmt_ocean, nonwhite)
         end
 
-        figrawdir =strcat('Z:\내 드라이브\MEPL\project\SSH\5th_year\figure\paper2\fin_fig_r1\'); % % where figure files will be saved
+        figrawdir =strcat('D:\MEPL\project\SSH\figures\5th_year\figure\paper2\fin_fig_r1\'); % % where figure files will be saved
         cmip5dir = strcat('D:\Data\Model\CMIP5\'); % % where data files are
 
         correction_right_fig=[-0.1600,0,0,0]; % right, up, width, height
@@ -294,7 +294,7 @@ for regionind2=1:length(all_region2)
 
         hold off;
         close all;
-        save ('Z:\내 드라이브\research\Ph_D_course\2020_SSH_CMIP5_decadal_variation_around_korea_using_downscaling_ocean_model\data_dryad\DataS03_steric_SLR_rcp85.mat', ...
+        save ('D:\research\Ph_D_course\2020_SSH_CMIP5_decadal_variation_around_korea_using_downscaling_ocean_model\data_dryad\DataS03_steric_SLR_rcp85.mat', ...
             'GCM_lon', 'GCM_lat', 'GCM_steric_SLR', ...
             'RCM_lon', 'RCM_lat', 'RCM_steric_SLR', ...
             'DIFF_lon', 'DIFF_lat', 'DIFF_steric_SLR', ...

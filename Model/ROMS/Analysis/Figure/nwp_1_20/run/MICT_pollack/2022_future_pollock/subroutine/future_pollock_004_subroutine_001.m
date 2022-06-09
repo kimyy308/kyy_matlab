@@ -68,7 +68,8 @@ for varind2=1:length(RCM_info.vars)
                     if (strcmp(tmp.variable,'SST')==1 || strcmp(tmp.variable,'SSS')==1)
                         tmp.data = ncread(tmp.filename,param.varname,[RCM_grid.lon_min(1) RCM_grid.lat_min(1) 1 1], ...
                             [RCM_grid.lon_max(1)-RCM_grid.lon_min(1)+1 RCM_grid.lat_max(1)-RCM_grid.lat_min(1)+1 1 1]);  %% cut horizontal area [x,y,z] (wider than target area) 
-                    elseif (strcmp(tmp.variable,'SSH')==1 || strcmp(tmp.variable,'Uwind')==1 || strcmp(tmp.variable,'Vwind')==1 || strcmp(tmp.variable,'shflux')==1)
+                    elseif (strcmp(tmp.variable,'SSH')==1 || strcmp(tmp.variable,'Uwind')==1 || strcmp(tmp.variable,'Vwind')==1 ...
+                            || strcmp(tmp.variable,'shflux')==1 || strcmp(tmp.variable,'swrad')==1)
                         tmp.data = ncread(tmp.filename,param.varname,[RCM_grid.lon_min(1) RCM_grid.lat_min(1) 1], ...
                             [RCM_grid.lon_max(1)-RCM_grid.lon_min(1)+1 RCM_grid.lat_max(1)-RCM_grid.lat_min(1)+1 1]);  %% cut horizontal area [x,y,z] (wider than target area)
                     elseif (strcmp(tmp.variable,'u')==1)
@@ -129,8 +130,9 @@ for varind2=1:length(RCM_info.vars)
             end
 %             a=1
             save(tmp.matname, 'RCM_data', 'RCM_grid', 'RCM_info');
+            disp('future_pollock_004_subroutine_001');
         else
-            load(tmp.matname);
+            load(tmp.matname, 'RCM_data', 'RCM_grid');
         end 
 % % % 
 % % %         
@@ -206,7 +208,6 @@ for varind2=1:length(RCM_info.vars)
 % % %         close all;
         clear RCM_data.mean
         RCM_grid=rmfield(RCM_grid, 'lon_rho');
-        disp('future_pollock_004_subroutine_001');
     end
 end
 

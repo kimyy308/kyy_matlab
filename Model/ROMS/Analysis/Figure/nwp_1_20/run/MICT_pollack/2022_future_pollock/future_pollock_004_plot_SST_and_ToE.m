@@ -7,11 +7,11 @@ warning off;
 % RCM_info.model = 'nwp_1_10';
 
 % RCM_info.name={ 'test2127'};
-% RCM_info.name={'test2117', 'test2118', 'test2119', 'test2120', 'test2121'};
-% RCM_info.name={'test2127', 'test2128', 'test2129', 'test2130', 'test2131'};
+% RCM_info.name={'test2117', 'test2118', 'test2119', 'test2120', 'test2121', 'ens2202'};
+RCM_info.name={'test2127', 'test2128', 'test2129', 'test2130', 'test2131', 'ens2201'};
 % RCM_info.name={'test2128', 'test2129', 'test2131'};
 % RCM_info.name={'test2131'};
-RCM_info.name={'ens2201'};
+% RCM_info.name={'ens2202'};
 
 % 
 RCM_info.model = 'nwp_1_20';
@@ -25,7 +25,10 @@ RCM_info.phase = 'run';  % run or spinup
 RCM_info.region = {'pollock_egg3'}; % NWP, AKP4, ES_KHOA, YS, ...
 
 % RCM_info.vars = {'SST'};
-RCM_info.vars = {'u','v'};
+% RCM_info.vars = {'v'};
+% RCM_info.vars = {'SSS', 'SSH', 'u', 'v', 'Uwind', 'Vwind', 'shflux', 'SST', 'swrad'};
+% RCM_info.vars = {'SSS', 'SSH', 'Uwind', 'Vwind'};
+RCM_info.vars = {'swrad', 'shflux'};
 
 % RCM_info.years = 1983:2021;  
 % RCM_info.years = [2015:2050, 2081:2100];  
@@ -35,6 +38,9 @@ RCM_info.vars = {'u','v'};
 % RCM_info.years = [1993:2021];  
 RCM_info.years = [2081:2100];  
 % RCM_info.years = [2015:2100];  
+
+RCM_info.years_his=[1995:2014];
+
 
 % seasons_group={'February', 'January', 'JF-'};
 seasons_group={'JF-'};
@@ -50,16 +56,18 @@ for seasons_groupi=1:length(seasons_group)
             clearvars '*' -except RCM_info RCM_grid testnameind2 regionind2 years_groupi years_group seasons_group seasons_groupi season
             tmp.fs=filesep;  
             
-            % % % 
-            % %     set dropbox path
+            %%     set dropbox path
             addpath(genpath('C:\Users\User\Dropbox\source\matlab\Model\ROMS\Analysis\Figure\nwp_1_20\run\MICT_pollack\2022_future_pollock\subroutine\'))
-
             tmp.dropboxpath = 'C:\Users\User\Dropbox';
             addpath(genpath([tmp.dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', tmp.fs, 'function']));
             [tmp.dropboxpath, tmp.error_status] = Func_0008_set_dropbox_path(computer);
             addpath(genpath([tmp.dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', tmp.fs, 'Model' ...
                 tmp.fs, 'ROMS', tmp.fs, 'Analysis', tmp.fs, 'Figure', tmp.fs, 'nwp_1_20', tmp.fs ...
                 'run', tmp.fs, 'SSH', tmp.fs, '2phase_2nd', tmp.fs, 'subroutine']));
+            %% get colormaps
+            [cmaps.byrmap3, tmp.error_status] = Func_0009_get_colormaps('byr3', tmp.dropboxpath);
+            [cmaps.byrmap, tmp.error_status] = Func_0009_get_colormaps('byr2', tmp.dropboxpath);        
+            [cmaps.yrmap, tmp.error_status] = Func_0009_get_colormaps('yr', tmp.dropboxpath);    
             
             RCM_info.season=seasons_group{seasons_groupi};
             [RCM_info.months,error_status] = Func_0019_get_month_from_season(RCM_info.season);
@@ -78,15 +86,21 @@ for seasons_groupi=1:length(seasons_group)
             dirs.matdir = strcat('D:\Data\Model\ROMS\', RCM_info.model, '\', tmp.testname, '\run\mean\');
             dirs.griddir = strcat('D:\Data\Model\ROMS\', RCM_info.model, '\backup_surf\'); % % where grid data files are            
             
+            dirs.matdir_reana = strcat('D:\Data\Model\ROMS\', 'nwp_1_10', '\', 'test06', '\run\mean\');
+            
             for gridi=1:length(RCM_grid.gridname)
                 RCM_grid.(['filename_', RCM_grid.gridname{gridi}])=[dirs.griddir, 'NWP_pck_ocean_', RCM_grid.gridname{gridi}, '_NWP.nc'];
             end
-           
-            flags.fig_switch(1)=0; % get data
-            flags.fig_switch(2)=0; % temporal mean pcolor
-            flags.fig_switch(3)=0; % yearly spatial mean time series
-            flags.fig_switch(4)=2; % temporal mean vec
             
+            flags.fig_switch(1)=1; % get data
+            flags.fig_switch(2)=2; % temporal mean pcolor
+            flags.fig_switch(3)=0; % yearly spatial mean time series
+            flags.fig_switch(4)=0; % temporal mean vec
+            flags.fig_switch(5)=0; % get RMSE and bias
+            flags.fig_switch(6)=2; % temporal mean pcolor diff
+            flags.fig_switch(7)=0; % temporal mean vec diff
+            flags.fig_switch(8)=0; % temporal mean windvec diff
+
 %             1/10 SST read
 %             comb
 %             make yearly
@@ -131,6 +145,30 @@ for seasons_groupi=1:length(seasons_group)
             fig_flag=0;
          end
          
+         fig_flag=flags.fig_switch(5);
+         while (fig_flag)
+            future_pollock_004_subroutine_005
+            fig_flag=0;
+         end
+         
+        fig_flag=flags.fig_switch(6);
+        if fig_flag>0
+            future_pollock_004_subroutine_006
+            fig_flag=0;
+        end
+         
+        fig_flag=flags.fig_switch(7);
+        if fig_flag>0
+            future_pollock_004_subroutine_007
+            fig_flag=0;
+        end
+        
+        fig_flag=flags.fig_switch(8);
+        if fig_flag>0
+            future_pollock_004_subroutine_008
+            fig_flag=0;
+        end
+        
         end
     end
 end

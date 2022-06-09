@@ -5,8 +5,8 @@ close all; clear all;  clc;
 % RCM_info.name = {'ens2203'}; 
 
 % RCM_info.name = {'test2127', 'test2128', 'test2129', 'test2130', 'test2131'};
-% RCM_info.name = {'test2127', 'test2128', 'test2129', 'test2130', 'test2131'};
-RCM_info.name = {'test2128'};
+RCM_info.name = {'test2127', 'test2128', 'test2129', 'test2130', 'test2131'};
+% RCM_info.name = {'test2128'};
 
 % RCM_info.all_regions ={'ES_KHOA'};
 % RCM_info.all_regions ={'pollock_egg', 'pollock_egg2'};
@@ -26,9 +26,10 @@ for testnameind=1:length(RCM_info.name)
         
         dl=1/10;
         
-        [cmps.bcmps.yrmap3, tmp.error_status] = Func_0009_get_colormaps('byr3', tmp.dropboxpath);
-        [cmps.bcmps.yrmap, tmp.error_status] = Func_0009_get_colormaps('byr2', tmp.dropboxpath);        
-        [cmps.yrmap, tmp.error_status] = Func_0009_get_colormaps('yr', tmp.dropboxpath);        
+        [cmaps.byrmap3, tmp.error_status] = Func_0009_get_colormaps('byr3', tmp.dropboxpath);
+        [cmaps.byrmap, tmp.error_status] = Func_0009_get_colormaps('byr2', tmp.dropboxpath);        
+        [cmaps.yrmap3, tmp.error_status] = Func_0009_get_colormaps('yr3', tmp.dropboxpath);        
+        [cmaps.bymap3, tmp.error_status] = Func_0009_get_colormaps('by3', tmp.dropboxpath);        
 
         % for snu_desktop
         tmp.testname_ssp=RCM_info.name{testnameind};
@@ -88,12 +89,14 @@ for testnameind=1:length(RCM_info.name)
 %                 flags.fig_switch(flagi)=0;
 %             end
 
-            flags.fig_switch(1)=2;  % 'probability plot for pollock spwaning ground, compared to total period';
+            flags.fig_switch(1)=0;  % 'probability plot for pollock spwaning ground, compared to total period';
             flags.fig_switch(2)=0;  %'# of individual plot at each grid (elapsed ?? days)';
             flags.fig_switch(3)=0;  %'spawning ground time series (regime)';
             flags.fig_switch(4)=0;  %'plot ensemble spawning probability at certain time (from std of RCMs)';
-            flags.fig_switch(5)=1;  %'plot SSPR mean of all test';
-            flags.fig_switch(6)=1;  %'plot # of individual plot of all test';
+            flags.fig_switch(5)=2;  %'plot SSPR mean of all test';
+            flags.fig_switch(6)=2;  %'plot # of individual plot of all test';
+            flags.fig_switch(7)=0;  %'plot intermodel std of individual plot of all test';
+            flags.fig_switch(8)=0;  %'plot intermodel std of SSPR of all test';
 
 %             flags.fig_switch(1)=2;  % 'probability plot for pollock spwaning ground';
 %             flags.fig_switch(2)=1;  % 'probability plot for pollock location (elapsed ?? days)';
@@ -221,7 +224,7 @@ for testnameind=1:length(RCM_info.name)
         
         
 % % %         run
-        for flagi=1:6
+        for flagi=1:8
             if flags.fig_switch(flagi)>=1
                 run(['future_pollock_003_subroutine_', num2str(flagi, '%03i')]);
             end

@@ -23,7 +23,7 @@ for varind2=1:length(RCM_info.vars)
         if (exist(tmp.matname , 'file') ~= 2)
             disp('please get data from subroutine_004_001 first')
         else
-            load(tmp.matname);
+            load(tmp.matname, 'RCM_data', 'RCM_grid');
         end 
         
         if(strcmp(tmp.variable, 'SST'))
@@ -44,7 +44,7 @@ for varind2=1:length(RCM_info.vars)
         m_pcolor(RCM_grid.cut_lon_rho',RCM_grid.cut_lat_rho',RCM_data.mean');
         shading(gca,param.m_pcolor_shading_method);   
         if(strcmp(tmp.variable, 'SST'))
-            [C,h2]=m_contour(RCM_grid.cut_lon_rho',RCM_grid.cut_lat_rho', RCM_data.mean', [2, 5, 10, 15, 20, 25, 30], 'color','k', ...
+            [C,h2]=m_contour(RCM_grid.cut_lon_rho',RCM_grid.cut_lat_rho', RCM_data.mean', [2, 5], 'color','k', ...
                     'linewidth', 1.5, 'linestyle', '-');
                 clabel(C,h2,'FontSize',13,'Color','k', ...
                     'labelspacing', 50000,'Rotation', 0,'fontweight', 'bold');
@@ -72,9 +72,9 @@ for varind2=1:length(RCM_info.vars)
         set(h,'fontsize',param.colorbar_fontsize);
         title(h,param.colorbar_title,'fontsize',param.colorbar_title_fontsize);
         switch tmp.variable
-            case {'SST', 'SSH', 'SSS', 'Uwind', 'Vwind', 'u', 'v', }
+            case {'SST', 'SSH', 'SSS', 'Uwind', 'Vwind', 'u', 'v', 'swrad', 'shflux'}
                 caxis(param.colorbar_lev);
-            case {'wstrcurl', 'wcurl'}
+            case {'wstrcurl', 'wcurl' }
 %                 caxis([-max(abs(RCM_data.mean(:))), max(abs(RCM_data.mean(:)))]);
                 caxis(param.colorbar_lev);
                 colormap(cmaps.byrmap);

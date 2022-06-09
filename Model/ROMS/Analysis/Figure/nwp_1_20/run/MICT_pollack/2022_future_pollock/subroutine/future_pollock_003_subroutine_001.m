@@ -84,6 +84,10 @@ if (exist(tmp.tifname , 'file') ~= 2 || flags.fig_switch(flagi)==2)
     tmp.mean_data(tmp.mean_data==0)=NaN;
 %     tmp.mean_data(tmp.mean_data<0.01)=NaN;
     
+    RCM_grid.mask_EKBcoast = double(inpolygon(RCM_grid.lon_rho,RCM_grid.lat_rho,[127 127 132 132],tmp.refpolygon(:,2)));
+    RCM_grid.mask_EKBcoast(RCM_grid.mask_EKBcoast==0)=NaN;
+    tmp.mean_data=tmp.mean_data.* RCM_grid.mask_EKBcoast;
+
 %% land fig    
     RCM_grid.mask_model2 = double(inpolygon(RCM_grid.lon_rho,RCM_grid.lat_rho,tmp.refpolygon(:,1),tmp.refpolygon(:,2)));
     RCM_grid.mask_model2(RCM_grid.mask_model2==0)=NaN;
@@ -150,7 +154,13 @@ if (exist(tmp.tifname , 'file') ~= 2 || flags.fig_switch(flagi)==2)
     sEKB_lat=RCM_grid.lat_rho(tmp.indw:tmp.inde,tmp.inds:tmp.indn);
     sEKB_data=tmp.mean_data(tmp.indw:tmp.inde,tmp.inds:tmp.indn);
     [sEKB_mean, error_status] = Func_0011_get_area_weighted_mean(sEKB_data, sEKB_lon, sEKB_lat)
-
+    
+    [indw, inde, inds, indn]=Func_0012_findind_Y(1/10,[128, 130, 39, 41],RCM_grid.lon_rho,RCM_grid.lat_rho); % southern EKB
+    nEKB_lon=RCM_grid.lon_rho(indw:inde,inds:indn);
+    nEKB_lat=RCM_grid.lat_rho(indw:inde,inds:indn);
+    nEKB_data=tmp.mean_data(indw:inde,inds:indn);
+    [nEKB_mean, error_status] = Func_0011_get_area_weighted_mean(nEKB_data, nEKB_lon, nEKB_lat)
+    
     saveas(gcf,tmp.tifname,'tif'); RemoveWhiteSpace([], 'file', tmp.tifname);
 
     disp(' ')
@@ -242,6 +252,9 @@ if (exist(tmp.tifname , 'file') ~= 2 || flags.fig_switch(flagi)==2)
     tmp.mean_data(tmp.mean_data==0)=NaN;
 %     tmp.mean_data(tmp.mean_data<0.01)=NaN;
 
+    RCM_grid.mask_EKBcoast = double(inpolygon(RCM_grid.lon_rho,RCM_grid.lat_rho,[127 127 132 132],tmp.refpolygon(:,2)));
+    RCM_grid.mask_EKBcoast(RCM_grid.mask_EKBcoast==0)=NaN;
+    tmp.mean_data=tmp.mean_data.* RCM_grid.mask_EKBcoast;
     
 %% land fig    
     RCM_grid.mask_model2 = double(inpolygon(RCM_grid.lon_rho,RCM_grid.lat_rho,tmp.refpolygon(:,1),tmp.refpolygon(:,2)));
@@ -325,7 +338,13 @@ if (exist(tmp.tifname , 'file') ~= 2 || flags.fig_switch(flagi)==2)
     sEKB_lat=RCM_grid.lat_rho(tmp.indw:tmp.inde,tmp.inds:tmp.indn);
     sEKB_data=tmp.mean_data(tmp.indw:tmp.inde,tmp.inds:tmp.indn);
     [sEKB_mean, error_status] = Func_0011_get_area_weighted_mean(sEKB_data, sEKB_lon, sEKB_lat)
-
+    
+    [indw, inde, inds, indn]=Func_0012_findind_Y(1/10,[128, 130, 39, 41],RCM_grid.lon_rho,RCM_grid.lat_rho); % southern EKB
+    nEKB_lon=RCM_grid.lon_rho(indw:inde,inds:indn);
+    nEKB_lat=RCM_grid.lat_rho(indw:inde,inds:indn);
+    nEKB_data=tmp.mean_data(indw:inde,inds:indn);
+    [nEKB_mean, error_status] = Func_0011_get_area_weighted_mean(nEKB_data, nEKB_lon, nEKB_lat)
+    
     saveas(gcf,tmp.tifname,'tif'); RemoveWhiteSpace([], 'file', tmp.tifname);
 
     disp(' ')
