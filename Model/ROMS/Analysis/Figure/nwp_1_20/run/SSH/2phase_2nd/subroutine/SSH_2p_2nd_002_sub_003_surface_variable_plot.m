@@ -175,7 +175,9 @@ for varind2=1:length(RCM_info.vars)
         saveas(gcf,tmp.tifname,'tif'); RemoveWhiteSpace([], 'file', tmp.tifname);
         close all;
         clear mean_data
-        RCM_grid=rmfield(RCM_grid, 'lon_rho');
+        if (isfield(RCM_grid, 'lon_rho') == 1)
+            RCM_grid=rmfield(RCM_grid, 'lon_rho');
+        end
     end
 end
 

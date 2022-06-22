@@ -6,6 +6,8 @@ close all; clear all;  clc;
 
 % RCM_info.name = {'test2127', 'test2128', 'test2129', 'test2130', 'test2131'};
 RCM_info.name = {'test2127', 'test2128', 'test2129', 'test2130', 'test2131'};
+% RCM_info.name = {'t17s_t27c', 't18s_t28c', 't19s_t29c', 't20s_t30c', 't21s_t31c'};
+
 % RCM_info.name = {'test2128'};
 
 % RCM_info.all_regions ={'ES_KHOA'};
@@ -27,7 +29,8 @@ for testnameind=1:length(RCM_info.name)
         dl=1/10;
         
         [cmaps.byrmap3, tmp.error_status] = Func_0009_get_colormaps('byr3', tmp.dropboxpath);
-        [cmaps.byrmap, tmp.error_status] = Func_0009_get_colormaps('byr2', tmp.dropboxpath);        
+        [cmaps.byrmap, tmp.error_status] = Func_0009_get_colormaps('byr2', tmp.dropboxpath);   
+        [cmaps.yrmap, tmp.error_status] = Func_0009_get_colormaps('yr', tmp.dropboxpath);        
         [cmaps.yrmap3, tmp.error_status] = Func_0009_get_colormaps('yr3', tmp.dropboxpath);        
         [cmaps.bymap3, tmp.error_status] = Func_0009_get_colormaps('by3', tmp.dropboxpath);        
 
@@ -93,7 +96,7 @@ for testnameind=1:length(RCM_info.name)
             flags.fig_switch(2)=0;  %'# of individual plot at each grid (elapsed ?? days)';
             flags.fig_switch(3)=0;  %'spawning ground time series (regime)';
             flags.fig_switch(4)=0;  %'plot ensemble spawning probability at certain time (from std of RCMs)';
-            flags.fig_switch(5)=2;  %'plot SSPR mean of all test';
+            flags.fig_switch(5)=0;  %'plot SSPR mean of all test';
             flags.fig_switch(6)=2;  %'plot # of individual plot of all test';
             flags.fig_switch(7)=0;  %'plot intermodel std of individual plot of all test';
             flags.fig_switch(8)=0;  %'plot intermodel std of SSPR of all test';

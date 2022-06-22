@@ -7,12 +7,12 @@ warning off;
 % all_testname2 = {'test57', 'test58', 'test59', 'test60'};
 
 % all_testname2 = {'test65', 'test66', 'test67', 'test68'};
-all_testname2 = {'test57', 'test58', 'test59', 'test60', 'test65', 'test66', 'test67', 'test68'};
+% all_testname2 = {'test57', 'test58', 'test59', 'test60', 'test65', 'test66', 'test67', 'test68'};
 
 % all_testname2 = {'test61', 'test62', 'test63', 'test64', 'ens09'};
 % all_testname2 = {'test61', 'test62', 'test63', 'test64', 'test65', 'test66', 'test67', 'test68', 'ens09', 'ens10'};
 
-% all_testname2 = {'test67'};
+all_testname2 = {'test68'};
 
 % all_region2 ={'NWP','ES', 'SS', 'YS', 'AKP'}
 % all_region2 ={'NWP','AKP4', 'YS', 'YSECS', 'ECS2', 'NES', 'SES', 'ES'}
@@ -239,6 +239,10 @@ for testnameind2=1:length(all_testname2)
             fig_flags{77,2}=1;
             fig_flags{78,2}=1;
         end
+        for flagi=1:100
+            fig_flags{flagi,2}=0;
+        end
+        fig_flags{81,2}=2;
 
 %         load(['G:\Data\Model\ROMS\nwp_1_10\',testname,'\run\',testname,'_',regionname, ...
 %             'ssh_trend_',num2str(min(inputyear),'%04i'),'_',num2str(max(inputyear),'%04i'),'.mat']);
@@ -249,7 +253,7 @@ for testnameind2=1:length(all_testname2)
         if (strcmp(system_name,'PCWIN64'))
             % % for windows
             drivename='D:\';
-            figrawdir =strcat('Z:\내 드라이브\MEPL\project\SSH\5th_year\figure\nwp_1_20\',testname,'\',regionname,'\'); % % where figure files will be saved
+            figrawdir =strcat('D:\MEPL\project\SSH\figures\5th_year\figure\nwp_1_20\',testname,'\',regionname,'\'); % % where figure files will be saved
 %             param_script ='C:\Users\User\Dropbox\source\matlab\Model\ROMS\Analysis\Figure\nwp_1_10\run\fig_param\fig_param_kyy_EKB_RMS.m'
             param_script =['C:\Users\User\Dropbox\source\matlab\Model\ROMS\Analysis\Figure\nwp_1_20\run\fig_param\fig_param_kyy_', regionname, '.m']
             filedir = strcat(drivename, 'Data\Model\ROMS\nwp_1_20\', testname, '\run\'); % % where data files are
@@ -2601,7 +2605,7 @@ for testnameind2=1:length(all_testname2)
         
 % start-------------------- model slr-ratio index plot (from exp fit yearly SLR) (all test)
         fig_flag=fig_flags{66,2};
-        figalldir =strcat('Z:\내 드라이브\MEPL\project\SSH\5th_year\figure\nwp_1_20\','all','\',regionname,'\slr-ratio\'); % % where figure files will be saved
+        figalldir =strcat('D:\MEPL\project\SSH\figures\5th_year\figure\nwp_1_20\','all','\',regionname,'\slr-ratio\'); % % where figure files will be saved
          
         while (fig_flag)
             outfile = strcat(figalldir,regionname);
@@ -2668,7 +2672,7 @@ for testnameind2=1:length(all_testname2)
 
 % start-------------------- rcm steric sea level time series
         fig_flag=fig_flags{67,2};
-        figstericdir =strcat('Z:\내 드라이브\MEPL\project\SSH\5th_year\figure\nwp_1_20\','all','\',regionname,'\steric\'); % % where figure files will be saved
+        figstericdir =strcat('D:\MEPL\project\SSH\figures\5th_year\figure\nwp_1_20\','all','\',regionname,'\steric\'); % % where figure files will be saved
         if (exist(strcat(figstericdir) , 'dir') ~= 7)
             mkdir(strcat(figstericdir));
         end 
@@ -2768,7 +2772,7 @@ for testnameind2=1:length(all_testname2)
         
 % start-------------------- steric sea level slc
         fig_flag=fig_flags{68,2};
-        figstericdir =strcat('Z:\내 드라이브\MEPL\project\SSH\5th_year\figure\nwp_1_20\','all','\',regionname,'\steric\'); % % where figure files will be saved
+        figstericdir =strcat('D:\MEPL\project\SSH\figures\5th_year\figure\nwp_1_20\','all','\',regionname,'\steric\'); % % where figure files will be saved
         if (exist(strcat(figstericdir) , 'dir') ~= 7)
             mkdir(strcat(figstericdir));
         end 
@@ -2886,7 +2890,7 @@ for testnameind2=1:length(all_testname2)
         
 % start-------------------- gcm steric sea level time series
         fig_flag=fig_flags{69,2};
-        figstericdir =strcat('Z:\내 드라이브\MEPL\project\SSH\5th_year\figure\nwp_1_20\','all','\',regionname,'\steric\'); % % where figure files will be saved
+        figstericdir =strcat('D:\MEPL\project\SSH\figures\5th_year\figure\nwp_1_20\','all','\',regionname,'\steric\'); % % where figure files will be saved
         if (exist(strcat(figstericdir) , 'dir') ~= 7)
             mkdir(strcat(figstericdir));
         end 
@@ -2985,7 +2989,7 @@ for testnameind2=1:length(all_testname2)
         
 % start-------------------- gcm steric sea level slc
         fig_flag=fig_flags{70,2};
-        figstericdir =strcat('Z:\내 드라이브\MEPL\project\SSH\5th_year\figure\nwp_1_20\','all','\',regionname,'\steric\'); % % where figure files will be saved
+        figstericdir =strcat('D:\MEPL\project\SSH\figures\5th_year\figure\nwp_1_20\','all','\',regionname,'\steric\'); % % where figure files will be saved
         if (exist(strcat(figstericdir) , 'dir') ~= 7)
             mkdir(strcat(figstericdir));
         end 
@@ -3082,7 +3086,7 @@ for testnameind2=1:length(all_testname2)
         
 % start-------------------- rcm - gcm steric sea level slc
         fig_flag=fig_flags{71,2};
-        figstericdir =strcat('Z:\내 드라이브\MEPL\project\SSH\5th_year\figure\nwp_1_20\','all','\',regionname,'\steric\'); % % where figure files will be saved
+        figstericdir =strcat('D:\MEPL\project\SSH\figures\5th_year\figure\nwp_1_20\','all','\',regionname,'\steric\'); % % where figure files will be saved
         if (exist(strcat(figstericdir) , 'dir') ~= 7)
             mkdir(strcat(figstericdir));
         end 
@@ -3190,7 +3194,7 @@ for testnameind2=1:length(all_testname2)
         
 % start-------------------- rcm manometric sea level slc
         fig_flag=fig_flags{72,2};
-        figmanodir =strcat('Z:\내 드라이브\MEPL\project\SSH\5th_year\figure\nwp_1_20\','all','\',regionname,'\steric\manometric\'); % % where figure files will be saved
+        figmanodir =strcat('D:\MEPL\project\SSH\figures\5th_year\figure\nwp_1_20\','all','\',regionname,'\steric\manometric\'); % % where figure files will be saved
         if (exist(strcat(figmanodir) , 'dir') ~= 7)
             mkdir(strcat(figmanodir));
         end 
@@ -3318,7 +3322,7 @@ for testnameind2=1:length(all_testname2)
 
 % start-------------------- gcm manometric sea level slc
         fig_flag=fig_flags{73,2};
-        figmanodir =strcat('Z:\내 드라이브\MEPL\project\SSH\5th_year\figure\nwp_1_20\','all','\',regionname,'\steric\manometric\'); % % where figure files will be saved
+        figmanodir =strcat('D:\MEPL\project\SSH\figures\5th_year\figure\nwp_1_20\','all','\',regionname,'\steric\manometric\'); % % where figure files will be saved
         if (exist(strcat(figmanodir) , 'dir') ~= 7)
             mkdir(strcat(figmanodir));
         end 
@@ -3480,7 +3484,7 @@ for testnameind2=1:length(all_testname2)
 
 % start-------------------- rcm - gcm manometric sea level slc
         fig_flag=fig_flags{74,2};
-        figmanodir =strcat('Z:\내 드라이브\MEPL\project\SSH\5th_year\figure\nwp_1_20\','all','\',regionname,'\steric\manometric\'); % % where figure files will be saved
+        figmanodir =strcat('D:\MEPL\project\SSH\figures\5th_year\figure\nwp_1_20\','all','\',regionname,'\steric\manometric\'); % % where figure files will be saved
         if (exist(strcat(figmanodir) , 'dir') ~= 7)
             mkdir(strcat(figmanodir));
         end 
@@ -4228,5 +4232,547 @@ for testnameind2=1:length(all_testname2)
         end
         
         
+% start-------------------- historical thermosteric sea level slc (raw grid)
+        fig_flag=fig_flags{79,2};
+        figstericdir =strcat('D:\MEPL\project\SSH\figures\5th_year\figure\nwp_1_20\','all','\',regionname,'\steric\'); % % where figure files will be saved
+        if (exist(strcat(figstericdir) , 'dir') ~= 7)
+            mkdir(strcat(figstericdir));
+        end 
+        outfile = strcat(figstericdir,regionname);
+
+        while (fig_flag)
+            switch testname
+                case {'test53', 'test54', 'test55', 'test56'}
+                    scenname='historical';
+                case {'test61', 'test62', 'test63', 'test64'}
+                    scenname='rcp26';
+                case {'test57', 'test58', 'test59', 'test60'}
+                    scenname='rcp45';
+                case {'test65', 'test66', 'test67', 'test68'}
+                    scenname='rcp85';
+            end
+            switch testname
+                case {'test53', 'test61', 'test57', 'test65'}
+                    gcmname='IPSL-CM5A-LR';
+                    histname='test53';
+                case {'test54', 'test62', 'test58', 'test66'}
+                    gcmname='IPSL-CM5A-MR';
+                    histname='test54';
+                case {'test55', 'test63', 'test59', 'test67'}
+                    gcmname='NorESM1-M';
+                    histname='test55';
+                case {'test56', 'test64', 'test60', 'test68'}
+                    gcmname='MPI-ESM-LR';
+                    histname='test56';
+            end
+            jpgname=strcat(outfile, '_RCM_', gcmname, '_', '_thermosteric_slc_1976_2005.jpg'); %% ~_year_month.jpg
+            if (exist(jpgname , 'file') ~= 2 || fig_flag==2)
+                
+                histdir = strcat(drivename, 'Data\Model\ROMS\nwp_1_20\', histname, '\run\');
+                hist_interped_stericfilename = strcat(histdir, histname,'_',regionname, '_thermosteric_ssh_1976_2005.nc');
+
+                hist_steric_ssh_early=ncread(hist_interped_stericfilename, 'steric_ssh', [1 1 1], [inf inf 12]);
+                hist_steric_ssh_early=mean( hist_steric_ssh_early,3);
+                hist_steric_ssh_late=ncread(hist_interped_stericfilename, 'steric_ssh', [1 1 349], [inf inf 12]);
+                hist_steric_ssh_late=mean( hist_steric_ssh_late,3);
+% %                 hist_steric_ssh_yearly= reshape(hist_interped_steric_ssh, ...
+% %                     [size(hist_interped_steric_ssh,1), size(hist_interped_steric_ssh,2), 12, 30]);
+% %                 hist_steric_ssh_yearly = squeeze(mean(hist_steric_ssh_yearly,3));
+                lon_glo= ncread(hist_interped_stericfilename, 'lon_rho');
+                lat_glo= ncread(hist_interped_stericfilename, 'lat_rho');
+% %                 dA = (m_lldist([0 0.5], [0 0])*1e3)^2 * cosd(lat_glo);
+                mask_rho = hist_steric_ssh_early(:,:,1);
+                mask_rho(isfinite(mask_rho))=1;
+% %                 dA=dA.*mask_rho;
+% %                 dA_sum = sum(dA(:), 'omitnan');
+% %                 for tt= 1:30
+% %                     mean_hist_interped_steric_ssh(tt)=sum(hist_steric_ssh_yearly(:,:,tt).*dA, 'all', 'omitnan')/dA_sum;
+% %                 end
+% % %                 for tt= 1:size(rcp_interped_steric_ssh,3)
+% % %                     mean_rcp_interped_steric_ssh(tt)=sum(rcp_interped_steric_ssh(:,:,tt).*dA, 'all', 'omitnan')/dA_sum;
+% % %                 end
+% % %                 plot([mean_hist_interped_steric_ssh, mean_rcp_interped_steric_ssh])
+% %                 mean_hist_yearly_interped_steric_ssh=reshape(mean_hist_interped_steric_ssh, [12, length(mean_hist_interped_steric_ssh)/12]);
+% %                 mean_hist_yearly_interped_steric_ssh= mean(mean_hist_yearly_interped_steric_ssh, 1);
+% %                 p=polyfit(1:30,mean_hist_yearly_interped_steric_ssh,1); % get yearly trend
+% %                 hist_end_mean = mean_hist_yearly_interped_steric_ssh(end);
+% %                 mean_rcp_yearly_interped_steric_ssh=reshape(mean_rcp_interped_steric_ssh, [12, length(mean_rcp_interped_steric_ssh)/12]);
+% %                 mean_rcp_yearly_interped_steric_ssh= mean(mean_rcp_yearly_interped_steric_ssh, 1);
+% %                 rcp_start_mean = mean_rcp_yearly_interped_steric_ssh(1);
+% %                 mean_rcp_interped_steric_ssh = mean_rcp_interped_steric_ssh + hist_end_mean + p(1) - rcp_start_mean;
+% %                 mean_all_interped_steric_ssh = [mean_hist_interped_steric_ssh, mean_rcp_interped_steric_ssh];
+% %                 
+% %                 rcp_interped_steric_ssh = rcp_interped_steric_ssh + hist_end_mean + p(1) - rcp_start_mean;
+% %                 steric_ssh_early = mean(hist_interped_steric_ssh(:,:,121:360), 3);
+% %                 steric_ssh_late = mean(rcp_interped_steric_ssh(:,:,end-239:end), 3);
+                steric_slc = hist_steric_ssh_late - hist_steric_ssh_early;
+                [mean_steric_slc, error_status] = Func_0011_get_area_weighted_mean(steric_slc, lon_glo, lat_glo);
+%                 mean_steric_ssh_early = mean(mean_all_interped_steric_ssh(121:360));
+%                 mean_steric_ssh_late =  mean(mean_all_interped_steric_ssh(end-239:end));
+%                 mean_steric_slc = mean_steric_ssh_late - mean_steric_ssh_early;
+                
+                load([filedir,testname,'_',regionname,'land_steric_ssh_',num2str(min(inputyear),'%04i'),'_',num2str(max(inputyear),'%04i'),'.mat']);
+                load([filedir,testname,'_',regionname,'land_model_only_steric_ssh_',num2str(1976,'%04i'),'_',num2str(2005,'%04i'),'.mat']);
+                
+                land_model=NaN(size(mask_rho));
+                land_model(isnan(mask_rho))=1;
+                testnameind=1;
+                ax{testnameind,1}=axes;
+%                 set(ax{testnameind,1},'pos',pos_sb{testnameind});
+                m_proj(m_proj_name,'lon',[lonlat(1) lonlat(2)],'lat',[lonlat(3) lonlat(4)]);
+                pc{testnameind,1}=m_pcolor(lon_glo',lat_glo', land_model','parent',ax{testnameind,1});
+                colormap(ax{testnameind,1},[0.8 0.8 0.8]);
+                shading(gca,m_pcolor_shading_method); 
+                m_grid('fontsize', m_grid_fontsize, 'tickdir', m_grid_tickdir_type,  'box', m_grid_box_type, ...
+                        'xticklabels', [], 'xtick',[120, 130, 140], ...
+                        'yticklabels', [32, 36, 40, 44, 48], 'ytick',[32, 36, 40, 44, 48], 'parent', ax{testnameind,1});  
+                
+                h = colorbar('eastoutside','AxisLocation','out');
+                set(h, 'TickLabels', []);
+                pos_sb{testnameind}=get(ax{testnameind,1}, 'pos'); % Get the position.
+                
+                ax{testnameind,2}=axes;
+%                 set(ax{testnameind,2},'pos',pos_sb{testnameind});
+                m_proj(m_proj_name,'lon',[lonlat(1) lonlat(2)],'lat',[lonlat(3) lonlat(4)]);
+                pc{testnameind,2}=m_pcolor(lon_glo',lat_glo', steric_slc'.*100.0,'parent',ax{testnameind,2});
+                colormap(ax{testnameind,2},flip(spring));
+                caxis([0 30]);
+                m_grid('fontsize', m_grid_fontsize, 'tickdir', m_grid_tickdir_type,  ...
+                    'xticklabels', [], 'xtick',[120,  130, 140], ...
+                    'yticklabels', [32, 36, 40, 44, 48], 'ytick',[32, 36, 40, 44, 48], 'backcolor', 'none', 'parent', ax{testnameind,2});  
+                shading(gca,m_pcolor_shading_method); 
+                h = colorbar('eastoutside','AxisLocation','out');
+                set(h,'fontsize',colorbar_fontsize);
+                title([regionname, ', RCM, ', gcmname, ', thermosteric, slc=', num2str(round(mean_steric_slc.*100,1)), 'cm'])
+
+                set(gcf, 'PaperUnits', 'points');
+                set(gcf, 'PaperSize', [hor_paper_size_x, hor_paper_size_y]);
+                set(gcf,'PaperPosition', [paper_position_hor paper_position_ver paper_position_width paper_position_height]) 
+
+                saveas(gcf,jpgname,'tif'); RemoveWhiteSpace([], 'file', jpgname);
+                close all;
+            end
+            fig_flag=0;
+        end
+        
+% start-------------------- historical sea level slc (raw grid)
+        fig_flag=fig_flags{80,2};
+        figstericdir =strcat('D:\MEPL\project\SSH\figures\5th_year\figure\nwp_1_20\','all','\',regionname,'\steric\'); % % where figure files will be saved
+        if (exist(strcat(figstericdir) , 'dir') ~= 7)
+            mkdir(strcat(figstericdir));
+        end 
+        outfile = strcat(figstericdir,regionname);
+
+        while (fig_flag)
+            switch testname
+                case {'test53', 'test54', 'test55', 'test56'}
+                    scenname='historical';
+                case {'test61', 'test62', 'test63', 'test64'}
+                    scenname='rcp26';
+                case {'test57', 'test58', 'test59', 'test60'}
+                    scenname='rcp45';
+                case {'test65', 'test66', 'test67', 'test68'}
+                    scenname='rcp85';
+            end
+            switch testname
+                case {'test53', 'test61', 'test57', 'test65'}
+                    gcmname='IPSL-CM5A-LR';
+                    histname='test53';
+                case {'test54', 'test62', 'test58', 'test66'}
+                    gcmname='IPSL-CM5A-MR';
+                    histname='test54';
+                case {'test55', 'test63', 'test59', 'test67'}
+                    gcmname='NorESM1-M';
+                    histname='test55';
+                case {'test56', 'test64', 'test60', 'test68'}
+                    gcmname='MPI-ESM-LR';
+                    histname='test56';
+            end
+            jpgname=strcat(outfile, '_RCM_', gcmname, '_', '_slc_1976_2005.jpg'); %% ~_year_month.jpg
+            if (exist(jpgname , 'file') ~= 2 || fig_flag==2)
+                
+                histdir = strcat(drivename, 'Data\Model\ROMS\nwp_1_20\', histname, '\run\');
+                hist_interped_stericfilename = strcat(histdir, histname,'_',regionname, '_ssh_trend_1976_2005.nc');
+                ncinfo(hist_interped_stericfilename)
+                hist_steric_ssh_early=ncread(hist_interped_stericfilename, 'raw_ssh', [1 1 1], [inf inf 12]);
+                hist_steric_ssh_early=mean( hist_steric_ssh_early,3);
+                hist_steric_ssh_late=ncread(hist_interped_stericfilename, 'raw_ssh', [1 1 349], [inf inf 12]);
+                hist_steric_ssh_late=mean( hist_steric_ssh_late,3);
+
+                lon_glo= ncread(hist_interped_stericfilename, 'lon_rho');
+                lat_glo= ncread(hist_interped_stericfilename, 'lat_rho');
+                mask_rho = hist_steric_ssh_early(:,:,1);
+                mask_rho(isfinite(mask_rho))=1;
+                steric_slc = hist_steric_ssh_late - hist_steric_ssh_early;
+                [mean_steric_slc, error_status] = Func_0011_get_area_weighted_mean(steric_slc, lon_glo, lat_glo);
+
+                
+                load([filedir,testname,'_',regionname,'land_steric_ssh_',num2str(min(inputyear),'%04i'),'_',num2str(max(inputyear),'%04i'),'.mat']);
+                load([filedir,testname,'_',regionname,'land_model_only_steric_ssh_',num2str(1976,'%04i'),'_',num2str(2005,'%04i'),'.mat']);
+                
+                land_model=NaN(size(mask_rho));
+                land_model(isnan(mask_rho))=1;
+                testnameind=1;
+                ax{testnameind,1}=axes;
+%                 set(ax{testnameind,1},'pos',pos_sb{testnameind});
+                m_proj(m_proj_name,'lon',[lonlat(1) lonlat(2)],'lat',[lonlat(3) lonlat(4)]);
+                pc{testnameind,1}=m_pcolor(lon_glo',lat_glo', land_model','parent',ax{testnameind,1});
+                colormap(ax{testnameind,1},[0.8 0.8 0.8]);
+                shading(gca,m_pcolor_shading_method); 
+                m_grid('fontsize', m_grid_fontsize, 'tickdir', m_grid_tickdir_type,  'box', m_grid_box_type, ...
+                        'xticklabels', [], 'xtick',[120, 130, 140], ...
+                        'yticklabels', [32, 36, 40, 44, 48], 'ytick',[32, 36, 40, 44, 48], 'parent', ax{testnameind,1});  
+                
+                h = colorbar('eastoutside','AxisLocation','out');
+                set(h, 'TickLabels', []);
+                pos_sb{testnameind}=get(ax{testnameind,1}, 'pos'); % Get the position.
+                
+                ax{testnameind,2}=axes;
+%                 set(ax{testnameind,2},'pos',pos_sb{testnameind});
+                m_proj(m_proj_name,'lon',[lonlat(1) lonlat(2)],'lat',[lonlat(3) lonlat(4)]);
+                pc{testnameind,2}=m_pcolor(lon_glo',lat_glo', steric_slc'.*100.0,'parent',ax{testnameind,2});
+                colormap(ax{testnameind,2},flip(spring));
+                caxis([0 30]);
+                m_grid('fontsize', m_grid_fontsize, 'tickdir', m_grid_tickdir_type,  ...
+                    'xticklabels', [], 'xtick',[120,  130, 140], ...
+                    'yticklabels', [32, 36, 40, 44, 48], 'ytick',[32, 36, 40, 44, 48], 'backcolor', 'none', 'parent', ax{testnameind,2});  
+                shading(gca,m_pcolor_shading_method); 
+                h = colorbar('eastoutside','AxisLocation','out');
+                set(h,'fontsize',colorbar_fontsize);
+                title([regionname, ', RCM, ', gcmname, ', totalslc, slc=', num2str(round(mean_steric_slc.*100,1)), 'cm'])
+
+                set(gcf, 'PaperUnits', 'points');
+                set(gcf, 'PaperSize', [hor_paper_size_x, hor_paper_size_y]);
+                set(gcf,'PaperPosition', [paper_position_hor paper_position_ver paper_position_width paper_position_height]) 
+
+                saveas(gcf,jpgname,'tif'); RemoveWhiteSpace([], 'file', jpgname);
+                close all;
+            end
+            fig_flag=0;
+        end
+        
+% start-------------------- historical thermosteric contribution (raw grid)
+        fig_flag=fig_flags{81,2};
+        figstericdir =strcat('D:\MEPL\project\SSH\figures\5th_year\figure\nwp_1_20\','all','\',regionname,'\steric\'); % % where figure files will be saved
+        if (exist(strcat(figstericdir) , 'dir') ~= 7)
+            mkdir(strcat(figstericdir));
+        end 
+        outfile = strcat(figstericdir,regionname);
+
+        while (fig_flag)
+            switch testname
+                case {'test53', 'test54', 'test55', 'test56'}
+                    scenname='historical';
+                case {'test61', 'test62', 'test63', 'test64'}
+                    scenname='rcp26';
+                case {'test57', 'test58', 'test59', 'test60'}
+                    scenname='rcp45';
+                case {'test65', 'test66', 'test67', 'test68'}
+                    scenname='rcp85';
+            end
+            switch testname
+                case {'test53', 'test61', 'test57', 'test65'}
+                    gcmname='IPSL-CM5A-LR';
+                    histname='test53';
+                case {'test54', 'test62', 'test58', 'test66'}
+                    gcmname='IPSL-CM5A-MR';
+                    histname='test54';
+                case {'test55', 'test63', 'test59', 'test67'}
+                    gcmname='NorESM1-M';
+                    histname='test55';
+                case {'test56', 'test64', 'test60', 'test68'}
+                    gcmname='MPI-ESM-LR';
+                    histname='test56';
+            end
+            jpgname=strcat(outfile, '_RCM_', gcmname, '_', '_thermo_contribution_1976_2005.jpg'); %% ~_year_month.jpg
+            if (exist(jpgname , 'file') ~= 2 || fig_flag==2)
+                
+                histdir = strcat(drivename, 'Data\Model\ROMS\nwp_1_20\', histname, '\run\');
+                hist_interped_stericfilename = strcat(histdir, histname,'_',regionname, '_ssh_trend_1976_2005.nc');
+                ncinfo(hist_interped_stericfilename)
+                hist_steric_ssh_early=ncread(hist_interped_stericfilename, 'raw_ssh', [1 1 1], [inf inf 12]);
+                hist_steric_ssh_early=mean( hist_steric_ssh_early,3);
+                hist_steric_ssh_late=ncread(hist_interped_stericfilename, 'raw_ssh', [1 1 349], [inf inf 12]);
+                hist_steric_ssh_late=mean( hist_steric_ssh_late,3);
+
+                lon_glo= ncread(hist_interped_stericfilename, 'lon_rho');
+                lat_glo= ncread(hist_interped_stericfilename, 'lat_rho');
+                mask_rho = hist_steric_ssh_early(:,:,1);
+                mask_rho(isfinite(mask_rho))=1;
+                steric_slc_total = hist_steric_ssh_late - hist_steric_ssh_early;
+                
+                hist_interped_stericfilename = strcat(histdir, histname,'_',regionname, '_thermosteric_ssh_1976_2005.nc');
+                ncinfo(hist_interped_stericfilename)
+                hist_steric_ssh_early=ncread(hist_interped_stericfilename, 'steric_ssh', [1 1 1], [inf inf 12]);
+                hist_steric_ssh_early=mean( hist_steric_ssh_early,3);
+                hist_steric_ssh_late=ncread(hist_interped_stericfilename, 'steric_ssh', [1 1 349], [inf inf 12]);
+                hist_steric_ssh_late=mean( hist_steric_ssh_late,3);
+
+                lon_glo= ncread(hist_interped_stericfilename, 'lon_rho');
+                lat_glo= ncread(hist_interped_stericfilename, 'lat_rho');
+                mask_rho = hist_steric_ssh_early(:,:,1);
+                mask_rho(isfinite(mask_rho))=1;
+                steric_slc_thermo = hist_steric_ssh_late - hist_steric_ssh_early;
+                
+                steric_slc=steric_slc_thermo./ steric_slc_total;
+                
+                
+                [mean_steric_slc, error_status] = Func_0011_get_area_weighted_mean(steric_slc, lon_glo, lat_glo);
+
+                
+                load([filedir,testname,'_',regionname,'land_steric_ssh_',num2str(min(inputyear),'%04i'),'_',num2str(max(inputyear),'%04i'),'.mat']);
+                load([filedir,testname,'_',regionname,'land_model_only_steric_ssh_',num2str(1976,'%04i'),'_',num2str(2005,'%04i'),'.mat']);
+                
+                land_model=NaN(size(mask_rho));
+                land_model(isnan(mask_rho))=1;
+                testnameind=1;
+                ax{testnameind,1}=axes;
+%                 set(ax{testnameind,1},'pos',pos_sb{testnameind});
+                m_proj(m_proj_name,'lon',[lonlat(1) lonlat(2)],'lat',[lonlat(3) lonlat(4)]);
+                pc{testnameind,1}=m_pcolor(lon_glo',lat_glo', land_model','parent',ax{testnameind,1});
+                colormap(ax{testnameind,1},[0.8 0.8 0.8]);
+                shading(gca,m_pcolor_shading_method); 
+                m_grid('fontsize', m_grid_fontsize, 'tickdir', m_grid_tickdir_type,  'box', m_grid_box_type, ...
+                        'xticklabels', [], 'xtick',[120, 130, 140], ...
+                        'yticklabels', [32, 36, 40, 44, 48], 'ytick',[32, 36, 40, 44, 48], 'parent', ax{testnameind,1});  
+                
+                h = colorbar('eastoutside','AxisLocation','out');
+                set(h, 'TickLabels', []);
+                pos_sb{testnameind}=get(ax{testnameind,1}, 'pos'); % Get the position.
+                
+                ax{testnameind,2}=axes;
+%                 set(ax{testnameind,2},'pos',pos_sb{testnameind});
+                m_proj(m_proj_name,'lon',[lonlat(1) lonlat(2)],'lat',[lonlat(3) lonlat(4)]);
+                pc{testnameind,2}=m_pcolor(lon_glo',lat_glo', steric_slc'.*100.0,'parent',ax{testnameind,2});
+                colormap(ax{testnameind,2},bwrmap);
+                caxis([-100 100]);
+                m_grid('fontsize', m_grid_fontsize, 'tickdir', m_grid_tickdir_type,  ...
+                    'xticklabels', [], 'xtick',[120,  130, 140], ...
+                    'yticklabels', [32, 36, 40, 44, 48], 'ytick',[32, 36, 40, 44, 48], 'backcolor', 'none', 'parent', ax{testnameind,2});  
+                shading(gca,m_pcolor_shading_method); 
+                h = colorbar('eastoutside','AxisLocation','out');
+                set(h,'fontsize',colorbar_fontsize);
+                title([regionname, ', RCM, ', gcmname, ', th_cont, slc=', num2str(round(mean_steric_slc.*100,1)), 'cm'])
+
+                set(gcf, 'PaperUnits', 'points');
+                set(gcf, 'PaperSize', [hor_paper_size_x, hor_paper_size_y]);
+                set(gcf,'PaperPosition', [paper_position_hor paper_position_ver paper_position_width paper_position_height]) 
+
+                saveas(gcf,jpgname,'tif'); RemoveWhiteSpace([], 'file', jpgname);
+                close all;
+            end
+            fig_flag=0;
+        end
+        
+        
+% start-------------------- historical halosteric sea level slc (raw grid)
+        fig_flag=fig_flags{82,2};
+        figstericdir =strcat('D:\MEPL\project\SSH\figures\5th_year\figure\nwp_1_20\','all','\',regionname,'\steric\'); % % where figure files will be saved
+        if (exist(strcat(figstericdir) , 'dir') ~= 7)
+            mkdir(strcat(figstericdir));
+        end 
+        outfile = strcat(figstericdir,regionname);
+
+        while (fig_flag)
+            switch testname
+                case {'test53', 'test54', 'test55', 'test56'}
+                    scenname='historical';
+                case {'test61', 'test62', 'test63', 'test64'}
+                    scenname='rcp26';
+                case {'test57', 'test58', 'test59', 'test60'}
+                    scenname='rcp45';
+                case {'test65', 'test66', 'test67', 'test68'}
+                    scenname='rcp85';
+            end
+            switch testname
+                case {'test53', 'test61', 'test57', 'test65'}
+                    gcmname='IPSL-CM5A-LR';
+                    histname='test53';
+                case {'test54', 'test62', 'test58', 'test66'}
+                    gcmname='IPSL-CM5A-MR';
+                    histname='test54';
+                case {'test55', 'test63', 'test59', 'test67'}
+                    gcmname='NorESM1-M';
+                    histname='test55';
+                case {'test56', 'test64', 'test60', 'test68'}
+                    gcmname='MPI-ESM-LR';
+                    histname='test56';
+            end
+            jpgname=strcat(outfile, '_RCM_', gcmname, '_', '_halosteric_slc_1976_2005.jpg'); %% ~_year_month.jpg
+            if (exist(jpgname , 'file') ~= 2 || fig_flag==2)
+                
+                histdir = strcat(drivename, 'Data\Model\ROMS\nwp_1_20\', histname, '\run\');
+                hist_interped_stericfilename = strcat(histdir, histname,'_',regionname, '_halosteric_ssh_1976_2005.nc');
+
+                hist_steric_ssh_early=ncread(hist_interped_stericfilename, 'steric_ssh', [1 1 1], [inf inf 12]);
+                hist_steric_ssh_early=mean( hist_steric_ssh_early,3);
+                hist_steric_ssh_late=ncread(hist_interped_stericfilename, 'steric_ssh', [1 1 349], [inf inf 12]);
+                hist_steric_ssh_late=mean( hist_steric_ssh_late,3);
+
+                lon_glo= ncread(hist_interped_stericfilename, 'lon_rho');
+                lat_glo= ncread(hist_interped_stericfilename, 'lat_rho');
+                mask_rho = hist_steric_ssh_early(:,:,1);
+                mask_rho(isfinite(mask_rho))=1;
+
+                steric_slc = hist_steric_ssh_late - hist_steric_ssh_early;
+                [mean_steric_slc, error_status] = Func_0011_get_area_weighted_mean(steric_slc, lon_glo, lat_glo);
+                
+                load([filedir,testname,'_',regionname,'land_steric_ssh_',num2str(min(inputyear),'%04i'),'_',num2str(max(inputyear),'%04i'),'.mat']);
+                load([filedir,testname,'_',regionname,'land_model_only_steric_ssh_',num2str(1976,'%04i'),'_',num2str(2005,'%04i'),'.mat']);
+                
+                land_model=NaN(size(mask_rho));
+                land_model(isnan(mask_rho))=1;
+                testnameind=1;
+                ax{testnameind,1}=axes;
+%                 set(ax{testnameind,1},'pos',pos_sb{testnameind});
+                m_proj(m_proj_name,'lon',[lonlat(1) lonlat(2)],'lat',[lonlat(3) lonlat(4)]);
+                pc{testnameind,1}=m_pcolor(lon_glo',lat_glo', land_model','parent',ax{testnameind,1});
+                colormap(ax{testnameind,1},[0.8 0.8 0.8]);
+                shading(gca,m_pcolor_shading_method); 
+                m_grid('fontsize', m_grid_fontsize, 'tickdir', m_grid_tickdir_type,  'box', m_grid_box_type, ...
+                        'xticklabels', [], 'xtick',[120, 130, 140], ...
+                        'yticklabels', [32, 36, 40, 44, 48], 'ytick',[32, 36, 40, 44, 48], 'parent', ax{testnameind,1});  
+                
+                h = colorbar('eastoutside','AxisLocation','out');
+                set(h, 'TickLabels', []);
+                pos_sb{testnameind}=get(ax{testnameind,1}, 'pos'); % Get the position.
+                
+                ax{testnameind,2}=axes;
+%                 set(ax{testnameind,2},'pos',pos_sb{testnameind});
+                m_proj(m_proj_name,'lon',[lonlat(1) lonlat(2)],'lat',[lonlat(3) lonlat(4)]);
+                pc{testnameind,2}=m_pcolor(lon_glo',lat_glo', steric_slc'.*100.0,'parent',ax{testnameind,2});
+                colormap(ax{testnameind,2},flip(spring));
+                caxis([0 30]);
+                m_grid('fontsize', m_grid_fontsize, 'tickdir', m_grid_tickdir_type,  ...
+                    'xticklabels', [], 'xtick',[120,  130, 140], ...
+                    'yticklabels', [32, 36, 40, 44, 48], 'ytick',[32, 36, 40, 44, 48], 'backcolor', 'none', 'parent', ax{testnameind,2});  
+                shading(gca,m_pcolor_shading_method); 
+                h = colorbar('eastoutside','AxisLocation','out');
+                set(h,'fontsize',colorbar_fontsize);
+                title([regionname, ', RCM, ', gcmname, ', halosteric, slc=', num2str(round(mean_steric_slc.*100,1)), 'cm'])
+
+                set(gcf, 'PaperUnits', 'points');
+                set(gcf, 'PaperSize', [hor_paper_size_x, hor_paper_size_y]);
+                set(gcf,'PaperPosition', [paper_position_hor paper_position_ver paper_position_width paper_position_height]) 
+
+                saveas(gcf,jpgname,'tif'); RemoveWhiteSpace([], 'file', jpgname);
+                close all;
+            end
+            fig_flag=0;
+        end
+        
+        
+        % start-------------------- historical halosteric contribution (raw grid)
+        fig_flag=fig_flags{83,2};
+        figstericdir =strcat('D:\MEPL\project\SSH\figures\5th_year\figure\nwp_1_20\','all','\',regionname,'\steric\'); % % where figure files will be saved
+        if (exist(strcat(figstericdir) , 'dir') ~= 7)
+            mkdir(strcat(figstericdir));
+        end 
+        outfile = strcat(figstericdir,regionname);
+
+        while (fig_flag)
+            switch testname
+                case {'test53', 'test54', 'test55', 'test56'}
+                    scenname='historical';
+                case {'test61', 'test62', 'test63', 'test64'}
+                    scenname='rcp26';
+                case {'test57', 'test58', 'test59', 'test60'}
+                    scenname='rcp45';
+                case {'test65', 'test66', 'test67', 'test68'}
+                    scenname='rcp85';
+            end
+            switch testname
+                case {'test53', 'test61', 'test57', 'test65'}
+                    gcmname='IPSL-CM5A-LR';
+                    histname='test53';
+                case {'test54', 'test62', 'test58', 'test66'}
+                    gcmname='IPSL-CM5A-MR';
+                    histname='test54';
+                case {'test55', 'test63', 'test59', 'test67'}
+                    gcmname='NorESM1-M';
+                    histname='test55';
+                case {'test56', 'test64', 'test60', 'test68'}
+                    gcmname='MPI-ESM-LR';
+                    histname='test56';
+            end
+            jpgname=strcat(outfile, '_RCM_', gcmname, '_', '_halo_contribution_1976_2005.jpg'); %% ~_year_month.jpg
+            if (exist(jpgname , 'file') ~= 2 || fig_flag==2)
+                
+                histdir = strcat(drivename, 'Data\Model\ROMS\nwp_1_20\', histname, '\run\');
+                hist_interped_stericfilename = strcat(histdir, histname,'_',regionname, '_ssh_trend_1976_2005.nc');
+                ncinfo(hist_interped_stericfilename)
+                hist_steric_ssh_early=ncread(hist_interped_stericfilename, 'raw_ssh', [1 1 1], [inf inf 12]);
+                hist_steric_ssh_early=mean( hist_steric_ssh_early,3);
+                hist_steric_ssh_late=ncread(hist_interped_stericfilename, 'raw_ssh', [1 1 349], [inf inf 12]);
+                hist_steric_ssh_late=mean( hist_steric_ssh_late,3);
+
+                lon_glo= ncread(hist_interped_stericfilename, 'lon_rho');
+                lat_glo= ncread(hist_interped_stericfilename, 'lat_rho');
+                mask_rho = hist_steric_ssh_early(:,:,1);
+                mask_rho(isfinite(mask_rho))=1;
+                steric_slc_total = hist_steric_ssh_late - hist_steric_ssh_early;
+                
+                hist_interped_stericfilename = strcat(histdir, histname,'_',regionname, '_halosteric_ssh_1976_2005.nc');
+                ncinfo(hist_interped_stericfilename)
+                hist_steric_ssh_early=ncread(hist_interped_stericfilename, 'steric_ssh', [1 1 1], [inf inf 12]);
+                hist_steric_ssh_early=mean( hist_steric_ssh_early,3);
+                hist_steric_ssh_late=ncread(hist_interped_stericfilename, 'steric_ssh', [1 1 349], [inf inf 12]);
+                hist_steric_ssh_late=mean( hist_steric_ssh_late,3);
+
+                lon_glo= ncread(hist_interped_stericfilename, 'lon_rho');
+                lat_glo= ncread(hist_interped_stericfilename, 'lat_rho');
+                mask_rho = hist_steric_ssh_early(:,:,1);
+                mask_rho(isfinite(mask_rho))=1;
+                steric_slc_thermo = hist_steric_ssh_late - hist_steric_ssh_early;
+                
+                steric_slc=steric_slc_thermo./ steric_slc_total;
+                
+                
+                [mean_steric_slc, error_status] = Func_0011_get_area_weighted_mean(steric_slc, lon_glo, lat_glo);
+
+                
+                load([filedir,testname,'_',regionname,'land_steric_ssh_',num2str(min(inputyear),'%04i'),'_',num2str(max(inputyear),'%04i'),'.mat']);
+                load([filedir,testname,'_',regionname,'land_model_only_steric_ssh_',num2str(1976,'%04i'),'_',num2str(2005,'%04i'),'.mat']);
+                
+                land_model=NaN(size(mask_rho));
+                land_model(isnan(mask_rho))=1;
+                testnameind=1;
+                ax{testnameind,1}=axes;
+%                 set(ax{testnameind,1},'pos',pos_sb{testnameind});
+                m_proj(m_proj_name,'lon',[lonlat(1) lonlat(2)],'lat',[lonlat(3) lonlat(4)]);
+                pc{testnameind,1}=m_pcolor(lon_glo',lat_glo', land_model','parent',ax{testnameind,1});
+                colormap(ax{testnameind,1},[0.8 0.8 0.8]);
+                shading(gca,m_pcolor_shading_method); 
+                m_grid('fontsize', m_grid_fontsize, 'tickdir', m_grid_tickdir_type,  'box', m_grid_box_type, ...
+                        'xticklabels', [], 'xtick',[120, 130, 140], ...
+                        'yticklabels', [32, 36, 40, 44, 48], 'ytick',[32, 36, 40, 44, 48], 'parent', ax{testnameind,1});  
+                
+                h = colorbar('eastoutside','AxisLocation','out');
+                set(h, 'TickLabels', []);
+                pos_sb{testnameind}=get(ax{testnameind,1}, 'pos'); % Get the position.
+                
+                ax{testnameind,2}=axes;
+%                 set(ax{testnameind,2},'pos',pos_sb{testnameind});
+                m_proj(m_proj_name,'lon',[lonlat(1) lonlat(2)],'lat',[lonlat(3) lonlat(4)]);
+                pc{testnameind,2}=m_pcolor(lon_glo',lat_glo', steric_slc'.*100.0,'parent',ax{testnameind,2});
+                colormap(ax{testnameind,2},bwrmap);
+                caxis([-100 100]);
+                m_grid('fontsize', m_grid_fontsize, 'tickdir', m_grid_tickdir_type,  ...
+                    'xticklabels', [], 'xtick',[120,  130, 140], ...
+                    'yticklabels', [32, 36, 40, 44, 48], 'ytick',[32, 36, 40, 44, 48], 'backcolor', 'none', 'parent', ax{testnameind,2});  
+                shading(gca,m_pcolor_shading_method); 
+                h = colorbar('eastoutside','AxisLocation','out');
+                set(h,'fontsize',colorbar_fontsize);
+                title([regionname, ', RCM, ', gcmname, ', halo_cont, slc=', num2str(round(mean_steric_slc.*100,1)), 'cm'])
+
+                set(gcf, 'PaperUnits', 'points');
+                set(gcf, 'PaperSize', [hor_paper_size_x, hor_paper_size_y]);
+                set(gcf,'PaperPosition', [paper_position_hor paper_position_ver paper_position_width paper_position_height]) 
+
+                saveas(gcf,jpgname,'tif'); RemoveWhiteSpace([], 'file', jpgname);
+                close all;
+            end
+            fig_flag=0;
+        end
     end
 end

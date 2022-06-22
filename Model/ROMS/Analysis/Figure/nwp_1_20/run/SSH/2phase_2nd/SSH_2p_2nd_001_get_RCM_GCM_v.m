@@ -2,8 +2,8 @@ close all; clear all;  clc;
 % %  Updated 05-Jul-2021 by Yong-Yub Kim, structure
 
 %% configuration of RCM
-RCM_info.testnames={'test2117', 'test2118', 'test2119', 'test2120', 'test2121'};
-% RCM_info.testnames={'test2127', 'test2128', 'test2129', 'test2130', 'test2131'};
+% RCM_info.testnames={'test2117', 'test2118', 'test2119', 'test2120', 'test2121'};
+RCM_info.testnames={'test2127', 'test2128', 'test2129', 'test2130', 'test2131'};
 % RCM_info.testnames={'test2117'};
 
 RCM_info.model = 'nwp_1_20';
@@ -18,12 +18,11 @@ RCM_info.atmroot = ['D:', filesep, 'Data', filesep, 'Model', filesep, ...
 RCM_info.transroot = ['D:', filesep, 'Data', filesep, 'Model', filesep, ...
     'ROMS', filesep, 'nwp_1_20', filesep, 'transport_barot', filesep];
 RCM_info.phase = 'run';
-RCM_info.region = {'ES_KHOA'};
-% RCM_info.region = {'EKWC2'};
-RCM_info.years = 1985:2014;
-% RCM_info.years = 2015:2050;
+% RCM_info.region = {'ES_KHOA'};
+RCM_info.region = {'AKP4'};
+% RCM_info.years = 1985:2014;
+RCM_info.years = 2051:2100;
 RCM_info.season = 'all';
-[RCM_info.months,error_status] = Func_0019_get_month_from_season(RCM_info.season);
 % RCM_info.months = [12, 1, 2];
 
 RCM_grid.filename= 'D:\Data\Model\ROMS\nwp_1_20\input\test2117\roms_grid_nwp_1_20_test2117.nc';
@@ -40,7 +39,6 @@ GCM_info.saveroot = GCM_info.dataroot;
 GCM_info.phase = RCM_info.phase;
 GCM_info.region = RCM_info.region;
 GCM_info.years = RCM_info.years;
-GCM_info.months = RCM_info.months;
 GCM_grid.dl = 1/2;
 
 %% configuration of CMEMS
@@ -87,6 +85,8 @@ for testnameind=1:length(RCM_info.testnames)
         end
         addpath(genpath([tmp.dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', tmp.fs, 'function']));
         [tmp.dropboxpath, tmp.error_status] = Func_0008_set_dropbox_path(computer);
+        [RCM_info.months,error_status] = Func_0019_get_month_from_season(RCM_info.season);
+        GCM_info.months = RCM_info.months;
 
 %         RCM_info=RCM_info2;
 %         GCM_info=GCM_info2;

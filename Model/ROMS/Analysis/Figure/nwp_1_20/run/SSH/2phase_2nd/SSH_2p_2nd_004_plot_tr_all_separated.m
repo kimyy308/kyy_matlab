@@ -15,7 +15,9 @@ addpath(genpath([tmp.dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', tmp.fs, 'M
 
 
 
-RCM_info.name = {'test2117', 'test2118', 'test2119', 'test2120', 'test2121'};
+% RCM_info.name = {'test2117', 'test2118', 'test2119', 'test2120', 'test2121'};
+RCM_info.name = {'test2127', 'test2128', 'test2129', 'test2130', 'test2131'};
+
 % RCM_info.name = {'CNRM-ESM2-1', 'EC-Earth3-Veg', 'ACCESS-CM2'};
 
 
@@ -33,7 +35,9 @@ RCM_info.name = {'test2117', 'test2118', 'test2119', 'test2120', 'test2121'};
 figs.meanplotlev2 =[0 4];
 
 
-RCM_info.years = [1985:2014]; % % put year which you want to plot [year year ...]
+% RCM_info.years = [1985:2014]; % % put year which you want to plot [year year ...]
+RCM_info.years = [2015:2100]; % % put year which you want to plot [year year ...]
+
 RCM_info.months = [1 2 3 4 5 6 7 8 9 10 11 12]; % % put month which you want to plot [month month ...]
 tmp.regionname = 'KS';
 % cmip5dir='D:\Data\Model\CMIP5\';

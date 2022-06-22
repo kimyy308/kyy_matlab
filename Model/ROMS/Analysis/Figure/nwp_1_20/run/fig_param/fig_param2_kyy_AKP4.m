@@ -139,6 +139,8 @@ param.m_contour_fontweight = 'bold';
 param.m_quiver_title_fontsize = 20;
 param.m_quiver_x_interval = 10;
 param.m_quiver_y_interval = 10;
+param.m_quiver_wind_x_interval = 20;
+param.m_quiver_wind_y_interval = 20;
 
 param.m_quiver_vector_color = 'k';
 param.m_quiver_LineWidth = 0.5;

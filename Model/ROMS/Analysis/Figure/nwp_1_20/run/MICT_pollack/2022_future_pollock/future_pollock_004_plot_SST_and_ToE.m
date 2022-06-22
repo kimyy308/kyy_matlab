@@ -11,7 +11,7 @@ warning off;
 RCM_info.name={'test2127', 'test2128', 'test2129', 'test2130', 'test2131', 'ens2201'};
 % RCM_info.name={'test2128', 'test2129', 'test2131'};
 % RCM_info.name={'test2131'};
-% RCM_info.name={'ens2202'};
+% RCM_info.name={'ens2201'};
 
 % 
 RCM_info.model = 'nwp_1_20';
@@ -24,11 +24,13 @@ RCM_info.phase = 'run';  % run or spinup
 % RCM_info.region = {'EKB2'}; % NWP, AKP4, ES_KHOA, YS, ...
 RCM_info.region = {'pollock_egg3'}; % NWP, AKP4, ES_KHOA, YS, ...
 
-% RCM_info.vars = {'SST'};
+RCM_info.vars = {'SST'};
 % RCM_info.vars = {'v'};
-% RCM_info.vars = {'SSS', 'SSH', 'u', 'v', 'Uwind', 'Vwind', 'shflux', 'SST', 'swrad'};
+% RCM_info.vars = {'SSS', 'SSH', 'u', 'v', 'Uwind', 'Vwind', 'shflux', 'SST', 'swrad', 'lwrad', 'sensible', 'latent'};
 % RCM_info.vars = {'SSS', 'SSH', 'Uwind', 'Vwind'};
-RCM_info.vars = {'swrad', 'shflux'};
+% RCM_info.vars = {'swrad', 'shflux'};
+% RCM_info.vars = {'swrad', 'shflux', 'lwrad', 'sensible', 'latent'};
+% RCM_info.vars = {'wstrcurl'};
 
 % RCM_info.years = 1983:2021;  
 % RCM_info.years = [2015:2050, 2081:2100];  
@@ -43,7 +45,8 @@ RCM_info.years_his=[1995:2014];
 
 
 % seasons_group={'February', 'January', 'JF-'};
-seasons_group={'JF-'};
+% seasons_group={'JF-'};
+seasons_group={'all'};
 
 RCM_grid.dl = 1/20;
 RCM_grid.gridname = {'lon_rho', 'lat_rho', 'lon_u', 'lat_u', 'lon_v', 'lat_v', 'lon_psi', 'lat_psi', 'pm', 'pn', 'f'};
@@ -93,7 +96,7 @@ for seasons_groupi=1:length(seasons_group)
             end
             
             flags.fig_switch(1)=1; % get data
-            flags.fig_switch(2)=2; % temporal mean pcolor
+            flags.fig_switch(2)=1; % temporal mean pcolor
             flags.fig_switch(3)=0; % yearly spatial mean time series
             flags.fig_switch(4)=0; % temporal mean vec
             flags.fig_switch(5)=0; % get RMSE and bias

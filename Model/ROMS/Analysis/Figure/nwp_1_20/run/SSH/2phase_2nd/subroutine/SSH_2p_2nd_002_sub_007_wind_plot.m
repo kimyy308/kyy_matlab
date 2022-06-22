@@ -1,4 +1,5 @@
 % %  Updated 09-Oct-2021 by Yong-Yub Kim, structure
+% %  Updated 22-Jun-2022 by Yong-Yub Kim, ref vec range
 
 
 % start-------------------- earlier decadal current plot
@@ -78,10 +79,18 @@ if (exist(tmp.tifname , 'file') ~= 2 || flags.fig_switch(7)==2)
                 == min(abs(cut_lon_rho(:,1)-param.m_quiver_ref_text_x_location)));
             tmp.ref_vec_y_ind = find(abs(cut_lat_rho(1,:)-param.m_quiver_ref_text_y_location) ...
                 == min(abs(cut_lat_rho(1,:)-param.m_quiver_ref_text_y_location)))+param.m_quiver_wind_y_interval*2;
-            tmp.ref_vec_x_range = round(tmp.ref_vec_x_ind-(param.m_quiver_x_interval/2)) : ...
-                round(tmp.ref_vec_x_ind-(param.m_quiver_x_interval/2))+param.m_quiver_wind_x_interval;
-            tmp.ref_vec_y_range = round(tmp.ref_vec_y_ind-(param.m_quiver_y_interval/2)) : ...
-                round(tmp.ref_vec_y_ind-(param.m_quiver_y_interval/2))+param.m_quiver_wind_y_interval;
+            switch tmp.regionname
+                case 'AKP4'
+                    tmp.ref_vec_x_range = round(tmp.ref_vec_x_ind-(param.m_quiver_x_interval/2)) : ...
+                        round(tmp.ref_vec_x_ind-(param.m_quiver_x_interval/2))+param.m_quiver_wind_x_interval/2;
+                    tmp.ref_vec_y_range = round(tmp.ref_vec_y_ind-(param.m_quiver_y_interval/2)) : ...
+                        round(tmp.ref_vec_y_ind-(param.m_quiver_y_interval/2))+param.m_quiver_wind_y_interval;
+                otherwise
+                    tmp.ref_vec_x_range = round(tmp.ref_vec_x_ind-(param.m_quiver_x_interval/2)) : ...
+                        round(tmp.ref_vec_x_ind-(param.m_quiver_x_interval/2))+param.m_quiver_wind_x_interval;
+                    tmp.ref_vec_y_range = round(tmp.ref_vec_y_ind-(param.m_quiver_y_interval/2)) : ...
+                        round(tmp.ref_vec_y_ind-(param.m_quiver_y_interval/2))+param.m_quiver_wind_y_interval;
+            end
         end
         Uwind(tmp.ref_vec_x_range,tmp.ref_vec_y_range)=param.m_quiver_ref_uwind_value;
         Vwind(tmp.ref_vec_x_range,tmp.ref_vec_y_range)=param.m_quiver_ref_vwind_value;     
@@ -124,7 +133,13 @@ if (exist(tmp.tifname , 'file') ~= 2 || flags.fig_switch(7)==2)
 
     close all;
 %             clear RCM_grid.lon_rho tmp.mean_Uwind tmp.ref_vec_x_range
-    RCM_grid=rmfield(RCM_grid, 'lon_rho');
-    tmp=rmfield(tmp, 'mean_Uwind');
-    tmp=rmfield(tmp, 'ref_vec_x_range');
+    if (isfield(RCM_grid, 'lon_rho') == 1)
+        RCM_grid=rmfield(RCM_grid, 'lon_rho');
+    end
+    if (isfield(tmp, 'mean_Uwind') == 1)
+        tmp=rmfield(tmp, 'mean_Uwind');
+    end
+    if (isfield(tmp, 'mean_Uwind') == 1)
+        tmp=rmfield(tmp, 'mean_Uwind');
+    end
 end

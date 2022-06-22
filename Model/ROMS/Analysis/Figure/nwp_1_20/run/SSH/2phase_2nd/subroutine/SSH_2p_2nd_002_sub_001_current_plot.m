@@ -77,10 +77,18 @@ if (exist(tmp.tifname , 'file') ~= 2 || flags.fig_switch(1)==2)
                 == min(abs(cut_lon_rho(:,1)-param.m_quiver_ref_text_x_location)));
             tmp.ref_vec_y_ind = find(abs(cut_lat_rho(1,:)-param.m_quiver_ref_text_y_location) ...
                 == min(abs(cut_lat_rho(1,:)-param.m_quiver_ref_text_y_location)))+param.m_quiver_y_interval*2;
-            tmp.ref_vec_x_range = round(tmp.ref_vec_x_ind-(param.m_quiver_x_interval/2)) : ...
-                round(tmp.ref_vec_x_ind-(param.m_quiver_x_interval/2))+param.m_quiver_x_interval*3;
-            tmp.ref_vec_y_range = round(tmp.ref_vec_y_ind-(param.m_quiver_y_interval/2)) : ...
-                round(tmp.ref_vec_y_ind-(param.m_quiver_y_interval/2))+param.m_quiver_y_interval*3;
+            switch tmp.regionname
+                case 'AKP4'
+                    tmp.ref_vec_x_range = round(tmp.ref_vec_x_ind-(param.m_quiver_x_interval/2)) : ...
+                        round(tmp.ref_vec_x_ind-(param.m_quiver_x_interval/2))+param.m_quiver_x_interval;
+                    tmp.ref_vec_y_range = round(tmp.ref_vec_y_ind-(param.m_quiver_y_interval/2)) : ...
+                        round(tmp.ref_vec_y_ind-(param.m_quiver_y_interval/2))+param.m_quiver_y_interval;
+                otherwise
+                    tmp.ref_vec_x_range = round(tmp.ref_vec_x_ind-(param.m_quiver_x_interval/2)) : ...
+                        round(tmp.ref_vec_x_ind-(param.m_quiver_x_interval/2))+param.m_quiver_x_interval*3;
+                    tmp.ref_vec_y_range = round(tmp.ref_vec_y_ind-(param.m_quiver_y_interval/2)) : ...
+                        round(tmp.ref_vec_y_ind-(param.m_quiver_y_interval/2))+param.m_quiver_y_interval*3;
+            end
         end
         u_rho(tmp.ref_vec_x_range,tmp.ref_vec_y_range)=param.m_quiver_ref_u_value;
         v_rho(tmp.ref_vec_x_range,tmp.ref_vec_y_range)=param.m_quiver_ref_v_value;     
@@ -123,9 +131,15 @@ if (exist(tmp.tifname , 'file') ~= 2 || flags.fig_switch(1)==2)
 
     close all;
 %             clear RCM_grid.lon_rho tmp.mean_u tmp.ref_vec_x_range
-    RCM_grid=rmfield(RCM_grid, 'lon_rho');
-    tmp=rmfield(tmp, 'mean_u');
-    tmp=rmfield(tmp, 'ref_vec_x_range');
+    if (isfield(RCM_grid, 'lon_rho') == 1)
+        RCM_grid=rmfield(RCM_grid, 'lon_rho');
+    end
+    if (isfield(tmp, 'mean_u') == 1)
+        tmp=rmfield(tmp, 'mean_u');
+    end
+    if (isfield(tmp, 'ref_vec_x_range') == 1)
+        tmp=rmfield(tmp, 'ref_vec_x_range');
+    end
 end
 
 % % % % start-------------------- later decadal current plot
