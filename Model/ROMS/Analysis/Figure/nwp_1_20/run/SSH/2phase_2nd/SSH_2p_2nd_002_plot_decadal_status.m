@@ -14,7 +14,7 @@ warning off;
 %         RCM_info.name={ 'test2118', 'test2121'};   
 %         RCM_info.name={ 'test2119'};      
 %         RCM_info.name={'test2117', 'test2118', 'test2119', 'test2120', 'test2121', 'v04'};
-RCM_info.name={'test2127', 'test2128', 'test2129', 'test2130', 'test2131', 'ens2201'};
+% RCM_info.name={'test2127', 'test2128', 'test2129', 'test2130', 'test2131', 'ens2201'};
 % RCM_info.name={'test2127', 'test2128', 'test2130', 'test2131'};
 % RCM_info.name={'test2117', 'test2118', 'test2119', 'test2120', 'test2121'};
 
@@ -22,7 +22,7 @@ RCM_info.name={'test2127', 'test2128', 'test2129', 'test2130', 'test2131', 'ens2
 % RCM_info.name={ 'test2129'};
 
 %         RCM_info.name={'v04', 'v05'};
-%         RCM_info.name={'v04'};
+        RCM_info.name={'v05'};
 
 % RCM_info.abbs = {'RCM-CNE', 'RCM-ECV', 'RCM-ACC', 'RCM-CNH', 'RCM-CMC'};
 % RCM_info.abbs ={'RCM-SOD', 'RCM-GRS'};
@@ -38,7 +38,8 @@ RCM_info.phase = 'run';  % run or spinup
 % RCM_info.region = {'ES_KHOA'}; % NWP, AKP4, ES_KHOA, YS, ...
 % RCM_info.region = {'EKWC2'}; % NWP, AKP4, ES_KHOA, YS, ...
 % RCM_info.region = {'pollock_egg3'}; % NWP, AKP4, ES_KHOA, YS, ...
-RCM_info.region = {'AKP4'}; % NWP, AKP4, ES_KHOA, YS, ...
+% RCM_info.region = {'AKP4'}; % NWP, AKP4, ES_KHOA, YS, ...
+RCM_info.region = {'ref_sal'}; % NWP, AKP4, ES_KHOA, YS, ...
 
 % RCM_info.vars = {'SST', 'SSH', 'SSS', 'Uwind', 'Vwind', 'shflux', 'u', 'v'};  % 'SST', 'SSH', 'SSS', 'Uwind', 'Vwind', 'shflux', 'u', 'v'
 % RCM_info.vars = {'SSS'};  % 'SST', 'SSH', 'SSS', 'Uwind', 'Vwind', 'shflux', 'u', 'v'
@@ -49,7 +50,7 @@ RCM_info.vert_section = [129, 131, 37, 37, -200, 0]; % lonmin, lonmax, latmin, l
 % RCM_info.vars = {'u', 'v'};
 % RCM_info.vars = { 'Uwind', 'Vwind'};
 % RCM_info.vars = {'wstrcurl', 'SST', 'SSS', 'SSH'};
-RCM_info.vars = {'SST'};
+RCM_info.vars = {'SSS'};
 % RCM_info.vars = {'wstrcurl'};
 % RCM_info.vars = {'shflux', 'wstrcurl', 'SST', 'SSS', 'SSH'};
 % RCM_info.vars = {'shflux', 'SST', 'SSS', 'SSH'};
@@ -58,10 +59,10 @@ RCM_info.vars = {'SST'};
 
 % RCM_info.vars = {'SSH'};
 % RCM_info.years = 1985:2014;  
-% RCM_info.years = 1993:2014;  
+RCM_info.years = 1993:2014;  
 % RCM_info.years = 1995:2014;  
 % RCM_info.years = 2081:2100;  
-RCM_info.years = 2020:2020;  
+% RCM_info.years = 2020:2020;  
 % RCM_info.years = years_group(years_groupi);  
 
 %         RCM_info.months =1:12;  
@@ -146,13 +147,13 @@ for seasons_groupi=1:length(seasons_group)
             for flagi=1:7
                 fig_flags{flagi,2}=0;
             end
-            flags.fig_switch(1)=1;  %1 or 2
+            flags.fig_switch(1)=0;  %1 or 2
             flags.fig_switch(2)=0; 
             flags.fig_switch(3)=1;
             flags.fig_switch(4)=0;
             flags.fig_switch(5)=0;
             flags.fig_switch(6)=0;
-            flags.fig_switch(7)=1; %1
+            flags.fig_switch(7)=0; %1
             flags.fig_switch(8)=0;
             flags.fig_switch(9)=0;
             

@@ -23,8 +23,10 @@ if nargin == 1
 %         vert_param
 %         grd_file ='/data1/kimyy/Model/ROMS/roms_nwp/nwp_1_20/grids/roms_grid_nwp_1_20_test37.nc' ;
 %         grd_file ='E:\Data\Model\ROMS\nwp_1_20\input\test48\roms_grid_nwp_1_20_test48.nc' ;
-            grd_file ='D:\Data\Model\ROMS\nwp_1_20\input\test53\roms_grid_nwp_1_20_test53.nc' ;
-        scoord = [10.0 1.0 250.0 40] % theta_s theta_b hc N
+%             grd_file ='D:\Data\Model\ROMS\nwp_1_20\input\test53\roms_grid_nwp_1_20_test53.nc' ;
+            grd_file ='D:\Data\Model\ROMS\nwp_1_20\input\test2117\roms_grid_nwp_1_20_test2117.nc' ;
+
+        scoord = [10.0 1.0 250.0 40]; % theta_s theta_b hc N
         Vtransform = 2;
         Vstretching = 4;
         disp(' ')

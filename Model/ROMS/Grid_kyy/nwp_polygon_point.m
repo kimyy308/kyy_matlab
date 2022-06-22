@@ -865,14 +865,9 @@ adm_div_GWD_polygon = ...
     127.80, 37.92;
     127.80, 37.18]; 
 
-
-
-%     130.55, 35.63; %%% 'Gyeongsangnam-do' (northeastern edge), 'Gyeongsangbuk-do' (southeastern edge)
-%     131.20, 36.10;
-%     131.40, 36.10;
-%     131.55, 36.05;
-%     132.50, 36.70;
-%     132.95, 37.18; %%% 'Gyeongsangbuk-do' (northeastern edge) 'Gangwon-do' (southeastern edge)
-%     134.25, 38.50; 
-%     134.20, 38.62; %%% 'Gangwon-do' (northwestern edge)
-%     128.36, 38.62]; %%% 'Gangwon-do' (land, northwestern edge)
+% %    reference salinity area in Isobe et al. (2002)
+ref_sal_polygon = ...
+    [122.2, 23.8;
+    122.2, 25.0;
+    123.4, 25.0;
+    123.4, 23.8];

@@ -85,28 +85,30 @@ RCM_data.tr_yearly_temp=cell2mat(RCM_data.tr_yearly);
 RCM_data.tr{testind+1}=mean(RCM_data.tr_temp,2);     % ens   
 RCM_data.tr_yearly{testind+1}=mean(RCM_data.tr_yearly_temp,2);     % ens   
 
-% % get observation transport
-[~, ~, raw] = xlsread('D:\Data\Observation\Transport_Korea\obs_tsushima_197001_201209_ORIGIN_new.xls','TWC','A2:H553');
-raw(cellfun(@(x) ~isempty(x) && isnumeric(x) && isnan(x),raw)) = {''};
+if (max(RCM_info.years)<=2014)
+    % % get observation transport
+    [~, ~, raw] = xlsread('D:\Data\Observation\Transport_Korea\obs_tsushima_197001_201209_ORIGIN_new.xls','TWC','A2:H553');
+    raw(cellfun(@(x) ~isempty(x) && isnumeric(x) && isnan(x),raw)) = {''};
 
-R = cellfun(@(x) ~isnumeric(x) && ~islogical(x),raw); % 숫자형이 아닌 셀 찾기
-raw(R) = {NaN}; % 숫자형이 아닌 셀 바꾸기
+    R = cellfun(@(x) ~isnumeric(x) && ~islogical(x),raw); % 숫자형이 아닌 셀 찾기
+    raw(R) = {NaN}; % 숫자형이 아닌 셀 바꾸기
 
-OBS_data.obs_ks_all = reshape([raw{:}],size(raw));
+    OBS_data.obs_ks_all = reshape([raw{:}],size(raw));
 
-clearvars raw R;
+    clearvars raw R;
 
-OBS_data.ADCP=OBS_data.obs_ks_all(find(OBS_data.obs_ks_all(:,1)<=RCM_info.years(end) & OBS_data.obs_ks_all(:,1)>=RCM_info.years(1)),5);
-OBS_data.SLD=OBS_data.obs_ks_all(find(OBS_data.obs_ks_all(:,1)<=RCM_info.years(end) & OBS_data.obs_ks_all(:,1)>=RCM_info.years(1)),6);
-OBS_data.HYCOM=OBS_data.obs_ks_all(find(OBS_data.obs_ks_all(:,1)<=RCM_info.years(end) & OBS_data.obs_ks_all(:,1)>=RCM_info.years(1)),7);
-OBS_data.Fuk=OBS_data.obs_ks_all(find(OBS_data.obs_ks_all(:,1)<=RCM_info.years(end) & OBS_data.obs_ks_all(:,1)>=RCM_info.years(1)),8);
-OBS_data.SLD(isfinite(OBS_data.Fuk))=NaN;
+    OBS_data.ADCP=OBS_data.obs_ks_all(find(OBS_data.obs_ks_all(:,1)<=RCM_info.years(end) & OBS_data.obs_ks_all(:,1)>=RCM_info.years(1)),5);
+    OBS_data.SLD=OBS_data.obs_ks_all(find(OBS_data.obs_ks_all(:,1)<=RCM_info.years(end) & OBS_data.obs_ks_all(:,1)>=RCM_info.years(1)),6);
+    OBS_data.HYCOM=OBS_data.obs_ks_all(find(OBS_data.obs_ks_all(:,1)<=RCM_info.years(end) & OBS_data.obs_ks_all(:,1)>=RCM_info.years(1)),7);
+    OBS_data.Fuk=OBS_data.obs_ks_all(find(OBS_data.obs_ks_all(:,1)<=RCM_info.years(end) & OBS_data.obs_ks_all(:,1)>=RCM_info.years(1)),8);
+    OBS_data.SLD(isfinite(OBS_data.Fuk))=NaN;
 
-OBS_data.OBS_data.ADCP_res=reshape(OBS_data.ADCP,[12, length(OBS_data.ADCP)/12]);
-OBS_data.OBS_data.ADCP_yearly=mean(OBS_data.OBS_data.ADCP_res,1);
-% 
-% corrcoef(trdata{5}(isfinite(OBS_data.ADCP)), OBS_data.ADCP(isfinite(OBS_data.ADCP)))
-% corrcoef(RCM_data.tr{5}(isfinite(OBS_data.ADCP)), OBS_data.ADCP(isfinite(OBS_data.ADCP)))
+    OBS_data.OBS_data.ADCP_res=reshape(OBS_data.ADCP,[12, length(OBS_data.ADCP)/12]);
+    OBS_data.OBS_data.ADCP_yearly=mean(OBS_data.OBS_data.ADCP_res,1);
+    % 
+    % corrcoef(trdata{5}(isfinite(OBS_data.ADCP)), OBS_data.ADCP(isfinite(OBS_data.ADCP)))
+    % corrcoef(RCM_data.tr{5}(isfinite(OBS_data.ADCP)), OBS_data.ADCP(isfinite(OBS_data.ADCP)))
+end
 
 if (strcmp(computer,'PCWIN64'))
     % % for windows
@@ -140,14 +142,18 @@ end
             for testind=1:length(RCM_info.name)
                 figs.mslplot2_all{testind}=plot(xData,RCM_data.tr{testind},'r');
             end
-            figs.mslplot2_all{testind+1}=plot(xData,OBS_data.ADCP, 'k');            
+            if (max(RCM_info.years)<=2014)
+                figs.mslplot2_all{testind+1}=plot(xData,OBS_data.ADCP, 'k');            
+            end
             set(figs.mslplot2_all{1},'Marker','*');
             set(figs.mslplot2_all{2},'Marker','^');
             set(figs.mslplot2_all{3},'Marker','o');
             set(figs.mslplot2_all{4},'Marker','+');
             set(figs.mslplot2_all{5},'Marker','square');
-            set(figs.mslplot2_all{6},'Marker','pentagram');
-            set(figs.mslplot2_all{6},'LineWidth',2);
+            if (max(RCM_info.years)<=2014)
+                set(figs.mslplot2_all{6},'Marker','pentagram');
+                set(figs.mslplot2_all{6},'LineWidth',2);
+            end
             
             xlabel('Year')
             ylabel('Transport (Sv)')
@@ -162,7 +168,11 @@ end
 %             set(mslplot,'LineWidth',2);
             set(gca,'FontSize',25);
             grid on
-            figs.lgd=legend({'RCM-CNRM'; 'RCM-EC-Veg'; 'RCM-ACC'; 'RCM-CNRM-HR'; 'RCM-CMCC'; 'OBS_data.ADCP'}, 'NumColumns',3);
+            if (max(RCM_info.years)<=2014)
+                figs.lgd=legend({'RCM-CNE'; 'RCM-ECV'; 'RCM-ACC'; 'RCM-CNH'; 'RCM-CMC'; 'ADCP'}, 'NumColumns',3);
+            else
+                figs.lgd=legend({'RCM-CNE'; 'RCM-ECV'; 'RCM-ACC'; 'RCM-CNH'; 'RCM-CMC'}, 'NumColumns',3);
+            end
             set(figs.lgd,'FontSize',15);
 %             set(figs.lgd,'Position',[0.13 0.88, 0.775, 0.03]);  %top cneter
             set(figs.lgd,'Orientation','horizontal');
@@ -240,15 +250,18 @@ end
             for testind=1:length(RCM_info.name)
                 figs.mslplot2_all{testind}=plot(xData_yearly,RCM_data.tr_yearly{testind},'r')
             end
-            figs.mslplot2_all{testind+1}=plot(xData_yearly,OBS_data.OBS_data.ADCP_yearly, 'k');
-
+            if (max(RCM_info.years)<=2014)
+                figs.mslplot2_all{testind+1}=plot(xData_yearly,OBS_data.OBS_data.ADCP_yearly, 'k');
+            end
             set(figs.mslplot2_all{1},'Marker','*');
             set(figs.mslplot2_all{2},'Marker','^');
             set(figs.mslplot2_all{3},'Marker','o');
             set(figs.mslplot2_all{4},'Marker','+');
             set(figs.mslplot2_all{5},'Marker','square');
-            set(figs.mslplot2_all{6},'Marker','pentagram');
-            set(figs.mslplot2_all{6},'LineWidth',2);
+            if (max(RCM_info.years)<=2014)
+                set(figs.mslplot2_all{6},'Marker','pentagram');
+                set(figs.mslplot2_all{6},'LineWidth',2);
+            end
             
             xlabel('Year')
             ylabel('Transport (Sv)')
@@ -263,7 +276,11 @@ end
 %             set(mslplot,'LineWidth',2);
             set(gca,'FontSize',25);
             grid on
-            figs.lgd=legend({'RCM-CNRM'; 'RCM-EC-Veg'; 'RCM-ACC'; 'RCM-CNRM-HR'; 'RCM-CMCC'; 'ADCP'}, 'NumColumns',3);
+            if (max(RCM_info.years)<=2014)
+                figs.lgd=legend({'RCM-CNE'; 'RCM-ECV'; 'RCM-ACC'; 'RCM-CNH'; 'RCM-CMC'; 'ADCP'}, 'NumColumns',3);
+            else
+                figs.lgd=legend({'RCM-CNE'; 'RCM-ECV'; 'RCM-ACC'; 'RCM-CNH'; 'RCM-CMC'}, 'NumColumns',3);
+            end
             set(figs.lgd,'FontSize',15);
 %             set(figs.lgd,'Position',[0.13 0.88, 0.775, 0.03]);  top center
 
@@ -284,7 +301,11 @@ end
             set(gcf,'PaperPosition', [0 0 26 20])   
             hold off
             saveas(gcf,jpgname,'jpg'); RemoveWhiteSpace([], 'file', jpgname);
-            save(['D:\Data\Model\ROMS\nwp_1_20\transport_all\', RCM_info.scenname, '_RCM_all.mat'], 'xData', 'xData_yearly', 'RCM_info', 'RCM_data', 'OBS_data');
+            if (max(RCM_info.years)<=2014)
+                save(['D:\Data\Model\ROMS\nwp_1_20\transport_all\', RCM_info.scenname, '_RCM_all.mat'], 'xData', 'xData_yearly', 'RCM_info', 'RCM_data', 'OBS_data');
+            else
+                save(['D:\Data\Model\ROMS\nwp_1_20\transport_all\', RCM_info.scenname, '_RCM_all.mat'], 'xData', 'xData_yearly', 'RCM_info', 'RCM_data');
+            end
             grid off
 %         end
         close all;
@@ -344,7 +365,11 @@ end
             set(gcf,'PaperPosition', [0 0 26 20])   
             hold off
             saveas(gcf,jpgname,'jpg'); RemoveWhiteSpace([], 'file', jpgname);
-            save(['D:\Data\Model\ROMS\nwp_1_20\transport_all\', RCM_info.scenname, '_RCM_all.mat'], 'xData', 'xData_yearly', 'RCM_info', 'RCM_data', 'OBS_data');
+            if (max(RCM_info.years)<=2014)
+                save(['D:\Data\Model\ROMS\nwp_1_20\transport_all\', RCM_info.scenname, '_RCM_all.mat'], 'xData', 'xData_yearly', 'RCM_info', 'RCM_data', 'OBS_data');
+            else
+                save(['D:\Data\Model\ROMS\nwp_1_20\transport_all\', RCM_info.scenname, '_RCM_all.mat'], 'xData', 'xData_yearly', 'RCM_info', 'RCM_data');                
+            end
             grid off
 %         end
         close all;

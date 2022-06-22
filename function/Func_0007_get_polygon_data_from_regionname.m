@@ -125,6 +125,8 @@ switch(regionname)
         refpolygon=adm_div_DD_only_polygon;
     case('adm_div_GWD') %% south korea administrative ocean division (Ulleung-do and dok-do)
         refpolygon=adm_div_GWD_polygon;
+    case('ref_sal') %% south korea administrative ocean division (Ulleung-do and dok-do)
+        refpolygon=ref_sal_polygon;
     otherwise
         ('?')
 end
