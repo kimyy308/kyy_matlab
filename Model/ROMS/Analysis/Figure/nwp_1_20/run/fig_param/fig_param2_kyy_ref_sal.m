@@ -1,12 +1,13 @@
-% % this script is for north western pacific region figure
-% %  Updated 30-Sep-2021 by Yong-Yub Kim
-% %  Updated 10-Nov-2021 by Yong-Yub Kim, wind parameter
+% % this script is for East Korean Bay region figure for pollock (nwp_1_20)
+% %  Updated 20-May-2021 by Yong-Yub Kim
 
 if (exist('refdepth' , 'var') ~= 1)
 % % set part of the m_quiver parameter 
-    param.m_quiver_vector_size = 1.5;
-    param.m_quiver_ref_u_value = 2;
-    param.m_quiver_wind_vector_size = 0.3;
+    param.m_quiver_vector_size = 3;
+    param.m_quiver_ref_u_value = 0.2;
+%     param.m_quiver_wind_vector_size = 0.2;
+    param.m_quiver_wind_vector_size = 1;
+
 elseif (refdepth >= -100)
     param.m_quiver_vector_size = 1.5;
     param.m_quiver_ref_u_value = 2;
@@ -21,6 +22,7 @@ end
 % % set colorbar parameter
 [cmap.bwr_map, error_status] = Func_0009_get_colormaps('bwr', tmp.dropboxpath);
 [cmap.jet_mod, error_status] = Func_0009_get_colormaps('jet_mod', tmp.dropboxpath);
+[cmap.byr_map, error_status] = Func_0009_get_colormaps('byr', tmp.dropboxpath);
 
 param.colorbar_fontsize = 20;
 param.colorbar_title_fontsize = 15;
@@ -33,7 +35,18 @@ if (isfield(tmp, 'variable') == 1)
             param.varname = 'temp';
             param.colorbar_title = '(^oC)';
             param.colorbar_lev = [-2 33];
-            param.colorbar_lev_meanplot = [19 23];
+            param.colorbar_lev_meanplot = [12 22];
+            param.colorbar_diff_lev = [0 6];
+            if isfield(RCM_info, 'season')
+                switch RCM_info.season
+                    case 'JF-'
+                        param.colorbar_lev = [-2 20];
+                    case 'February'
+                        param.colorbar_lev = [-2 20];
+                    case 'January'
+                        param.colorbar_lev = [-2 20];
+                end
+            end
         case('BT')
             param.varname = 'temp';
             param.colorbar_title = '(^oC)';
@@ -45,7 +58,8 @@ if (isfield(tmp, 'variable') == 1)
         case('SSH')
             param.varname = 'zeta';
             param.colorbar_title = '(m)';
-            param.colorbar_lev = [-0.7 1.3];
+            param.colorbar_lev = [-0.5 0.4];
+            param.colorbar_diff_lev = [0 0.8];
         case('vert_temp')
             param.varname = 'temp';
             param.colorbar_title = '(^oC)';
@@ -57,38 +71,68 @@ if (isfield(tmp, 'variable') == 1)
         case('vert_u')
             param.varname = 'u';
             param.colorbar_title = '(m/s)';
-            param.colormap_style = cmap.bwrmap;
+            param.colormap_style = cmap.bwr_map;
         case('vert_v')
             param.varname = 'v';
             param.colorbar_title = '(m/s)';
-            param.colormap_style = cmap.bwrmap;
+            param.colormap_style = cmap.bwr_map;
         case('vert_rho')
             param.varname = 'zeta';
             param.colorbar_title = '(kg/m^3)';
         case('speed')
             param.varname = 'speed';
             param.colorbar_title = '(m/s)';
-            param.colorbar_lev_meanplot = [0.05 0.25];
+            param.colorbar_lev_meanplot = [0.03 0.18];
         case('H')
             param.varname = 'h';
             param.colorbar_title = '(m)';
-            param.colorbar_lev = [-5000 0];
-        case('salt')
-            param.varname = 'salt';
-            param.colorbar_title = ' ';
-            param.colorbar_lev = [30 35];
-        case('temp')
-            param.varname = 'temp';
-            param.colorbar_title = '(^oC)';
-            param.colorbar_lev = [0 35];
+            param.colorbar_lev = [-3000 0];
+        case('Uwind')
+            param.varname = 'Uwind';
+            param.colorbar_title = '(m/s)';
+%             param.colorbar_lev = [-4 4]; % annual
+            param.colorbar_lev = [0 10]; % annual
+            param.colormap_style = cmap.bwr_map;
+        case('Vwind')
+            param.varname = 'Vwind';
+            param.colorbar_title = '(m/s)';
+%             param.colorbar_lev = [-4 4]; % annual
+            param.colorbar_lev = [-10 0]; % annual
+            param.colormap_style = cmap.bwr_map;
+        case('wstrcurl')
+            param.varname = 'Vwind';
+            param.colorbar_title = '/s';
+            param.colorbar_lev = [-2e-7 2e-7]; % annual
+            param.colormap_style = cmap.bwr_map;
+        case('swrad')
+            param.varname = 'swrad';
+            param.colorbar_title = 'W/m^2';
+            param.colorbar_lev = [0 200]; % winter
+            param.colormap_style = colormap(flip(autumn));
+        case('shflux')
+            param.varname = 'shflux';
+            param.colorbar_title = 'W/m^2';
+            param.colorbar_lev = [-300 0]; % winter
+            param.colormap_style = colormap(cool);
         otherwise
             param.varname = tmp.variable;
             param.colorbar_title = ' ';
     end
 end
 % % set calendar name
-param.calendarname=cell(1,12); param.calendarname{1} = 'January'; param.calendarname{2} = 'February'; param.calendarname{3} = 'March'; param.calendarname{4} = 'April'; param.calendarname{5} = 'May'; param.calendarname{6} = 'June';
-param.calendarname{7} = 'July'; param.calendarname{8} = 'August'; param.calendarname{9} = 'September'; param.calendarname{10} = 'October'; param.calendarname{11} = 'November'; param.calendarname{12} = 'December';
+param.calendarname=cell(1,12); 
+param.calendarname{1} = 'January'; 
+param.calendarname{2} = 'February'; 
+param.calendarname{3} = 'March'; 
+param.calendarname{4} = 'April'; 
+param.calendarname{5} = 'May'; 
+param.calendarname{6} = 'June';
+param.calendarname{7} = 'July'; 
+param.calendarname{8} = 'August'; 
+param.calendarname{9} = 'September'; 
+param.calendarname{10} = 'October'; 
+param.calendarname{11} = 'November'; 
+param.calendarname{12} = 'December';
 
 % % set m_proj parameter
 param.m_proj_name='mercator';
@@ -101,8 +145,8 @@ param.m_grid_tickdir_type = 'in';
 % % set m_pcolor parameter
 param.m_pcolor_title_fontsize = 20;
 param.m_pcolor_shading_method = 'flat';
-param.m_pcolor_ref_text_x_location = 120;
-param.m_pcolor_ref_text_y_location = 45.7;
+param.m_pcolor_ref_text_x_location = 127.5;
+param.m_pcolor_ref_text_y_location = 37.5;
 
 % % set m_gshhs parameter
 param.m_gshhs_line_color = 'k';
@@ -120,25 +164,41 @@ param.m_contour_fontweight = 'bold';
 
 % % set m_quiver parameter
 param.m_quiver_title_fontsize = 20;
-param.m_quiver_x_interval = 10;
-param.m_quiver_y_interval = 10;
-param.m_quiver_wind_x_interval = 20;
-param.m_quiver_wind_y_interval = 20;
+param.m_quiver_x_interval = 5;
+param.m_quiver_y_interval = 5;
 
 param.m_quiver_vector_color = 'k';
 param.m_quiver_LineWidth = 0.5;
 param.m_quiver_AutoScale = 'off';
-% param.m_quiver_ref_vec_x_range = 200:205;
-% param.m_quiver_ref_vec_y_range = 700:705;
-param.m_quiver_ref_uwind_value = 5;
+param.m_quiver_ref_uwind_value = 1;
 param.m_quiver_ref_vwind_value = param.m_quiver_ref_uwind_value/10000.0;
 param.m_quiver_ref_v_value = param.m_quiver_ref_u_value/10000.0;
 param.m_quiver_ref_text = [num2str(param.m_quiver_ref_u_value),' m/s'];
 param.m_quiver_wind_ref_text = [num2str(param.m_quiver_ref_uwind_value),' m/s'];
+param.m_quiver_ekman_ref_text = [num2str(param.m_quiver_ref_u_value),' m^3/s'];
 param.m_quiver_ref_text_fontsize = 15;
-param.m_quiver_ref_text_x_location = 125;
-param.m_quiver_ref_text_y_location = 45.7;
+param.m_quiver_ref_text_x_location = 127.5;
+param.m_quiver_ref_text_y_location = 37.5;
 
+% % set vert_grid parameter
+param.vert_grid_fontsize = 15;
+param.vert_grid_tickdir_type = 'in';
+param.vert_grid_box = 'on';
+param.vert_grid_box_linewidth = 1.5;
+
+% % set vert_pcolor parameter
+param.vert_pcolor_title_fontsize = 15;
+param.vert_pcolor_shading_method = 'interp';
+
+% % set vert_contour parameter
+param.vert_contour_color = 'k';
+param.vert_contour_title_fontsize = 15;
+param.vert_contour_label_fontsize = 10;
+param.vert_contour_label_color = 'k';
+param.vert_contour_linewidth = 1;
+param.vert_contour_rotation = 0;
+param.vert_contour_labelspacing = 100000;
+param.vert_contour_fontweight = 'bold';
 
 % % set gcf parameter
 param.hor_paper_size_x = RCM_grid.domain(2)-RCM_grid.domain(1);

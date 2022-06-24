@@ -106,7 +106,7 @@ for varind2=1:length(RCM_info.vars)
             load(tmp.matname);
         end 
 
-        [m_value, error_status] = Func_0011_get_area_weighted_mean(mean_data, cut_lon_rho, cut_lat_rho)
+        [m_value, error_status] = Func_0011_get_area_weighted_mean(mean_data, cut_lon_rho, cut_lat_rho);
 
         if(strcmp(tmp.variable, 'SST'))
             mean_data=mean_data;
