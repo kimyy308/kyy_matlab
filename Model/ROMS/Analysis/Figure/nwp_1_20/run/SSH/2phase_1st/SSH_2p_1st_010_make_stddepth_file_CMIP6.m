@@ -2,8 +2,13 @@ addpath(genpath('/data1/ykang/function/'))
 
 clc; clear all; close all;
 modelname = 'CMIP6';
-testnames = {'test2117','test2118','test2119','test2120','test2121'};
-syear = 1985; ss = num2str(syear);
+% testnames = {'test2117','test2118','test2119','test2120','test2121'};
+% testnames = {'test2127','test2128','test2129','test2130','test2131'};
+% testnames = {'test2127','test2128','test2129','test2130','test2131'};
+testnames = {'ens2201'};
+
+syear = 2081; ss = num2str(syear);
+% syear = 1985; ss = num2str(syear);
 
 for i = 1 : length(testnames)
     testname = testnames{i};

@@ -53,6 +53,8 @@ switch(season)
         months =12;
     case 'JF-'
         months =[1,2];
+    case 'JA-'
+        months =[7,8];
 end
 error_status=1;
 end

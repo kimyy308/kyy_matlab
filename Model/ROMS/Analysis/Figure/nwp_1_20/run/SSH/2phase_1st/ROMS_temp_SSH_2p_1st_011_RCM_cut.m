@@ -1,7 +1,9 @@
 close all; clear all;  clc;
 warning off;
 
-all_testname2 = {'test2117', 'test2118', 'test2119', 'test2120', 'test2121'};
+% all_testname2 = {'test2117', 'test2118', 'test2119', 'test2120', 'test2121'};
+% all_testname2 = {'test2127', 'test2128', 'test2129', 'test2130', 'test2131'};
+all_testname2 = {'ens2202'};
 
 all_region2 ={'ES'};
 
@@ -36,13 +38,15 @@ for testnameind2=1:length(all_testname2)
 
         % for snu_desktopd
         testname=all_testname2{testnameind2}    % % need to change
-        inputyear = [1985:2014]; % % put year which you want to plot [year year ...]
+        inputyear = [1995:2014]; % % put year which you want to plot [year year ...]
+%         inputyear = [2081:2100]; % % put year which you want to plot [year year ...]
+
 %         inputyear = [1985]; % % put year which you want to plot [year year ...]
         inputmonth = [1 2 3 4 5 6 7 8 9 10 11 12]; % % put month which you want to plot [month month ...]
 %         inputmonth = [1]; % % put month which you want to plot [month month ...]
         
-%         scenname ='ssp585';
-        scenname ='historical';
+        scenname ='ssp585';
+%         scenname ='historical';
 %         variable ='zeta'
         run('nwp_polygon_point.m');
         regionname=all_region2{regionind2};
@@ -102,6 +106,8 @@ for testnameind2=1:length(all_testname2)
                     yuname = 'eta_u';
                     xvname = 'xi_v';
                     yvname = 'eta_v';
+                    xpsiname = 'xi_psi';
+                    ypsiname = 'eta_psi';
 
                     if (exist('lon_rho' , 'var') ~= 1)
                         lon_rho=ncread(filename, lonname);
@@ -124,6 +130,7 @@ for testnameind2=1:length(all_testname2)
                        ' -d ', xrhoname, ',', lon_min_str, ',', lon_max_str, ' -d ', yrhoname, ',', lat_min_str, ',', lat_max_str, ' ', ...
                        ' -d ', xuname, ',', lon_min_str, ',', lonu_max_str, ' -d ', yuname, ',', lat_min_str, ',', lat_max_str, ' ', ...
                        ' -d ', xvname, ',', lon_min_str, ',', lon_max_str, ' -d ', yvname, ',', lat_min_str, ',', latv_max_str, ' ', ...
+                       ' -d ', xpsiname, ',', lon_min_str, ',', lonu_max_str, ' -d ', ypsiname, ',', lat_min_str, ',', latv_max_str, ' ', ...
                        filename, ' ', savefilename]);
                     disp([yearstr, ', ', monthstr])
                 end

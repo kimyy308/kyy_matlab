@@ -42,11 +42,13 @@ end
 
 experiment='nwp_1_20';
 % all_testname2 = {'test2107', 'test2108', 'test2109'};
-all_testname2 = {'test2117', 'test2118', 'test2119', 'test2120', 'test2121'};
+% all_testname2 = {'test2117', 'test2118', 'test2119', 'test2120', 'test2121'};
+all_testname2 = {'test2127', 'test2128', 'test2129', 'test2130', 'test2131'};
 
 % all_testname2 = {'test2109'};
 
-inputyear = [1985:2014];
+% inputyear = [1985:2014];
+inputyear = [2073:2100];
 
 t_point= 8;  
 point_name={'korea','tsugaru','soya','taiwan','kuro_intrusion','yellowsea', 'west', 'east'};
