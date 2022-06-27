@@ -189,7 +189,7 @@ if (exist(RCM_info.matname , 'file') ~= 2 || flags.fig_tmp==2)
                 case 'historical'
                     tmp.gcm_corrind=(tmp.year-1985)*12+tmp.month;
                 otherwise
-                    tmp.gcm_corrind=(tmp.year-2014)*12+tmp.month;                    
+                    tmp.gcm_corrind=(tmp.year-2015)*12+tmp.month;                    
             end
             GCM_correction=GCM_corr(testnameind).ts(tmp.gcm_corrind);
             GCM_data.tmp_data=GCM_data.tmp_data + GCM_correction;
