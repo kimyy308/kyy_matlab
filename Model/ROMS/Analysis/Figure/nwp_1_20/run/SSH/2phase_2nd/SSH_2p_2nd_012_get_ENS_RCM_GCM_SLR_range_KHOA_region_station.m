@@ -4,13 +4,16 @@ close all; clear all;  clc;
 % %  Updated 06-Dec-2021 by Yong-Yub Kim,KHOA region
 % %  Updated 23-Jun-2022 by Yong-Yub Kim, modification for 2022 project
 
+warning off
+
 % % % configuration of RCM
 % RCM_info.name={'test2117', 'test2118', 'test2119', 'test2120', 'test2121'};
 RCM_info.name={'test2127', 'test2128', 'test2129', 'test2130', 'test2131'};
 
+
 % RCM_info.name={'test2107', 'test2108', 'test2109'};
 % RCM_info.name={'test2102', 'test2103', 'test2104'};
-RCM_info.abbs = {'RCM-CNE', 'RCM-ECV', 'RCM-ACC', 'RCM-CNH', 'RCM-CMC'};
+% RCM_info.abbs = {'RCM-CNE', 'RCM-ECV', 'RCM-ACC', 'RCM-CNH', 'RCM-CMC'};
 % RCM_info.name={  'test2107'};
 % RCM_info.abbs = {  'RCM-CNRM'};
 
@@ -26,12 +29,12 @@ RCM_info.region = {'AKP4'};
 % RCM_info.years = 1985:2014;
 % RCM_info.years = 1989:2014;
 RCM_info.years = 2015:2100;
-RCM_info.months = 1:12;
+RCM_info.season = 'all';
 RCM_grid.dl = 1/20;
 
 % % % % % configuration of GCM
 GCM_info.name={'CNRM-ESM2-1', 'EC-Earth3-Veg', 'ACCESS-CM2', 'CNRM-CM6-1-HR', 'CMCC-ESM2'};
-GCM_info.abbs = {'GCM-CNE', 'GCM-ECV', 'GCM-ACC', 'GCM-CNH', 'GCM-CMC'};
+% GCM_info.abbs = {'GCM-CNE', 'GCM-ECV', 'GCM-ACC', 'GCM-CNH', 'GCM-CMC'};
 % GCM_info.name={'CNRM-ESM2-1'};
 % GCM_info.abbs = {  'GCM-CNRM'};
 GCM_info.model = GCM_info.name;
@@ -41,7 +44,6 @@ GCM_info.saveroot = GCM_info.dataroot;
 GCM_info.phase = RCM_info.phase;
 GCM_info.region = RCM_info.region;
 GCM_info.years = RCM_info.years;
-GCM_info.months = RCM_info.months;
 GCM_grid.dl = 1/2;
 
 % % % configuration of CMEMS
@@ -51,6 +53,8 @@ CMEMS_grid.dl = 1/4;
 % % % configuration of flags (make file)
 flags.make_std_mat = 1;
 flags.make_std_nc = 1;
+
+
 
 
 % %  working
@@ -81,7 +85,9 @@ for testnameind=1:length(RCM_info.name)
 %         GCM_info.abb = GCM_info.abbs{testnameind};
         [GCM_info.abb, tmp.error_status] = Func_0018_abbname(GCM_info.testname);
         GCM_info.scenario = RCM_info.scenario;
-                
+        [RCM_info.months,error_status] = Func_0019_get_month_from_season(RCM_info.season);
+        GCM_info.months = RCM_info.months;
+        
         [tmp.dropboxpath, tmp.error_status] = Func_0008_set_dropbox_path(computer);
         addpath(genpath([tmp.dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', tmp.fs, 'Model' ...
             tmp.fs, 'ROMS', tmp.fs, 'Analysis', tmp.fs, 'Figure', tmp.fs, 'nwp_1_20', tmp.fs ...
@@ -101,9 +107,11 @@ for testnameind=1:length(RCM_info.name)
             'Omon', tmp.fs, GCM_info.testname, tmp.fs];
         
         RCM_info.matname_mean_data_trend = [RCM_info.savedir,'ENS_adm','_',RCM_info.regionname, '_RCM_ssh_mean_data_trend_', ...
-            num2str(min(RCM_info.years),'%04i'),'_',num2str(max(RCM_info.years),'%04i'),'.mat'];
+            num2str(min(RCM_info.years),'%04i'),'_',num2str(max(RCM_info.years),'%04i'), '_', ...
+            RCM_info.season, '.mat'];
         GCM_info.matname_mean_data_trend = [RCM_info.savedir,'ENS_adm','_',RCM_info.regionname, '_GCM_ssh_mean_data_trend_', ...
-            num2str(min(RCM_info.years),'%04i'),'_',num2str(max(RCM_info.years),'%04i'),'.mat'];
+            num2str(min(RCM_info.years),'%04i'),'_',num2str(max(RCM_info.years),'%04i'), '_', ...
+            RCM_info.season, '.mat'];
         
 % % %         time set
         for folding=1:1
@@ -133,15 +141,20 @@ for testnameind=1:length(RCM_info.name)
         end     
         
         RCM_info.matname = [RCM_info.savedir,RCM_info.testname,'_',RCM_info.regionname, '_RCM_ssh_', ...
-            num2str(min(RCM_info.years),'%04i'),'_',num2str(max(RCM_info.years),'%04i'),'.mat'];
+            num2str(min(RCM_info.years),'%04i'),'_',num2str(max(RCM_info.years),'%04i'), '_', ...
+            RCM_info.season, '.mat'];
         RCM_info.matname_interped = [RCM_info.savedir,RCM_info.testname,'_',RCM_info.regionname, '_RCM_cmems_interped_ssh_', ...
-            num2str(min(RCM_info.years),'%04i'),'_',num2str(max(RCM_info.years),'%04i'),'.mat'];
+            num2str(min(RCM_info.years),'%04i'),'_',num2str(max(RCM_info.years),'%04i'), '_', ...
+            RCM_info.season, '.mat'];
         GCM_info.matname = [RCM_info.savedir,RCM_info.testname,'_',RCM_info.regionname, '_GCM_ssh_', ...
-            num2str(min(RCM_info.years),'%04i'),'_',num2str(max(RCM_info.years),'%04i'),'.mat'];
+            num2str(min(RCM_info.years),'%04i'),'_',num2str(max(RCM_info.years),'%04i'), '_', ...
+            RCM_info.season, '.mat'];
         GCM_info.matname_interped = [RCM_info.savedir,RCM_info.testname,'_',RCM_info.regionname, '_GCM_cmems_interped_ssh_', ...
-            num2str(min(RCM_info.years),'%04i'),'_',num2str(max(RCM_info.years),'%04i'),'.mat'];
+            num2str(min(RCM_info.years),'%04i'),'_',num2str(max(RCM_info.years),'%04i'), '_', ...
+            RCM_info.season, '.mat'];
         CMEMS_info.matname = [RCM_info.savedir,RCM_info.testname,'_',RCM_info.regionname, '_CMEMS_ssh_', ...
-            num2str(min(RCM_info.years),'%04i'),'_',num2str(max(RCM_info.years),'%04i'),'.mat'];
+            num2str(min(RCM_info.years),'%04i'),'_',num2str(max(RCM_info.years),'%04i'), '_', ...
+            RCM_info.season, '.mat'];
         if (exist(RCM_info.matname , 'file') == 2)   
             load(RCM_info.matname); 
             load(GCM_info.matname);
@@ -527,6 +540,9 @@ GCM_mean_trend.ens.(RCM_info.regionname) = tmp_fitobject.p1;
             end
         end
         
+        
+        RCM_mean_data.ens_lap = 1500;
+
                 % % % get population from avg and std; get trend from population (adm_div_all)
         for i=1:RCM_time.tlen
             for j=1:RCM_mean_data.ens_lap
@@ -668,7 +684,6 @@ end
 % end
 
 
-RCM_mean_data.ens_lap = 1500;
 
 % % % get population from avg and std; get trend from population (domain)
 for i=1:RCM_time.tlen
@@ -710,19 +725,27 @@ end
 save(RCM_info.matname_mean_data_trend, 'RCM_mean_data', 'RCM_mean_trend', '-v7.3');
 save(GCM_info.matname_mean_data_trend, 'GCM_mean_data', 'GCM_mean_trend', '-v7.3');
 
-% plot_ci(RCM_info.years', RCM_mean_data.ens.AKP4')
-% hold on
-% plot_ci(RCM_info.years', ...
-%     [RCM_mean_data.ens.AKP4_rand_lower_limit; RCM_mean_data.ens.AKP4_rand_upper_limit]', ...
-%     PatchColor', 'r', 'PatchAlpha', 0.1, ...
-%             'MainLineWidth', 2, 'MainLineColor', 'r', ...
-%             'LineWidth', 1, 'LineStyle','--', 'LineColor', 'k')
-% hold off
 
-
-
-
-% % plot(RCM_mean_data.test2107.(RCM_info.regionname));
+% % plot_ci(RCM_info.years', RCM_mean_data.ens.AKP4')
+% % hold on
+% % plot_ci(RCM_info.years', ...
+% %     [RCM_mean_data.ens.AKP4_rand_lower_limit; RCM_mean_data.ens.AKP4_rand_upper_limit]', ...
+% %     'PatchColor', 'r', 'PatchAlpha', 0.1, ...
+% %             'MainLineWidth', 2, 'MainLineColor', 'r', ...
+% %             'LineWidth', 1, 'LineStyle','--', 'LineColor', 'k')
+% % hold off
+% % 
+% % plot_ci(RCM_info.years', GCM_mean_data.ens.AKP4')
+% % hold on
+% % plot_ci(RCM_info.years', ...
+% %     [GCM_mean_data.ens.AKP4_rand_lower_limit; GCM_mean_data.ens.AKP4_rand_upper_limit]', ...
+% %     'PatchColor', 'b', 'PatchAlpha', 0.1, ...
+% %             'MainLineWidth', 2, 'MainLineColor', 'b', ...
+% %             'LineWidth', 1, 'LineStyle','--', 'LineColor', 'k')
+% % hold off
+% % 
+% % 
+% % plot(RCM_mean_data.test2127.(RCM_info.regionname));
 % % hold on
 % % for i=2:length(RCM_info.name)
 % %     RCM_info.testname = RCM_info.name{i}
@@ -730,7 +753,7 @@ save(GCM_info.matname_mean_data_trend, 'GCM_mean_data', 'GCM_mean_trend', '-v7.3
 % % end
 % % hold off
 % % 
-% % plot(GCM_mean_data.test2107.(RCM_info.regionname));
+% % plot(GCM_mean_data.test2127.(RCM_info.regionname));
 % % hold on
 % % for i=2:length(RCM_info.name)
 % %     RCM_info.testname = RCM_info.name{i}

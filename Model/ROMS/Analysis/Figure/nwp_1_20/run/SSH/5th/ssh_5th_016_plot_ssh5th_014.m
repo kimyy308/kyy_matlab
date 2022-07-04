@@ -13,9 +13,11 @@ warning off;
 % all_testname2 = {'test61', 'test62', 'test63', 'test64', 'test65', 'test66', 'test67', 'test68', 'ens09', 'ens10'};
 % all_testname2 = {'test57', 'test58', 'test59', 'test60', 'ens08'};
 
-all_testname2 = {'test57', 'test58', 'test59', 'test60', 'ens08', 'test61', 'test62', 'test63', 'test64', 'test65', 'test66', 'test67', 'test68', 'ens09', 'ens10'};
+% all_testname2 = {'test57', 'test58', 'test59', 'test60', 'ens08', 'test61', 'test62', 'test63', 'test64', 'test65', 'test66', 'test67', 'test68', 'ens09', 'ens10'};
 
 % all_testname2 = {'ens09', 'ens08', 'ens10'};
+all_testname2 = {'test53', 'test54', 'test55', 'test56'};
+% all_testname2 = {'ens03'};
 
 % all_region2 ={'NWP','ES', 'SS', 'YS', 'AKP'}
 % all_region2 ={'NWP','AKP4', 'YS', 'YSECS', 'ECS2', 'NES', 'SES', 'ES'}
@@ -24,7 +26,8 @@ all_testname2 = {'test57', 'test58', 'test59', 'test60', 'ens08', 'test61', 'tes
 % all_region2 ={'ES_KHOA','YS_KHOA', 'SS_KHOA'};
 % all_region2 ={'SS_KHOA'};
 
-all_region2 ={'AKP4'};
+% all_region2 ={'AKP4'};
+all_region2 ={'NWP'};
 
 % all_region2 ={'TEST'}
 for testnameind2=1:length(all_testname2)
@@ -68,7 +71,9 @@ for testnameind2=1:length(all_testname2)
 
         % for snu_desktopd
         testname=all_testname2{testnameind2}    % % need to change
-        inputyear = [2006:2100]; % % put year which you want to plot [year year ...]
+%         inputyear = [2006:2100]; % % put year which you want to plot [year year ...]
+        inputyear = [1993:2005]; % % put year which you want to plot [year year ...]
+
 %         inputmonth = [1 2 3 4 5 6 7 8 9 10 11 12]; % % put month which you want to plot [month month ...]
         inputmonth = [1:12]; % % put month which you want to plot [month month ...]
 
@@ -215,77 +220,82 @@ end
             fig_flags{65,1}='slr-ratio_plot with yearly exp fit SLR + cmems yearly detrended std';
             fig_flags{66,1}='slr-ratio_plot with yearly exp fit SLR, all test';
             fig_flags{67,1}='tgtyear SLR plot from yearly exponential fit data';
+            fig_flags{68,1}='cmems, pcolor';
+            fig_flags{69,1}='each test, pcolor';
 
-            for flagi=1:67
+            for flagi=1:69
                 fig_flags{flagi,2}=0;
             end
-%             fig_flags{1,2}=0;
-%             fig_flags{2,2}=0;
-%             fig_flags{3,2}=0;
-%             fig_flags{4,2}=0;
-%             fig_flags{5,2}=1;
-%             fig_flags{6,2}=0;
-%             fig_flags{7,2}=0;
-%             fig_flags{8,2}=0;
-%             fig_flags{9,2}=0;
-%             fig_flags{10,2}=0;
-%             fig_flags{11,2}=0;
-            fig_flags{12,2}=2;
-            fig_flags{13,2}=1;
-            fig_flags{14,2}=1;
-%             fig_flags{15,2}=1;
-%             fig_flags{16,2}=0;
-%             fig_flags{17,2}=0;
-            fig_flags{18,2}=1;
-            fig_flags{19,2}=1;
-%             fig_flags{20,2}=0;
-%             fig_flags{21,2}=0;
-%             fig_flags{22,2}=2;
-%             fig_flags{23,2}=0;
-%             fig_flags{24,2}=0;
-%             fig_flags{25,2}=1;0
-            fig_flags{26,2}=1;
-%             fig_flags{27,2}=0;
-%             fig_flags{28,2}=0;
-            fig_flags{29,2}=1;
-%             fig_flags{30,2}=0;
-            fig_flags{31,2}=1;
-%             fig_flags{32,2}=1;
-%             fig_flags{33,2}=0;
-%             fig_flags{34,2}=0;
-%             fig_flags{35,2}=0;
-            fig_flags{36,2}=1;
-%             fig_flags{37,2}=1;
-%             fig_flags{38,2}=0;
-            fig_flags{39,2}=1;
-%             fig_flags{40,2}=1;
-%             fig_flags{41,2}=0;
-%             fig_flags{42,2}=0;
-%             fig_flags{43,2}=0;
-%             fig_flags{44,2}=1;
-%             fig_flags{45,2}=0;
-%             fig_flags{46,2}=1;
-%             fig_flags{47,2}=1;
-%             fig_flags{48,2}=1;
-%             fig_flags{49,2}=0;
-%             fig_flags{50,2}=0;
-%             fig_flags{51,2}=0;
-%             fig_flags{52,2}=0;
-%             fig_flags{53,2}=1;
-%             fig_flags{54,2}=1;
-            fig_flags{55,2}=0;
-            fig_flags{56,2}=0;
-            fig_flags{57,2}=0;
-            fig_flags{58,2}=1;
-            fig_flags{59,2}=1;
-            fig_flags{60,2}=1;
-            fig_flags{61,2}=1;
-            fig_flags{62,2}=0;
-            fig_flags{63,2}=0;
-            fig_flags{64,2}=0;
-            fig_flags{65,2}=0;
-            fig_flags{66,2}=0;
-            fig_flags{67,2}=0;
+% % % %             fig_flags{1,2}=0;
+% % % %             fig_flags{2,2}=0;
+% % % %             fig_flags{3,2}=0;
+% % % %             fig_flags{4,2}=0;
+% % % %             fig_flags{5,2}=1;
+% % % %             fig_flags{6,2}=0;
+% % % %             fig_flags{7,2}=0;
+% % % %             fig_flags{8,2}=0;
+% % % %             fig_flags{9,2}=0;
+% % % %             fig_flags{10,2}=0;
+% % % %             fig_flags{11,2}=0;
+% % %             fig_flags{12,2}=1;
+% % %             fig_flags{13,2}=1;
+% % %             fig_flags{14,2}=1;
+% % % %             fig_flags{15,2}=1;
+% % % %             fig_flags{16,2}=0;
+% % % %             fig_flags{17,2}=0;
+% % %             fig_flags{18,2}=1;
+% % %             fig_flags{19,2}=1;
+% % % %             fig_flags{20,2}=0;
+% % % %             fig_flags{21,2}=0;
+% % % %             fig_flags{22,2}=2;
+% % % %             fig_flags{23,2}=0;
+% % % %             fig_flags{24,2}=0;
+% % % %             fig_flags{25,2}=1;0
+% % %             fig_flags{26,2}=1;
+% % % %             fig_flags{27,2}=0;
+% % % %             fig_flags{28,2}=0;
+% % %             fig_flags{29,2}=1;
+% % % %             fig_flags{30,2}=0;
+% % %             fig_flags{31,2}=1;
+% % % %             fig_flags{32,2}=1;
+% % % %             fig_flags{33,2}=0;
+% % % %             fig_flags{34,2}=0;
+% % % %             fig_flags{35,2}=0;
+% % %             fig_flags{36,2}=1;
+% % % %             fig_flags{37,2}=1;
+% % % %             fig_flags{38,2}=0;
+% % %             fig_flags{39,2}=1;
+% % % %             fig_flags{40,2}=1;
+% % % %             fig_flags{41,2}=0;
+% % % %             fig_flags{42,2}=0;
+% % % %             fig_flags{43,2}=0;
+% % % %             fig_flags{44,2}=1;
+% % % %             fig_flags{45,2}=0;
+% % % %             fig_flags{46,2}=1;
+% % % %             fig_flags{47,2}=1;
+% % % %             fig_flags{48,2}=1;
+% % % %             fig_flags{49,2}=0;
+% % % %             fig_flags{50,2}=0;
+% % % %             fig_flags{51,2}=0;
+% % % %             fig_flags{52,2}=0;
+% % % %             fig_flags{53,2}=1;
+% % % %             fig_flags{54,2}=1;
+% % %             fig_flags{55,2}=0;
+% % %             fig_flags{56,2}=0;
+% % %             fig_flags{57,2}=0;
+% % %             fig_flags{58,2}=1;
+% % %             fig_flags{59,2}=1;
+% % %             fig_flags{60,2}=1;
+% % %             fig_flags{61,2}=1;
+% % %             fig_flags{62,2}=0;
+% % %             fig_flags{63,2}=0;
+% % %             fig_flags{64,2}=0;
+% % %             fig_flags{65,2}=0;
+% % %             fig_flags{66,2}=0;
+% % %             fig_flags{67,2}=0;
+fig_flags{68,2}=1;
+fig_flags{69,2}=1;
+
         end
 
 %         load(['G:\Data\Model\ROMS\nwp_1_10\',testname,'\run\',testname,'_',regionname, ...
@@ -297,7 +307,7 @@ end
         if (strcmp(system_name,'PCWIN64'))
             % % for windows
             drivename='D:\';
-            figrawdir =strcat('Z:\내 드라이브\MEPL\project\SSH\5th_year\figure\nwp_1_20\',testname,'\',regionname,'\'); % % where figure files will be saved
+            figrawdir =strcat('D:\MEPL\project\SSH\figures\5th_year\figure\nwp_1_20\',testname,'\',regionname,'\'); % % where figure files will be saved
 %             param_script ='C:\Users\User\Dropbox\source\matlab\Model\ROMS\Analysis\Figure\nwp_1_10\run\fig_param\fig_param_kyy_EKB_RMS.m'
             param_script =['C:\Users\User\Dropbox\source\matlab\Model\ROMS\Analysis\Figure\nwp_1_20\run\fig_param\fig_param_kyy_', regionname, '.m']
             filedir = strcat(drivename, 'Data\Model\ROMS\nwp_1_20\', testname, '\run\'); % % where data files are
@@ -2866,5 +2876,124 @@ end
             
             fig_flag=0;
         end
+        
+% start-------------------- CMEMS ADT horizontal mean plot
+        fig_flag=fig_flags{68,2};
+        while (fig_flag) 
+%             var='SST'
+%             run(param_script);
+
+            figdir=[figrawdir,'CLIM\'];
+            if (exist(strcat(figdir) , 'dir') ~= 7)
+                mkdir(strcat(figdir));
+            end 
+            outfile = strcat(figdir,regionname);
+                % CLIM AVHRR temp plot
+                
+                ncinfo(cmemsfilename)
+                clim_mean_cmems=ncread(cmemsfilename, 'clim_cmems_ssh');
+                mean_cmems=mean(clim_mean_cmems, 3);
+                [mean_data, error_status] = Func_0011_get_area_weighted_mean(mean_cmems, cut_lon_rho, cut_lat_rho)
+                
+%                 mean_avhrr=mean(comb_spatial_meanavhrr,3,'omitnan');
+                m_proj(m_proj_name,'lon',[lonlat(1)-0.5 lonlat(2)+0.5],'lat',[lonlat(3)-0.5 lonlat(4)+0.5]);
+                hold on;
+                m_pcolor(double(cut_lon_rho),cut_lat_rho,mean_cmems-mean_data+0.5);
+                shading(gca,m_pcolor_shading_method);
+                m_gshhs_i('color',m_gshhs_line_color);
+                m_gshhs_i('patch',m_gshhs_land_color);   % gray colored land
+                titlename = strcat('CMEMS ADT ', '(',num2str(min(inputyear),'%04i'),'-',num2str(max(inputyear),'%04i'),') ');
+                title(titlename,'fontsize',m_pcolor_title_fontsize);  %%title
+
+                % set colorbar 
+                h = colorbar;
+                colormap(jet);
+                set(h,'fontsize',colorbar_fontsize);
+                title(h,'(m)','fontsize',colorbar_title_fontsize);
+                colorbar_lev = [-0.7 1.3];
+                caxis(colorbar_lev);
+
+                % set grid
+                m_grid('fontsize', m_grid_fontsize, 'box', m_grid_box_type, 'tickdir', m_grid_tickdir_type);
+
+                set(gcf, 'PaperUnits', 'points');
+                set(gcf, 'PaperSize', [hor_paper_size_x, hor_paper_size_y]);
+                set(gcf,'PaperPosition', [paper_position_hor paper_position_ver paper_position_width paper_position_height]) 
+
+                jpgname=strcat(outfile, '_', 'cmems', '_',regionname, '_mssh_',num2str(min(inputyear),'%04i'),'_',num2str(max(inputyear),'%04i'), '.jpg'); %% ~_year_month.jpg
+                saveas(gcf,jpgname,'jpg');
+% 
+%                 disp(' ')
+%                 disp(['clim_', num2str(tempmonth), '_', 'BIAS', ' plot is created.'])
+%                 disp(' ')
+%                 disp([' File path is : ',jpgname])
+%                 disp(' ')
+
+                hold off
+                close all;
+                
+                fig_flag=0;
+        end
+        
+        
+% start-------------------- each test mean plot
+        fig_flag=fig_flags{69,2};
+        while (fig_flag) 
+%             var='SST'
+%             run(param_script);
+
+            figdir=[figrawdir,'CLIM\'];
+            if (exist(strcat(figdir) , 'dir') ~= 7)
+                mkdir(strcat(figdir));
+            end 
+            outfile = strcat(figdir,regionname);
+                % CLIM AVHRR temp plot
+                
+%                 ncinfo(interpedfilename)
+                clim_mean_cmems=ncread(interpedfilename, 'interped_ssh');
+                mean_cmems=mean(clim_mean_cmems, 3);
+                [mean_data, error_status] = Func_0011_get_area_weighted_mean(mean_cmems, cut_lon_rho, cut_lat_rho)
+                
+%                 mean_avhrr=mean(comb_spatial_meanavhrr,3,'omitnan');
+                m_proj(m_proj_name,'lon',[lonlat(1)-0.5 lonlat(2)+0.5],'lat',[lonlat(3)-0.5 lonlat(4)+0.5]);
+                hold on;
+                m_pcolor(double(cut_lon_rho),cut_lat_rho,mean_cmems-mean_data+0.5);
+                shading(gca,m_pcolor_shading_method);
+                m_gshhs_i('color',m_gshhs_line_color);
+                m_gshhs_i('patch',m_gshhs_land_color);   % gray colored land
+                titlename = strcat(testname, ' SSH ', '(',num2str(min(inputyear),'%04i'),'-',num2str(max(inputyear),'%04i'),') ');
+                title(titlename,'fontsize',m_pcolor_title_fontsize);  %%title
+
+                % set colorbar 
+                h = colorbar;
+                colormap(jet);
+                set(h,'fontsize',colorbar_fontsize);
+                title(h,'(m)','fontsize',colorbar_title_fontsize);
+                colorbar_lev = [-0.7 1.3];
+                caxis(colorbar_lev);
+
+                % set grid
+                m_grid('fontsize', m_grid_fontsize, 'box', m_grid_box_type, 'tickdir', m_grid_tickdir_type);
+
+                set(gcf, 'PaperUnits', 'points');
+                set(gcf, 'PaperSize', [hor_paper_size_x, hor_paper_size_y]);
+                set(gcf,'PaperPosition', [paper_position_hor paper_position_ver paper_position_width paper_position_height]) 
+
+                jpgname=strcat(outfile, '_', testname, '_',regionname, '_mssh_',num2str(min(inputyear),'%04i'),'_',num2str(max(inputyear),'%04i'), '.jpg'); %% ~_year_month.jpg
+                saveas(gcf,jpgname,'jpg');
+% 
+%                 disp(' ')
+%                 disp(['clim_', num2str(tempmonth), '_', 'BIAS', ' plot is created.'])
+%                 disp(' ')
+%                 disp([' File path is : ',jpgname])
+%                 disp(' ')
+
+                hold off
+                close all;
+                
+                fig_flag=0;
+        end
+        
+        
     end
 end

@@ -20,11 +20,14 @@ RCM_info.saveroot = ['D:', filesep, 'Data', filesep, 'Model', filesep, ...
     'ROMS', filesep, 'nwp_1_20', filesep, 'backup_surf', filesep];
 RCM_info.phase = 'run';
 % RCM_info.region = {'EKWC2'};
-RCM_info.region = {'AKP4'};
+% RCM_info.region = {'AKP4'};
+RCM_info.region = {'NWP'};
+
 % RCM_info.years = 1985:2014;
 % RCM_info.years = 1989:2014;
 RCM_info.years = 2015:2100;
-RCM_info.months = [12, 1, 2];
+% RCM_info.months = [12, 1, 2];
+RCM_info.season = 'all';
 RCM_grid.dl = 1/20;
 
 % % % configuration of GCM
@@ -39,7 +42,6 @@ GCM_info.saveroot = GCM_info.dataroot;
 GCM_info.phase = RCM_info.phase;
 GCM_info.region = RCM_info.region;
 GCM_info.years = RCM_info.years;
-GCM_info.months = RCM_info.months;
 GCM_grid.dl = 1/2;
 
 % % % configuration of CMEMS
@@ -67,7 +69,8 @@ for testnameind=1:length(RCM_info.name)
     for regionind=1:length(RCM_info.region)
         clearvars '*' -except regionind testnameind flags flg_lev param ...
             RCM_info RCM_grid GCM_info GCM_grid CMEMS_info CMEMS_grid
-        
+        [RCM_info.months,error_status] = Func_0019_get_month_from_season(RCM_info.season);
+        GCM_info.months = RCM_info.months;
         tmp.variable = 'zeta';
         tmp.variable_GCM = 'zos';
         tmp.variable_CMEMS = 'sla';

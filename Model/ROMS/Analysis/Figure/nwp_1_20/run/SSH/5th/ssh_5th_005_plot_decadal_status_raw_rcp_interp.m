@@ -3,17 +3,22 @@ warning off;
 % all_region2 ={'NWP','NWP2'}
 % all_region2 ={'ES', 'YS', 'SS', 'NWP2'}
 % all_testname2 = {'ens02','test53','test55','test56'};
-all_testname2 = {'ens09', 'ens10'};
+% all_testname2 = {'ens09', 'ens10'};
+all_testname2 = {'ens08'};
+
 % all_testname2 = {'NorESM1-M'};
 % scenname ='rcp26';
 
 % all_region2 ={'NWP', 'YS', 'AKP2'}
-all_region2 ={'YS'};
+% all_region2 ={'YS'};
 % all_region2 ={'NWP', 'AKP4'};
+all_region2 ={'NWP'};
 
-% all_var2 = {'SST', 'SSH'};
+all_var2 = {'SST', 'SSH'};
+% all_var2 = {'SSH'};
+
 % all_var2 = {'SSH', 'SST', 'SSS'};
-all_var2 = {'BT'};
+% all_var2 = {'BT'};
 
 % all_region2 ={'NWP'}
 for testnameind2=1:length(all_testname2)
@@ -57,8 +62,10 @@ for testnameind2=1:length(all_testname2)
 
         % for snu_desktopd
         testname=all_testname2{testnameind2}    % % need to change
-        inputyear1 = [2026:2035]; % % put year which you want to plot [year year ...]
-        inputyear2 = [2046:2055]; % % put year which you want to plot [year year ...]
+%         inputyear1 = [2026:2035]; % % put year which you want to plot [year year ...]
+%         inputyear2 = [2046:2055]; % % put year which you want to plot [year year ...]
+        inputyear1 = [2006:2015]; % % put year which you want to plot [year year ...]
+        inputyear2 = [2091:2100]; % % put year which you want to plot [year year ...]
 %         inputmonth = [1 2 3 4 5 6 7 8 9 10 11 12]; % % put month which you want to plot [month month ...]
         inputmonth = [1:12]; % % put month which you want to plot [month month ...]
         
@@ -132,12 +139,12 @@ for testnameind2=1:length(all_testname2)
                 fig_flags{flagi,2}=0;
             end
 
-            fig_flags{1,2}=0;
-            fig_flags{2,2}=0;
-            fig_flags{3,2}=0;
-            fig_flags{4,2}=0;
-            fig_flags{5,2}=1;
-            fig_flags{6,2}=1;
+            fig_flags{1,2}=2;
+            fig_flags{2,2}=2;
+            fig_flags{3,2}=1;
+            fig_flags{4,2}=1;
+            fig_flags{5,2}=0;
+            fig_flags{6,2}=0;
 %             fig_flags{7,2}=1;
             fig_flags{8,2}=0;
         end
@@ -148,7 +155,7 @@ for testnameind2=1:length(all_testname2)
 
         if (strcmp(system_name,'PCWIN64'))
             % % for windows
-            figrawdir =strcat('Z:\내 드라이브\MEPL\project\SSH\5th_year\figure\CMIP5\',testname,'\',regionname,'\'); % % where figure files will be saved
+            figrawdir =strcat('D:\MEPL\project\SSH\figures\5th_year\figure\CMIP5\',testname,'\',regionname,'\'); % % where figure files will be saved
             param_script =['C:\Users\User\Dropbox\source\matlab\Model\ROMS\Analysis\Figure\nwp_1_20\run\fig_param\fig_param_kyy_CMIP5_interped_', regionname, '.m'];
 %             cmip5dir = strcat('G:\Data\Model\CMIP5\'); % % where data files are
             cmip5dir = strcat('D:\Data\Model\CMIP5\'); % % where data files are
@@ -195,8 +202,8 @@ for testnameind2=1:length(all_testname2)
                                 fyear_end   = str2num( fyear_str{1}(1:4) );
                                 if( tempyear >= fyear_start && tempyear <= fyear_end &&     ...                 
                                         strcmp( fname_split{2}, 'interp' ) &&         ...
-                                        strcmp( fname_split{3}, testname ) &&      ...                 
-                                        strcmp( fname_split{4}, scenname ) )
+                                        strcmp( fname_split{3}, scenname ) &&      ...                 
+                                        strcmp( fname_split{4}, testname ) )
                                     flag_file_in = true;            break;
                                 end         
                             end         
@@ -204,6 +211,9 @@ for testnameind2=1:length(all_testname2)
                                 fprintf('Source File for %04i does not Exist. Continue...\n',year);   continue;
                             end
                             ufilename=[filedir, '\', fname_in];
+                            lonfilename='D:\Data\Model\CMIP5\uo\rcp45\interp\IPSL-CM5A-LR\lon_interp_rcp45_IPSL-CM5A-LR.nc';
+                            latfilename='D:\Data\Model\CMIP5\uo\rcp45\interp\IPSL-CM5A-LR\lat_interp_rcp45_IPSL-CM5A-LR.nc';
+                            
                             tind_u=tempmonth;
 
                             varname='vo';
@@ -218,8 +228,8 @@ for testnameind2=1:length(all_testname2)
                                 fyear_end   = str2num( fyear_str{1}(1:4) );
                                 if( tempyear >= fyear_start && tempyear <= fyear_end &&     ...                 
                                         strcmp( fname_split{2}, 'interp' ) &&         ...
-                                        strcmp( fname_split{3}, testname ) &&      ...                 
-                                        strcmp( fname_split{4}, scenname ) )
+                                        strcmp( fname_split{3}, scenname ) &&      ...                 
+                                        strcmp( fname_split{4}, testname ) )
                                     flag_file_in = true;            break;
                                 end         
                             end         
@@ -229,8 +239,8 @@ for testnameind2=1:length(all_testname2)
                             vfilename=[filedir, '\', fname_in];
 
                             if (exist('lon_rho' , 'var') ~= 1)
-                                lon_gcm=ncread(ufilename, 'lon');
-                                lat_gcm=ncread(ufilename, 'lat');
+                                lon_gcm=ncread(lonfilename, 'lon');
+                                lat_gcm=ncread(latfilename, 'lat');
                                 [lat_rho, lon_rho]= meshgrid(lat_gcm, lon_gcm);                          
                                 [lon_min, lon_max, lat_min, lat_max] = findind_Y(1/20, lonlat(1:4), lon_rho, lat_rho, 1);
                                 cut_lon_rho = lon_rho(lon_min(1):lon_max(1), lat_min(1):lat_max(1));
@@ -260,8 +270,8 @@ for testnameind2=1:length(all_testname2)
                         ref_vec_y_ind = find(abs(cut_lat_rho(1,:)-m_quiver_ref_text_y_location) == min(abs(cut_lat_rho(1,:)-m_quiver_ref_text_y_location)))+m_quiver_y_interval;
         %                 ref_vec_x_range = round(ref_vec_x_ind-(m_quiver_x_interval/2)) : round(ref_vec_x_ind-(m_quiver_x_interval/2))+m_quiver_x_interval;
         %                 ref_vec_y_range = round(ref_vec_y_ind-(m_quiver_y_interval/2)) : round(ref_vec_y_ind-(m_quiver_y_interval/2))+m_quiver_y_interval;
-                        ref_vec_x_range = round(ref_vec_x_ind-(m_quiver_x_interval/2)) : round(ref_vec_x_ind-(m_quiver_x_interval/2));
-                        ref_vec_y_range = round(ref_vec_y_ind-(m_quiver_y_interval/2)) : round(ref_vec_y_ind-(m_quiver_y_interval/2));
+                        ref_vec_x_range = round(ref_vec_x_ind-(m_quiver_x_interval/2)) : round(ref_vec_x_ind+(m_quiver_x_interval/2));
+                        ref_vec_y_range = round(ref_vec_y_ind-(m_quiver_y_interval/2)) : round(ref_vec_y_ind+(m_quiver_y_interval/2));
                     end
                     mask_model = double(inpolygon(cut_lon_rho,cut_lat_rho,refpolygon(:,1),refpolygon(:,2)));
                     mask_model(mask_model==0)=NaN;
@@ -328,8 +338,8 @@ for testnameind2=1:length(all_testname2)
                                 fyear_end   = str2num( fyear_str{1}(1:4) );
                                 if( tempyear >= fyear_start && tempyear <= fyear_end &&     ...                 
                                         strcmp( fname_split{2}, 'interp' ) &&         ...
-                                        strcmp( fname_split{3}, testname ) &&      ...                 
-                                        strcmp( fname_split{4}, scenname ) )
+                                        strcmp( fname_split{3}, scenname ) &&      ...                 
+                                        strcmp( fname_split{4}, testname ) )
                                     flag_file_in = true;            break;
                                 end         
                             end         
@@ -337,6 +347,8 @@ for testnameind2=1:length(all_testname2)
                                 fprintf('Source File for %04i does not Exist. Continue...\n',year);   continue;
                             end
                             ufilename=[filedir, '\', fname_in];
+                            lonfilename='D:\Data\Model\CMIP5\uo\rcp45\interp\IPSL-CM5A-LR\lon_interp_rcp45_IPSL-CM5A-LR.nc';
+                            latfilename='D:\Data\Model\CMIP5\uo\rcp45\interp\IPSL-CM5A-LR\lat_interp_rcp45_IPSL-CM5A-LR.nc';
                             tind_u=tempmonth;
 
                             varname='vo';
@@ -351,8 +363,8 @@ for testnameind2=1:length(all_testname2)
                                 fyear_end   = str2num( fyear_str{1}(1:4) );
                                 if( tempyear >= fyear_start && tempyear <= fyear_end &&     ...                 
                                         strcmp( fname_split{2}, 'interp' ) &&         ...
-                                        strcmp( fname_split{3}, testname ) &&      ...                 
-                                        strcmp( fname_split{4}, scenname ) )
+                                        strcmp( fname_split{3}, scenname ) &&      ...                 
+                                        strcmp( fname_split{4}, testname ) )
                                     flag_file_in = true;            break;
                                 end         
                             end         
@@ -362,8 +374,8 @@ for testnameind2=1:length(all_testname2)
                             vfilename=[filedir, '\', fname_in];
 
                             if (exist('lon_rho' , 'var') ~= 1)
-                                lon_gcm=ncread(ufilename, 'lon');
-                                lat_gcm=ncread(ufilename, 'lat');
+                                lon_gcm=ncread(lonfilename, 'lon');
+                                lat_gcm=ncread(latfilename, 'lat');
                                 [lat_rho, lon_rho]= meshgrid(lat_gcm, lon_gcm);                          
                                 [lon_min, lon_max, lat_min, lat_max] = findind_Y(1/20, lonlat(1:4), lon_rho, lat_rho, 1);
                                 cut_lon_rho = lon_rho(lon_min(1):lon_max(1), lat_min(1):lat_max(1));
@@ -393,8 +405,8 @@ for testnameind2=1:length(all_testname2)
                         ref_vec_y_ind = find(abs(cut_lat_rho(1,:)-m_quiver_ref_text_y_location) == min(abs(cut_lat_rho(1,:)-m_quiver_ref_text_y_location)))+m_quiver_y_interval;
         %                 ref_vec_x_range = round(ref_vec_x_ind-(m_quiver_x_interval/2)) : round(ref_vec_x_ind-(m_quiver_x_interval/2))+m_quiver_x_interval;
         %                 ref_vec_y_range = round(ref_vec_y_ind-(m_quiver_y_interval/2)) : round(ref_vec_y_ind-(m_quiver_y_interval/2))+m_quiver_y_interval;
-                        ref_vec_x_range = round(ref_vec_x_ind-(m_quiver_x_interval/2)) : round(ref_vec_x_ind-(m_quiver_x_interval/2));
-                        ref_vec_y_range = round(ref_vec_y_ind-(m_quiver_y_interval/2)) : round(ref_vec_y_ind-(m_quiver_y_interval/2));
+                        ref_vec_x_range = round(ref_vec_x_ind-(m_quiver_x_interval/2)) : round(ref_vec_x_ind+(m_quiver_x_interval/2));
+                        ref_vec_y_range = round(ref_vec_y_ind-(m_quiver_y_interval/2)) : round(ref_vec_y_ind+(m_quiver_y_interval/2));
                     end
 
                     mask_model = double(inpolygon(cut_lon_rho,cut_lat_rho,refpolygon(:,1),refpolygon(:,2)));
@@ -463,8 +475,8 @@ for testnameind2=1:length(all_testname2)
                                     fyear_end   = str2num( fyear_str{1}(1:4) );
                                     if( tempyear >= fyear_start && tempyear <= fyear_end &&     ...                 
                                             strcmp( fname_split{2}, 'interp' ) &&         ...
-                                            strcmp( fname_split{3}, testname ) &&      ...                 
-                                            strcmp( fname_split{4}, scenname ) )
+                                            strcmp( fname_split{3}, scenname ) &&      ...                 
+                                            strcmp( fname_split{4}, testname ) )
                                         flag_file_in = true;            break;
                                     end         
                                 end         
@@ -473,10 +485,11 @@ for testnameind2=1:length(all_testname2)
                                 end
                                 filename=[filedir, '\', fname_in];
                                 tind=tempmonth;
-
+                                lonfilename='D:\Data\Model\CMIP5\uo\rcp45\interp\IPSL-CM5A-LR\lon_interp_rcp45_IPSL-CM5A-LR.nc';
+                                latfilename='D:\Data\Model\CMIP5\uo\rcp45\interp\IPSL-CM5A-LR\lat_interp_rcp45_IPSL-CM5A-LR.nc';
                                 if (exist('lon_rho' , 'var') ~= 1)
-                                    lon_gcm=ncread(filename, 'lon');
-                                    lat_gcm=ncread(filename, 'lat');
+                                    lon_gcm=ncread(lonfilename, 'lon');
+                                    lat_gcm=ncread(latfilename, 'lat');
                                     [lat_rho, lon_rho]= meshgrid(lat_gcm, lon_gcm);                          
                                     [lon_min, lon_max, lat_min, lat_max] = findind_Y(1/20, lonlat(1:4), lon_rho, lat_rho, 1);
                                     cut_lon_rho = lon_rho(lon_min(1):lon_max(1), lat_min(1):lat_max(1));
@@ -574,8 +587,8 @@ for testnameind2=1:length(all_testname2)
                                     fyear_end   = str2num( fyear_str{1}(1:4) );
                                     if( tempyear >= fyear_start && tempyear <= fyear_end &&     ...                 
                                             strcmp( fname_split{2}, 'interp' ) &&         ...
-                                            strcmp( fname_split{3}, testname ) &&      ...                 
-                                            strcmp( fname_split{4}, scenname ) )
+                                            strcmp( fname_split{3}, scenname ) &&      ...                 
+                                            strcmp( fname_split{4}, testname ) )
                                         flag_file_in = true;            break;
                                     end         
                                 end         
@@ -584,10 +597,12 @@ for testnameind2=1:length(all_testname2)
                                 end
                                 filename=[filedir, '\', fname_in];
                                 tind=tempmonth;
-
+                                lonfilename='D:\Data\Model\CMIP5\uo\rcp45\interp\IPSL-CM5A-LR\lon_interp_rcp45_IPSL-CM5A-LR.nc';
+                                latfilename='D:\Data\Model\CMIP5\uo\rcp45\interp\IPSL-CM5A-LR\lat_interp_rcp45_IPSL-CM5A-LR.nc';
+                            
                                 if (exist('lon_rho' , 'var') ~= 1)
-                                    lon_gcm=ncread(filename, 'lon');
-                                    lat_gcm=ncread(filename, 'lat');
+                                    lon_gcm=ncread(lonfilename, 'lon');
+                                    lat_gcm=ncread(latfilename, 'lat');
                                     [lat_rho, lon_rho]= meshgrid(lat_gcm, lon_gcm);                          
                                     [lon_min, lon_max, lat_min, lat_max] = findind_Y(1/20, lonlat(1:4), lon_rho, lat_rho, 1);
                                     cut_lon_rho = lon_rho(lon_min(1):lon_max(1), lat_min(1):lat_max(1));

@@ -66,6 +66,16 @@ if nargin == 1
         disp([ 'using grid file ' grd_file])
         disp(' ')
         grd = roms_get_grid(Vtransform,Vstretching,grd_file,scoord);
+    case 'ysecs_1_33'
+        grd_file ='D:\Data\Model\ROMS\ysecs_1_33_1layer\input\roms_grd.nc' ;
+        scoord = [5.0 0.4 30 1] % theta_s theta_b hc N
+        Vtransform = 1;
+        Vstretching = 1;
+        disp(' ')
+        disp([ 'Loading ROMS grd for application: ' location])
+        disp([ 'using grid file ' grd_file])
+        disp(' ')
+        grd = roms_get_grid(Vtransform,Vstretching,grd_file,scoord);
     end
 end
 

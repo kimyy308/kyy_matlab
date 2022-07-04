@@ -5,15 +5,19 @@ warning off;
 % all_testname2 = {'ens02','test53','test55','test56'};
 % all_testname2 = {'test57', 'test58','test59' ,'test60'};
 % all_testname2 = {'ens10'};
-all_testname2 = {'test61', 'test62','test63' ,'test64','ens09','test65', 'test66','test67' ,'test68','ens10'};
+% all_testname2 = {'test61', 'test62','test63' ,'test64','ens09','test65', 'test66','test67' ,'test68','ens10'};
+all_testname2 = {'ens08'};
 
 % all_region2 ={'NWP', 'YS', 'AKP2'}
-all_region2 ={'NWP', 'AKP4'};
+% all_region2 ={'NWP', 'AKP4'};
+all_region2 ={'NWP'};
 
 % all_region2 ={'YS'};
 
 % all_var2 = {'SST', 'SSH'};
-all_var2 = {'SSS'};
+% all_var2 = {'SSS'};
+all_var2 = {'SSH'};
+
 % all_var2 = {'BT'};
 
 % all_region2 ={'NWP'}
@@ -58,10 +62,10 @@ for testnameind2=1:length(all_testname2)
 
         % for snu_desktop
         testname=all_testname2{testnameind2}    % % need to change
-        inputyear1 = [2026:2035]; % % put year which you want to plot [year year ...]
-        inputyear2 = [2046:2055]; % % put year which you want to plot [year year ...]
-%         inputyear1 = [2006:2015]; % % put year which you want to plot [year year ...]
-%         inputyear2 = [2091:2100]; % % put year which you want to plot [year year ...]
+%         inputyear1 = [2026:2035]; % % put year which you want to plot [year year ...]
+%         inputyear2 = [2046:2055]; % % put year which you want to plot [year year ...]
+        inputyear1 = [2006:2015]; % % put year which you want to plot [year year ...]
+        inputyear2 = [2091:2100]; % % put year which you want to plot [year year ...]
         inputmonth = [1:12]; % % put month which you want to plot [month month ...]
         
         for folding=1:1
@@ -77,10 +81,10 @@ for testnameind2=1:length(all_testname2)
         end
         fig_flags{1,2}=0;
         fig_flags{2,2}=0;
-        fig_flags{3,2}=1;
-        fig_flags{4,2}=1;
-        fig_flags{5,2}=1;
-        fig_flags{6,2}=1;
+        fig_flags{3,2}=2;
+        fig_flags{4,2}=2;
+        fig_flags{5,2}=0;
+        fig_flags{6,2}=0;
         
 %         varname ='zeta'
         run('nwp_polygon_point.m');
@@ -150,7 +154,7 @@ for testnameind2=1:length(all_testname2)
         
         if (strcmp(system_name,'PCWIN64'))
             % % for windows
-            figrawdir =strcat('Z:\내 드라이브\MEPL\project\SSH\5th_year\figure\nwp_1_20\',testname,'\',regionname,'\'); % % where figure files will be saved
+            figrawdir =strcat('D:\MEPL\project\SSH\figures\5th_year\figure\nwp_1_20\',testname,'\',regionname,'\'); % % where figure files will be saved
             param_script =['C:\Users\user\Dropbox\source\matlab\Model\ROMS\Analysis\Figure\nwp_1_20\run\fig_param\fig_param_kyy_', regionname, '.m'];
             filedir = strcat(drivename,'Data\Model\ROMS\nwp_1_20\', testname, '\run\'); % % where data files are
             matdir = strcat('D:\Data\Model\ROMS\nwp_1_20\', testname, '\run\mean\');
@@ -377,6 +381,7 @@ for testnameind2=1:length(all_testname2)
                                     data = ncread(filename,varname,[lon_min(1) lat_min(1) data_info.Size(3) 1], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1 1 1]);  %% cut horizontal area [x,y,z] (wider than target area) 
                                 elseif (strcmp(variable,'SSH')==1)
                                     data = ncread(filename,varname,[lon_min(1) lat_min(1) 1], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1 1]);  %% cut horizontal area [x,y,z] (wider than target area)
+                                    data = data+ 0.045; % referench SSH of NWP domain
                                 elseif (strcmp(variable,'BT')==1)
                                     data = ncread(filename,varname,[lon_min(1) lat_min(1) 1 1], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1 1 1]);  %% cut horizontal area [x,y,z] (wider than target area) 
                                 end
@@ -414,7 +419,8 @@ for testnameind2=1:length(all_testname2)
                     colormap(jet);
                     set(h,'fontsize',colorbar_fontsize);
                     title(h,colorbar_title,'fontsize',colorbar_title_fontsize);
-                    caxis(colorbar_lev);
+                    %                     caxis(colorbar_lev);
+                    caxis([-0.7 1.3]);
                     
                     disp(['M = ', num2str(mean(mean_data(:),'omitnan'))]);
                     set(gcf, 'PaperUnits', 'points');
@@ -460,6 +466,7 @@ for testnameind2=1:length(all_testname2)
                                     data = ncread(filename,varname,[lon_min(1) lat_min(1) data_info.Size(3) 1], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1 1 1]);  %% cut horizontal area [x,y,z] (wider than target area) 
                                 elseif (strcmp(variable,'SSH')==1)
                                     data = ncread(filename,varname,[lon_min(1) lat_min(1) 1], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1 1]);  %% cut horizontal area [x,y,z] (wider than target area)
+                                    data = data+ 0.045; % referench SSH of NWP domain
                                 elseif (strcmp(variable,'BT')==1)
                                     data = ncread(filename,varname,[lon_min(1) lat_min(1) 1 1], [lon_max(1)-lon_min(1)+1 lat_max(1)-lat_min(1)+1 1 1]);  %% cut horizontal area [x,y,z] (wider than target area) 
                                 end
@@ -495,7 +502,8 @@ for testnameind2=1:length(all_testname2)
                     colormap(jet);
                     set(h,'fontsize',colorbar_fontsize);
                     title(h,colorbar_title,'fontsize',colorbar_title_fontsize);
-                    caxis(colorbar_lev);
+%                     caxis(colorbar_lev);
+                    caxis([-0.7 1.3]);
                     
                     disp(['M = ', num2str(mean(mean_data(:),'omitnan'))]);
                     set(gcf, 'PaperUnits', 'points');

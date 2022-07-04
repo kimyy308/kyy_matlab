@@ -45,8 +45,8 @@ system_name=computer;
 %
 %  ROMS title names and directories
 %
-ROMS_title  = 'NorthPacific Model';
-ROMS_config = 'NorthPacific';
+ROMS_title  = 'Automation YS & ECS 3km';
+ROMS_config = 'Automation YS & ECS 3km';
 %
 %  ROMSTOOLS directory
 %
@@ -76,7 +76,9 @@ FORC_DATA_DIR = [RUN_dir,'DATA\'];
 bioname=[ROMS_files_dir,'roms_frcbio.nc'];  %Iron Dust forcing 
 					                           %file with PISCES
 % grdname=[ROMS_files_dir,'roms_grid2_ADD_03.nc'];
-grdname=['D:\Data\Model\ROMS\nwp_1_20\input\test2117\roms_grid_nwp_1_20_test2117.nc'];
+% grdname=['/home/kimyy/Model/ROMS/ysecs_1_33_1layer/input/roms_grd.nc'];
+grdname=['D:\Data\Model\ROMS\ysecs_1_33_1layer\input/roms_grd.nc'];
+
 % grdname=['/data1/kimyy/Model/ROMS/roms_nwp/nwp_1_20/input/test53/spinup/roms_grid_nwp_1_20_test53.nc'];
 smoothname=['D:\Data\Model\ROMS\nwp_1_20\input\test2117\roms_grid_nwp_1_20_test2117.nc'];
 % grdname=['D:\add2_ini_bry_grd\grid\roms_add_grid2_flat2_yellow.nc'];
@@ -88,7 +90,7 @@ smoothname=['D:\Data\Model\ROMS\nwp_1_20\input\test2117\roms_grid_nwp_1_20_test2
 blkname=[ROMS_files_dir,'roms_blk.nc'];
 clmname=['D:\Data\Model\ROMS\nwp_1_20\input\test2122\','roms_nwp_clim.nc'];
 % ininame=[ROMS_files_dir,'roms_nwp_ini2_test27.nc'];
-ininame=['D:\Data\Model\ROMS\nwp_1_20\input\test2122\','roms_nwp_ini_test2122.nc'];
+ininame=['D:\Data\Model\ROMS\ysecs_1_33_1layer\input/roms_ini.nc'];
 rstname=['D:\Data\Model\ROMS\nwp_1_20\test49\run\1980\','ocean_avg_0001.nc'];
 oaname =['D:\Data\Model\ROMS\nwp_1_20\input\test2122\','roms_nwp_oa7.nc'];    % oa file  : intermediate file not used
                                              %            in roms simulations
@@ -124,10 +126,10 @@ WOA_switch = 2; %% 0 -> WOA1998, 1 -> WOA2013, 2-> WOA2018
 %
 % Grid dimensions:
 
-lonmin =  115;   % Minimum longitude [degree east]
-lonmax =  163.98;   % Maximum longitude [degree east]
-latmin = 15;   % Minimum latitude  [degree north]
-latmax = 52;   % Maximum latitude  [degree north]
+lonmin =  117.5;   % Minimum longitude [degree east]
+lonmax =  130.3;   % Maximum longitude [degree east]
+latmin = 24.8;   % Minimum latitude  [degree north]
+latmax = 41.0;   % Maximum latitude  [degree north]
 % %
 % lonmin =  115;   % Minimum longitude [degree east]
 % lonmax =  142.5;   % Maximum longitude [degree east]
@@ -141,29 +143,29 @@ latmax = 52;   % Maximum latitude  [degree north]
 %
 % Grid resolution [degree]
 %
-dl = 1/20;
+dl = 1/33;
 %
 % Number of vertical Levels (! should be the same in param.h !)
 %
-N = 40;
+N = 1;
 %
 %  Vertical grid parameters (! should be the same in roms.in !)
 
 
 
 %% please reset Vtransform and Vstretching in the vert_param.m
-Vtransform=2;
-Vstretching=4;
-theta_s = 10;
-theta_b = 1;
-hc      =250.;
+Vtransform=1;
+Vstretching=1;
+theta_s = 5;
+theta_b = 0.4;
+hc      =4.;
 
 %
 % Minimum depth at the shore [m] (depends on the resolution,
 % rule of thumb: dl=1, hmin=300, dl=1/4, hmin=150, ...)
 % This affect the filtering since it works on grad(h)/h.
 %
-hmin = 5;
+hmin = 0.1;
 %
 % Maximum depth at the shore [m] (to prevent the generation
 % of too big walls along the coast)
@@ -319,13 +321,15 @@ end
 %
 % Number of tides component to process
 %
-Ntides=10;
+% Ntides=10;
+Ntides=4;
+
 %
 % Chose order from the rank in the TPXO file :
 % "M2 S2 N2 K2 K1 O1 P1 Q1 Mf Mm"
 % " 1  2  3  4  5  6  7  8  9 10"
 %
-tidalrank=[1 2 3 4 5 6 7 8 9 10];
+tidalrank=[1 2 5 6];
 %
 % Compare with tidegauge observations
 %
@@ -336,8 +340,10 @@ tidalrank=[1 2 3 4 5 6 7 8 9 10];
 % lat0=-33.91;   % Cape Town location
 % Z0=1;          % Mean depth of the tidegauge in Cape Town
 
-lon0 = 129; % Busan location
-lat0 = 35;
+% lon0 = 129; % Busan location
+% lat0 = 35;
+lon0 = 127; 
+lat0 = 33;
 Z0= 1;
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -354,7 +360,7 @@ Yorig         = 1979;               % reference time for vector time
 Ymin          = 1979;               % first forcing year
 Ymax          = 1979;               % last  forcing year
 % frcname=['D:\Data\Model\ROMS\nwp_1_20\input\test53\nwp_1_20_',num2str(Ymax,'%04i'),'_tides.nc'];
-frcname=['/data1/kimyy/Model/ROMS/roms_nwp/nwp_1_20/input/test53/spinup/nwp_1_20_',num2str(Ymax,'%04i'),'_tides.nc'];
+frcname=['D:\Data\Model\ROMS\ysecs_1_33_1layer\input/roms_tides.nc'];
 Mmin          = 1;                  % first forcing month
 Mmax          = 12;                  % last  forcing month
 %

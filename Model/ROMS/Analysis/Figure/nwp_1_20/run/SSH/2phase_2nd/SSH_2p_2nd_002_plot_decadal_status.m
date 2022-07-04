@@ -14,7 +14,7 @@ warning off;
 %         RCM_info.name={ 'test2118', 'test2121'};   
 %         RCM_info.name={ 'test2119'};      
 %         RCM_info.name={'test2117', 'test2118', 'test2119', 'test2120', 'test2121', 'v04'};
-% RCM_info.name={'test2127', 'test2128', 'test2129', 'test2130', 'test2131', 'ens2201'};
+RCM_info.name={'test2127', 'test2128', 'test2129', 'test2130', 'test2131', 'ens2201'};
 % RCM_info.name={'test2127', 'test2128', 'test2130', 'test2131'};
 % RCM_info.name={'test2117', 'test2118', 'test2119', 'test2120', 'test2121'};
 
@@ -22,7 +22,7 @@ warning off;
 % RCM_info.name={ 'test2129'};
 
 %         RCM_info.name={'v04', 'v05'};
-        RCM_info.name={'v05'};
+%         RCM_info.name={'v05'};
 
 % RCM_info.abbs = {'RCM-CNE', 'RCM-ECV', 'RCM-ACC', 'RCM-CNH', 'RCM-CMC'};
 % RCM_info.abbs ={'RCM-SOD', 'RCM-GRS'};
@@ -38,8 +38,8 @@ RCM_info.phase = 'run';  % run or spinup
 % RCM_info.region = {'ES_KHOA'}; % NWP, AKP4, ES_KHOA, YS, ...
 % RCM_info.region = {'EKWC2'}; % NWP, AKP4, ES_KHOA, YS, ...
 % RCM_info.region = {'pollock_egg3'}; % NWP, AKP4, ES_KHOA, YS, ...
-% RCM_info.region = {'AKP4'}; % NWP, AKP4, ES_KHOA, YS, ...
-RCM_info.region = {'ref_sal'}; % NWP, AKP4, ES_KHOA, YS, ...
+RCM_info.region = {'AKP4'}; % NWP, AKP4, ES_KHOA, YS, ...
+% RCM_info.region = {'ref_sal'}; % NWP, AKP4, ES_KHOA, YS, ...
 
 % RCM_info.vars = {'SST', 'SSH', 'SSS', 'Uwind', 'Vwind', 'shflux', 'u', 'v'};  % 'SST', 'SSH', 'SSS', 'Uwind', 'Vwind', 'shflux', 'u', 'v'
 % RCM_info.vars = {'SSS'};  % 'SST', 'SSH', 'SSS', 'Uwind', 'Vwind', 'shflux', 'u', 'v'
@@ -59,9 +59,9 @@ RCM_info.vars = {'SSS'};
 
 % RCM_info.vars = {'SSH'};
 % RCM_info.years = 1985:2014;  
-RCM_info.years = 1993:2014;  
+% RCM_info.years = 1993:2014;  
 % RCM_info.years = 1995:2014;  
-% RCM_info.years = 2081:2100;  
+RCM_info.years = 2081:2100;  
 % RCM_info.years = 2020:2020;  
 % RCM_info.years = years_group(years_groupi);  
 

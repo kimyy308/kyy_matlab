@@ -42,12 +42,13 @@ warning off
 romstools_param
 
 
-for yearind=2006:2014
+for yearind=2000:2000
 %      frcname=['/data1/kimyy/Model/ROMS/roms_nwp/nwp_1_10/input/test06/nwp_1_10_',num2str(yearind,'%04i'),'_tides.nc'];
 %     frcname =['D:\Data\Model\ROMS\nwp_1_10\input\test06\nwp_1_10_',num2str(yearind,'%04i'),'_tides.nc'];
-    frcname=['D:\Data\Model\ROMS\nwp_1_20\input\test53\nwp_1_20_',num2str(yearind,'%04i'),'_tides.nc'];
+%     frcname=['D:\Data\Model\ROMS\nwp_1_20\input\test53\nwp_1_20_',num2str(yearind,'%04i'),'_tides.nc'];
+    frcname=['D:\Data\Model\ROMS\ysecs_1_33_1layer\input\roms_tides.nc'];
 % 
-    Yorig         = 1976;               % reference time for vector time
+    Yorig         = 2000;               % reference time for vector time
 
     Ymin          = yearind;               % first forcing year
     Ymax          = yearind;               % last  forcing year
@@ -211,11 +212,13 @@ for yearind=2006:2014
         ncfrc=netcdf(tide_frc_name,'write');
         clm_tides(grdname,tide_frc_name,Ntides,Ymin,Mmin,Dmin,...
                 Hmin,Min_min,Smin,Yorig,lon0,lat0,Z0)
+        close(ncfrc)
     else
         nc_add_tides(frcname,Ntides,date_mjd,components)
         ncfrc=netcdf(frcname,'write');
         clm_tides(grdname,frcname,Ntides,Ymin,Mmin,Dmin,...
                 Hmin,Min_min,Smin,Yorig,lon0,lat0,Z0)
+        close(ncfrc)
     end
        warning on     
     end
