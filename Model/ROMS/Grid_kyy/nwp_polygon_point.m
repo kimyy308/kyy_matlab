@@ -280,6 +280,11 @@ ysecspolygon = ...
         135.0, 48.0
         150.0, 48.0;
         150.0, 32.0];
+    kuro2polygon = ...
+       [142.5, 32.0;
+        142.5, 42.0
+        147.5, 42.0;
+        147.5, 32.0];
 
 % % EKWC for masking (for DA)
     ekwcpolygon = ...

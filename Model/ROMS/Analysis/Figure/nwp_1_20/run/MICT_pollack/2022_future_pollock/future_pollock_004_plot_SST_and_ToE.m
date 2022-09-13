@@ -39,6 +39,7 @@ RCM_info.vars = {'SST'};
 % RCM_info.years = [1995:2014];  
 % RCM_info.years = [1993:2021];  
 RCM_info.years = [2081:2100];  
+% RCM_info.years = [2100];  
 % RCM_info.years = [2015:2100];  
 
 RCM_info.years_his=[1995:2014];
@@ -95,7 +96,7 @@ for seasons_groupi=1:length(seasons_group)
                 RCM_grid.(['filename_', RCM_grid.gridname{gridi}])=[dirs.griddir, 'NWP_pck_ocean_', RCM_grid.gridname{gridi}, '_NWP.nc'];
             end
             
-            flags.fig_switch(1)=1; % get data
+            flags.fig_switch(1)=2; % get data
             flags.fig_switch(2)=1; % temporal mean pcolor
             flags.fig_switch(3)=0; % yearly spatial mean time series
             flags.fig_switch(4)=0; % temporal mean vec

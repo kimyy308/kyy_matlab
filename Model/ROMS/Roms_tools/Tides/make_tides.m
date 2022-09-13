@@ -42,7 +42,7 @@ warning off
 romstools_param
 
 
-for yearind=2000:2000
+for yearind=2080:2080
 %      frcname=['/data1/kimyy/Model/ROMS/roms_nwp/nwp_1_10/input/test06/nwp_1_10_',num2str(yearind,'%04i'),'_tides.nc'];
 %     frcname =['D:\Data\Model\ROMS\nwp_1_10\input\test06\nwp_1_10_',num2str(yearind,'%04i'),'_tides.nc'];
 %     frcname=['D:\Data\Model\ROMS\nwp_1_20\input\test53\nwp_1_20_',num2str(yearind,'%04i'),'_tides.nc'];

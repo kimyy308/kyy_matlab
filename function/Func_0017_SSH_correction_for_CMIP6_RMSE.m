@@ -48,7 +48,10 @@ switch(testname)
         ssh_correction_for_fig=-0.3914; % 1995-2014 AKP4 mean (from AKP4 yearly mean, SSH_2p_1st_012 from raw sea-level)                        
     case{'test2121', 'test2131'}
 %         ssh_correction_for_fig=-0.1346; % 1995-2014 AKP4 mean  
-        ssh_correction_for_fig=-0.3204; % 1995-2014 AKP4 mean (from AKP4 yearly mean, SSH_2p_1st_012 from raw sea-level)                                
+        ssh_correction_for_fig=-0.3204; % 1995-2014 AKP4 mean (from AKP4 yearly mean, SSH_2p_1st_012 from raw sea-level)   
+    case{'ens2201', 'ens2202'}
+        ssh_correction_for_fig=-0.3902; % 1995-2014 AKP4 mean (from AKP4 yearly mean, SSH_2p_1st_012 from raw sea-level)   
+
     case{'RCM_ENSg_historical'}
 %         ssh_correction_for_fig=-0.2552; %mean of test2117~2121
         ssh_correction_for_fig=-0.3902; %mean of test2117~2121

@@ -35,6 +35,10 @@ switch(testname)
         gcmtestname='CNRM-CM6-1-HR';
     case {'test2106', 'test2111', 'test2121', 'test2131', 'test2209'}
         gcmtestname='CMCC-ESM2';
+    case {'v04'}
+        gcmtestname='SODA';
+    case{'v05'}
+        gcmtestname='GLORYS';
 end
 
 end

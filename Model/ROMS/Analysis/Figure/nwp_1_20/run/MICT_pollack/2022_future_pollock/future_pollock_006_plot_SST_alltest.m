@@ -30,10 +30,10 @@ RCM_info.vars = {'SST'};
 % RCM_info.years = [2015:2050, 2081:2100];  
 % RCM_info.years = [1983:1987];  
 % RCM_info.years = [1988:1992];  
-% RCM_info.years = [1995:2014];  
+RCM_info.years = [1995:2014];  
 % RCM_info.years = [1993:2021];  
 % RCM_info.years = [2081:2100];  
-RCM_info.years = [2015:2100];  
+% RCM_info.years = [2015:2100];  
 
 % seasons_group={'February', 'January', 'JF-'};
 seasons_group={'JF-'};
@@ -165,6 +165,9 @@ dirs.figdir=[dirs.figrawdir,'ts', tmp.fs, tmp.regionname, tmp.fs, tmp.variable, 
 %             meanstd=mean(model_std);
 % 
 %             set(gcf,'PaperPosition', [0 0 48 12])   
+
+            
+
             set(gcf,'PaperPosition', [0 0 24 12])   
             hold off
             saveas(gcf,tmp.tifname,'jpg'); RemoveWhiteSpace([], 'file', tmp.tifname);

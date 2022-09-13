@@ -45,6 +45,10 @@ switch(testname)
         abbname = 'RCM-SOD';
     case {'v05'}
         abbname = 'RCM-GRS';
+    case {'SODA'}
+        abbname = 'GCM-SOD';
+    case {'GLORYS'}
+        abbname = 'GCM-GRS';
 end
 
 error_status=1;

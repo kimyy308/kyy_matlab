@@ -1,12 +1,12 @@
 close all; clear all;  clc;
 warning off;
 
-% RCM_rcp26_testnames = {'test61', 'test62', 'test63', 'test64', 'ens09'};
-% RCM_rcp45_testnames = {'test57', 'test58', 'test59', 'test60', 'ens08'};
-% RCM_rcp85_testnames = {'test65', 'test66', 'test67', 'test68', 'ens10'};
-RCM_rcp26_testnames = { 'ens09'};
-RCM_rcp45_testnames = {'ens08'};
-RCM_rcp85_testnames = { 'ens10'};
+RCM_rcp26_testnames = {'test61', 'test62', 'test63', 'test64', 'ens09'};
+RCM_rcp45_testnames = {'test57', 'test58', 'test59', 'test60', 'ens08'};
+RCM_rcp85_testnames = {'test65', 'test66', 'test67', 'test68', 'ens10'};
+% RCM_rcp26_testnames = { 'ens09'};
+% RCM_rcp45_testnames = {'ens08'};
+% RCM_rcp85_testnames = { 'ens10'};
 % all_region2 ={'NWP','ES', 'SS', 'YS', 'AKP'}
 % all_region2 ={'NWP','AKP2', 'YS', 'NES', 'SES'}
 
@@ -121,7 +121,7 @@ for testind=1:length(RCM_rcp26_testnames)
         num2str(min(inputyear),'%04i'),'_',num2str(max(inputyear),'%04i'), '.nc');
     RCM_rcp26_movfilenames{testind} = strcat(filedir, testname,'_',regionname, 'moving_averaged_cmems_interped_ssh_trend_', ...
         num2str(min(inputyear),'%04i'),'_',num2str(max(inputyear),'%04i'), '.nc');
-%     cmemsdir='Z:\내 드라이브\Data\Observation\CMEMS\';
+%     cmemsdir='D:\Data\Observation\CMEMS\';
 %     cmems_filename = strcat(filedir, testname,'_',regionname, 'cmems_ssh_trend_',num2str(min(inputyear),'%04i'),'_',num2str(max(inputyear),'%04i'), '.nc');
 end
 
@@ -250,7 +250,7 @@ wrmap = bwrmap(51:100,:);
 
 if (strcmp(system_name,'PCWIN64'))
     % % for windows
-    figrawdir =strcat('Z:\내 드라이브\MEPL\project\SSH\5th_year\figure\all\',regionname,'\'); % % where figure files will be saved
+    figrawdir =strcat('D:\MEPL\project\SSH\figures\5th_year\figure\all\',regionname,'\'); % % where figure files will be saved
 %             param_script ='C:\Users\User\Dropbox\source\matlab\Model\ROMS\Analysis\Figure\nwp_1_10\run\fig_param\fig_param_kyy_EKB_RMS.m'
     param_script =['C:\Users\User\Dropbox\source\matlab\Model\ROMS\Analysis\Figure\nwp_1_20\run\fig_param\fig_param_kyy_', regionname, '.m']
 %     filedir = strcat('E:\Data\Model\ROMS\nwp_1_10\', testname, '\run\'); % % where data files are

@@ -3,8 +3,8 @@ close all; clear all;  clc;
 
 %% configuration of RCM
 % RCM_info.testnames={'test2117', 'test2118', 'test2119', 'test2120', 'test2121'};
-% RCM_info.testnames={'test2127', 'test2128', 'test2129', 'test2130', 'test2131'};
-RCM_info.testnames={'test2117', 'test2118', 'test2119'};
+RCM_info.testnames={'test2127', 'test2128', 'test2129', 'test2130', 'test2131'};
+% RCM_info.testnames={'test2117', 'test2118', 'test2119'};
 
 RCM_info.model = 'nwp_1_20';
 RCM_info.figroot = ['D:', filesep, 'Research', filesep, 'Ph_D_course', filesep, ...
@@ -19,10 +19,10 @@ RCM_info.transroot = ['D:', filesep, 'Data', filesep, 'Model', filesep, ...
     'ROMS', filesep, 'nwp_1_20', filesep, 'transport_barot', filesep];
 RCM_info.phase = 'run';
 RCM_info.region = {'EKWC2'};
-RCM_info.years = 1985:1987;
-% RCM_info.years = 2015:2050;
+% RCM_info.years = 1985:1987;
+RCM_info.years = 2015:2100;
 % RCM_info.months = [12, 1, 2];
-RCM_info.season ='winter';
+RCM_info.season ='all';
 [RCM_info.months, tmp.error_status]=Func_0019_get_month_from_season(RCM_info.season);
 RCM_grid.filename= 'D:\Data\Model\ROMS\nwp_1_20\input\test2117\roms_grid_nwp_1_20_test2117.nc';
 RCM_grid.dl = 1/20;
@@ -138,10 +138,10 @@ for testnameind=1:length(RCM_info.testnames)
             for flagi=1:length(flags.fig_name)
                 flags.fig_switch(flagi)=0;
             end
-            flags.fig_switch(1)=1;
+            flags.fig_switch(1)=0;
             flags.fig_switch(2)=0;
             flags.fig_switch(3)=0;
-            flags.fig_switch(4)=0;
+            flags.fig_switch(4)=1;
             flags.fig_switch(5)=0;
         end
         

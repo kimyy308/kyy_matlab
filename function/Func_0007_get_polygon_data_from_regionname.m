@@ -37,6 +37,8 @@ switch(regionname)
         refpolygon=espolygon;
     case('EKWC2') %% East Korean Warm Current
         refpolygon=ekwc2polygon;
+    case('KURO2') %% Kuroshio
+        refpolygon=kuro2polygon;
     case('NES') %% Northern East Sea
         refpolygon=nespolygon;
     case('NES2') %% Northern East Sea

@@ -17,7 +17,7 @@ function [scenname, error_status] = Func_0013_RCM_CMIP6_scenname(testname)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 switch(testname)
-    case {'test2102', 'test2103', 'test2104', 'test2105', 'test2106'}
+    case {'test2102', 'test2103', 'test2104', 'test2105', 'test2106', 'v04', 'v05'}
         scenname='historical';
     case {'test2107', 'test2108', 'test2109', 'test2110', 'test2111'}
         scenname='ssp585';
