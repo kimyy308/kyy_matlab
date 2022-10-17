@@ -3,16 +3,16 @@
 clc; clear all; close all;
 
 %% set path
-tmp.dropboxpath = '/mnt/lustre/proj/kimyy/Dropbox';
+tmp.dropboxpath = '/Volumes/kyy_raid/kimyy/Dropbox';
 tmp.fs=filesep;
 addpath(genpath([tmp.dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', tmp.fs, 'function']));
             [tmp.dropboxpath, tmp.error_status] = Func_0008_set_dropbox_path(computer);
 
 %% model configuration
-dirs.root='/mnt/lustre/proj/earth.system.predictability/ASSM_EXP';
+dirs.root='/Volumes/kyy_raid/earth.system.predictability/ASSM_EXP';
 dirs.yoshi_root='/proj/yaoshi/DATA/CESM2_ODA';
 dirs.archive=[dirs.root, filesep, 'archive'];
-dirs.saveroot='/mnt/lustre/proj/kimyy/Model/CESM2/ESP/ASSM_EXP';
+dirs.saveroot='/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/ASSM_EXP';
 
 config.years=1960:2021;
 config.months=1:12;
@@ -53,7 +53,7 @@ config_obs.staname = 'ALOHA';
 config_obs.sta_lon = 360.0-158.0;
 config_obs.sta_lat = 22.0+45.0/60.0;
 
-dirs.obsroot = '/mnt/lustre/proj/kimyy/Observation/HOT/ALOHA/Bottle';
+dirs.obsroot = '/Volumes/kyy_raid/kimyy/Observation/HOT/ALOHA/Bottle';
 dirs.obssavedir = [dirs.obsroot, filesep, 'mat'];
 mkdir(dirs.obssavedir)
 config_obs.filename = [dirs.obsroot, filesep, 'ALOHA_0_200m_depth.nc'];
@@ -92,7 +92,18 @@ for varind=1:length(config.varnames)
 %     hold on
 %     plot(projd_ens20m, '-r*');
 %     hold off
+   
     tmp.data=reshape(permute(CESM2_data.([tmp.varname,'_vm_200m']),[1 2 4 3]),[3 10 744]);
+    switch tmp.varname_obs
+        case 'llp' % meq/m^3
+            tmp.data=tmp.data.*1000;
+        case 'lln' %mmol/m^3
+            tmp.data=tmp.data.*1000;
+        case 'sigma' %g/cm^3
+            tmp.data=tmp.data.*1000-1000;
+
+    end 
+    
     projd_ensm=squeeze(mean(tmp.data(2,:,:),2));
     
     en4_ensm=squeeze(mean(tmp.data(3,:,:),2));
@@ -111,11 +122,19 @@ for varind=1:length(config.varnames)
     plot(time_m,obs_data_m_ano_norm, 'k*');
 
     %%transparent each ensemble plot
-    val_transparent = 0.3;
-    rgb_tr_en4=get_transparent_rgb([0,1,0], val_transparent);
+    val_transparent = 0.5;
     rgb_tr_projd=get_transparent_rgb([1,0,0], val_transparent);
-
-    for ensi=1:size(tmp.data,2)
+    rgb_tr_en4=get_transparent_rgb([0,1,0], val_transparent);
+    for ensi=1:size(tmp.data,2)/2
+        [projd_ens_m, projd_ens_std, projd_ens_ano, projd_ens_ano_norm] = get_ano_norm(squeeze(tmp.data(2,ensi,:)));
+        plot(time_m, projd_ens_ano_norm, 'color', rgb_tr_projd);
+        [en4_ens_m, en4_ens_std, en4_ens_ano, en4_ens_ano_norm] = get_ano_norm(squeeze(tmp.data(3,ensi,:)));
+        plot(time_m, en4_ens_ano_norm, 'color', rgb_tr_en4);
+    end
+    val_transparent = 0.2;
+    rgb_tr_projd=get_transparent_rgb([1,0,0], val_transparent);
+    rgb_tr_en4=get_transparent_rgb([0,1,0], val_transparent);
+    for ensi=size(tmp.data,2)/2+1:size(tmp.data,2)
         [projd_ens_m, projd_ens_std, projd_ens_ano, projd_ens_ano_norm] = get_ano_norm(squeeze(tmp.data(2,ensi,:)));
         plot(time_m, projd_ens_ano_norm, 'color', rgb_tr_projd);
         [en4_ens_m, en4_ens_std, en4_ens_ano, en4_ens_ano_norm] = get_ano_norm(squeeze(tmp.data(3,ensi,:)));
@@ -137,7 +156,8 @@ for varind=1:length(config.varnames)
     grid minor
     hold off
     
-    dirs.figdir='/mnt/lustre/proj/kimyy/Figure/ESMP/ASSM_EXP/ALOHA';
+    dirs.figdir='/Volumes/kyy_raid/kimyy/Figure/ESP/ASSM_EXP/ALOHA';
+    system(['mkdir -p ', dirs.figdir])
     figname=[dirs.figdir, filesep, tmp.varname, '_ano_norm_', tmp.varname_obs, '_', ...
         num2str(min(config.years)), '_', num2str(max(config.years)), '.tif'];
     set(gcf, 'PaperPosition', [0, 0, 8, 4]);
@@ -152,16 +172,26 @@ for varind=1:length(config.varnames)
     plot(time_m,obs_data_m, 'k*');
 
     %%transparent each ensemble plot
-    val_transparent = 0.3;
+    val_transparent = 0.5;
     rgb_tr_en4=get_transparent_rgb([0,1,0], val_transparent);
     rgb_tr_projd=get_transparent_rgb([1,0,0], val_transparent);
 
-    for ensi=1:size(tmp.data,2)
+    for ensi=1:size(tmp.data,2)/2
         [projd_ens_m, projd_ens_std, projd_ens_ano, projd_ens_ano_norm] = get_ano_norm(squeeze(tmp.data(2,ensi,:)));
         plot(time_m, squeeze(tmp.data(2,ensi,:)), 'color', rgb_tr_projd);
         [en4_ens_m, en4_ens_std, en4_ens_ano, en4_ens_ano_norm] = get_ano_norm(squeeze(tmp.data(3,ensi,:)));
         plot(time_m, squeeze(tmp.data(3,ensi,:)), 'color', rgb_tr_en4);
     end
+    val_transparent = 0.2;
+    rgb_tr_projd=get_transparent_rgb([1,0,0], val_transparent);
+    rgb_tr_en4=get_transparent_rgb([0,1,0], val_transparent);
+    for ensi=size(tmp.data,2)/2+1:size(tmp.data,2)
+        [projd_ens_m, projd_ens_std, projd_ens_ano, projd_ens_ano_norm] = get_ano_norm(squeeze(tmp.data(2,ensi,:)));
+        plot(time_m, squeeze(tmp.data(2,ensi,:)), 'color', rgb_tr_projd);
+        [en4_ens_m, en4_ens_std, en4_ens_ano, en4_ens_ano_norm] = get_ano_norm(squeeze(tmp.data(3,ensi,:)));
+        plot(time_m, squeeze(tmp.data(3,ensi,:)), 'color', rgb_tr_en4);
+    end
+
     plot(time_m,projd_ensm, '-r', 'linewidth', 3);
     plot(time_m,en4_ensm, '-g', 'linewidth', 3);
     ind_valid=find(isfinite(obs_data_m_ano_norm));
@@ -205,7 +235,7 @@ function var_obs = f_varname_obs(var_model)
             var_obs='theta'; % ITS-90
         case 'DIC' % mmol/m^3
             var_obs='dic'; %umol/kg
-        case 'PO4' %mmol/m^3
+        case 'PO4' %mmol/m^3ㅇㅅ
             var_obs='phos';  % standard method with low accuracy, umol/kg
 %             var_obs='llp';  %high precision, nmol/kg
         case 'ALK' % meq/m^3
@@ -239,3 +269,13 @@ function rgb_transparent = get_transparent_rgb(rgb, val_transparent)
     rgb_hsv(:,2) =  val_transparent;
     rgb_transparent = hsv2rgb(rgb_hsv);
 end
+
+
+% Lomb-Scargle transform?
+% 
+% tmptmp(1:12)=0;
+% for i=1:744
+%     if isfinite(obs_data_m(i))
+%         tmptmp(mod(i-1,12)+1)=tmptmp(mod(i-1,12)+1)+1;
+%     end
+% end

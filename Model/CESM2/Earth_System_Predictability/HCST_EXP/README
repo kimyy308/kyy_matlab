@@ -1,0 +1,15 @@
+    1. fig_001_CESM2_HCST_read_GMSST.m
+- reads data files which are created by ANA_001_CESM2_HCST_read_GMSST.m
+- correlation coefficients for global mean surface temperature between hindcast and observation as a function of lead year
+
+    2. fig_002_CESM2_HCST_read_GMSST_spaghetti.m
+- reads data files which are created by ANA_001_CESM2_HCST_read_GMSST.m
+- GMSST(GMSSS) spaghetti plot
+
+    3. fig_003_CESM2_HCST_read_GMSST_corr_map.m
+- reads data files which are created by ANA_001_CESM2_HCST_read_GMSST.m
+- correlation map as a funtion of lead year
+
+    4. fig_004_CESM2_HCST_read_GMSST_trend_map.m
+- reads data files which are created by ANA_001_CESM2_HCST_read_GMSST.m
+- linear trend map (just for lead year 0)

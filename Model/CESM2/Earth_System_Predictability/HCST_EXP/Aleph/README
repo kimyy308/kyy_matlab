@@ -1,0 +1,4 @@
+    1. ana_001_CESM2_HCST_read_GMSST.m
+- reads and saves SST and SSS from hindcast experiment in Aleph server.
+- Output contains EN4, projd assimilated hindcast data and bias adjusted
+EN4 and projD global mean SST and SSS.
