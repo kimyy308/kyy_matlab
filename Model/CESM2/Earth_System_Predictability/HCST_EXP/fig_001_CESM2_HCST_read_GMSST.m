@@ -1,4 +1,6 @@
 % %  Created 05-Oct-2022 by Yong-Yub Kim
+% %  Created 17-Oct-2022 by Yong-Yub Kim
+
 clc; clear all; close all;
 warning off;
 %% set path
@@ -22,7 +24,7 @@ addpath(genpath([tmp.dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', tmp.fs, 'f
 dirs.hcstroot='/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/HCST_EXP';
 dirs.figroot='/Volumes/kyy_raid/kimyy/Figure/CESM2/ESP/HCST_EXP';
 
-config.iyears=1968:2021;
+config.iyears=1961:2021;
 config.months=1:12;
 config.scenname='HIST';
 config.gridname='f09_g17';
@@ -112,6 +114,8 @@ for obsind=1:length(config.obsnames)
             end
             tmp.ymean= mean(ncread(config.datafilename, ['gm_obs_', tmp.varname], [1], 12));
             data.(['gm_', tmp.varname, '_obs_', tmp.obsname_simple])(iyear-min(config.iyears)+1)= tmp.ymean;
+            tmp.ymean= mean(ncread(config.datafilename, ['gm_assm_', tmp.varname], [1], 12));
+            data.(['gm_', tmp.varname, '_assm_', tmp.obsname_simple])(iyear-min(config.iyears)+1)= tmp.ymean;            
         end
 %% save ncfile
 
@@ -178,12 +182,12 @@ for obsind=1:length(config.obsnames)
 % 
 %     end
 
- %% normal time series and correlation coefficient (combined plot)
+ %% normal time series and correlation coefficient (combined plot, hcst&obs)
     for varind=1:length(config.varnames)
         tmp.varname=config.varnames{varind};
         dirs.figdir= [dirs.figroot, filesep, config.casename_m, filesep, 'GMSV', filesep, 'Timeseries'];
         system(['mkdir -p ', dirs.figdir]);
-        for lyear=1:config.proj_year-1
+        for lyear=0:config.proj_year-1
             tmp.lyear_str=num2str(lyear, '%02i');
             tmp.md=data.(['gm_', tmp.varname, '_model_', tmp.obsname_simple, '_l', tmp.lyear_str]);
             tmp.obs=data.(['gm_', tmp.varname, '_obs_', tmp.obsname_simple]);
@@ -206,7 +210,7 @@ for obsind=1:length(config.obsnames)
 %             xlabel('Year'); 
             ylabel([tmp.varname, '-l', tmp.lyear_str]); 
             legend(['HCST-l', tmp.lyear_str, ', R=', num2str(round(tmp.corrcoef(1,2),2))],...
-                tmp.obsname_simple,...
+                [tmp.obsname_simple, '(obs-ba)'],...
                 'Location', 'NorthWest');
 %             set(gca, 'fontsize', 20)
             grid minor
@@ -216,17 +220,17 @@ for obsind=1:length(config.obsnames)
         
 %             close all;
         end
-        config.figname=[dirs.figdir, filesep, 'gm_', tmp.varname, '.tif'];
+        config.figname=[dirs.figdir, filesep, 'gm_hcst_obs_', tmp.varname, '.tif'];
         saveas(gcf,config.figname,'tif');
         RemoveWhiteSpace([], 'file', config.figname);
         close all;
 
         %% correlation coefficient of SST, function of lead year
-            config.figname=[dirs.figdir, filesep, 'gm_', tmp.varname, '_corr', '.tif'];
+            config.figname=[dirs.figdir, filesep, 'gm_hcst_obs_', tmp.varname, '_corr', '.tif'];
 %             plot(0:config.proj_year-1,data.(['gm_', tmp.varname, '_corr']),  '-o', 'linewidth', 2)
             bar(0:config.proj_year-1,data.(['gm_', tmp.varname, '_corr']),  'linewidth', 2)
 
-            xlabel('Lead year'); ylabel(['corr. coef.,', tmp.varname]);
+            xlabel('Lead year'); ylabel(['corr. coef.,', tmp.varname, ', obs-ba']);
             set(gca, 'fontsize', 20)
             grid minor
             ylim([-1 1])
@@ -235,7 +239,65 @@ for obsind=1:length(config.obsnames)
             close all;
         
     end
-    
+
+    %% normal time series and correlation coefficient (combined plot, hcst&assm)
+    for varind=1:length(config.varnames)
+        tmp.varname=config.varnames{varind};
+        dirs.figdir= [dirs.figroot, filesep, config.casename_m, filesep, 'GMSV', filesep, 'Timeseries'];
+        system(['mkdir -p ', dirs.figdir]);
+        for lyear=0:config.proj_year-1
+            tmp.lyear_str=num2str(lyear, '%02i');
+            tmp.md=data.(['gm_', tmp.varname, '_model_', tmp.obsname_simple, '_l', tmp.lyear_str]);
+            tmp.obs=data.(['gm_', tmp.varname, '_assm_', tmp.obsname_simple]);
+            
+            subplot(5,2, lyear+1)
+            plot(data.time_y_extended(1:length(tmp.md)),tmp.md,  '-o', 'color', 'g', 'linewidth', 2)
+            xlim([min(data.time_y_extended), max(data.time_y_extended)])
+            switch tmp.varname
+                case 'temp'
+                    ylim([18.2 19.8])
+                case 'salt'
+                    ylim([34.3 34.4])
+            end
+            hold on;
+            plot(data.time_y, tmp.obs,  '-^', 'color', 'k', 'linewidth', 2)
+
+            tmp.corrcoef=corrcoef(tmp.md(isfinite(tmp.md(1:length(data.time_y)))), tmp.obs(isfinite(tmp.md(1:length(data.time_y)))));
+            data.(['gm_', tmp.varname, '_corr'])(lyear+1)=tmp.corrcoef(1,2);
+
+%             xlabel('Year'); 
+            ylabel([tmp.varname, '-l', tmp.lyear_str]); 
+            legend(['HCST-l', tmp.lyear_str, ', R=', num2str(round(tmp.corrcoef(1,2),2))],...
+                [tmp.obsname_simple, '(assm)'],...
+                'Location', 'NorthWest');
+%             set(gca, 'fontsize', 20)
+            grid minor
+            hold off
+                    
+            set(gcf, 'PaperPosition', [0, 0, 10, 15]);
+        
+%             close all;
+        end
+        config.figname=[dirs.figdir, filesep, 'gm_hcst_assm_', tmp.varname, '.tif'];
+        saveas(gcf,config.figname,'tif');
+        RemoveWhiteSpace([], 'file', config.figname);
+        close all;
+
+        %% correlation coefficient of SST, function of lead year
+            config.figname=[dirs.figdir, filesep, 'gm_hcst_assm_', tmp.varname, '_corr', '.tif'];
+%             plot(0:config.proj_year-1,data.(['gm_', tmp.varname, '_corr']),  '-o', 'linewidth', 2)
+            bar(0:config.proj_year-1,data.(['gm_', tmp.varname, '_corr']),  'linewidth', 2)
+
+            xlabel('Lead year'); ylabel(['corr. coef.,', tmp.varname, ', assm']);
+            set(gca, 'fontsize', 20)
+            grid minor
+            ylim([-1 1])
+            saveas(gcf,config.figname,'tif');
+            RemoveWhiteSpace([], 'file', config.figname);
+            close all;
+        
+    end
+
 
 %     %% detrended time series and correlation coefficient
 %     for varind=1:length(config.varnames)
@@ -303,7 +365,7 @@ for obsind=1:length(config.obsnames)
 %     end
 
 
- %% detrended time series and correlation coefficient (combined plot)
+ %% detrended time series and correlation coefficient (combined plot, hcst&obs)
      for varind=1:length(config.varnames)
         tmp.varname=config.varnames{varind};
         dirs.figdir= [dirs.figroot, filesep, config.casename_m, filesep, 'GMSV', filesep, 'Timeseries_det'];
@@ -344,25 +406,25 @@ for obsind=1:length(config.obsnames)
             ylabel([tmp.varname, '-l', tmp.lyear_str]); 
 
             legend(['HCST-det-l', tmp.lyear_str, ', R=', num2str(round(tmp.corrcoef(1,2),2))],...
-                [tmp.obsname_simple, '-det'],...
+                [tmp.obsname_simple, '-det(obs-ba)'],...
                 'Location', 'NorthWest');
 %             set(gca, 'fontsize', 20)
             grid minor
             hold off
                     
         end
-        config.figname=[dirs.figdir, filesep, 'gm_', tmp.varname, '_det.tif'];
+        config.figname=[dirs.figdir, filesep, 'gm_hcst_obs_', tmp.varname, '_det.tif'];
         set(gcf, 'PaperPosition', [0, 0, 10, 15]);
         saveas(gcf,config.figname,'tif');
         RemoveWhiteSpace([], 'file', config.figname);
         close all;
 
         %% correlation coefficient of SST, function of lead year
-        config.figname=[dirs.figdir, filesep, 'gm_', tmp.varname, '_det_corr', '.tif'];
+        config.figname=[dirs.figdir, filesep, 'gm_hcst_obs_', tmp.varname, '_det_corr', '.tif'];
 %         plot(0:config.proj_year-1,data.(['gm_', tmp.varname, '_det_corr']),  '-o', 'linewidth', 2)
         bar(0:config.proj_year-1,data.(['gm_', tmp.varname, '_det_corr']),  'linewidth', 2)
         
-        xlabel('Lead year'); ylabel(['corr. coef.,', tmp.varname]);
+        xlabel('Lead year'); ylabel(['corr. coef.,', tmp.varname, '-det, obs-ba']);
         set(gca, 'fontsize', 20)
         grid minor
         ylim([-1 1])
@@ -371,9 +433,79 @@ for obsind=1:length(config.obsnames)
         close all;
 
     end
+    
+     %% detrended time series and correlation coefficient (combined plot, hcst&assm)
+     for varind=1:length(config.varnames)
+        tmp.varname=config.varnames{varind};
+        dirs.figdir= [dirs.figroot, filesep, config.casename_m, filesep, 'GMSV', filesep, 'Timeseries_det'];
+        system(['mkdir -p ', dirs.figdir]);
+        for lyear=0:config.proj_year-1
+            tmp.lyear_str=num2str(lyear, '%02i');
+            tmp.md=data.(['gm_', tmp.varname, '_model_', tmp.obsname_simple, '_l', tmp.lyear_str]);
+            tmp.obs=data.(['gm_', tmp.varname, '_assm_', tmp.obsname_simple]);
+            
+            tmp.md_finite=tmp.md(isfinite(tmp.md));
+            [f_exp, gof_exp] = fit(data.time_y_extended(isfinite(tmp.md))',squeeze(tmp.md_finite)','poly1');
+            tmp.md_det_finite=f_exp(data.time_y_extended(isfinite(tmp.md)));
+            tmp.md_det=tmp.md;
+            tmp.md_det(isfinite(tmp.md_det))=tmp.md_det(isfinite(tmp.md_det))' - tmp.md_det_finite;
+            
+            tmp.obs_finite=tmp.obs(isfinite(tmp.obs));
+            [f_exp, gof_exp] = fit(data.time_y_extended(isfinite(tmp.obs))',squeeze(tmp.obs_finite)','poly1');
+            tmp.obs_det_finite=f_exp(data.time_y_extended(isfinite(tmp.obs)));
+            tmp.obs_det=tmp.obs;
+            tmp.obs_det(isfinite(tmp.obs_det))=tmp.obs_det(isfinite(tmp.obs_det))' - tmp.obs_det_finite;
 
+            subplot(5,2, lyear+1)
+            plot(data.time_y_extended(1:length(tmp.md_det)),tmp.md_det, '-o', 'color', 'g', 'linewidth', 2)
+            xlim([min(data.time_y_extended), max(data.time_y_extended)])
+            switch tmp.varname
+                case 'temp'
+                    ylim([-0.4 0.4])
+                case 'salt'
+                    ylim([-0.05 0.05])
+            end
+            hold on;
+            plot(data.time_y, tmp.obs_det,  '-^', 'color', 'k', 'linewidth', 2)
+            tmp.corrcoef=corrcoef(tmp.md_det(isfinite(tmp.md_det(1:length(data.time_y)))), tmp.obs_det(isfinite(tmp.md_det(1:length(data.time_y)))));
+            data.(['gm_', tmp.varname, '_det_corr'])(lyear+1)=tmp.corrcoef(1,2);
+            
+%             xlabel('Year'); 
+%             ylabel([tmp.varname, '-detrended']); 
+            ylabel([tmp.varname, '-l', tmp.lyear_str]); 
+
+            legend(['HCST-det-l', tmp.lyear_str, ', R=', num2str(round(tmp.corrcoef(1,2),2))],...
+                [tmp.obsname_simple, '-det(assm)'],...
+                'Location', 'NorthWest');
+%             set(gca, 'fontsize', 20)
+            grid minor
+            hold off
+                    
+        end
+        config.figname=[dirs.figdir, filesep, 'gm_hcst_assm_', tmp.varname, '_det.tif'];
+        set(gcf, 'PaperPosition', [0, 0, 10, 15]);
+        saveas(gcf,config.figname,'tif');
+        RemoveWhiteSpace([], 'file', config.figname);
+        close all;
+
+        %% correlation coefficient of SST, function of lead year
+        config.figname=[dirs.figdir, filesep, 'gm_hcst_assm_', tmp.varname, '_det_corr', '.tif'];
+%         plot(0:config.proj_year-1,data.(['gm_', tmp.varname, '_det_corr']),  '-o', 'linewidth', 2)
+        bar(0:config.proj_year-1,data.(['gm_', tmp.varname, '_det_corr']),  'linewidth', 2)
+        
+        xlabel('Lead year'); ylabel(['corr. coef.,', tmp.varname, '-det, assm']);
+        set(gca, 'fontsize', 20)
+        grid minor
+        ylim([-1 1])
+        saveas(gcf,config.figname,'tif');
+        RemoveWhiteSpace([], 'file', config.figname);
+        close all;
+     end
 
 end
+
+
+
 
 function obsname_simple = f_obs_simple(obsname)
     switch obsname
