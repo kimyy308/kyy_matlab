@@ -1,4 +1,6 @@
 % %  Created 11-Oct-2022 by Yong-Yub Kim
+% %  Created 26-Oct-2022 by Yong-Yub Kim
+
 clc; clear all; close all;
 warning off;
 %% set path
@@ -22,7 +24,7 @@ addpath(genpath([tmp.dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', tmp.fs, 'f
 dirs.hcstroot='/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/HCST_EXP';
 dirs.figroot='/Volumes/kyy_raid/kimyy/Figure/CESM2/ESP/HCST_EXP';
 
-config.iyears=1968:2021;
+config.iyears=1960:2021;
 config.months=1:12;
 config.scenname='HIST';
 config.gridname='f09_g17';
@@ -82,6 +84,7 @@ for obsind=1:length(config.obsnames)
 
         for varind=1:length(config.varnames)
             tmp.varname=config.varnames{varind};
+            tmp.var_unit=f_varname_unit(tmp.varname);
 %             grid.(['time_i', tmp.iyear_str])=NaN(1,grid.ntime);
             %% variables initialization
 %             data.([tmp.varname, '_model_', tmp.obsname_simple, '_i', tmp.iyear_str])=NaN(grid.nlon, grid.nlat, grid.ntime);
@@ -116,6 +119,8 @@ for obsind=1:length(config.obsnames)
 
             tmp.ymean_obs= mean(ncread(config.datafilename, ['gm_obs_', tmp.varname], [1], 12));
             data.(['gm_', tmp.varname, '_obs_', tmp.obsname_simple])(iyear-min(config.iyears)+1)= tmp.ymean_obs;
+            tmp.ymean_assm= mean(ncread(config.datafilename, ['gm_assm_', tmp.varname], [1], 12));
+            data.(['gm_', tmp.varname, '_assm_', tmp.obsname_simple])(iyear-min(config.iyears)+1)= tmp.ymean_assm;
         end
 %% save ncfile
 
@@ -132,9 +137,11 @@ for obsind=1:length(config.obsnames)
 
 
 
-    %% normal time series and correlation coefficient (for each plot)
+    %% normal time series and correlation coefficient (for each plot, with obs)
     for varind=1:length(config.varnames)
         tmp.varname=config.varnames{varind};
+        tmp.var_unit=f_varname_unit(tmp.varname);
+        tmp.var_plot = f_varname_plot(tmp.varname);
         dirs.figdir= [dirs.figroot, filesep, config.casename_m, filesep, 'GMSV', filesep, 'Timeseries'];
         system(['mkdir -p ', dirs.figdir]);
         for iyear=min(config.iyears):max(config.iyears)
@@ -144,8 +151,11 @@ for obsind=1:length(config.obsnames)
 %             tmp.obs=data.(['gm_', tmp.varname, '_obs_', tmp.obsname_simple]);
             
 %             plot(data.time_y_extended(1:length(tmp.md)),tmp.md,  '-o', 'color', 'g', 'linewidth', 2)
-            plot(data.(['time_proj_', tmp.iyear_str]),tmp.md,  '-', 'color', 'b', 'linewidth', 0.5)
-
+            tsplot{iyear}=plot(data.(['time_proj_', tmp.iyear_str]),tmp.md,  '-', 'color', 'b', 'linewidth', 1);
+            if iyear~=min(config.iyears)
+                set(get(get(tsplot{iyear},'Annotation'),'LegendInformation'),'IconDisplayStyle','off');
+            end
+            
             xlim([min(data.time_y_extended), max(data.time_y_extended)])
             switch tmp.varname
                 case 'temp'
@@ -161,22 +171,76 @@ for obsind=1:length(config.obsnames)
             
         end
         plot(data.time_y, data.(['gm_', tmp.varname, '_obs_', tmp.obsname_simple]),  '-^', 'color', 'k', 'linewidth', 2)
-        xlabel('Year'); ylabel([tmp.varname]); 
-%         legend(['HCST-l', tmp.lyear_str, ', R=', num2str(round(tmp.corrcoef(1,2),2))],...
-%             tmp.obsname_simple,...
-%             'Location', 'NorthWest');
+        xlabel('Year'); 
+%         ylabel([tmp.varname]);
+        ylabel([replace(tmp.var_plot,'_',' '), '(',tmp.var_unit,')']);
+
+        legend('Hindcast', 'Observation', ...
+            'Location', 'NorthWest');
         set(gca, 'fontsize', 20)
         grid minor
         hold off
-        set(gcf, 'PaperPosition', [0, 0, 8, 4]);
+        set(gcf, 'PaperPosition', [0, 0, 6, 4]);
         
-        config.figname=[dirs.figdir, filesep, 'gm_', tmp.varname, '_spaghetti.tif'];
+        config.figname=[dirs.figdir, filesep, 'gm_obs_', tmp.varname, '_spaghetti.tif'];
         saveas(gcf,config.figname,'tif');
         RemoveWhiteSpace([], 'file', config.figname);
         close all;
     end
 
     
+  %% normal time series and correlation coefficient (for each plot, with assm)
+    for varind=1:length(config.varnames)
+        tmp.varname=config.varnames{varind};
+        tmp.var_unit=f_varname_unit(tmp.varname);
+        tmp.var_plot = f_varname_plot(tmp.varname);
+        dirs.figdir= [dirs.figroot, filesep, config.casename_m, filesep, 'GMSV', filesep, 'Timeseries'];
+        system(['mkdir -p ', dirs.figdir]);
+        for iyear=min(config.iyears):max(config.iyears)
+            tmp.iyear_str=num2str(iyear, '%02i');
+%             config.figname=[dirs.figdir, filesep, 'gm_', tmp.varname, '_', tmp.lyear_str, '.tif'];
+            tmp.md=data.(['gm_', tmp.varname, '_model_', tmp.obsname_simple, '_i', tmp.iyear_str]);
+%             tmp.obs=data.(['gm_', tmp.varname, '_obs_', tmp.obsname_simple]);
+            
+%             plot(data.time_y_extended(1:length(tmp.md)),tmp.md,  '-o', 'color', 'g', 'linewidth', 2)
+            tsplot{iyear}=plot(data.(['time_proj_', tmp.iyear_str]),tmp.md,  '-', 'color', 'b', 'linewidth', 1);
+            if iyear~=min(config.iyears)
+                set(get(get(tsplot{iyear},'Annotation'),'LegendInformation'),'IconDisplayStyle','off');
+            end
+            
+            xlim([min(data.time_y_extended), max(data.time_y_extended)])
+            switch tmp.varname
+                case 'temp'
+                    ylim([18.2 19.8])
+                case 'salt'
+                    ylim([34.3 34.4])
+            end
+            hold on;
+
+%             tmp.corrcoef=corrcoef(tmp.md(isfinite(tmp.md(1:length(data.time_y)))), tmp.obs(isfinite(tmp.md(1:length(data.time_y)))));
+%             data.(['gm_', tmp.varname, '_corr'])(lyear+1)=tmp.corrcoef(1,2);
+           
+            
+        end
+        plot(data.time_y, data.(['gm_', tmp.varname, '_assm_', tmp.obsname_simple]),  '-^', 'color', 'k', 'linewidth', 2)
+        xlabel('Year'); 
+%         ylabel([tmp.varname]);
+        ylabel([replace(tmp.var_plot,'_',' '), '(',tmp.var_unit,')']);
+
+        legend('Hindcast', 'Assimilation', ...
+            'Location', 'NorthWest');
+        set(gca, 'fontsize', 20)
+        grid minor
+        hold off
+        set(gcf, 'PaperPosition', [0, 0, 6, 4]);
+        
+        config.figname=[dirs.figdir, filesep, 'gm_assm_', tmp.varname, '_spaghetti.tif'];
+        saveas(gcf,config.figname,'tif');
+        RemoveWhiteSpace([], 'file', config.figname);
+        close all;
+    end
+
+
 
 %     %% detrended time series and correlation coefficient
 %     for varind=1:length(config.varnames)
@@ -267,7 +331,23 @@ function gmsst = f_gm_var(var_2d, area)
     gmsst=var_2d_sum ./ sum(area(:), 'omitnan');
 end
 
+function varname_unit = f_varname_unit(varname)
+    switch varname
+        case 'temp'
+            varname_unit='\circC';
+        case 'salt'
+            varname_unit='g/kg';
+    end
+end
 
+function varname_plot = f_varname_plot(varname)
+    switch varname
+        case 'temp'
+            varname_plot='SST';
+        case 'salt'
+            varname_plot='Salt';
+    end
+end
 
 
 

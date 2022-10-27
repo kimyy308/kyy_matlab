@@ -34,7 +34,6 @@ config.obsnames={'en4.2_ba'};
 config.ensnames={'ba-10p1'};
 
 config.component='ocn';
-% config.varnames={'TEMP','SALT'};
 config.varnames={'temp', 'salt'};
 config.len_t_y = length(config.iyears);
 config.len_t_m = length(config.months);
@@ -50,20 +49,6 @@ config.casename=[config.casename_m, '_i', num2str(iyear)];
 dirs.datadir= [dirs.hcstroot, filesep, config.casename_m, filesep, 'GMSV'];
 
 % f09_g17.hcst.en4.2_ba-10p1_i2021.pop.h.once.nc
-
-% files = dir('/Volumes/kyy_raid/kimyy/bongan/example/data/*.nc');
-% for i_model = 1:length(files)
-% file_parts = split(files(i_model).name,{'_','.'});
-% Table = file_parts{2};
-% Model = file_parts{3};
-% Grd   = file_parts{6};
-% Time  = split(file_parts{end-1},'-');
-% Time  = Time{1};
-% file_in = fullfile(files(i_model).folder,files(i_model).name);
-% end
-
-% finfo   = ncinfo( fname );
-% kk = find(ismember({finfo.Variables.Name},varnames),1,'last');
 
 [tmp.error_status, tmp.value]=system(['ls ', dirs.datadir, '/*once*']);  % b.e21.BHISTsmbb.f09_g17.assm.oras4_ba-10p1.pop.h.once.nc
 tmp.gridname = [tmp.value(1:end-1)];
@@ -101,25 +86,13 @@ for obsind=1:length(config.obsnames)
             fprintf('%02d_%s_%s  ',lyear,config.casename_m, tmp.varname); lap_time = tic;
 
             
-%             grid.(['time_i', tmp.iyear_str])=NaN(1,grid.ntime);
             %% variables initialization
             data.([tmp.varname, '_model_', tmp.obsname_simple, '_l', tmp.lyear_str])=NaN(grid.nlon, grid.nlat, config.len_t_y+config.proj_year-1);
             data.([tmp.varname, '_bias_', tmp.obsname_simple, '_l', tmp.lyear_str])=NaN(grid.nlon, grid.nlat, config.len_t_y+config.proj_year-1);
             data.([tmp.varname, '_obs_', tmp.obsname_simple])=NaN(grid.nlon, grid.nlat, config.len_t_y);
-%             data.([tmp.varname, '_sq_err_', tmp.obsname_simple, '_l', tmp.iyear_str])=NaN(grid.nlon, grid.nlat, config.len_t);
-%             data.([tmp.varname, '_rmse_', tmp.obsname_simple, '_l', tmp.iyear_str])=NaN(grid.nlon, grid.nlat);
-
-%             data.(['gm_', tmp.varname, '_model_', tmp.obsname_simple, '_i', tmp.iyear_str])=ncread(config.datafilename, ['gm_', tmp.varname]);
-%             data.(['gm_', tmp.varname, '_bias_', tmp.obsname_simple, '_i', tmp.iyear_str])=ncread(config.datafilename, ['gm_bias_', tmp.varname]);
-%             data.(['gm_', tmp.varname, '_obs_', tmp.obsname_simple, '_i', tmp.iyear_str])=ncread(config.datafilename, ['gm_obs_', tmp.varname]);
-%             data.(['gm_', tmp.varname, '_sq_err_', tmp.obsname_simple, '_i', tmp.iyear_str])=ncread(config.datafilename, ['gm_sq_err_', tmp.varname]);
-
-%             tmp.corrcoef= ...
-%                 corrcoef(data.(['gm_', tmp.varname, '_model_', tmp.obsname_simple, '_i', tmp.iyear_str]), ...
-%                 data.(['gm_', tmp.varname, '_obs_', tmp.obsname_simple, '_i', tmp.iyear_str]));
-%             data.(['corr_gm_', tmp.varname])(iyear-min(config.iyears)+1)= tmp.corrcoef(1,2);
-%             data.(['gm_', tmp.varname, '_rmse_', tmp.obsname_simple, '_i', tmp.iyear_str])= ncread(config.datafilename, ['gm_rmse_', tmp.varname]);
-
+            data.([tmp.varname, '_assm_', tmp.obsname_simple])=NaN(grid.nlon, grid.nlat, config.len_t_y);
+            
+            %% read variables
             for iyear=min(config.iyears):max(config.iyears)
                 tmp.iyear_str=num2str(iyear, '%04i');
                 config.casename=[config.casename_m, '_i', tmp.iyear_str];
@@ -127,31 +100,57 @@ for obsind=1:length(config.obsnames)
                 data.time=ncread(config.datafilename, 'time');
                 tmp.ymean= mean(ncread(config.datafilename, [tmp.varname_C], [1, 1, (lyear)*12+1], [inf, inf, 12]),3);
                 data.([tmp.varname, '_model_', tmp.obsname_simple, '_l', tmp.lyear_str])(:,:,iyear-min(config.iyears)+1+lyear)= tmp.ymean;
-%                 data.([tmp.varname, '_model_', tmp.obsname_simple, '_l', tmp.lyear_str])(data.([tmp.varname, '_model_', tmp.obsname_simple, '_l', tmp.lyear_str])==0)=NaN;
                 tmp.ymean= mean(ncread(config.datafilename, ['obs_', tmp.varname], [1, 1, 1], [inf, inf, 12]), 3);
                 data.([tmp.varname, '_obs_', tmp.obsname_simple])(:,:,iyear-min(config.iyears)+1)= tmp.ymean;
+                tmp.ymean= mean(ncread(config.datafilename, ['assm_', tmp.varname], [1, 1, 1], [inf, inf, 12]), 3);
+                data.([tmp.varname, '_assm_', tmp.obsname_simple])(:,:,iyear-min(config.iyears)+1)= tmp.ymean;
             end
             
+            %% get correlation coefficient
             for loni=1:grid.nlon
                 for lati=1:grid.nlat
                      if (isnan(data.([tmp.varname, '_obs_', tmp.obsname_simple])(loni,lati,1))~=1)
                          [tmp.corr, tmp.corr_p]=corrcoef(squeeze(data.([tmp.varname, '_model_', tmp.obsname_simple, '_l', tmp.lyear_str])(loni,lati,1+lyear:end-config.proj_year+1)), ...
                              squeeze(data.([tmp.varname, '_obs_', tmp.obsname_simple])(loni,lati,1+lyear:end)));
-                         data.([tmp.varname, '_corr_', tmp.obsname_simple, '_l', tmp.lyear_str])(loni,lati)=tmp.corr(1,2);
-                         data.([tmp.varname, '_corr_p_', tmp.obsname_simple, '_l', tmp.lyear_str])(loni,lati)=tmp.corr_p(1,2);
+                         data.([tmp.varname, '_corr_obs_', tmp.obsname_simple, '_l', tmp.lyear_str])(loni,lati)=tmp.corr(1,2);
+                         data.([tmp.varname, '_corr_obs_p_', tmp.obsname_simple, '_l', tmp.lyear_str])(loni,lati)=tmp.corr_p(1,2);
+                         [tmp.corr, tmp.corr_p]=corrcoef(squeeze(data.([tmp.varname, '_model_', tmp.obsname_simple, '_l', tmp.lyear_str])(loni,lati,1+lyear:end-config.proj_year+1)), ...
+                             squeeze(data.([tmp.varname, '_assm_', tmp.obsname_simple])(loni,lati,1+lyear:end)));
+                         data.([tmp.varname, '_corr_assm_', tmp.obsname_simple, '_l', tmp.lyear_str])(loni,lati)=tmp.corr(1,2);
+                         data.([tmp.varname, '_corr_assm_p_', tmp.obsname_simple, '_l', tmp.lyear_str])(loni,lati)=tmp.corr_p(1,2);
                      else
-                         data.([tmp.varname, '_corr_', tmp.obsname_simple, '_l', tmp.lyear_str])(loni,lati)=NaN;
-                         data.([tmp.varname, '_corr_p_', tmp.obsname_simple, '_l', tmp.lyear_str])(loni,lati)=NaN;                         
+                         data.([tmp.varname, '_corr_obs_', tmp.obsname_simple, '_l', tmp.lyear_str])(loni,lati)=NaN;
+                         data.([tmp.varname, '_corr_obs_p_', tmp.obsname_simple, '_l', tmp.lyear_str])(loni,lati)=NaN;
+                         data.([tmp.varname, '_corr_assm_', tmp.obsname_simple, '_l', tmp.lyear_str])(loni,lati)=NaN;
+                         data.([tmp.varname, '_corr_assm_p_', tmp.obsname_simple, '_l', tmp.lyear_str])(loni,lati)=NaN;   
                      end
                 end
             end
-            disp('abc')
+            disp('abc')        
+        end
+        
+        data.([tmp.varname, '_corr_obs_', tmp.obsname_simple, '_l3_4'])= ( data.([tmp.varname, '_corr_obs_', tmp.obsname_simple, '_l03']) + ...
+            data.([tmp.varname, '_corr_obs_', tmp.obsname_simple, '_l04']) ) / 2;
+        data.([tmp.varname, '_corr_obs_', tmp.obsname_simple, '_l5_9'])= ( data.([tmp.varname, '_corr_obs_', tmp.obsname_simple, '_l05']) + ...
+            data.([tmp.varname, '_corr_obs_', tmp.obsname_simple, '_l06']) + ...
+            data.([tmp.varname, '_corr_obs_', tmp.obsname_simple, '_l07']) + ...
+            data.([tmp.varname, '_corr_obs_', tmp.obsname_simple, '_l08']) + ...
+            data.([tmp.varname, '_corr_obs_', tmp.obsname_simple, '_l09']) ) / 5;
 
+        data.([tmp.varname, '_corr_assm_', tmp.obsname_simple, '_l3_4'])= ( data.([tmp.varname, '_corr_assm_', tmp.obsname_simple, '_l03']) + ...
+            data.([tmp.varname, '_corr_assm_', tmp.obsname_simple, '_l04']) ) / 2;
+        data.([tmp.varname, '_corr_assm_', tmp.obsname_simple, '_l5_9'])= ( data.([tmp.varname, '_corr_assm_', tmp.obsname_simple, '_l05']) + ...
+            data.([tmp.varname, '_corr_assm_', tmp.obsname_simple, '_l06']) + ...
+            data.([tmp.varname, '_corr_assm_', tmp.obsname_simple, '_l07']) + ...
+            data.([tmp.varname, '_corr_assm_', tmp.obsname_simple, '_l08']) + ...
+            data.([tmp.varname, '_corr_assm_', tmp.obsname_simple, '_l09']) ) / 5;
 
-%%example of bongan
-% name_rgn = 'Glob';  map_proj = 'robinson';  x_lim = [0 360];    y_lim = [-80 89];   fig_size = [0,0,6,2.8]; ax_size = [-0.15,-0.2,5.4,3];   cb_size = [5.15,0.20,0.15,2.3]; title_pos = [0.5,1.0];
-% name_rgn = 'Glob';  map_proj = 'eqdcylin';  x_lim = [0 360];    y_lim = [-80 89];   fig_size = [0,0,6,2.8]; ax_size = [-0.15,0.15,5.4,2.7];	cb_size = [5.15,0.20,0.15,2.3]; title_pos = [0.5,0.93];
+        
+        tmp.yearset={'01', '02', '3_4', '5_9'};
+        for lyear_ind=1:length(tmp.yearset)
+            tmp.lyear_str=tmp.yearset{lyear_ind};
 
+            %% model & obs corr map
             fig_config.name_rgn = 'Glob';
             fig_config.map_proj = 'eqdcylin';  % robinson, eqdcylin
             fig_config.x_lim = [-180 180];
@@ -163,64 +162,51 @@ for obsind=1:length(config.obsnames)
             fig_config.p_lim =0.1;
             fig_config.c_lim = [-1 1];
             [fig_config.c_map, tmp.err_stat] = Func_0009_get_colormaps('byr', tmp.dropboxpath);
-            
-            
+
             tmp.X=grid.tlong([end, 1:end],:);
-%             tmp.X(tmp.X>180)= tmp.X(tmp.X>180)-360;
             tmp.Y=grid.tlat([end, 1:end],:);
-            tmp.C=data.([tmp.varname, '_corr_', tmp.obsname_simple, '_l', tmp.lyear_str]);
+            tmp.C=data.([tmp.varname, '_corr_obs_', tmp.obsname_simple, '_l', tmp.lyear_str]);
             tmp.C=tmp.C([end, 1:end],:);
-            tmp.C_H=data.([tmp.varname, '_corr_p_', tmp.obsname_simple, '_l', tmp.lyear_str]);
-            tmp.C_H=tmp.C_H([end, 1:end],:);
-            tmp.C_2=tmp.C;
-            tmp.C_2(tmp.C_H<fig_config.p_lim)=NaN;
-        
-            fig_config.fig_name=['l',tmp.lyear_str, ', corr, ', tmp. varname];
+%             tmp.C_H=data.([tmp.varname, '_corr_obs_p_', tmp.obsname_simple, '_l', tmp.lyear_str]);
+%             tmp.C_H=tmp.C_H([end, 1:end],:);
+%             tmp.C_2=tmp.C;
+%             tmp.C_2(tmp.C_H<fig_config.p_lim)=NaN;
+
+            fig_config.fig_name=['l',tmp.lyear_str, ', corr_ob_, ', tmp. varname];
             fig_h = figure('name',fig_config.fig_name,'PaperUnits','inches', ...
                 'PaperPosition',fig_config.fig_size,'position',fig_config.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
             %% map setting
             ax_m = axesm('MapProjection',fig_config.map_proj,'grid','on','fontsize',14, ...
                 'fontname','freeserif'); 
-
+    
             axis off; 
             hold on;
-%             setm(ax_m, 'MapLatLimit',fig_config.y_lim);
-%             setm(ax_m, 'MapLatLimit',fig_config.y_lim,'MapLonLimit',fig_config.x_lim);
-%             setm(ax_m,'origin',[0,mean(fig_config.x_lim)],'MapLatLimit',fig_config.y_lim,'MapLonLimit',fig_config.x_lim);
             setm(ax_m,'origin',[0,180],'MapLatLimit',fig_config.y_lim);
-
-%             setm(ax_m, 'MeridianLabel','on','ParallelLabel','on','MLineLocation',5,'PLineLocation',5,'MLabelLocation',5,'PLabelLocation',5)
-%             setm(ax_m,'ParallelLabel','on','MeridianLabel','on','PLabelMeridian','west','MLabelParallel','south');
-%             setm(ax_m,'ParallelLabel','on','MeridianLabel','on','PLabelMeridian','west','MLabelParallel','south', ...
-%                 'PLineLocation',10, 'PLabelLocation',20, 'MLineLocation',20, 'MLabelLocation',60);
-            
-
-    
             set(ax_m,'Units','inches','Position',fig_config.ax_size);
             text(ax_m,fig_config.title_pos(1),fig_config.title_pos(2),fig_config.fig_name, ...
-                'units','normalized','horizontalalignment','center','verticalalignment','middle','fontsize',14,'fontname','freeserif','interpreter','none')
+            'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
+            'fontsize',14,'fontname','freeserif','interpreter','none')
+
             %% caxis & colorbar
             caxis(ax_m, fig_config.c_lim); 
             colormap(fig_config.c_map);
             cb = colorbar(ax_m,'units','inches','position',fig_config.cb_size);
             set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
-%             ylabel(cb,[replace(tmp.varname,'_',' '), '(',tmp.var_unit,')']);
             title(cb,'R','fontsize',12);
+
             %% draw on ax_m
-            
-            
             h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
             shading flat;
             geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
-
-            pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2, 'parent', ax_m);
-            set(pp2,'linestyle','none','Tag','HatchingRegion');
-            hp = findobj(pp2,'Tag','HatchingRegion');
-            hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','k','HatchLineWidth',0.5);
+    
+%             pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2, 'parent', ax_m);
+%             set(pp2,'linestyle','none','Tag','HatchingRegion');
+%             hp = findobj(pp2,'Tag','HatchingRegion');
+%             hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','k','HatchLineWidth',0.5);
 
             %% frame and label setting
             setm(ax_m,'frame','on','FLineWidth',1);
-
+    
             label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
             label_x=mlabel('MLabelParallel','south', 'MLineLocation',20, 'MLabelLocation',60, 'labelrotation','on');
             mlabel; plabel;
@@ -236,51 +222,95 @@ for obsind=1:length(config.obsnames)
             end
 
             %% save
-            dirs.figdir= [dirs.figroot, filesep, config.casename_m, filesep, 'GMSV', filesep, 'Corr_map'];
+            dirs.figdir= [dirs.figroot, filesep, config.casename_m, filesep, 'GMSV', filesep, 'Corr_obs_map'];
             if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-            config.figname=[dirs.figdir, filesep, 'corr_map_', tmp.varname, '_l', tmp.lyear_str, '.tif'];
+            config.figname=[dirs.figdir, filesep, 'corr_obs_map_', tmp.varname, '_l', tmp.lyear_str, '.tif'];
             print(fig_h, config.figname, '-dpng');
             RemoveWhiteSpace([], 'file', config.figname);
             fprintf('%7.1f sec\n', toc(lap_time) );
-
-%             pcolor(data.([tmp.varname, '_corr_', tmp.obsname_simple, '_l', tmp.lyear_str])'); shading flat; colorbar;
-            
-%             set(gcf,'Renderer','opengl')
-%             set(gcf,'Renderer','zbuffer')
-%             set(gcf,'Renderer','painters')
+            close all;
 
 
-%% sort by longitude - fail
-%             var_src=data.([tmp.varname, '_corr_', tmp.obsname_simple, '_l', tmp.lyear_str]);
-%             X = grid.tlong;
-%             Y = NaN(size(grid.tlong)); C = Y;
-%             X( grid.tlong < 0 ) = X( grid.tlong < 0 ) + 360;
-%             [X, I] = sort( X );
-%             for mm = 1:size(grid.tlat,2)
-%                 Y(:,mm) = grid.tlat( I(:,mm), mm );
-%                 C(:,mm) = squeeze( var_src( I(:,mm), mm ) );
-%             end 
-%             pcolor(X',Y',C')
 
+            %% model & assm corr map
+            fig_config.name_rgn = 'Glob';
+            fig_config.map_proj = 'eqdcylin';  % robinson, eqdcylin
+            fig_config.x_lim = [-180 180];
+            fig_config.y_lim = [-80 89];
+            fig_config.fig_size = [0,0,6,3.5];
+            fig_config.ax_size = [0.3,0.7,5.4,2.7];
+            fig_config.cb_size = [5.15,0.8,0.15,2.3];
+            fig_config.title_pos = [0.5,0.93];
+            fig_config.p_lim =0.1;
+            fig_config.c_lim = [-1 1];
+            [fig_config.c_map, tmp.err_stat] = Func_0009_get_colormaps('byr', tmp.dropboxpath);
 
-            %% hatch
-%             pp2 = pcolor(ref_lon,ref_lat,hatch_tr1');% shading flat
+            tmp.X=grid.tlong([end, 1:end],:);
+            tmp.Y=grid.tlat([end, 1:end],:);
+            tmp.C=data.([tmp.varname, '_corr_assm_', tmp.obsname_simple, '_l', tmp.lyear_str]);
+            tmp.C=tmp.C([end, 1:end],:);
+%             tmp.C_2=tmp.C;
+%             tmp.C_2(tmp.C_H<fig_config.p_lim)=NaN;
+
+            fig_config.fig_name=['l',tmp.lyear_str, ', corr_as_, ', tmp. varname];
+            fig_h = figure('name',fig_config.fig_name,'PaperUnits','inches', ...
+                'PaperPosition',fig_config.fig_size,'position',fig_config.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
+            %% map setting
+            ax_m = axesm('MapProjection',fig_config.map_proj,'grid','on','fontsize',14, ...
+                'fontname','freeserif'); 
+    
+            axis off; 
+            hold on;
+            setm(ax_m,'origin',[0,180],'MapLatLimit',fig_config.y_lim);
+            set(ax_m,'Units','inches','Position',fig_config.ax_size);
+            text(ax_m,fig_config.title_pos(1),fig_config.title_pos(2),fig_config.fig_name, ...
+            'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
+            'fontsize',14,'fontname','freeserif','interpreter','none')
+
+            %% caxis & colorbar
+            caxis(ax_m, fig_config.c_lim); 
+            colormap(fig_config.c_map);
+            cb = colorbar(ax_m,'units','inches','position',fig_config.cb_size);
+            set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
+            title(cb,'R','fontsize',12);
+
+            %% draw on ax_m
+            h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
+            shading flat;
+            geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
+    
+%             pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2, 'parent', ax_m);
 %             set(pp2,'linestyle','none','Tag','HatchingRegion');
 %             hp = findobj(pp2,'Tag','HatchingRegion');
 %             hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','k','HatchLineWidth',0.5);
-            
-%             m_pcolor(double(cut_lon_rho)',cut_lat_rho',squeeze(cmems_trend_yearly(:,:)'));
-%             shading(gca, 'flat');
-%             m_gshhs_c('color',[0.8 0.8 0.8]);
-%             m_gshhs_c('patch',[0.8 0.8 0.8]);   % gray colored land
-%             m_grid('fontsize', 20, 'box', 'fancy', 'tickdir', m_grid_tickdir_type);
-%             hold off
 
+            %% frame and label setting
+            setm(ax_m,'frame','on','FLineWidth',1);
+    
+            label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
+            label_x=mlabel('MLabelParallel','south', 'MLineLocation',20, 'MLabelLocation',60, 'labelrotation','on');
+            mlabel; plabel;
+            label_y=plabel; label_x=mlabel;
+            for lxi=1:length(label_x)
+                tmp.tmppos=label_x(lxi,1).Position;
+                tmp.tmppos(2)=-fig_config.ax_size(4)+1.55;
+                label_x(lxi,1).Position=tmp.tmppos;
+                label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
+            end
+            for lyi=1:length(label_y)
+                label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
+            end
+
+            %% save
+            dirs.figdir= [dirs.figroot, filesep, config.casename_m, filesep, 'GMSV', filesep, 'Corr_assm_map'];
+            if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
+            config.figname=[dirs.figdir, filesep, 'corr_assm_map_', tmp.varname, '_l', tmp.lyear_str, '.tif'];
+            print(fig_h, config.figname, '-dpng');
+            RemoveWhiteSpace([], 'file', config.figname);
+            fprintf('%7.1f sec\n', toc(lap_time) );
+            close all;
         end
-%% save ncfile
 
-%     [f_exp, gof_exp] = fit(trendtime_yearly',squeeze(cmems_sla_yearly(i,j,:)),'poly1');
-%                             cmems_sla_yearly_poly1_fit(i,j,1:length(trendtime_yearly))=f_exp(trendtime_yearly);
 
     end
     
@@ -325,33 +355,3 @@ function varname_unit = f_varname_unit(varname)
             varname_unit='g/kg';
     end
 end
-
-
-% %                 % % %         cmems poly1 fitting yearly
-% %                 tic;
-% %                 for i=1:cmems_lonsize_cut
-% %                     for j=1:cmems_latsize_cut
-% %                         if isfinite(cmems_sla_yearly(i,j,1))
-% %                             [f_exp, gof_exp] = fit(trendtime_yearly',squeeze(cmems_sla_yearly(i,j,:)),'poly1');
-% %                             cmems_sla_yearly_poly1_fit(i,j,1:length(trendtime_yearly))=f_exp(trendtime_yearly);
-% %                             cmems_sla_yearly_poly1_fit_rsquare(i,j)=gof_exp.rsquare;
-% %                             cmems_sla_yearly_poly1_fit_rmse(i,j)=gof_exp.rmse;
-% %                         else
-% %                             cmems_sla_yearly_poly1_fit(i,j,1:length(trendtime_yearly))=NaN;
-% %                             cmems_sla_yearly_poly1_fit_rsquare(i,j)=NaN;
-% %                             cmems_sla_yearly_poly1_fit_rmse(i,j)=NaN;
-% %                         end
-% % %                         p=polyfit(trendtime_yearly,squeeze(cmems_sla_yearly(i,j,:))',1);
-% % %                         cmems_trend_yearly(i,j)=p(1) * 1000.0 ;
-% %                     end
-% %                 end
-% %                 disp('cmems poly1 fitting yearly complete') 
-% %                 toc;
-% %                 
-% %                 for i=1:cmems_lonsize_cut
-% %                     for j=1:cmems_latsize_cut
-% %                         for k=1:size(cmems_sla_yearly,3)
-% %                             cmems_sla_yearly_poly1_fit_detrended(i,j,k)=cmems_sla_yearly(i,j,k)-cmems_sla_yearly_poly1_fit(i,j,k);
-% %                         end
-% %                     end
-% %                 end

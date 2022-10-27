@@ -24,7 +24,7 @@ addpath(genpath([tmp.dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', tmp.fs, 'f
 dirs.hcstroot='/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/HCST_EXP';
 dirs.figroot='/Volumes/kyy_raid/kimyy/Figure/CESM2/ESP/HCST_EXP';
 
-config.iyears=1961:2021;
+config.iyears=1960:2021;
 config.months=1:12;
 config.scenname='HIST';
 config.gridname='f09_g17';
@@ -237,6 +237,25 @@ for obsind=1:length(config.obsnames)
             saveas(gcf,config.figname,'tif');
             RemoveWhiteSpace([], 'file', config.figname);
             close all;
+
+        %% correlation coefficient of SST, function of lead year (1, 2, 3-4, 5-9)
+            config.figname=[dirs.figdir, filesep, 'gm_hcst_obs_', tmp.varname, '_corr_2', '.tif'];
+            tmp.timelabel={'1','2', '3~4', '5~9'};
+            tmp.data(1)=data.(['gm_', tmp.varname, '_corr'])(2);
+            tmp.data(2)=data.(['gm_', tmp.varname, '_corr'])(3);
+            tmp.data(3)=mean(data.(['gm_', tmp.varname, '_corr'])(4:5));
+            tmp.data(4)=mean(data.(['gm_', tmp.varname, '_corr'])(6:10));
+            bar(1:4,tmp.data,  'linewidth', 2)
+            xticklabels(tmp.timelabel);
+            xlabel('Lead year'); 
+%             ylabel(['ACC,', tmp.varname, ', obs-ba']);
+            ylabel(['ACC']);
+            set(gca, 'fontsize', 20)
+            grid minor
+            ylim([0 1])
+            saveas(gcf,config.figname,'tif');
+            RemoveWhiteSpace([], 'file', config.figname);
+            close all;
         
     end
 
@@ -292,6 +311,25 @@ for obsind=1:length(config.obsnames)
             set(gca, 'fontsize', 20)
             grid minor
             ylim([-1 1])
+            saveas(gcf,config.figname,'tif');
+            RemoveWhiteSpace([], 'file', config.figname);
+            close all;
+
+        %% correlation coefficient of SST, function of lead year (1, 2, 3-4, 5-9)
+            config.figname=[dirs.figdir, filesep, 'gm_hcst_assm_', tmp.varname, '_corr_2', '.tif'];
+            tmp.timelabel={'1','2', '3~4', '5~9'};
+            tmp.data(1)=data.(['gm_', tmp.varname, '_corr'])(2);
+            tmp.data(2)=data.(['gm_', tmp.varname, '_corr'])(3);
+            tmp.data(3)=mean(data.(['gm_', tmp.varname, '_corr'])(4:5));
+            tmp.data(4)=mean(data.(['gm_', tmp.varname, '_corr'])(6:10));
+            bar(1:4,tmp.data,  'linewidth', 2)
+            xticklabels(tmp.timelabel);
+            xlabel('Lead year'); 
+%             ylabel(['ACC,', tmp.varname, ', obs-ba']);
+            ylabel(['ACC']);
+            set(gca, 'fontsize', 20)
+            grid minor
+            ylim([0 1])
             saveas(gcf,config.figname,'tif');
             RemoveWhiteSpace([], 'file', config.figname);
             close all;
