@@ -63,6 +63,7 @@ grid.section_nino34=[190 240 -5 5]; % 170W 120W 5S 5N
     Func_0012_findind_Y(1, grid.section_nino34, ...
     grid.tlong_glo, grid.tlat_glo, 'CESM2'); % find valid lon, lat index near station
 grid.tlong=grid.tlong_glo(CESM2_grid.obs_lon_ind:CESM2_grid.obs_lon_ind2, CESM2_grid.obs_lat_ind:CESM2_grid.obs_lat_ind2);
+grid.tlat=grid.tlat_glo(CESM2_grid.obs_lon_ind:CESM2_grid.obs_lon_ind2, CESM2_grid.obs_lat_ind:CESM2_grid.obs_lat_ind2);
 
 grid.nlon=size(grid.tlong,1);
 grid.nlat=size(grid.tlong,2);
@@ -81,10 +82,14 @@ dirs.datadir= [dirs.archive, filesep, config.casename_m, filesep, config.casenam
 
 [tmp.error_status, tmp.value]=system(['ls ', dirs.datadir, '/*once*']);  % b.e21.BHISTsmbb.f09_g17.assm.oras4_ba-10p1.pop.h.once.nc
 tmp.gridname = [tmp.value(1:end-1)];
-grid.region_mask=ncread(tmp.gridname, 'REGION_MASK'); 
-grid.ocean_mask=NaN(size(grid.region_mask));
-grid.ocean_mask(grid.region_mask>0)=1;
-grid.tarea = ncread(tmp.gridname, 'TAREA');
+grid.region_mask_glo=ncread(tmp.gridname, 'REGION_MASK');
+grid.ocean_mask_glo=NaN(size(grid.region_mask_glo));
+grid.ocean_mask_glo(grid.region_mask_glo>0)=1;
+grid.ocean_mask=grid.ocean_mask_glo(CESM2_grid.obs_lon_ind:CESM2_grid.obs_lon_ind2, CESM2_grid.obs_lat_ind:CESM2_grid.obs_lat_ind2);
+
+grid.tarea_glo = ncread(tmp.gridname, 'TAREA');
+grid.tarea = grid.tarea_glo(CESM2_grid.obs_lon_ind:CESM2_grid.obs_lon_ind2, CESM2_grid.obs_lat_ind:CESM2_grid.obs_lat_ind2);
+
 
 % % model filename example
 % /mnt/lustre/proj/earth.system.predictability/HCST_EXP/archive/
@@ -111,9 +116,13 @@ for factorind=1:length(config.assm_factors)
                     grid.(['time_i', tmp.iyear_str])=NaN(1,grid.ntime);
                     %% variables initialization
                    
-                    data.(['nino34_', tmp.varname, '_model_', tmp.obsname_simple, '_i', tmp.iyear_str])=NaN(1,grid.ntime);
-                    data.(['nino34_', tmp.varname, '_obs_', tmp.obsname_simple, '_i', tmp.iyear_str])=NaN(1,grid.ntime);  
-                    data.(['nino34_', tmp.varname, '_assm_', tmp.obsname_simple, '_i', tmp.iyear_str])=NaN(1,grid.ntime);                    
+                    data.([tmp.varname, '_model_', tmp.obsname_simple, '_i', tmp.iyear_str])=NaN(grid.nlon, grid.nlat, grid.ntime);
+                    data.([tmp.varname, '_obs_', tmp.obsname_simple])=NaN(grid.nlon, grid.nlat, grid.ntime);
+                    data.([tmp.varname, '_assm_', tmp.obsname_simple])=NaN(grid.nlon, grid.nlat, grid.ntime);
+
+                    data.(['nino34m_', tmp.varname, '_model_', tmp.obsname_simple, '_i', tmp.iyear_str])=NaN(1,grid.ntime);
+                    data.(['nino34m_', tmp.varname, '_obs_', tmp.obsname_simple, '_i', tmp.iyear_str])=NaN(1,grid.ntime);  
+                    data.(['nino34m_', tmp.varname, '_assm_', tmp.obsname_simple, '_i', tmp.iyear_str])=NaN(1,grid.ntime);                    
 
                     data.time=NaN(1,grid.ntime);
             
@@ -132,18 +141,21 @@ for factorind=1:length(config.assm_factors)
                                 config.casename, '.pop.h.', num2str(myear), '-', num2str(month, '%02i'), '.nc'];
                             tmp.ind_var=(myear-iyear)*12+month;
                             data.([tmp.varname, '_model_', tmp.obsname_simple, '_i', tmp.iyear_str])(:,:,tmp.ind_var) = ...
-                                ncread(config.(['cesm2_',tmp.obsname_simple,'_filename']), tmp.varname, [1 1 1 1], [inf inf 1 1]) ...
+                                ncread(config.(['cesm2_',tmp.obsname_simple,'_filename']), tmp.varname, ...
+                                [CESM2_grid.obs_lon_ind CESM2_grid.obs_lat_ind 1 1], [grid.nlon grid.nlat 1 1]) ...
                                 .* grid.ocean_mask;
                             %% read obs
                             if (exist(config.(['obs_',tmp.obsname_simple,'_filename']))==2)
                                 data.([tmp.varname, '_obs_', tmp.obsname_simple])(:,:,tmp.ind_var) = ...
-                                    ncread(config.(['obs_',tmp.obsname_simple,'_filename']), tmp.varname, [1 1 1 1], [inf inf 1 1])...
+                                    ncread(config.(['obs_',tmp.obsname_simple,'_filename']), tmp.varname, ...
+                                    [CESM2_grid.obs_lon_ind CESM2_grid.obs_lat_ind 1 1], [grid.nlon grid.nlat 1 1]) ...
                                     .* grid.ocean_mask;
                             end
                             %% read assm
                             if (exist(config.(['assm_',tmp.obsname_simple,'_filename']))==2)
                                 data.([tmp.varname, '_assm_', tmp.obsname_simple])(:,:,tmp.ind_var) = ...
-                                    ncread(config.(['assm_',tmp.obsname_simple,'_filename']), tmp.varname, [1 1 1 1], [inf inf 1 1])...
+                                    ncread(config.(['assm_',tmp.obsname_simple,'_filename']), tmp.varname, ...
+                                    [CESM2_grid.obs_lon_ind CESM2_grid.obs_lat_ind 1 1], [grid.nlon grid.nlat 1 1]) ...
                                     .* grid.ocean_mask;
                             end
                             data.time(tmp.ind_var) = ncread(config.(['cesm2_',tmp.obsname_simple,'_filename']), 'time');
@@ -152,56 +164,26 @@ for factorind=1:length(config.assm_factors)
         %                     shading flat; colorbar;
         %                     pcolor(data.([tmp.varname, '_obs_', tmp.obsname_simple])(:,:,tmp.ind_var)');
         %                     shading flat; colorbar;
-                            data.([tmp.varname, '_bias_obs_', tmp.obsname_simple, '_i', tmp.iyear_str])(:,:,tmp.ind_var) = ...
-                                data.([tmp.varname, '_model_', tmp.obsname_simple, '_i', tmp.iyear_str])(:,:,tmp.ind_var) - ...
-                                data.([tmp.varname, '_obs_', tmp.obsname_simple])(:,:,tmp.ind_var);
-                            data.([tmp.varname, '_bias_assm_', tmp.obsname_simple, '_i', tmp.iyear_str])(:,:,tmp.ind_var) = ...
-                                data.([tmp.varname, '_model_', tmp.obsname_simple, '_i', tmp.iyear_str])(:,:,tmp.ind_var) - ...
-                                data.([tmp.varname, '_assm_', tmp.obsname_simple])(:,:,tmp.ind_var);
-                            data.([tmp.varname, '_sq_err_obs_', tmp.obsname_simple, '_i', tmp.iyear_str])(:,:,tmp.ind_var) = ...
-                                data.([tmp.varname, '_bias_obs_', tmp.obsname_simple, '_i', tmp.iyear_str])(:,:,tmp.ind_var).^2;
-                            data.([tmp.varname, '_sq_err_assm_', tmp.obsname_simple, '_i', tmp.iyear_str])(:,:,tmp.ind_var) = ...
-                                data.([tmp.varname, '_bias_assm_', tmp.obsname_simple, '_i', tmp.iyear_str])(:,:,tmp.ind_var).^2;
-                            data.(['gm_', tmp.varname, '_model_', tmp.obsname_simple, '_i', tmp.iyear_str])(tmp.ind_var)= ...
+                            
+                            data.(['nino34m_', tmp.varname, '_model_', tmp.obsname_simple, '_i', tmp.iyear_str])(tmp.ind_var)= ...
                                 f_gm_var(data.([tmp.varname, '_model_', tmp.obsname_simple, '_i', tmp.iyear_str])(:,:,tmp.ind_var), ...
                                 grid.tarea);
-                            data.(['gm_', tmp.varname, '_assm_', tmp.obsname_simple])(tmp.ind_var)= ...
+                            data.(['nino34m_', tmp.varname, '_assm_', tmp.obsname_simple])(tmp.ind_var)= ...
                                 f_gm_var(data.([tmp.varname, '_assm_', tmp.obsname_simple])(:,:,tmp.ind_var), ...
                                 grid.tarea);
-                            data.(['gm_', tmp.varname, '_obs_', tmp.obsname_simple])(tmp.ind_var)= ...
+                            data.(['nino34m_', tmp.varname, '_obs_', tmp.obsname_simple])(tmp.ind_var)= ...
                                 f_gm_var(data.([tmp.varname, '_obs_', tmp.obsname_simple])(:,:,tmp.ind_var), ...
                                 grid.tarea);
-                            data.(['gm_', tmp.varname, '_bias_obs_', tmp.obsname_simple, '_i', tmp.iyear_str])(tmp.ind_var)= ...
-                                f_gm_var(data.([tmp.varname, '_bias_obs_', tmp.obsname_simple, '_i', tmp.iyear_str])(:,:,tmp.ind_var), ...
-                                grid.tarea);
-                            data.(['gm_', tmp.varname, '_bias_assm_', tmp.obsname_simple, '_i', tmp.iyear_str])(tmp.ind_var)= ...
-                                f_gm_var(data.([tmp.varname, '_bias_assm_', tmp.obsname_simple, '_i', tmp.iyear_str])(:,:,tmp.ind_var), ...
-                                grid.tarea);
-                            data.(['gm_', tmp.varname, '_sq_err_obs_', tmp.obsname_simple, '_i', tmp.iyear_str])(tmp.ind_var)= ...
-                                f_gm_var(data.([tmp.varname, '_sq_err_obs_', tmp.obsname_simple, '_i', tmp.iyear_str])(:,:,tmp.ind_var), ...
-                                grid.tarea);
-                            data.(['gm_', tmp.varname, '_sq_err_assm_', tmp.obsname_simple, '_i', tmp.iyear_str])(tmp.ind_var)= ...
-                                f_gm_var(data.([tmp.varname, '_sq_err_assm_', tmp.obsname_simple, '_i', tmp.iyear_str])(:,:,tmp.ind_var), ...
-                                grid.tarea);
+                            
                         end
                     end
-                    data.([tmp.varname, '_rmse_obs_', tmp.obsname_simple, '_i', tmp.iyear_str]) = ...
-                        sqrt(sum(data.([tmp.varname, '_sq_err_obs_', tmp.obsname_simple, '_i', tmp.iyear_str]), 3) ./ grid.ntime);
-                    data.([tmp.varname, '_rmse_assm_', tmp.obsname_simple, '_i', tmp.iyear_str]) = ...
-                        sqrt(sum(data.([tmp.varname, '_sq_err_assm_', tmp.obsname_simple, '_i', tmp.iyear_str]), 3) ./ grid.ntime);
-        %             pcolor(data.([tmp.varname, '_rmse_', tmp.obsname_simple, '_i', tmp.iyear_str])'); shading flat; colorbar;
-                    data.(['gm_', tmp.varname, '_rmse_obs_', tmp.obsname_simple, '_i', tmp.iyear_str])= ...
-                                f_gm_var(data.([tmp.varname, '_rmse_obs_', tmp.obsname_simple, '_i', tmp.iyear_str])(:,:), ...
-                                grid.tarea);
-                    data.(['gm_', tmp.varname, '_rmse_assm_', tmp.obsname_simple, '_i', tmp.iyear_str])= ...
-                                f_gm_var(data.([tmp.varname, '_rmse_assm_', tmp.obsname_simple, '_i', tmp.iyear_str])(:,:), ...
-                                grid.tarea);
+                    
                 end
         %% save ncfile
                 dirs.saveroot='/mnt/lustre/proj/kimyy/Model/CESM2/ESP/HCST_EXP';
-                dirs.savedir=[dirs.saveroot, filesep, config.casename_m, filesep, 'GMSV'];
+                dirs.savedir=[dirs.saveroot, filesep, config.casename_m, filesep, 'NINO34'];
                 mkdir(dirs.savedir);
-                config.savefilename=[dirs.savedir, filesep, 'GMSV_', config.casename, '.nc'];
+                config.savefilename=[dirs.savedir, filesep, 'NINO34_', config.casename, '.nc'];
                 
                 if (exist(config.savefilename)==0)
                     ncid = netcdf.create(config.savefilename,'NETCDF4');
@@ -256,139 +238,18 @@ for factorind=1:length(config.assm_factors)
                         netcdf.putAtt(ncid,assm_tempvarid,'source', [tmp.obsname, ', assm']);  
                         netcdf.defVarChunking(ncid, assm_tempvarid, 'CHUNKED', [grid.nlon/10, grid.nlat/10 1]);
                         netcdf.defVarDeflate(ncid, assm_tempvarid, true, true, 1);
-                    bias_obs_tempvarid=netcdf.defVar(ncid, 'bias_obs_temp', 'NC_FLOAT', [lon_dimid lat_dimid time_dimid]);
-                        netcdf.putAtt(ncid,bias_obs_tempvarid,'long_name','bias_temperature(model-obs)');
-                        netcdf.putAtt(ncid,bias_obs_tempvarid,'units','degC');  
-                        netcdf.defVarChunking(ncid, bias_obs_tempvarid, 'CHUNKED', [grid.nlon/10, grid.nlat/10 1]);
-                        netcdf.defVarDeflate(ncid, bias_obs_tempvarid, true, true, 1);
-                    sq_err_obs_tempvarid=netcdf.defVar(ncid, 'sq_err_obs_temp', 'NC_FLOAT', [lon_dimid lat_dimid time_dimid]);
-                        netcdf.putAtt(ncid,sq_err_obs_tempvarid,'long_name','sq_err_temperature');
-                        netcdf.putAtt(ncid,sq_err_obs_tempvarid,'units','degC^2');  
-                        netcdf.defVarChunking(ncid, sq_err_obs_tempvarid, 'CHUNKED', [grid.nlon/10, grid.nlat/10 1]);
-                        netcdf.defVarDeflate(ncid, sq_err_obs_tempvarid, true, true, 1);
-                    rmse_obs_tempvarid=netcdf.defVar(ncid, 'rmse_obs_temp', 'NC_FLOAT', [lon_dimid lat_dimid]);
-                        netcdf.putAtt(ncid,rmse_obs_tempvarid,'long_name','rmse_temperature');
-                        netcdf.putAtt(ncid,rmse_obs_tempvarid,'units','degC');  
-                        netcdf.defVarChunking(ncid, rmse_obs_tempvarid, 'CHUNKED', [grid.nlon/10, grid.nlat/10]);
-                        netcdf.defVarDeflate(ncid, rmse_obs_tempvarid, true, true, 1);
-                    bias_assm_tempvarid=netcdf.defVar(ncid, 'bias_assm_temp', 'NC_FLOAT', [lon_dimid lat_dimid time_dimid]);
-                        netcdf.putAtt(ncid,bias_assm_tempvarid,'long_name','bias_temperature(model-assm)');
-                        netcdf.putAtt(ncid,bias_assm_tempvarid,'units','degC');  
-                        netcdf.defVarChunking(ncid, bias_assm_tempvarid, 'CHUNKED', [grid.nlon/10, grid.nlat/10 1]);
-                        netcdf.defVarDeflate(ncid, bias_assm_tempvarid, true, true, 1);
-                    sq_err_assm_tempvarid=netcdf.defVar(ncid, 'sq_err_assm_temp', 'NC_FLOAT', [lon_dimid lat_dimid time_dimid]);
-                        netcdf.putAtt(ncid,sq_err_assm_tempvarid,'long_name','sq_err_temperature');
-                        netcdf.putAtt(ncid,sq_err_assm_tempvarid,'units','degC^2');  
-                        netcdf.defVarChunking(ncid, sq_err_assm_tempvarid, 'CHUNKED', [grid.nlon/10, grid.nlat/10 1]);
-                        netcdf.defVarDeflate(ncid, sq_err_assm_tempvarid, true, true, 1);
-                    rmse_assm_tempvarid=netcdf.defVar(ncid, 'rmse_assm_temp', 'NC_FLOAT', [lon_dimid lat_dimid]);
-                        netcdf.putAtt(ncid,rmse_assm_tempvarid,'long_name','rmse_temperature');
-                        netcdf.putAtt(ncid,rmse_assm_tempvarid,'units','degC');  
-                        netcdf.defVarChunking(ncid, rmse_assm_tempvarid, 'CHUNKED', [grid.nlon/10, grid.nlat/10]);
-                        netcdf.defVarDeflate(ncid, rmse_assm_tempvarid, true, true, 1);
-                    gm_tempvarid=netcdf.defVar(ncid, 'gm_temp', 'NC_FLOAT', [time_dimid]);
-                        netcdf.putAtt(ncid,gm_tempvarid,'long_name','global mean Potential temperature (surface)');
-                        netcdf.putAtt(ncid,gm_tempvarid,'units','degC');
-                    gm_obs_tempvarid=netcdf.defVar(ncid, 'gm_obs_temp', 'NC_FLOAT', [time_dimid]);
-                        netcdf.putAtt(ncid,gm_obs_tempvarid,'long_name','global mean obs_temperature (surface)');
-                        netcdf.putAtt(ncid,gm_obs_tempvarid,'units','degC');
-                    gm_assm_tempvarid=netcdf.defVar(ncid, 'gm_assm_temp', 'NC_FLOAT', [time_dimid]);
-                        netcdf.putAtt(ncid,gm_assm_tempvarid,'long_name','global mean assm_temperature (surface)');
-                        netcdf.putAtt(ncid,gm_assm_tempvarid,'units','degC');
-                    gm_bias_obs_tempvarid=netcdf.defVar(ncid, 'gm_bias_obs_temp', 'NC_FLOAT', [time_dimid]);
-                        netcdf.putAtt(ncid,gm_bias_obs_tempvarid,'long_name','global mean bias_temperature (surface)');
-                        netcdf.putAtt(ncid,gm_bias_obs_tempvarid,'units','degC');
-                    gm_sq_err_obs_tempvarid=netcdf.defVar(ncid, 'gm_sq_err_obs_temp', 'NC_FLOAT', [time_dimid]);
-                        netcdf.putAtt(ncid,gm_sq_err_obs_tempvarid,'long_name','global mean sq_err_temperature (surface)');
-                        netcdf.putAtt(ncid,gm_sq_err_obs_tempvarid,'units','degC^2');
-                    gm_rmse_obs_tempvarid=netcdf.defVar(ncid, 'gm_rmse_obs_temp', 'NC_FLOAT', [one_dimid]);
-                        netcdf.putAtt(ncid,gm_rmse_obs_tempvarid,'long_name','global mean rmse_temperature (surface)');
-                        netcdf.putAtt(ncid,gm_rmse_obs_tempvarid,'units','degC');
-                    gm_bias_assm_tempvarid=netcdf.defVar(ncid, 'gm_bias_assm_temp', 'NC_FLOAT', [time_dimid]);
-                        netcdf.putAtt(ncid,gm_bias_assm_tempvarid,'long_name','global mean bias_temperature (surface)');
-                        netcdf.putAtt(ncid,gm_bias_assm_tempvarid,'units','degC');
-                    gm_sq_err_assm_tempvarid=netcdf.defVar(ncid, 'gm_sq_err_assm_temp', 'NC_FLOAT', [time_dimid]);
-                        netcdf.putAtt(ncid,gm_sq_err_assm_tempvarid,'long_name','global mean sq_err_temperature (surface)');
-                        netcdf.putAtt(ncid,gm_sq_err_assm_tempvarid,'units','degC^2');
-                    gm_rmse_assm_tempvarid=netcdf.defVar(ncid, 'gm_rmse_assm_temp', 'NC_FLOAT', [one_dimid]);
-                        netcdf.putAtt(ncid,gm_rmse_assm_tempvarid,'long_name','global mean rmse_temperature (surface)');
-                        netcdf.putAtt(ncid,gm_rmse_assm_tempvarid,'units','degC');
-            
-                    saltvarid=netcdf.defVar(ncid, 'SALT', 'NC_FLOAT', [lon_dimid lat_dimid time_dimid]);
-                        netcdf.putAtt(ncid,saltvarid,'long_name','Salinity (surface)');
-                        netcdf.putAtt(ncid,saltvarid,'units','gram/kilogram');  
-                        netcdf.defVarChunking(ncid, saltvarid, 'CHUNKED', [grid.nlon/10, grid.nlat/10 1]);
-                        netcdf.defVarDeflate(ncid, saltvarid, true, true, 1);
-                    obs_saltvarid=netcdf.defVar(ncid, 'obs_salt', 'NC_FLOAT', [lon_dimid lat_dimid time_dimid]);
-                        netcdf.putAtt(ncid,obs_saltvarid,'long_name','obs_salinity (surface)');
-                        netcdf.putAtt(ncid,obs_saltvarid,'units','gram/kilogram');
-                        netcdf.putAtt(ncid,obs_saltvarid,'source', tmp.obsname);  
-                        netcdf.defVarChunking(ncid, obs_saltvarid, 'CHUNKED', [grid.nlon/10, grid.nlat/10 1]);
-                        netcdf.defVarDeflate(ncid, obs_saltvarid, true, true, 1);
-                    assm_saltvarid=netcdf.defVar(ncid, 'assm_salt', 'NC_FLOAT', [lon_dimid lat_dimid time_dimid]);
-                        netcdf.putAtt(ncid,assm_saltvarid,'long_name','assm_salinity (surface)');
-                        netcdf.putAtt(ncid,assm_saltvarid,'units','gram/kilogram');
-                        netcdf.putAtt(ncid,assm_saltvarid,'source', [tmp.obsname, ', assm']);  
-                        netcdf.defVarChunking(ncid, assm_saltvarid, 'CHUNKED', [grid.nlon/10, grid.nlat/10 1]);
-                        netcdf.defVarDeflate(ncid, assm_saltvarid, true, true, 1);
-                    bias_obs_saltvarid=netcdf.defVar(ncid, 'bias_obs_salt', 'NC_FLOAT', [lon_dimid lat_dimid time_dimid]);
-                        netcdf.putAtt(ncid,bias_obs_saltvarid,'long_name','bias_salinity(model-obs)');
-                        netcdf.putAtt(ncid,bias_obs_saltvarid,'units','gram/kilogram');  
-                        netcdf.defVarChunking(ncid, bias_obs_saltvarid, 'CHUNKED', [grid.nlon/10, grid.nlat/10 1]);
-                        netcdf.defVarDeflate(ncid, bias_obs_saltvarid, true, true, 1);
-                    sq_err_obs_saltvarid=netcdf.defVar(ncid, 'sq_err_obs_salt', 'NC_FLOAT', [lon_dimid lat_dimid time_dimid]);
-                        netcdf.putAtt(ncid,sq_err_obs_saltvarid,'long_name','sq_err_salinity');
-                        netcdf.putAtt(ncid,sq_err_obs_saltvarid,'units','(gram/kilogram)^2');  
-                        netcdf.defVarChunking(ncid, sq_err_obs_saltvarid, 'CHUNKED', [grid.nlon/10, grid.nlat/10 1]);
-                        netcdf.defVarDeflate(ncid, sq_err_obs_saltvarid, true, true, 1);
-                    rmse_obs_saltvarid=netcdf.defVar(ncid, 'rmse_obs_salt', 'NC_FLOAT', [lon_dimid lat_dimid]);
-                        netcdf.putAtt(ncid,rmse_obs_saltvarid,'long_name','rmse_salterature');
-                        netcdf.putAtt(ncid,rmse_obs_saltvarid,'units','gram/kilogram');  
-                        netcdf.defVarChunking(ncid, rmse_obs_saltvarid, 'CHUNKED', [grid.nlon/10, grid.nlat/10]);
-                        netcdf.defVarDeflate(ncid, rmse_obs_saltvarid, true, true, 1);
-                    bias_assm_saltvarid=netcdf.defVar(ncid, 'bias_assm_salt', 'NC_FLOAT', [lon_dimid lat_dimid time_dimid]);
-                        netcdf.putAtt(ncid,bias_assm_saltvarid,'long_name','bias_salinity(model-assm)');
-                        netcdf.putAtt(ncid,bias_assm_saltvarid,'units','gram/kilogram');  
-                        netcdf.defVarChunking(ncid, bias_assm_saltvarid, 'CHUNKED', [grid.nlon/10, grid.nlat/10 1]);
-                        netcdf.defVarDeflate(ncid, bias_assm_saltvarid, true, true, 1);
-                    sq_err_assm_saltvarid=netcdf.defVar(ncid, 'sq_err_assm_salt', 'NC_FLOAT', [lon_dimid lat_dimid time_dimid]);
-                        netcdf.putAtt(ncid,sq_err_assm_saltvarid,'long_name','sq_err_salinity');
-                        netcdf.putAtt(ncid,sq_err_assm_saltvarid,'units','(gram/kilogram)^2');  
-                        netcdf.defVarChunking(ncid, sq_err_assm_saltvarid, 'CHUNKED', [grid.nlon/10, grid.nlat/10 1]);
-                        netcdf.defVarDeflate(ncid, sq_err_assm_saltvarid, true, true, 1);
-                    rmse_assm_saltvarid=netcdf.defVar(ncid, 'rmse_assm_salt', 'NC_FLOAT', [lon_dimid lat_dimid]);
-                        netcdf.putAtt(ncid,rmse_assm_saltvarid,'long_name','rmse_salterature');
-                        netcdf.putAtt(ncid,rmse_assm_saltvarid,'units','gram/kilogram');  
-                        netcdf.defVarChunking(ncid, rmse_assm_saltvarid, 'CHUNKED', [grid.nlon/10, grid.nlat/10]);
-                        netcdf.defVarDeflate(ncid, rmse_assm_saltvarid, true, true, 1);
-                    gm_saltvarid=netcdf.defVar(ncid, 'gm_salt', 'NC_FLOAT', [time_dimid]);
-                        netcdf.putAtt(ncid,gm_saltvarid,'long_name','global mean Salinity (surface)');
-                        netcdf.putAtt(ncid,gm_saltvarid,'units','gram/kilogram');
-                    gm_obs_saltvarid=netcdf.defVar(ncid, 'gm_obs_salt', 'NC_FLOAT', [time_dimid]);
-                        netcdf.putAtt(ncid,gm_obs_saltvarid,'long_name','global mean obs_salinity (surface)');
-                        netcdf.putAtt(ncid,gm_obs_saltvarid,'units','gram/kilogram');
-                    gm_assm_saltvarid=netcdf.defVar(ncid, 'gm_assm_salt', 'NC_FLOAT', [time_dimid]);
-                        netcdf.putAtt(ncid,gm_assm_saltvarid,'long_name','global mean assm_salinity (surface)');
-                        netcdf.putAtt(ncid,gm_assm_saltvarid,'units','gram/kilogram');
-                    gm_bias_obs_saltvarid=netcdf.defVar(ncid, 'gm_bias_obs_salt', 'NC_FLOAT', [time_dimid]);
-                        netcdf.putAtt(ncid,gm_bias_obs_saltvarid,'long_name','global mean bias_salinity (surface)');
-                        netcdf.putAtt(ncid,gm_bias_obs_saltvarid,'units','gram/kilogram');
-                    gm_sq_err_obs_saltvarid=netcdf.defVar(ncid, 'gm_sq_err_obs_salt', 'NC_FLOAT', [time_dimid]);
-                        netcdf.putAtt(ncid,gm_sq_err_obs_saltvarid,'long_name','global mean sq_err_salinity (surface)');
-                        netcdf.putAtt(ncid,gm_sq_err_obs_saltvarid,'units','(gram/kilogram)^2');
-                    gm_rmse_obs_saltvarid=netcdf.defVar(ncid, 'gm_rmse_obs_salt', 'NC_FLOAT', [one_dimid]);
-                        netcdf.putAtt(ncid,gm_rmse_obs_saltvarid,'long_name','global mean rmse_salinity (surface)');
-                        netcdf.putAtt(ncid,gm_rmse_obs_saltvarid,'units','gram/kilogram');    
-                    gm_bias_assm_saltvarid=netcdf.defVar(ncid, 'gm_bias_assm_salt', 'NC_FLOAT', [time_dimid]);
-                        netcdf.putAtt(ncid,gm_bias_assm_saltvarid,'long_name','global mean bias_salinity (surface)');
-                        netcdf.putAtt(ncid,gm_bias_assm_saltvarid,'units','gram/kilogram');
-                    gm_sq_err_assm_saltvarid=netcdf.defVar(ncid, 'gm_sq_err_assm_salt', 'NC_FLOAT', [time_dimid]);
-                        netcdf.putAtt(ncid,gm_sq_err_assm_saltvarid,'long_name','global mean sq_err_salinity (surface)');
-                        netcdf.putAtt(ncid,gm_sq_err_assm_saltvarid,'units','(gram/kilogram)^2');
-                    gm_rmse_assm_saltvarid=netcdf.defVar(ncid, 'gm_rmse_assm_salt', 'NC_FLOAT', [one_dimid]);
-                        netcdf.putAtt(ncid,gm_rmse_assm_saltvarid,'long_name','global mean rmse_salinity (surface)');
-                        netcdf.putAtt(ncid,gm_rmse_assm_saltvarid,'units','gram/kilogram');
-                        
+                    
+                    nino34m_tempvarid=netcdf.defVar(ncid, 'nino34m_temp', 'NC_FLOAT', [time_dimid]);
+                        netcdf.putAtt(ncid,nino34m_tempvarid,'long_name','Nino 3.4 mean Potential temperature (surface)');
+                        netcdf.putAtt(ncid,nino34m_tempvarid,'units','degC');
+                    nino34m_obs_tempvarid=netcdf.defVar(ncid, 'nino34m_obs_temp', 'NC_FLOAT', [time_dimid]);
+                        netcdf.putAtt(ncid,nino34m_obs_tempvarid,'long_name','Nino 3.4 mean obs_temperature (surface)');
+                        netcdf.putAtt(ncid,nino34m_obs_tempvarid,'units','degC');
+                    nino34m_assm_tempvarid=netcdf.defVar(ncid, 'nino34m_assm_temp', 'NC_FLOAT', [time_dimid]);
+                        netcdf.putAtt(ncid,nino34m_assm_tempvarid,'long_name','Nino 3.4 mean assm_temperature (surface)');
+                        netcdf.putAtt(ncid,nino34m_assm_tempvarid,'units','degC');
+                            
+                                         
                     netcdf.endDef(ncid);
             
                     netcdf.putVar(ncid, timevarid, 0, grid.ntime, data.time);
@@ -398,43 +259,11 @@ for factorind=1:length(config.assm_factors)
                     netcdf.putVar(ncid, tempvarid, [0 0 0], [grid.nlon grid.nlat grid.ntime], data.(['TEMP', '_model_', tmp.obsname_simple, '_i', tmp.iyear_str]));
                     netcdf.putVar(ncid, obs_tempvarid, [0 0 0], [grid.nlon grid.nlat grid.ntime], data.(['TEMP', '_obs_', tmp.obsname_simple]));
                     netcdf.putVar(ncid, assm_tempvarid, [0 0 0], [grid.nlon grid.nlat grid.ntime], data.(['TEMP', '_assm_', tmp.obsname_simple]));
-                    netcdf.putVar(ncid, bias_obs_tempvarid, [0 0 0], [grid.nlon grid.nlat grid.ntime], data.(['TEMP', '_bias_obs_', tmp.obsname_simple, '_i', tmp.iyear_str]));
-                    netcdf.putVar(ncid, sq_err_obs_tempvarid, [0 0 0], [grid.nlon grid.nlat grid.ntime], data.(['TEMP', '_sq_err_obs_', tmp.obsname_simple, '_i', tmp.iyear_str]));
-                    netcdf.putVar(ncid, rmse_obs_tempvarid, [0 0], [grid.nlon grid.nlat], data.(['TEMP', '_rmse_obs_', tmp.obsname_simple, '_i', tmp.iyear_str]));
-                    netcdf.putVar(ncid, bias_assm_tempvarid, [0 0 0], [grid.nlon grid.nlat grid.ntime], data.(['TEMP', '_bias_assm_', tmp.obsname_simple, '_i', tmp.iyear_str]));
-                    netcdf.putVar(ncid, sq_err_assm_tempvarid, [0 0 0], [grid.nlon grid.nlat grid.ntime], data.(['TEMP', '_sq_err_assm_', tmp.obsname_simple, '_i', tmp.iyear_str]));
-                    netcdf.putVar(ncid, rmse_assm_tempvarid, [0 0], [grid.nlon grid.nlat], data.(['TEMP', '_rmse_assm_', tmp.obsname_simple, '_i', tmp.iyear_str]));
-
-                    netcdf.putVar(ncid, gm_tempvarid, [0], [grid.ntime], data.(['gm_', 'TEMP', '_model_', tmp.obsname_simple, '_i', tmp.iyear_str]));
-                    netcdf.putVar(ncid, gm_obs_tempvarid, [0], [grid.ntime], data.(['gm_', 'TEMP', '_obs_', tmp.obsname_simple]));
-                    netcdf.putVar(ncid, gm_assm_tempvarid, [0], [grid.ntime], data.(['gm_', 'TEMP', '_assm_', tmp.obsname_simple]));                    
-                    netcdf.putVar(ncid, gm_bias_obs_tempvarid, [0], [grid.ntime], data.(['gm_', 'TEMP', '_bias_obs_', tmp.obsname_simple, '_i', tmp.iyear_str]));
-                    netcdf.putVar(ncid, gm_sq_err_obs_tempvarid, [0], [grid.ntime], data.(['gm_', 'TEMP', '_sq_err_obs_', tmp.obsname_simple, '_i', tmp.iyear_str]));
-                    netcdf.putVar(ncid, gm_rmse_obs_tempvarid, [0], [1], data.(['gm_', 'TEMP', '_rmse_obs_', tmp.obsname_simple, '_i', tmp.iyear_str]));
-                    netcdf.putVar(ncid, gm_bias_assm_tempvarid, [0], [grid.ntime], data.(['gm_', 'TEMP', '_bias_assm_', tmp.obsname_simple, '_i', tmp.iyear_str]));
-                    netcdf.putVar(ncid, gm_sq_err_assm_tempvarid, [0], [grid.ntime], data.(['gm_', 'TEMP', '_sq_err_assm_', tmp.obsname_simple, '_i', tmp.iyear_str]));
-                    netcdf.putVar(ncid, gm_rmse_assm_tempvarid, [0], [1], data.(['gm_', 'TEMP', '_rmse_assm_', tmp.obsname_simple, '_i', tmp.iyear_str]));
-
-                    netcdf.putVar(ncid, saltvarid, [0 0 0], [grid.nlon grid.nlat grid.ntime], data.(['SALT', '_model_', tmp.obsname_simple, '_i', tmp.iyear_str]));
-                    netcdf.putVar(ncid, obs_saltvarid, [0 0 0], [grid.nlon grid.nlat grid.ntime], data.(['SALT', '_obs_', tmp.obsname_simple]));
-                    netcdf.putVar(ncid, assm_saltvarid, [0 0 0], [grid.nlon grid.nlat grid.ntime], data.(['SALT', '_assm_', tmp.obsname_simple]));
-                    netcdf.putVar(ncid, bias_obs_saltvarid, [0 0 0], [grid.nlon grid.nlat grid.ntime], data.(['SALT', '_bias_obs_', tmp.obsname_simple, '_i', tmp.iyear_str]));
-                    netcdf.putVar(ncid, sq_err_obs_saltvarid, [0 0 0], [grid.nlon grid.nlat grid.ntime], data.(['SALT', '_sq_err_obs_', tmp.obsname_simple, '_i', tmp.iyear_str]));
-                    netcdf.putVar(ncid, rmse_obs_saltvarid, [0 0], [grid.nlon grid.nlat], data.(['SALT', '_rmse_obs_', tmp.obsname_simple, '_i', tmp.iyear_str]));
-                    netcdf.putVar(ncid, bias_assm_saltvarid, [0 0 0], [grid.nlon grid.nlat grid.ntime], data.(['SALT', '_bias_assm_', tmp.obsname_simple, '_i', tmp.iyear_str]));
-                    netcdf.putVar(ncid, sq_err_assm_saltvarid, [0 0 0], [grid.nlon grid.nlat grid.ntime], data.(['SALT', '_sq_err_assm_', tmp.obsname_simple, '_i', tmp.iyear_str]));
-                    netcdf.putVar(ncid, rmse_assm_saltvarid, [0 0], [grid.nlon grid.nlat], data.(['SALT', '_rmse_assm_', tmp.obsname_simple, '_i', tmp.iyear_str]));
                     
-                    netcdf.putVar(ncid, gm_saltvarid, [0], [grid.ntime], data.(['gm_', 'SALT', '_model_', tmp.obsname_simple, '_i', tmp.iyear_str]));
-                    netcdf.putVar(ncid, gm_obs_saltvarid, [0], [grid.ntime], data.(['gm_', 'SALT', '_obs_', tmp.obsname_simple]));
-                    netcdf.putVar(ncid, gm_assm_saltvarid, [0], [grid.ntime], data.(['gm_', 'SALT', '_assm_', tmp.obsname_simple]));
-                    netcdf.putVar(ncid, gm_bias_obs_saltvarid, [0], [grid.ntime], data.(['gm_', 'SALT', '_bias_obs_', tmp.obsname_simple, '_i', tmp.iyear_str]));
-                    netcdf.putVar(ncid, gm_sq_err_obs_saltvarid, [0], [grid.ntime], data.(['gm_', 'SALT', '_sq_err_obs_', tmp.obsname_simple, '_i', tmp.iyear_str]));
-                    netcdf.putVar(ncid, gm_rmse_obs_saltvarid, [0], [1], data.(['gm_', 'SALT', '_rmse_obs_', tmp.obsname_simple, '_i', tmp.iyear_str]));
-                    netcdf.putVar(ncid, gm_bias_assm_saltvarid, [0], [grid.ntime], data.(['gm_', 'SALT', '_bias_assm_', tmp.obsname_simple, '_i', tmp.iyear_str]));
-                    netcdf.putVar(ncid, gm_sq_err_assm_saltvarid, [0], [grid.ntime], data.(['gm_', 'SALT', '_sq_err_assm_', tmp.obsname_simple, '_i', tmp.iyear_str]));
-                    netcdf.putVar(ncid, gm_rmse_assm_saltvarid, [0], [1], data.(['gm_', 'SALT', '_rmse_assm_', tmp.obsname_simple, '_i', tmp.iyear_str]));
-            
+                    netcdf.putVar(ncid, nino34m_tempvarid, [0], [grid.ntime], data.(['nino34m_', 'TEMP', '_model_', tmp.obsname_simple, '_i', tmp.iyear_str]));
+                    netcdf.putVar(ncid, nino34m_obs_tempvarid, [0], [grid.ntime], data.(['nino34m_', 'TEMP', '_obs_', tmp.obsname_simple]));
+                    netcdf.putVar(ncid, nino34m_assm_tempvarid, [0], [grid.ntime], data.(['nino34m_', 'TEMP', '_assm_', tmp.obsname_simple]));                    
+                                
                     netcdf.close(ncid);
                     
                     disp(['saved file is ', config.savefilename]);
