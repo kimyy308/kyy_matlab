@@ -13,7 +13,7 @@ dirs.yoshi_root='/proj/yoshi/DATA/CESM2_ODA';
 dirs.archive=[dirs.root, filesep, 'archive'];
 dirs.saveroot='/mnt/lustre/proj/kimyy/Model/CESM2/ESP/ASSM_EXP';
 
-config.years=1999:2009;
+config.years=1988:2021;
 config.months=1:12;
 config.scenname='HIST';
 config.gridname='f09_g17';
@@ -51,10 +51,9 @@ config.len_ens= length(config.ensnames);
 % config_obs.sta_lon = 360.0-158.0;
 % config_obs.sta_lat = 22.0+45.0/60.0;
 
-config_obs.staname = 'K2';
-config_obs.sta_lon = 160;
-config_obs.sta_lat = 47;
-
+config_obs.staname = 'BATS';
+config_obs.sta_lon = [360-66.1690, 360-60.4470]; % degrees west to 0~360 degrees east
+config_obs.sta_lat = [24.7590, 35.6670]; % degrees north
 
 %bsal; bottle salinity
 %theta; potential temperature
@@ -96,20 +95,27 @@ for varind=1:length(config.varnames)
                     CESM2_grid.ocean_mask=NaN(size(CESM2_grid.region_mask));
                     CESM2_grid.ocean_mask(CESM2_grid.region_mask>0)=1;
                     CESM2_grid.z_t=ncread(tmp.gridname, 'z_t');  % (cm)
-                    CESM2_grid.dz=ncread(tmp.gridname, 'dz'); 
+                    CESM2_grid.dz=ncread(tmp.gridname, 'dz');
+
+
                     CESM2_grid.len_z_t=length(CESM2_grid.z_t);
                     
-                    [CESM2_grid.obs_lon_ind, CESM2_grid.obs_lon_ind, CESM2_grid.obs_lat_ind, CESM2_grid.obs_lat_ind] = ...
+                    [CESM2_grid.obs_lon_ind_w, CESM2_grid.obs_lon_ind_e, CESM2_grid.obs_lat_ind_s, CESM2_grid.obs_lat_ind_n] = ...
                         Func_0012_findind_Y(1, [config_obs.sta_lon, config_obs.sta_lat], ...
                         CESM2_grid.lon_t.*CESM2_grid.ocean_mask, ...
                         CESM2_grid.lat_t.*CESM2_grid.ocean_mask, 'CESM2'); % find valid lon, lat index near station
+                    CESM2_grid.len_x= CESM2_grid.obs_lon_ind_e-CESM2_grid.obs_lon_ind_w+1;
+                    CESM2_grid.len_y= CESM2_grid.obs_lat_ind_n-CESM2_grid.obs_lat_ind_s+1;
+
+                    CESM2_grid.dz_3d= permute(repmat(CESM2_grid.dz',1,CESM2_grid.len_x,CESM2_grid.len_y),[2,3,1]);
+                    CESM2_grid.z_t_3d= permute(repmat(CESM2_grid.z_t',1,CESM2_grid.len_x,CESM2_grid.len_y),[2,3,1]);
                 %% initialize
 %                     CESM2_data.(tmp.varname)(1:config.len_obs, 1:config.len_ens, 1:config.len_t_y,1:config.len_t_m,1:CESM2_grid.len_z_t)=NaN;
 %                     CESM2_data.([tmp.varname, '_vm'])(1:config.len_obs, 1:config.len_ens, 1:config.len_t_y,1:config.len_t_m)=NaN;
 %                     CESM2_data.([tmp.varname, '_vm_200m'])(1:config.len_obs, 1:config.len_ens, 1:config.len_t_y,1:config.len_t_m)=NaN;
-                    CESM2_data.(tmp.varname)(1:config.len_ens, 1:config.len_t_y,1:config.len_t_m,1:CESM2_grid.len_z_t)=NaN;
-                    CESM2_data.([tmp.varname, '_vm'])(1:config.len_ens, 1:config.len_t_y,1:config.len_t_m)=NaN;
-                    CESM2_data.([tmp.varname, '_vm_200m'])(1:config.len_ens, 1:config.len_t_y,1:config.len_t_m)=NaN;
+                    CESM2_data.(tmp.varname)(1:config.len_ens, CESM2_grid.len_x, CESM2_grid.len_y, 1:config.len_t_y,1:config.len_t_m,1:CESM2_grid.len_z_t)=NaN;
+                    CESM2_data.([tmp.varname, '_vm'])(1:config.len_ens, CESM2_grid.len_x, CESM2_grid.len_y, 1:config.len_t_y,1:config.len_t_m)=NaN;
+                    CESM2_data.([tmp.varname, '_vm_200m'])(1:config.len_ens, CESM2_grid.len_x, CESM2_grid.len_y, 1:config.len_t_y,1:config.len_t_m)=NaN;
 
                 end
                 %% read data
@@ -134,26 +140,30 @@ for varind=1:length(config.varnames)
     
                             tmp.data= ...
                                 squeeze(ncread(tmp.filename, tmp.varname, ...
-                                [CESM2_grid.obs_lon_ind, CESM2_grid.obs_lat_ind, 1, 1], ...
-                                [1, 1, inf, inf]));
-                            CESM2_data.(tmp.varname)(ensind,yind,mind,:)= tmp.data;
-                            tmp.vmask=NaN(CESM2_grid.len_z_t,1);
-                            tmp.vmask(isfinite(squeeze(tmp.data)))=1;
-                            tmp.data_vm=sum(tmp.data.*CESM2_grid.dz.*tmp.vmask, 'omitnan') / sum(CESM2_grid.dz.*tmp.vmask, 'omitnan'); % vertical weighted mean
-                            tmp.zind_200m=20;
-                            tmp.data_vm_200m=sum(tmp.data(1:tmp.zind_200m).*CESM2_grid.dz(1:tmp.zind_200m).*tmp.vmask(1:tmp.zind_200m), 'omitnan') ...
-                                / sum(CESM2_grid.dz(1:tmp.zind_200m).*tmp.vmask(1:tmp.zind_200m), 'omitnan'); % vertical weighted mean (~200m)
-                            CESM2_data.([tmp.varname, '_vm'])(ensind,yind,mind) = tmp.data_vm;
-                            CESM2_data.([tmp.varname, '_vm_200m'])(ensind,yind,mind) = tmp.data_vm_200m;
-    
+                                [CESM2_grid.obs_lon_ind_w, CESM2_grid.obs_lat_ind_s, 1, 1], ...
+                                [CESM2_grid.len_x, CESM2_grid.len_y, inf, inf]));
+                            CESM2_data.(tmp.varname)(ensind,:,:,yind,mind,:)= tmp.data;
+
+                            for loni=1:CESM2_grid.len_x
+                                for lati=1:CESM2_grid.len_y
+                                    tmp.vmask=NaN(CESM2_grid.len_z_t,1);
+                                    tmp.vmask(isfinite(squeeze(tmp.data(loni,lati,:))))=1;
+                                    tmp.data_vm=sum(squeeze(tmp.data(loni,lati,:)).*CESM2_grid.dz.*tmp.vmask, 'omitnan') / sum(CESM2_grid.dz.*tmp.vmask, 'omitnan'); % vertical weighted mean
+                                    tmp.zind_200m=20;
+                                    tmp.data_vm_200m=sum(squeeze(tmp.data(loni,lati,1:tmp.zind_200m)).*CESM2_grid.dz(1:tmp.zind_200m).*tmp.vmask(1:tmp.zind_200m), 'omitnan') ...
+                                        / sum(CESM2_grid.dz(1:tmp.zind_200m).*tmp.vmask(1:tmp.zind_200m), 'omitnan'); % vertical weighted mean (~200m)
+                                    CESM2_data.([tmp.varname, '_vm'])(ensind,loni,lati, yind,mind) = tmp.data_vm;
+                                    CESM2_data.([tmp.varname, '_vm_200m'])(ensind,loni,lati, yind,mind) = tmp.data_vm_200m;
+                                end
+                            end
+%     pcolor(squeeze(CESM2_data.SALT_vm(1,:,:,1,1)))
                         else
                             tmp.filename = NaN;
-                            CESM2_data.(tmp.varname)(ensind,yind,mind,:)= NaN;
-                            CESM2_data.([tmp.varname, '_vm'])(ensind,yind,mind) = NaN;
-                            CESM2_data.([tmp.varname, '_vm_200m'])(ensind,yind,mind) = NaN;
+                            CESM2_data.(tmp.varname)(ensind,:,:,yind,mind,:)= NaN;
+                            CESM2_data.([tmp.varname, '_vm'])(ensind,:,:,yind,mind) = NaN;
+                            CESM2_data.([tmp.varname, '_vm_200m'])(ensind,:,:,yind,mind) = NaN;
                         end
-%                         close all force
-                        clear functions
+                        clear functions  % to read faster
                     end
                 end
             end
