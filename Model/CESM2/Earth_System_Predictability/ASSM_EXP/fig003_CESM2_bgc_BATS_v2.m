@@ -1,7 +1,8 @@
 % %  Created 25-Oct-2022 by Yong-Yub Kim
 % %  Created 05-Nov-2022 by Yong-Yub Kim
 % %  Created 16-Nov-2022 by Yong-Yub Kim
-
+% %  Created 17-Nov-2022 by Yong-Yub Kim %% anomaly from each ensemble member -> mean
+ 
 clc; clear all; close all;
 
 %% set path
@@ -30,8 +31,10 @@ config.varnames={'TEMP', 'SALT', 'DIC', 'ALK', 'NO3', 'PO4', 'SiO3'};
 
 config.len_t_y = length(config.years);
 config.len_t_m = length(config.months);
+config.len_t = config.len_t_y * config.len_t_m;
 config.len_obs= length(config.obsnames);
 config.len_ens= length(config.ensnames);
+
 
 
 %% observation configuration (BATS, Excel; .xlsx)
@@ -234,7 +237,19 @@ for varind=1:length(config.varnames)
                         end
                     end
                 end
+                tmp.varname_m_model_avg=[tmp.varname, '_m_', num2str(config_obs.avgdepth(avgi), '%04i')]; % varname_save
+                tmp.varname_std_model_avg=[tmp.varname, '_std_', num2str(config_obs.avgdepth(avgi), '%04i')]; % varname_save
+                tmp.varname_ano_model_avg=[tmp.varname, '_ano_', num2str(config_obs.avgdepth(avgi), '%04i')]; % varname_save
+                tmp.varname_norm_model_avg=[tmp.varname, '_norm_', num2str(config_obs.avgdepth(avgi), '%04i')]; % varname_save
+
+                [CESM2_alldata.([tmp.obs_abb]).(tmp.varname_m_model_avg)(ensi), ...
+                    CESM2_alldata.([tmp.obs_abb]).(tmp.varname_std_model_avg)(ensi), ...
+                    CESM2_alldata.([tmp.obs_abb]).(tmp.varname_ano_model_avg)(ensi,1:config.len_t), ...
+                    CESM2_alldata.([tmp.obs_abb]).(tmp.varname_norm_model_avg)(ensi,1:config.len_t)] = ...
+                    get_ano_norm(CESM2_alldata.(tmp.obs_abb).(tmp.varname_model_avg)(ensi,:));
             end
+            tmp.varname_ano_ensm_model_avg=[tmp.varname, '_ano_ensm_', num2str(config_obs.avgdepth(avgi), '%04i')]; % varname_save
+            CESM2_alldata.([tmp.obs_abb]).(tmp.varname_ano_ensm_model_avg) = mean(CESM2_alldata.([tmp.obs_abb]).(tmp.varname_ano_model_avg),1);
         end
     end
     
@@ -290,7 +305,7 @@ for varind=1:length(config.varnames)
     end
 
     
-    %% normalized anomaly plot
+    %% anomaly plot
     
     time_m=min(config.years):1/12:max(config.years)+11/12;
     tmp.plot_color(1,1:3)=[1,0,0];  % red, projd
@@ -308,12 +323,14 @@ for varind=1:length(config.varnames)
         tmp.varname_m_model_avg=[tmp.varname, '_m_', num2str(config_obs.avgdepth(avgi), '%04i')];
         tmp.varname_std_model_avg=[tmp.varname, '_std_', num2str(config_obs.avgdepth(avgi), '%04i')];
 
+        tmp.varname_ano_ensm_model_avg=[tmp.varname, '_ano_ensm_', num2str(config_obs.avgdepth(avgi), '%04i')]; % varname_save
+
         hold on
         for obsi=1:config.len_obs
             %% ensemble mean & observation plot
             tmp.obsname_assm=config.obsnames{obsi};
             tmp.obs_abb=tmp.obsname_assm(1:3);
-            tmp.data=CESM2_alldata.([tmp.obs_abb,'_ensm']).(tmp.varname_norm_model_avg);
+            tmp.data=CESM2_alldata.([tmp.obs_abb]).(tmp.varname_ano_ensm_model_avg);
             plot(CESM2_grid.datenum,tmp.data, 'color', tmp.plot_color(obsi,:), 'linewidth', 3);
 
             %% ensemble member plot (10p)
@@ -326,7 +343,7 @@ for varind=1:length(config.varnames)
                 CESM2_alldata.([tmp.obs_abb]).(tmp.varname_ano_model_avg)(ensi,:), ...
                 CESM2_alldata.([tmp.obs_abb]).(tmp.varname_norm_model_avg)(ensi,:)] = ...
                     get_ano_norm(CESM2_alldata.([tmp.obs_abb]).(tmp.varname_model_avg)(ensi,:));
-                tmp.data=CESM2_alldata.([tmp.obs_abb]).(tmp.varname_norm_model_avg)(ensi,:); %data
+                tmp.data=CESM2_alldata.([tmp.obs_abb]).(tmp.varname_ano_model_avg)(ensi,:); %data
                 tsplot{ensi}=plot(CESM2_grid.datenum, tmp.data, 'color', tmp.plot_color_tr_10p(obsi,:));
                 set(get(get(tsplot{ensi},'Annotation'),'LegendInformation'),'IconDisplayStyle','off'); % turn off legend informatino
             end
@@ -341,14 +358,14 @@ for varind=1:length(config.varnames)
                 CESM2_alldata.([tmp.obs_abb]).(tmp.varname_ano_model_avg)(ensi,:), ...
                 CESM2_alldata.([tmp.obs_abb]).(tmp.varname_norm_model_avg)(ensi,:)] = ...
                     get_ano_norm(CESM2_alldata.([tmp.obs_abb]).(tmp.varname_model_avg)(ensi,:));
-                tmp.data=CESM2_alldata.([tmp.obs_abb]).(tmp.varname_norm_model_avg)(ensi,:); %data
+                tmp.data=CESM2_alldata.([tmp.obs_abb]).(tmp.varname_ano_model_avg)(ensi,:); %data
                 tsplot{ensi}=plot(CESM2_grid.datenum, tmp.data, 'color', tmp.plot_color_tr_20p(obsi,:));
                 set(get(get(tsplot{ensi},'Annotation'),'LegendInformation'),'IconDisplayStyle','off'); % turn off legend informatino
             end
 
             datetick('x', 'yymmm')
         end
-        plot(OBS.datenum,OBS.(tmp.varname_norm_obs_avg), 'k*');
+        plot(OBS.datenum,OBS.(tmp.varname_ano_obs_avg), 'k*');
         xlabel('Year'); ylabel([tmp.varname, '(', tmp.varname_obs, ')']);
 %         lgd=legend([config.obsnames{1}], [config.obsnames{2}], ['OBS(', config_obs.staname,')'], 'Location', 'NorthWest');
         set(gca, 'fontsize', 20)
@@ -358,8 +375,8 @@ for varind=1:length(config.varnames)
         
         dirs.figdir=['/Volumes/kyy_raid/kimyy/Figure/CESM2/ESP/ASSM_EXP/', ...
             config_obs.staname, '/', num2str(config_obs.avgdepth(avgi), '%04i'), 'm'];
-        system(['mkdir -p ', dirs.figdir])
-        tmp.figname=[dirs.figdir, filesep, tmp.varname, '_ano_norm_', tmp.varname_obs, '_', ...
+        system(['mkdir -p ', dirs.figdir]);
+        tmp.figname=[dirs.figdir, filesep, tmp.varname, '_ano_', tmp.varname_obs, '_', ...
             num2str(config_obs.avgdepth(avgi), '%04i'), 'm_avg_', ...
             num2str(min(config.years)), '_', num2str(max(config.years)), '.tif'];
         set(gcf, 'PaperPosition', [0, 0, 8, 4]);
@@ -368,64 +385,6 @@ for varind=1:length(config.varnames)
         close all;
      end
 
-    
-%% raw plot
-    time_m=min(config.years):1/12:max(config.years)+11/12;
-    tmp.plot_color(1,1:3)=[1,0,0];  % red, projd
-    tmp.plot_color(2,1:3)=[0,1,0];  % green, en4 
-    for avgi=1:length(config_obs.avgdepth)
-        tmp.varname_obs_avg=[tmp.varname_obs, '_', num2str(config_obs.avgdepth(avgi), '%04i')];
-        tmp.varname_model_avg=[tmp.varname, '_', num2str(config_obs.avgdepth(avgi), '%04i')];
-        
-        hold on
-        for obsi=1:config.len_obs
-            %% ensemble mean & observation plot
-            tmp.obsname_assm=config.obsnames{obsi};
-            tmp.obs_abb=tmp.obsname_assm(1:3);
-            tmp.data=CESM2_alldata.([tmp.obs_abb,'_ensm']).(tmp.varname_model_avg); %data
-            plot(CESM2_grid.datenum,tmp.data, 'color', tmp.plot_color(obsi,:), 'linewidth', 3);
-
-            %% ensemble member plot (10p)
-            tmp.val_transparent = 0.5;
-            tmp.plot_color_tr_10p(obsi,:)=get_transparent_rgb(tmp.plot_color(obsi,:), tmp.val_transparent);
-            tmp.size_ens=size(CESM2_alldata.(tmp.obs_abb).(tmp.varname_model_avg));
-            for ensi=1:tmp.size_ens/2
-                tmp.data=CESM2_alldata.([tmp.obs_abb]).(tmp.varname_model_avg)(ensi,:); %data
-                tsplot{ensi}=plot(CESM2_grid.datenum, tmp.data, 'color', tmp.plot_color_tr_10p(obsi,:));
-                set(get(get(tsplot{ensi},'Annotation'),'LegendInformation'),'IconDisplayStyle','off'); % turn off legend informatino
-            end
-
-            %% ensemble member plot (20p)
-            tmp.val_transparent = 0.2;
-            tmp.plot_color_tr_20p(obsi,:)=get_transparent_rgb(tmp.plot_color(obsi,:), tmp.val_transparent);
-            tmp.size_ens=size(CESM2_alldata.(tmp.obs_abb).(tmp.varname_model_avg));
-            for ensi=tmp.size_ens/2+1:tmp.size_ens
-                tmp.data=CESM2_alldata.([tmp.obs_abb]).(tmp.varname_model_avg)(ensi,:); %data
-                tsplot{ensi}=plot(CESM2_grid.datenum, tmp.data, 'color', tmp.plot_color_tr_20p(obsi,:));
-                set(get(get(tsplot{ensi},'Annotation'),'LegendInformation'),'IconDisplayStyle','off'); % turn off legend informatino
-            end
-
-            datetick('x', 'yymmm')
-        end
-        plot(OBS.datenum,OBS.(tmp.varname_obs_avg), 'k*');
-        xlabel('Year'); ylabel([tmp.varname, '(', tmp.varname_obs, ')']);
-%         lgd=legend([config.obsnames{1}], [config.obsnames{2}], ['OBS(', config_obs.staname,')'], 'Location', 'northoutside');
-        set(gca, 'fontsize', 20)
-%         set(lgd, 'fontsize',5)
-        grid minor
-        hold off
-        
-        dirs.figdir=['/Volumes/kyy_raid/kimyy/Figure/CESM2/ESP/ASSM_EXP/', ...
-            config_obs.staname, '/', num2str(config_obs.avgdepth(avgi), '%04i'), 'm'];
-        system(['mkdir -p ', dirs.figdir])
-        tmp.figname=[dirs.figdir, filesep, tmp.varname, '_raw_', tmp.varname_obs, '_', ...
-            num2str(config_obs.avgdepth(avgi), '%04i'), 'm_avg_', ...
-            num2str(min(config.years)), '_', num2str(max(config.years)), '.tif'];
-        set(gcf, 'PaperPosition', [0, 0, 8, 4]);
-        saveas(gcf,tmp.figname,'tif');
-        RemoveWhiteSpace([], 'file', tmp.figname);
-        close all;
-    end
 end
 
 
@@ -493,6 +452,11 @@ function [var_obs, var_flag] = f_varname_obs(var_model)
 % -999 = Bad or missing data
 %  0 = Less than detection limit
 
+%mmol = 10^-3 mol
+%umol = 10^-6 mol
+% 1L ~ 1kg
+%1000L = 1m^3
+% mmol/m^3 ~= umol/kg
 
 var_flag=NaN;
 var_obs=NaN;
@@ -512,19 +476,19 @@ var_obs=NaN;
 %             var_obs='Temp'; % Potential temperature
             var_obs='Temp'; % Water temperature           
         case 'DIC' % mmol/m^3
-            var_obs='CO2'; % DISSOLVED INORGANIC CARBON, umol/kg
+            var_obs='CO2'; % DISSOLVED INORGANIC CARBON, (umol/kg)
 %             var_flag='TCARBN_FLAG_W';
         case 'PO4' %mmol/m^3
-            var_obs='PO4';  % phosphate, umol/kg
+            var_obs='PO4';  % phosphate, (umol/kg)
 %             var_flag='PHSPHT_FLAG_W';
         case 'ALK' % meq/m^3
-            var_obs='alk'; % total alkalinity, umol/kg
+            var_obs='alk'; % total alkalinity, uequiv
 %             var_flag='ALKALI_FLAG_W';
         case 'NO3' %mmol/m^3
-            var_obs='NO3NO2'; % NITRATE
+            var_obs='NO3NO2'; % NITRATE (umol/kg)
 %             var_flag='NITRAT_FLAG_W';
         case 'SiO3' %mmol/m^3
-            var_obs='SiO2';  %silicate, umol/kg
+            var_obs='SiO2';  %silicate, (umol/kg)
 %             var_flag='SILCAT_FLAG_W';            
         case 'NO2'
             var_obs='NO2'; %NITRITE umol /kg

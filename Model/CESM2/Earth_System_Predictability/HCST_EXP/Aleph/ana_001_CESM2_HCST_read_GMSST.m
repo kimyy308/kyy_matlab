@@ -75,7 +75,7 @@ dirs.datadir= [dirs.archive, filesep, config.casename_m, filesep, config.casenam
 
 [tmp.error_status, tmp.value]=system(['ls ', dirs.datadir, '/*once*']);  % b.e21.BHISTsmbb.f09_g17.assm.oras4_ba-10p1.pop.h.once.nc
 tmp.gridname = [tmp.value(1:end-1)];
-grid.region_mask=ncread(tmp.gridname, 'REGION_MASK'); 
+grid.region_mask=ncread(tmp.gridname, 'REGION_MASK');
 grid.ocean_mask=NaN(size(grid.region_mask));
 grid.ocean_mask(grid.region_mask>0)=1;
 grid.tarea = ncread(tmp.gridname, 'TAREA');

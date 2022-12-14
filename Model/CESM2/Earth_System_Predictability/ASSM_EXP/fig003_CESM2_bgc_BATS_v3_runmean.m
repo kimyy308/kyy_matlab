@@ -1,6 +1,9 @@
 % %  Created 25-Oct-2022 by Yong-Yub Kim
 % %  Created 05-Nov-2022 by Yong-Yub Kim
 % %  Created 16-Nov-2022 by Yong-Yub Kim
+% %  Created 17-Nov-2022 by Yong-Yub Kim %% anomaly from each ensemble member -> mean
+% %  Created 17-Nov-2022 by Yong-Yub Kim  
+% %  observation -> 12 month running mean filter -> remove climatology
 
 clc; clear all; close all;
 
@@ -26,12 +29,14 @@ config.ensnames={'ba-10p1', 'ba-10p2', 'ba-10p3', 'ba-10p4', 'ba-10p5', ...
 
 config.component='ocn';
 config.varnames={'TEMP', 'SALT', 'DIC', 'ALK', 'NO3', 'PO4', 'SiO3'};
-% config.varnames={'SALT'};
+% config.varnames={'ALK'};
 
 config.len_t_y = length(config.years);
 config.len_t_m = length(config.months);
+config.len_t = config.len_t_y * config.len_t_m;
 config.len_obs= length(config.obsnames);
 config.len_ens= length(config.ensnames);
+
 
 
 %% observation configuration (BATS, Excel; .xlsx)
@@ -46,7 +51,7 @@ config_obs.avgdepth=[100, 140, 200];
 
 dirs.obsroot = '/Volumes/kyy_raid/kimyy/Observation';
 dirs.obssavedir = [dirs.obsroot, filesep, 'mat'];
-mkdir(dirs.obssavedir)
+% mkdir(dirs.obssavedir)
 config_obs.filename = [dirs.obsroot, filesep, 'BATS/batsftp.bios.edu/BATS/bottle/bats_bottle.xlsx'];
 
 
@@ -131,6 +136,8 @@ abc=1;
 
 %% get observation data
 for varind=1:length(config.varnames)
+    
+
     tmp.varname=config.varnames{varind}; %varname
     [tmp.varname_obs, tmp.varname_flag] = f_varname_obs(tmp.varname); %variable name of observation
     OBS.var_ind=find(strcmp(OBS_bdat.Properties.VariableNames, tmp.varname_obs)==1);
@@ -138,12 +145,22 @@ for varind=1:length(config.varnames)
     OBS.datenum_uniq=unique(OBS_datenum);
     OBS.data_len_uniq=length(OBS.datenum_uniq);
     
+    %% remove >3std data for quality control
+    tmp.alldata=table2array(OBS_bdat(:, OBS.var_ind));
+    tmp.alldata(tmp.alldata==-999)=NaN;
+    tmp.alldat_med=median(tmp.alldata, 'omitnan');
+    tmp.alldat_3std=3*std(tmp.alldata, 'omitnan');
+    tmp.alldat_upper_lim = tmp.alldat_med + tmp.alldat_3std;
+    tmp.alldat_lower_lim = tmp.alldat_med - tmp.alldat_3std;
+
     for ti=1:OBS.data_len_uniq
         OBS.data_ind=find(OBS_datenum==OBS.datenum_uniq(ti));
         tmp.data=table2array(OBS_bdat(OBS.data_ind, OBS.var_ind));
         tmp.depth=table2array(OBS_bdat(OBS.data_ind, OBS.depth_ind));
         OBS.lon=table2array(OBS_bdat(OBS.data_ind, OBS.lon_ind));
         OBS.lat=table2array(OBS_bdat(OBS.data_ind, OBS.lat_ind));
+        tmp.data(tmp.data < tmp.alldat_lower_lim) = NaN;
+        tmp.data(tmp.data > tmp.alldat_upper_lim) = NaN;
 
         
         tmp.invalid_ind=find(tmp.data==tmp.NaNval);
@@ -166,7 +183,9 @@ for varind=1:length(config.varnames)
             end
         end
         
-
+%         if (ti==3352) 
+%             abc='stop';
+%         end
         % put interpolated data
         OBS.(tmp.varname_obs)(:,ti)=tmp.data_interped;
         OBS.datenum(ti)=OBS.datenum_uniq(ti);
@@ -190,6 +209,43 @@ for varind=1:length(config.varnames)
 %     plot(OBS.datenum,OBS.Temp_0140, 'k-*')
 %     datetick('x','yymmm')
 
+%% 12-month running mean filter - observation
+    [OBS.year, OBS.month, OBS.day, OBS.hour, OBS.minute, OBS.second]=datevec(OBS.datenum_uniq);
+    for avgi=1:length(config_obs.avgdepth)
+        tmp.varname_obs_avg=[tmp.varname_obs, '_', num2str(config_obs.avgdepth(avgi), '%04i')];
+        tmp.varname_obs_avg_12rm=[tmp.varname_obs, '_', num2str(config_obs.avgdepth(avgi), '%04i'), '_12rm'];
+        tmp.varname_obs_avg_12rm_clim=[tmp.varname_obs, '_', num2str(config_obs.avgdepth(avgi), '%04i'), '_12rm_clim'];
+        tmp.varname_obs_avg_12rm_sm=[tmp.varname_obs, '_', num2str(config_obs.avgdepth(avgi), '%04i'), '_12rm_sm'];
+
+        for tyi=1:config.len_t_y
+            tmp.year=config.years(tyi);
+            for tmi=1:config.len_t_m
+                tmp.month=config.months(tmi);
+                tmp.datenum=datenum(tmp.year, tmp.month, 28);
+                OBS.datenum_12rm((tyi-1)*12+tmi)=tmp.datenum;
+                if (tmp.datenum > min(OBS.datenum_uniq)+365.25/2 & tmp.datenum < max(OBS.datenum_uniq)-365.25/2)
+                    tmp.ind_12runmean = ...
+                        find(OBS.datenum_uniq>tmp.datenum-365.25/2 & OBS.datenum_uniq<tmp.datenum+365.25/2);
+                    OBS.(tmp.varname_obs_avg_12rm)((tyi-1)*12+tmi) = ...
+                        mean(OBS.(tmp.varname_obs_avg)(tmp.ind_12runmean), 'omitnan');
+                else
+                    OBS.(tmp.varname_obs_avg_12rm)((tyi-1)*12+tmi) = NaN;
+                end
+            end
+        end
+        %% get get climatology from 12-month running mean filtered data
+        tmp.data=reshape(OBS.(tmp.varname_obs_avg_12rm), [config.len_t_m, config.len_t_y]);
+        OBS.(tmp.varname_obs_avg_12rm_clim)=mean(tmp.data,2, 'omitnan');
+        for tmi=1:12
+            OBS.(tmp.varname_obs_avg_12rm_sm)((0:config.len_t_y-1)*12+tmi) = ...
+                OBS.(tmp.varname_obs_avg_12rm)((0:config.len_t_y-1)*12+tmi) - OBS.(tmp.varname_obs_avg_12rm_clim)(tmi);
+        end
+    end
+
+
+
+
+
     %% get model data
     for obsi=1:config.len_obs
         tmp.obsname_assm=config.obsnames{obsi};
@@ -199,6 +255,13 @@ for varind=1:length(config.varnames)
             tmp.obsname_assm, '_', tmp.varname, '_', num2str(min(config.years)), '_', num2str(max(config.years)), '.mat'];
         load(config.savename_cfg, 'CESM2_data', 'CESM2_grid');
         
+        %% get subsequent datenum of model
+        for tyi=1:config.len_t_y
+            for tmi=1:config.len_t_m
+                CESM2_grid.datenum((tyi-1)*12+tmi)=datenum(config.years(tyi), config.months(tmi), 15);
+            end
+        end
+
         tmp.obs_abb=tmp.obsname_assm(1:3);
         CESM2_grid.lon_cut=CESM2_grid.lon_t(CESM2_grid.obs_lon_ind_w:CESM2_grid.obs_lon_ind_e, CESM2_grid.obs_lat_ind_s:CESM2_grid.obs_lat_ind_n);
         CESM2_grid.lat_cut=CESM2_grid.lat_t(CESM2_grid.obs_lon_ind_w:CESM2_grid.obs_lon_ind_e, CESM2_grid.obs_lat_ind_s:CESM2_grid.obs_lat_ind_n);
@@ -212,7 +275,7 @@ for varind=1:length(config.varnames)
                         CESM2_grid.lat_cut, 'CESM2'); % find valid lon, lat index near station
         tmp.lon_ind=tmp.lon_ind_w;
         tmp.lat_ind=tmp.lat_ind_s;
-        % get depth averaged data
+        %% get depth averaged data
         for avgi=1:length(config_obs.avgdepth)
             for ensi=1:config.len_ens
                 for tyi=1:config.len_t_y
@@ -234,16 +297,56 @@ for varind=1:length(config.varnames)
                         end
                     end
                 end
+                %% vertical average
+                tmp.varname_m_model_avg=[tmp.varname, '_m_', num2str(config_obs.avgdepth(avgi), '%04i')]; % varname_save
+                tmp.varname_std_model_avg=[tmp.varname, '_std_', num2str(config_obs.avgdepth(avgi), '%04i')]; % varname_save
+                tmp.varname_ano_model_avg=[tmp.varname, '_ano_', num2str(config_obs.avgdepth(avgi), '%04i')]; % varname_save
+                tmp.varname_norm_model_avg=[tmp.varname, '_norm_', num2str(config_obs.avgdepth(avgi), '%04i')]; % varname_save
+
+                [CESM2_alldata.([tmp.obs_abb]).(tmp.varname_m_model_avg)(ensi), ...
+                    CESM2_alldata.([tmp.obs_abb]).(tmp.varname_std_model_avg)(ensi), ...
+                    CESM2_alldata.([tmp.obs_abb]).(tmp.varname_ano_model_avg)(ensi,1:config.len_t), ...
+                    CESM2_alldata.([tmp.obs_abb]).(tmp.varname_norm_model_avg)(ensi,1:config.len_t)] = ...
+                    get_ano_norm(CESM2_alldata.(tmp.obs_abb).(tmp.varname_model_avg)(ensi,:));
             end
+            %% ensemble mean
+            tmp.varname_ano_ensm_model_avg=[tmp.varname, '_ano_ensm_', num2str(config_obs.avgdepth(avgi), '%04i')]; % varname_save
+            CESM2_alldata.([tmp.obs_abb]).(tmp.varname_ano_ensm_model_avg) = mean(CESM2_alldata.([tmp.obs_abb]).(tmp.varname_ano_model_avg),1);
+             
+            %% 12-month running mean filter - model
+            tmp.varname_model_avg_12rm=[tmp.varname, '_', num2str(config_obs.avgdepth(avgi), '%04i'), '_12rm'];
+            tmp.varname_model_avg_12rm_clim=[tmp.varname, '_', num2str(config_obs.avgdepth(avgi), '%04i'), '_12rm_clim'];
+            tmp.varname_model_avg_12rm_sm=[tmp.varname, '_', num2str(config_obs.avgdepth(avgi), '%04i'), '_12rm_sm'];       
+            for tyi=1:config.len_t_y
+                tmp.year=config.years(tyi);
+                for tmi=1:config.len_t_m
+                    tmp.month=config.months(tmi);
+                    tmp.datenum=datenum(tmp.year, tmp.month, 28);
+                    if (tmp.datenum > min(CESM2_grid.datenum)+365.25/2 && tmp.datenum < max(CESM2_grid.datenum)-365.25/2)
+                        tmp.ind_12runmean = ...
+                            find(CESM2_grid.datenum>tmp.datenum-365.25/2 & CESM2_grid.datenum<tmp.datenum+365.25/2);
+                        CESM2_alldata.(tmp.obs_abb).(tmp.varname_model_avg_12rm)(1:config.len_ens,(tyi-1)*12+tmi) = ...
+                            mean(CESM2_alldata.(tmp.obs_abb).(tmp.varname_model_avg)(1:config.len_ens,tmp.ind_12runmean), 2, 'omitnan');
+                    else
+                        CESM2_alldata.(tmp.obs_abb).(tmp.varname_model_avg_12rm)(1:config.len_ens, (tyi-1)*12+tmi) = NaN;
+                    end
+                end
+            end
+            %% get get climatology from 12-month running mean filtered data
+            tmp.data=reshape(CESM2_alldata.(tmp.obs_abb).(tmp.varname_model_avg_12rm), [config.len_ens, config.len_t_m, config.len_t_y]);
+            CESM2_alldata.(tmp.obs_abb).(tmp.varname_model_avg_12rm_clim)=mean(tmp.data,3, 'omitnan');
+            for tmi=1:12
+                CESM2_alldata.(tmp.obs_abb).(tmp.varname_model_avg_12rm_sm)(1:config.len_ens,(0:config.len_t_y-1)*12+tmi) = ...
+                    CESM2_alldata.(tmp.obs_abb).(tmp.varname_model_avg_12rm)(1:config.len_ens,(0:config.len_t_y-1)*12+tmi) ...
+                    - CESM2_alldata.(tmp.obs_abb).(tmp.varname_model_avg_12rm_clim)(1:config.len_ens, tmi);
+            end
+            %% ensemble mean
+            tmp.varname_ensm_model_avg_12rm_sm=[tmp.varname, '_ensm_', num2str(config_obs.avgdepth(avgi), '%04i'), '_12rm_sm']; % varname_save
+            CESM2_alldata.([tmp.obs_abb]).(tmp.varname_ensm_model_avg_12rm_sm) = mean(CESM2_alldata.([tmp.obs_abb]).(tmp.varname_model_avg_12rm_sm),1);
         end
     end
     
-    %% get subsequent datenum of model
-    for tyi=1:config.len_t_y
-        for tmi=1:config.len_t_m
-            CESM2_grid.datenum((tyi-1)*12+tmi)=datenum(config.years(tyi), config.months(tmi), 15);
-        end
-    end
+    
 
 %     plot(OBS.datenum+0.1,OBS.([tmp.varname_obs,'_0100']), 'k*')
 %     datetick('x','yymmm')
@@ -288,46 +391,38 @@ for varind=1:length(config.varnames)
                 get_ano_norm(CESM2_alldata.([tmp.obs_abb,'_ensm']).(tmp.varname_model_avg));
         end
     end
+    
+   
 
     
-    %% normalized anomaly plot
+    %% 12 month running mean - climatology plot
     
     time_m=min(config.years):1/12:max(config.years)+11/12;
     tmp.plot_color(1,1:3)=[1,0,0];  % red, projd
     tmp.plot_color(2,1:3)=[0,1,0];  % green, en4 
     for avgi=1:length(config_obs.avgdepth)
         tmp.varname_obs_avg=[tmp.varname_obs, '_', num2str(config_obs.avgdepth(avgi), '%04i')];
-        tmp.varname_ano_obs_avg=[tmp.varname_obs, '_ano_', num2str(config_obs.avgdepth(avgi), '%04i')];
-        tmp.varname_norm_obs_avg=[tmp.varname_obs, '_norm_', num2str(config_obs.avgdepth(avgi), '%04i')];
-        tmp.varname_m_obs_avg=[tmp.varname_obs, '_m_', num2str(config_obs.avgdepth(avgi), '%04i')];
-        tmp.varname_std_obs_avg=[tmp.varname_obs, '_std_', num2str(config_obs.avgdepth(avgi), '%04i')];
+        tmp.varname_obs_avg_12rm_sm=[tmp.varname_obs, '_', num2str(config_obs.avgdepth(avgi), '%04i'), '_12rm_sm'];
 
+        tmp.varname_ensm_model_avg_12rm_sm=[tmp.varname, '_ensm_', num2str(config_obs.avgdepth(avgi), '%04i'), '_12rm_sm']; % varname_save
         tmp.varname_model_avg=[tmp.varname, '_', num2str(config_obs.avgdepth(avgi), '%04i')];
-        tmp.varname_ano_model_avg=[tmp.varname, '_ano_', num2str(config_obs.avgdepth(avgi), '%04i')];
-        tmp.varname_norm_model_avg=[tmp.varname, '_norm_', num2str(config_obs.avgdepth(avgi), '%04i')];
-        tmp.varname_m_model_avg=[tmp.varname, '_m_', num2str(config_obs.avgdepth(avgi), '%04i')];
-        tmp.varname_std_model_avg=[tmp.varname, '_std_', num2str(config_obs.avgdepth(avgi), '%04i')];
+        tmp.varname_model_avg_12rm_sm=[tmp.varname, '_', num2str(config_obs.avgdepth(avgi), '%04i'), '_12rm_sm'];       
 
         hold on
         for obsi=1:config.len_obs
             %% ensemble mean & observation plot
             tmp.obsname_assm=config.obsnames{obsi};
             tmp.obs_abb=tmp.obsname_assm(1:3);
-            tmp.data=CESM2_alldata.([tmp.obs_abb,'_ensm']).(tmp.varname_norm_model_avg);
-            plot(CESM2_grid.datenum,tmp.data, 'color', tmp.plot_color(obsi,:), 'linewidth', 3);
+            tmp.data=CESM2_alldata.([tmp.obs_abb]).(tmp.varname_ensm_model_avg_12rm_sm);
+            plot(OBS.datenum_12rm,tmp.data, 'color', tmp.plot_color(obsi,:), 'linewidth', 3);
 
             %% ensemble member plot (10p)
             tmp.val_transparent = 0.5;
             tmp.plot_color_tr_10p(obsi,:)=get_transparent_rgb(tmp.plot_color(obsi,:), tmp.val_transparent);
             tmp.size_ens=size(CESM2_alldata.(tmp.obs_abb).(tmp.varname_model_avg));
             for ensi=1:tmp.size_ens/2
-                [CESM2_alldata.([tmp.obs_abb]).(tmp.varname_m_model_avg)(ensi), ...
-                CESM2_alldata.([tmp.obs_abb]).(tmp.varname_std_model_avg)(ensi), ...
-                CESM2_alldata.([tmp.obs_abb]).(tmp.varname_ano_model_avg)(ensi,:), ...
-                CESM2_alldata.([tmp.obs_abb]).(tmp.varname_norm_model_avg)(ensi,:)] = ...
-                    get_ano_norm(CESM2_alldata.([tmp.obs_abb]).(tmp.varname_model_avg)(ensi,:));
-                tmp.data=CESM2_alldata.([tmp.obs_abb]).(tmp.varname_norm_model_avg)(ensi,:); %data
-                tsplot{ensi}=plot(CESM2_grid.datenum, tmp.data, 'color', tmp.plot_color_tr_10p(obsi,:));
+                tmp.data=CESM2_alldata.([tmp.obs_abb]).(tmp.varname_model_avg_12rm_sm)(ensi,:); %data
+                tsplot{ensi}=plot(OBS.datenum_12rm, tmp.data, 'color', tmp.plot_color_tr_10p(obsi,:));
                 set(get(get(tsplot{ensi},'Annotation'),'LegendInformation'),'IconDisplayStyle','off'); % turn off legend informatino
             end
 
@@ -336,19 +431,16 @@ for varind=1:length(config.varnames)
             tmp.plot_color_tr_20p(obsi,:)=get_transparent_rgb(tmp.plot_color(obsi,:), tmp.val_transparent);
             tmp.size_ens=size(CESM2_alldata.(tmp.obs_abb).(tmp.varname_model_avg));
             for ensi=tmp.size_ens/2+1:tmp.size_ens
-                [CESM2_alldata.([tmp.obs_abb]).(tmp.varname_m_model_avg)(ensi), ...
-                CESM2_alldata.([tmp.obs_abb]).(tmp.varname_std_model_avg)(ensi), ...
-                CESM2_alldata.([tmp.obs_abb]).(tmp.varname_ano_model_avg)(ensi,:), ...
-                CESM2_alldata.([tmp.obs_abb]).(tmp.varname_norm_model_avg)(ensi,:)] = ...
-                    get_ano_norm(CESM2_alldata.([tmp.obs_abb]).(tmp.varname_model_avg)(ensi,:));
-                tmp.data=CESM2_alldata.([tmp.obs_abb]).(tmp.varname_norm_model_avg)(ensi,:); %data
-                tsplot{ensi}=plot(CESM2_grid.datenum, tmp.data, 'color', tmp.plot_color_tr_20p(obsi,:));
+                tmp.data=CESM2_alldata.([tmp.obs_abb]).(tmp.varname_model_avg_12rm_sm)(ensi,:); %data
+                tsplot{ensi}=plot(OBS.datenum_12rm, tmp.data, 'color', tmp.plot_color_tr_20p(obsi,:));
                 set(get(get(tsplot{ensi},'Annotation'),'LegendInformation'),'IconDisplayStyle','off'); % turn off legend informatino
             end
 
             datetick('x', 'yymmm')
         end
-        plot(OBS.datenum,OBS.(tmp.varname_norm_obs_avg), 'k*');
+%         plot(OBS.datenum_12rm,OBS.(tmp.varname_obs_avg_12rm_sm), 'k*');
+        plot(OBS.datenum_12rm,OBS.(tmp.varname_obs_avg_12rm_sm), 'k', 'linewidth', 3);
+
         xlabel('Year'); ylabel([tmp.varname, '(', tmp.varname_obs, ')']);
 %         lgd=legend([config.obsnames{1}], [config.obsnames{2}], ['OBS(', config_obs.staname,')'], 'Location', 'NorthWest');
         set(gca, 'fontsize', 20)
@@ -358,8 +450,8 @@ for varind=1:length(config.varnames)
         
         dirs.figdir=['/Volumes/kyy_raid/kimyy/Figure/CESM2/ESP/ASSM_EXP/', ...
             config_obs.staname, '/', num2str(config_obs.avgdepth(avgi), '%04i'), 'm'];
-        system(['mkdir -p ', dirs.figdir])
-        tmp.figname=[dirs.figdir, filesep, tmp.varname, '_ano_norm_', tmp.varname_obs, '_', ...
+        system(['mkdir -p ', dirs.figdir]);
+        tmp.figname=[dirs.figdir, filesep, tmp.varname, '_12rm_sm_', tmp.varname_obs, '_', ...
             num2str(config_obs.avgdepth(avgi), '%04i'), 'm_avg_', ...
             num2str(min(config.years)), '_', num2str(max(config.years)), '.tif'];
         set(gcf, 'PaperPosition', [0, 0, 8, 4]);
@@ -368,64 +460,6 @@ for varind=1:length(config.varnames)
         close all;
      end
 
-    
-%% raw plot
-    time_m=min(config.years):1/12:max(config.years)+11/12;
-    tmp.plot_color(1,1:3)=[1,0,0];  % red, projd
-    tmp.plot_color(2,1:3)=[0,1,0];  % green, en4 
-    for avgi=1:length(config_obs.avgdepth)
-        tmp.varname_obs_avg=[tmp.varname_obs, '_', num2str(config_obs.avgdepth(avgi), '%04i')];
-        tmp.varname_model_avg=[tmp.varname, '_', num2str(config_obs.avgdepth(avgi), '%04i')];
-        
-        hold on
-        for obsi=1:config.len_obs
-            %% ensemble mean & observation plot
-            tmp.obsname_assm=config.obsnames{obsi};
-            tmp.obs_abb=tmp.obsname_assm(1:3);
-            tmp.data=CESM2_alldata.([tmp.obs_abb,'_ensm']).(tmp.varname_model_avg); %data
-            plot(CESM2_grid.datenum,tmp.data, 'color', tmp.plot_color(obsi,:), 'linewidth', 3);
-
-            %% ensemble member plot (10p)
-            tmp.val_transparent = 0.5;
-            tmp.plot_color_tr_10p(obsi,:)=get_transparent_rgb(tmp.plot_color(obsi,:), tmp.val_transparent);
-            tmp.size_ens=size(CESM2_alldata.(tmp.obs_abb).(tmp.varname_model_avg));
-            for ensi=1:tmp.size_ens/2
-                tmp.data=CESM2_alldata.([tmp.obs_abb]).(tmp.varname_model_avg)(ensi,:); %data
-                tsplot{ensi}=plot(CESM2_grid.datenum, tmp.data, 'color', tmp.plot_color_tr_10p(obsi,:));
-                set(get(get(tsplot{ensi},'Annotation'),'LegendInformation'),'IconDisplayStyle','off'); % turn off legend informatino
-            end
-
-            %% ensemble member plot (20p)
-            tmp.val_transparent = 0.2;
-            tmp.plot_color_tr_20p(obsi,:)=get_transparent_rgb(tmp.plot_color(obsi,:), tmp.val_transparent);
-            tmp.size_ens=size(CESM2_alldata.(tmp.obs_abb).(tmp.varname_model_avg));
-            for ensi=tmp.size_ens/2+1:tmp.size_ens
-                tmp.data=CESM2_alldata.([tmp.obs_abb]).(tmp.varname_model_avg)(ensi,:); %data
-                tsplot{ensi}=plot(CESM2_grid.datenum, tmp.data, 'color', tmp.plot_color_tr_20p(obsi,:));
-                set(get(get(tsplot{ensi},'Annotation'),'LegendInformation'),'IconDisplayStyle','off'); % turn off legend informatino
-            end
-
-            datetick('x', 'yymmm')
-        end
-        plot(OBS.datenum,OBS.(tmp.varname_obs_avg), 'k*');
-        xlabel('Year'); ylabel([tmp.varname, '(', tmp.varname_obs, ')']);
-%         lgd=legend([config.obsnames{1}], [config.obsnames{2}], ['OBS(', config_obs.staname,')'], 'Location', 'northoutside');
-        set(gca, 'fontsize', 20)
-%         set(lgd, 'fontsize',5)
-        grid minor
-        hold off
-        
-        dirs.figdir=['/Volumes/kyy_raid/kimyy/Figure/CESM2/ESP/ASSM_EXP/', ...
-            config_obs.staname, '/', num2str(config_obs.avgdepth(avgi), '%04i'), 'm'];
-        system(['mkdir -p ', dirs.figdir])
-        tmp.figname=[dirs.figdir, filesep, tmp.varname, '_raw_', tmp.varname_obs, '_', ...
-            num2str(config_obs.avgdepth(avgi), '%04i'), 'm_avg_', ...
-            num2str(min(config.years)), '_', num2str(max(config.years)), '.tif'];
-        set(gcf, 'PaperPosition', [0, 0, 8, 4]);
-        saveas(gcf,tmp.figname,'tif');
-        RemoveWhiteSpace([], 'file', tmp.figname);
-        close all;
-    end
 end
 
 
@@ -493,6 +527,11 @@ function [var_obs, var_flag] = f_varname_obs(var_model)
 % -999 = Bad or missing data
 %  0 = Less than detection limit
 
+%mmol = 10^-3 mol
+%umol = 10^-6 mol
+% 1L ~ 1kg
+%1000L = 1m^3
+% mmol/m^3 ~= umol/kg
 
 var_flag=NaN;
 var_obs=NaN;
@@ -512,19 +551,19 @@ var_obs=NaN;
 %             var_obs='Temp'; % Potential temperature
             var_obs='Temp'; % Water temperature           
         case 'DIC' % mmol/m^3
-            var_obs='CO2'; % DISSOLVED INORGANIC CARBON, umol/kg
+            var_obs='CO2'; % DISSOLVED INORGANIC CARBON, (umol/kg)
 %             var_flag='TCARBN_FLAG_W';
         case 'PO4' %mmol/m^3
-            var_obs='PO4';  % phosphate, umol/kg
+            var_obs='PO4';  % phosphate, (umol/kg)
 %             var_flag='PHSPHT_FLAG_W';
         case 'ALK' % meq/m^3
-            var_obs='alk'; % total alkalinity, umol/kg
+            var_obs='alk'; % total alkalinity, uequiv
 %             var_flag='ALKALI_FLAG_W';
         case 'NO3' %mmol/m^3
-            var_obs='NO3NO2'; % NITRATE
+            var_obs='NO3NO2'; % NITRATE (umol/kg)
 %             var_flag='NITRAT_FLAG_W';
         case 'SiO3' %mmol/m^3
-            var_obs='SiO2';  %silicate, umol/kg
+            var_obs='SiO2';  %silicate, (umol/kg)
 %             var_flag='SILCAT_FLAG_W';            
         case 'NO2'
             var_obs='NO2'; %NITRITE umol /kg
