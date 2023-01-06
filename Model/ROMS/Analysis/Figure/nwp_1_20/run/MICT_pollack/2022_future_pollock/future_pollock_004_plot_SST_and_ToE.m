@@ -16,10 +16,15 @@ RCM_info.name={'test2127', 'test2128', 'test2129', 'test2130', 'test2131', 'ens2
 % 
 RCM_info.model = 'nwp_1_20';
 
-RCM_info.dataroot = ['D:', filesep, 'Data', filesep, 'Model', filesep, ...
+% RCM_info.dataroot = ['D:', filesep, 'Data', filesep, 'Model', filesep, ...
+%     'ROMS', filesep, RCM_info.model, filesep, 'backup_surf', filesep];
+% RCM_info.saveroot = ['D:', filesep, 'Data', filesep, 'Model', filesep, ...
+%     'ROMS', filesep, RCM_info.model, filesep, 'backup_surf', filesep];
+
+RCM_info.dataroot = ['/Volumes/kyy_raid', filesep, 'Data', filesep, 'Model', filesep, ...
     'ROMS', filesep, RCM_info.model, filesep, 'backup_surf', filesep];
-RCM_info.saveroot = ['D:', filesep, 'Data', filesep, 'Model', filesep, ...
-    'ROMS', filesep, RCM_info.model, filesep, 'backup_surf', filesep];
+RCM_info.saveroot= RCM_info.dataroot;
+
 RCM_info.phase = 'run';  % run or spinup
 % RCM_info.region = {'EKB2'}; % NWP, AKP4, ES_KHOA, YS, ...
 RCM_info.region = {'pollock_egg3'}; % NWP, AKP4, ES_KHOA, YS, ...
@@ -68,6 +73,7 @@ for seasons_groupi=1:length(seasons_group)
             addpath(genpath([tmp.dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', tmp.fs, 'Model' ...
                 tmp.fs, 'ROMS', tmp.fs, 'Analysis', tmp.fs, 'Figure', tmp.fs, 'nwp_1_20', tmp.fs ...
                 'run', tmp.fs, 'SSH', tmp.fs, '2phase_2nd', tmp.fs, 'subroutine']));
+            
             %% get colormaps
             [cmaps.byrmap3, tmp.error_status] = Func_0009_get_colormaps('byr3', tmp.dropboxpath);
             [cmaps.byrmap, tmp.error_status] = Func_0009_get_colormaps('byr2', tmp.dropboxpath);        
@@ -83,7 +89,6 @@ for seasons_groupi=1:length(seasons_group)
 
             tmp.variable ='temp';
             
-%             dirs.figrawdir =strcat('D:\MEPL\project\SSH\7th_year(2022)\figure\nwp_1_20\'); % % where figure files will be saved
             dirs.figrawdir =strcat('D:\Research\Ph_D_course\2022_pollock_future\figure',filesep, RCM_info.model, filesep); % % where figure files will be saved            
             tmp.param_script =['C:\Users\user\Dropbox\source\matlab\Model\ROMS\Analysis\Figure\', RCM_info.model, '\run\fig_param\fig_param2_kyy_', tmp.regionname, '.m'];
             dirs.filedir = strcat('D:\Data\Model\ROMS\', RCM_info.model, '\backup_surf\', tmp.testname, '\run\'); % % where data files are          
@@ -92,18 +97,23 @@ for seasons_groupi=1:length(seasons_group)
             
             dirs.matdir_reana = strcat('D:\Data\Model\ROMS\', 'nwp_1_10', '\', 'test06', '\run\mean\');
             
+            tmp.param_script =[tmp.dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', tmp.fs, 'Model', tmp.fs, ...
+            'ROMS', tmp.fs, 'Analysis', tmp.fs, 'Figure', tmp.fs, 'nwp_1_20', tmp.fs, 'run', tmp.fs, ...
+            'fig_param', tmp.fs, 'fig_param2_kyy_', tmp.regionname, '.m'];
+
+
             for gridi=1:length(RCM_grid.gridname)
                 RCM_grid.(['filename_', RCM_grid.gridname{gridi}])=[dirs.griddir, 'NWP_pck_ocean_', RCM_grid.gridname{gridi}, '_NWP.nc'];
             end
             
-            flags.fig_switch(1)=2; % get data
-            flags.fig_switch(2)=1; % temporal mean pcolor
+            flags.fig_switch(1)=1; % get data
+            flags.fig_switch(2)=0; % temporal mean pcolor
             flags.fig_switch(3)=0; % yearly spatial mean time series
             flags.fig_switch(4)=0; % temporal mean vec
             flags.fig_switch(5)=0; % get RMSE and bias
-            flags.fig_switch(6)=2; % temporal mean pcolor diff
+            flags.fig_switch(6)=0; % temporal mean pcolor diff
             flags.fig_switch(7)=0; % temporal mean vec diff
-            flags.fig_switch(8)=0; % temporal mean windvec diff
+            flags.fig_switch(8)=2; % temporal mean windvec diff
 
 %             1/10 SST read
 %             comb

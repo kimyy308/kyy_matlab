@@ -26,7 +26,7 @@ function [lv, pc, var_exp] = Func_0024_EOF_3d(data,X)
     mask_finite=isfinite(sum(data,3)); % get finite mask considering whole period
     K=sum(mask_finite(:)); % length of valid values at certain time
     
-    %% Create 2-D matrix by finite values only
+    %% Create 2-D matrix using finite values only
     data_compact=zeros(K,L);
     for i=1:L
         tmpdata=data(:,:,i);

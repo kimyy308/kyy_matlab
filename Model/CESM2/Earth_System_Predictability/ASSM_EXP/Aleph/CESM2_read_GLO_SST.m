@@ -52,9 +52,9 @@ config.len_ens= length(config.ensnames);
 % config_obs.sta_lon = 360.0-158.0;
 % config_obs.sta_lat = 22.0+45.0/60.0;
 
-config_obs.staname = 'PDO';
-config_obs.sta_lon = [105, 360-98]; % degrees west to 0~360 degrees east
-config_obs.sta_lat = [20 70]; % degrees north
+config_obs.staname = 'GLO';
+config_obs.sta_lon = [0, 360]; % degrees west to 0~360 degrees east
+config_obs.sta_lat = [-100 100]; % degrees north
 
 %bsal; bottle salinity
 %theta; potential temperature
@@ -106,20 +106,18 @@ for varind=1:length(config.varnames)
 
                     CESM2_grid.len_z_t=length(CESM2_grid.z_t);
                     
-                    [CESM2_grid.obs_lon_ind_w, CESM2_grid.obs_lon_ind_e, CESM2_grid.obs_lat_ind_s, CESM2_grid.obs_lat_ind_n] = ...
-                        Func_0012_findind_Y(0.1, [config_obs.sta_lon, config_obs.sta_lat], ...
-                        CESM2_grid.lon_t.*CESM2_grid.ocean_mask, ...
-                        CESM2_grid.lat_t.*CESM2_grid.ocean_mask, 'CESM2'); % find valid lon, lat index near station
-%                     CESM2_grid.obs_lon_ind_w=1;
-%                     CESM2_grid.obs_lat_ind_s=1;
-%                     [CESM2_grid.obs_lon_ind_e, CESM2_grid.obs_lat_ind_n]=size(CESM2_grid.lon_t);
+%                     [CESM2_grid.obs_lon_ind_w, CESM2_grid.obs_lon_ind_e, CESM2_grid.obs_lat_ind_s, CESM2_grid.obs_lat_ind_n] = ...
+%                         Func_0012_findind_Y(0.1, [config_obs.sta_lon, config_obs.sta_lat], ...
+%                         CESM2_grid.lon_t.*CESM2_grid.ocean_mask, ...
+%                         CESM2_grid.lat_t.*CESM2_grid.ocean_mask, 'CESM2'); % find valid lon, lat index near station
+                    CESM2_grid.obs_lon_ind_w=1;
+                    CESM2_grid.obs_lat_ind_s=1;
+                    [CESM2_grid.obs_lon_ind_e, CESM2_grid.obs_lat_ind_n]=size(CESM2_grid.lon_t);
                     CESM2_grid.len_x= CESM2_grid.obs_lon_ind_e-CESM2_grid.obs_lon_ind_w+1;
                     CESM2_grid.len_y= CESM2_grid.obs_lat_ind_n-CESM2_grid.obs_lat_ind_s+1;
                     CESM2_grid.cut_lon_t = CESM2_grid.lon_t(CESM2_grid.obs_lon_ind_w:CESM2_grid.obs_lon_ind_e, ...
                         CESM2_grid.obs_lat_ind_s:CESM2_grid.obs_lat_ind_n);
                     CESM2_grid.cut_lat_t = CESM2_grid.lat_t(CESM2_grid.obs_lon_ind_w:CESM2_grid.obs_lon_ind_e, ...
-                        CESM2_grid.obs_lat_ind_s:CESM2_grid.obs_lat_ind_n);
-                    CESM2_grid.cut_tarea = CESM2_grid.tarea(CESM2_grid.obs_lon_ind_w:CESM2_grid.obs_lon_ind_e, ...
                         CESM2_grid.obs_lat_ind_s:CESM2_grid.obs_lat_ind_n);
                     CESM2_grid.dz_3d= permute(repmat(CESM2_grid.dz',1,CESM2_grid.len_x,CESM2_grid.len_y),[2,3,1]);
                     CESM2_grid.z_t_3d= permute(repmat(CESM2_grid.z_t',1,CESM2_grid.len_x,CESM2_grid.len_y),[2,3,1]);
@@ -154,7 +152,7 @@ for varind=1:length(config.varnames)
                             CESM2_data.(tmp.varname)(:,:,tmp.tind)= tmp.data; % [ens, x, y, year, month, z]
                             CESM2_data.time(tmp.tind)=ncread(tmp.filename, 'time');
 
-                            CESM2_data.(['gm_',tmp.varname])(tmp.tind) = f_gm_var(tmp.data, CESM2_grid.cut_tarea);
+                            CESM2_data.(['gm_',tmp.varname])(tmp.tind) = f_gm_var(tmp.data, CESM2_grid.tarea);
                         else
                             tmp.filename = NaN;
 %                             CESM2_data.(tmp.varname)(ensind,:,:,yind,mind)= NaN;

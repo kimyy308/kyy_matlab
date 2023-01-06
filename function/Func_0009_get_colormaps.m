@@ -55,6 +55,8 @@ switch colormapname
         load([dropboxpath, filesep, 'source', filesep, 'matlab', filesep, 'Common', ...
             filesep, 'Figure', filesep, 'bwr_map.mat'])  % % set colormap (bwrmap)
         colormap = bwrmap;
+    case('jet')
+        colormap =jet;
 end
 
 error_status=1;

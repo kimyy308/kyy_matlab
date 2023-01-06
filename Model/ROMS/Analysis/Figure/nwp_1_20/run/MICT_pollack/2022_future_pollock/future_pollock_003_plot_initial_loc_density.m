@@ -20,10 +20,16 @@ for testnameind=1:length(RCM_info.name)
     for regionind=1:length(RCM_info.all_regions)
         clearvars '*' -except regionind testnameind RCM_info
         % % % 
-        tmp.dropboxpath='C:\users\user/Dropbox/';
+%         tmp.dropboxpath='C:\users\user/Dropbox/';
+%         addpath(genpath('C:\Users\User\Dropbox\source\matlab\Model\ROMS\Analysis\Figure\nwp_1_20\run\MICT_pollack\2022_future_pollock\subroutine\'))
+%         addpath(genpath('C:\Users\User\Dropbox\source\matlab\function\'))
 
-        addpath(genpath('C:\Users\User\Dropbox\source\matlab\Model\ROMS\Analysis\Figure\nwp_1_20\run\MICT_pollack\2022_future_pollock\subroutine\'))
-        addpath(genpath('C:\Users\User\Dropbox\source\matlab\function\'))
+        tmp.dropboxpath = '/Volumes/kyy_raid/kimyy/Dropbox';
+        tmp.fs=filesep;
+        addpath(genpath([tmp.dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', tmp.fs, 'function']));
+        addpath(genpath([tmp.dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', tmp.fs, 'Model', tmp.fs, ...
+            'ROMS', tmp.fs, 'Analysis', tmp.fs, 'Figure', tmp.fs, 'nwp_1_20', tmp.fs, 'run', tmp.fs, ...
+            'MICT_pollack', tmp.fs, '2022_future_pollock', tmp.fs, 'subroutine', tmp.fs]))
         [tmp.dropboxpath, error_status] = Func_0008_set_dropbox_path(computer);
         
         dl=1/10;
@@ -72,15 +78,24 @@ for testnameind=1:length(RCM_info.name)
 % % %         switch region
         [tmp.refpolygon, RCM_grid.domain, tmp.error_status] = Func_0007_get_polygon_data_from_regionname(tmp.regionname);
 
-        tmp.param_script =['C:\users\user/Dropbox/source/matlab/Model/ROMS/Analysis/Figure/nwp_1_20/run/fig_param/fig_param2_kyy_', tmp.regionname, '.m'];
-        dirs.figrawdir =strcat('D:\Research\Ph_D_course\2022_pollock_future\figure\', tmp.testname_ssp, '\'); % % where figure files will be saved
-        dirs.filedir_ssp = strcat('D:\Data\Model\ROMS\nwp_1_20\', tmp.testname_ssp, '\pollock\'); % % where data files are
-        dirs.savedir_ssp = strcat('D:\Data\Model\ROMS\nwp_1_20\', tmp.testname_ssp, '\pollock\');
+%         tmp.param_script =['C:\users\user/Dropbox/source/matlab/Model/ROMS/Analysis/Figure/nwp_1_20/run/fig_param/fig_param2_kyy_', tmp.regionname, '.m'];
+        tmp.param_script =[tmp.dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', tmp.fs, 'Model', tmp.fs, ...
+            'ROMS', tmp.fs, 'Analysis', tmp.fs, 'Figure', tmp.fs, 'nwp_1_20', tmp.fs, 'run', tmp.fs, ...
+            'fig_param', tmp.fs, 'fig_param2_kyy_', tmp.regionname, '.m'];
+
+        dirs.pollock_fdir='/Users/kimyy/Desktop/backup/Research/Ph_D_course/2022_pollock_future/';
+%         dirs.pollock_fdir='D:\Research\Ph_D_course\2022_pollock_future\';
+        dirs.figrawdir =strcat(dirs.pollock_fdir, 'figure', tmp.fs, tmp.testname_ssp, tmp.fs); % % where figure files will be saved
+
+        dirs.nwproot='/Volumes/kyy_raid/Data/Model/ROMS/nwp_1_20/';
+%         dirs.nwproot='D:\Data\Model\ROMS\nwp_1_20\';
+        dirs.filedir_ssp = strcat(dirs.nwproot, tmp.testname_ssp, tmp.fs, 'pollock', tmp.fs); % % where data files are
+        dirs.savedir_ssp = strcat(dirs.nwproot, tmp.testname_ssp, tmp.fs, 'pollock', tmp.fs);
         
-        dirs.filedir_his = strcat('D:\Data\Model\ROMS\nwp_1_20\', tmp.testname_his, '\pollock\'); % % where data files are
-        dirs.savedir_his = strcat('D:\Data\Model\ROMS\nwp_1_20\', tmp.testname_his, '\pollock\');
+        dirs.filedir_his = strcat(dirs.nwproot, tmp.testname_his, tmp.fs, 'pollock', tmp.fs); % % where data files are
+        dirs.savedir_his = strcat(dirs.nwproot, tmp.testname_his, tmp.fs, 'pollock', tmp.fs);
         
-        dirs.figrawdir_allmean = strcat('D:\Research\Ph_D_course\2022_pollock_future\figure\', 'allmean', '\'); % % where figure files will be saved
+        dirs.figrawdir_allmean = strcat(dirs.pollock_fdir, 'figure', tmp.fs, 'allmean', tmp.fs); % % where figure files will be saved
         
 %         inputdir = ['/home/auto/MAMS/Data/01_NWP_1_10/Input/'];
 %         mkdir(savedir);
@@ -92,7 +107,7 @@ for testnameind=1:length(RCM_info.name)
 %                 flags.fig_switch(flagi)=0;
 %             end
 
-            flags.fig_switch(1)=0;  % 'probability plot for pollock spwaning ground, compared to total period';
+            flags.fig_switch(1)=2;  % 'probability plot for pollock spwaning ground, compared to total period';
             flags.fig_switch(2)=0;  %'# of individual plot at each grid (elapsed ?? days)';
             flags.fig_switch(3)=0;  %'spawning ground time series (regime)';
             flags.fig_switch(4)=0;  %'plot ensemble spawning probability at certain time (from std of RCMs)';
@@ -179,47 +194,49 @@ for testnameind=1:length(RCM_info.name)
 %         flags.fig_switch(43)=2; 
 
         
-        dirs.figdir=[dirs.figrawdir,tmp.LTRANS_testname, '\', tmp.regionname, '\spawn\'];
+
+
+        dirs.figdir=[dirs.figrawdir,tmp.LTRANS_testname, tmp.fs, tmp.regionname, '\spawn\'];
         if (exist(strcat(dirs.figdir) , 'dir') ~= 7)
             mkdir(strcat(dirs.figdir));
         end 
         
-        dirs.spdiff_figdir=[dirs.figrawdir,tmp.LTRANS_testname, '\', tmp.regionname, '\spawn_diff\'];
+        dirs.spdiff_figdir=[dirs.figrawdir,tmp.LTRANS_testname, tmp.fs, tmp.regionname, '\spawn_diff\'];
         if (exist(strcat(dirs.spdiff_figdir) , 'dir') ~= 7)
             mkdir(strcat(dirs.spdiff_figdir));
         end 
         
-        dirs.climfigdir=[dirs.figrawdir,tmp.LTRANS_testname, '\', tmp.regionname, '\clim\'];
+        dirs.climfigdir=[dirs.figrawdir,tmp.LTRANS_testname, tmp.fs, tmp.regionname, '\clim\'];
         if (exist(strcat(dirs.climfigdir) , 'dir') ~= 7)
             mkdir(strcat(dirs.climfigdir));
         end 
         
-        dirs.clim_atfigdir=[dirs.figrawdir,tmp.LTRANS_testname, '\', tmp.regionname, '\clim_at\'];
+        dirs.clim_atfigdir=[dirs.figrawdir,tmp.LTRANS_testname, tmp.fs, tmp.regionname, '\clim_at\'];
         if (exist(strcat(dirs.clim_atfigdir) , 'dir') ~= 7)
             mkdir(strcat(dirs.clim_atfigdir));
         end 
         
-        dirs.clim_diff_figdir=[dirs.figrawdir,tmp.LTRANS_testname, '\', tmp.regionname, '\clim_diff\'];
+        dirs.clim_diff_figdir=[dirs.figrawdir,tmp.LTRANS_testname, tmp.fs, tmp.regionname, '\clim_diff\'];
         if (exist(strcat(dirs.clim_diff_figdir) , 'dir') ~= 7)
             mkdir(strcat(dirs.clim_diff_figdir));
         end 
         
-        dirs.clim_atdiff_figdir=[dirs.figrawdir,tmp.LTRANS_testname, '\', tmp.regionname, '\clim_atdiff\'];
+        dirs.clim_atdiff_figdir=[dirs.figrawdir,tmp.LTRANS_testname, tmp.fs, tmp.regionname, '\clim_atdiff\'];
         if (exist(strcat(dirs.clim_atdiff_figdir) , 'dir') ~= 7)
             mkdir(strcat(dirs.clim_atdiff_figdir));
         end 
         
-        dirs.all_figdir=[dirs.figrawdir,tmp.LTRANS_testname, '\', tmp.regionname, '\all\'];
+        dirs.all_figdir=[dirs.figrawdir,tmp.LTRANS_testname, tmp.fs, tmp.regionname, '\all\'];
         if (exist(strcat(dirs.all_figdir) , 'dir') ~= 7)
             mkdir(strcat(dirs.all_figdir));
         end 
         
-        dirs.regime_figdir=[dirs.figrawdir,tmp.LTRANS_testname, '\', tmp.regionname, '\regime_shift\'];
+        dirs.regime_figdir=[dirs.figrawdir,tmp.LTRANS_testname, tmp.fs, tmp.regionname, '\regime_shift\'];
         if (exist(strcat(dirs.regime_figdir) , 'dir') ~= 7)
             mkdir(strcat(dirs.regime_figdir));
         end         
         
-        dirs.figdir_allmean=[dirs.figrawdir_allmean,tmp.LTRANS_testname, '\', tmp.regionname, '\spawn\'];
+        dirs.figdir_allmean=[dirs.figrawdir_allmean,tmp.LTRANS_testname, tmp.fs, tmp.regionname, '\spawn\'];
         if (exist(strcat(dirs.figdir_allmean) , 'dir') ~= 7)
             mkdir(strcat(dirs.figdir_allmean));
         end 
