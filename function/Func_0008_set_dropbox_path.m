@@ -50,6 +50,17 @@ switch tmp.hostname
         addpath(genpath([dropboxpath '/source/matlab/Model/ROMS/Grid_kyy']));
         addpath(genpath([dropboxpath '/source/matlab/Model/ROMS/Roms_tools/Preprocessing_tools']));
         error_status=2;
+    case 'da1'
+        dropboxpath='/proj/kimyy/Dropbox';
+        addpath(genpath([dropboxpath '/source/matlab/Common/m_map']));
+        addpath(genpath([dropboxpath '/source/matlab/Common/Figure']));
+        addpath(genpath([dropboxpath '/source/matlab/Common/cptcmap']));
+        addpath(genpath([dropboxpath '/source/matlab/Common/hatchfill2_r8']));
+    %     addpath(genpath([dropboxpath '/source/matlab/Common/netcdf_old']));
+        addpath(genpath([matlabroot,'/toolbox/matlab/imagesci/'])); %% add new netcdf path
+        addpath(genpath([dropboxpath '/source/matlab/Model/ROMS/Grid_kyy']));
+        addpath(genpath([dropboxpath '/source/matlab/Model/ROMS/Roms_tools/Preprocessing_tools']));
+        error_status=2;
     otherwise % windows
         dropboxpath='C:\Users\User\Dropbox';
         addpath(genpath([dropboxpath '\source\matlab\Common\m_map']));
