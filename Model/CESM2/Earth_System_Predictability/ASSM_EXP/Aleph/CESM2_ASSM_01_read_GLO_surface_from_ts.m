@@ -1,4 +1,4 @@
-% %  Created 06-Jan-2023 by Yong-Yub Kim
+% %  Created 13-Jan-2023 by Yong-Yub Kim
 clc; clear all; close all;
 
 %% set path
@@ -21,7 +21,8 @@ cfg.y=1960:2014; %config.years
 cfg.m=1:12; %config.months
 % cfg.sce='HIST'; %cfg.scenname
 cfg.gr='f09_g17'; %cfg.gridname 
-cfg.obs={'en4.2_ba', 'oras4_ba', 'projdv7.3_ba'}; % cfg.obsname
+% cfg.obs={'en4.2_ba', 'oras4_ba', 'projdv7.3_ba'}; % cfg.obsname
+cfg.obs={'en4.2_ba', 'oras4_ba'}; % cfg.obsname
 
 % cfg.ens={'ba-10p1', 'ba-10p2', 'ba-10p3', 'ba-10p4', 'ba-10p5', ...
 %     'ba-20p1', 'ba-20p2', 'ba-20p3', 'ba-20p4', 'ba-20p5'}; %cfg.ensnames
@@ -75,7 +76,7 @@ end
 for vind=1:length(cfg.v)
     t.v=cfg.v{vind}; %t.varname
     t.dim = Func_0026_CESM2_dim_var(t.v);%t.dimension
-    t.cmp = Func_0025_CESM2_cmpname_var(var_model)(t.v); %t.component
+    t.cmp = Func_0025_CESM2_cmpname_var(t.v); %t.component
 
     for oind=1:length(cfg.obs)
         t.onm=cfg.obs{oind};
@@ -175,7 +176,7 @@ for vind=1:length(cfg.v)
             
                                 %% initialize
                                 CESM2_data.(t.v)(CESM2_grid.l_x, CESM2_grid.l_y, cfg.l_y*cfg.l_m, cfg.l_e)=NaN;
-                                t.i_tmin=1+(t.f_y_min-min(cfg.y))*cfg.l_m; % minimum t index
+                                t.i_tmin=1+(min(cfg.y)-t.f_y_min)*cfg.l_m; % minimum t index
                                 t.i_tmax=((t.f_y_max - min(cfg.y))+1)*cfg.l_m; % length t to read
     
                                 %% read data

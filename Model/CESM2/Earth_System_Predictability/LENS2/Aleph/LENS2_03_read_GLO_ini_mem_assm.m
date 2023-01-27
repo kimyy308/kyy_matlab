@@ -176,7 +176,7 @@ for vind=1:length(cfg.v)
         
                             %% initialize
                             CESM2_data.(t.v)(CESM2_grid.l_x, CESM2_grid.l_y, cfg.l_y*cfg.l_m, cfg.l_e)=NaN;
-                            t.i_tmin=1+(t.f_y_min-min(cfg.y))*cfg.l_m; % minimum t index
+                            t.i_tmin=1+(min(cfg.y)- t.f_y_min)*cfg.l_m; % minimum t index
                             t.i_tmax=((t.f_y_max - min(cfg.y))+1)*cfg.l_m; % length t to read
 
                             %% read data
