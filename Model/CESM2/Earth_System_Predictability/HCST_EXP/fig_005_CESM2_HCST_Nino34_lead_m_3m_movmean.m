@@ -173,7 +173,10 @@ for obsind=1:length(config.obsnames)
         tmp.obsvar_ano_lm_rm=['nino34m_', tmp.varname, '_obs_ano_', tmp.obsname_simple, '_l', tmp.lmonth_str, '_rm'];
         tmp.assmvar_ano_lm_rm=['nino34m_', tmp.varname, '_assm_ano_', tmp.obsname_simple, '_l', tmp.lmonth_str, '_rm'];
         
-        tmp.rm_window=3;
+%         tmp.rm_window=3;
+        tmp.rm_window1=3;
+        tmp.rm_window=[0 tmp.rm_window1-1]; % forward
+
         data.(tmp.modelvar_ano_lm_rm)=movmean(data.(tmp.modelvar_ano_lm), tmp.rm_window, 'Endpoints', 'fill');
         data.(tmp.obsvar_ano_lm_rm)=movmean(data.(tmp.obsvar_ano_lm), tmp.rm_window, 'Endpoints', 'fill');
         data.(tmp.assmvar_ano_lm_rm)=movmean(data.(tmp.assmvar_ano_lm), tmp.rm_window, 'Endpoints', 'fill');

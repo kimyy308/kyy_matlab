@@ -1,4 +1,4 @@
-function [data_det] = Func_0028_detrend_linear_1d(data)
+function [data_det] = Func_0028_detrend_linear_1d(data, nanflag)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % function [psd, psd_sig, freq] = Func_0027_get_PSD_siglev(data, sig_level, DOF)
@@ -7,6 +7,7 @@ function [data_det] = Func_0028_detrend_linear_1d(data)
 %
 %  input:
 %  data         Time Series Data (t)
+%  nanflag      'omitnan' (optional)
 %
 %  output:
 %  psd          linearly detrended data (t)
@@ -19,12 +20,24 @@ function [data_det] = Func_0028_detrend_linear_1d(data)
 %% squeeze
 data = squeeze(data)';
 
-n=length(data);
-t=1:n;
+if nargin < 2
+    n=length(data);
+    t=1:n;
+    
+    p=polyfit(t,data,1); %linear fit
+    data_fit=p(1)*t + p(2);
+    data_det=data-data_fit;
 
-p=polyfit(t,data,1); %linear fit
-data_fit=p(1)*t + p(2);
-data_det=data-data_fit; 
+else
+    data_finite=data(isfinite(data));
+    n=length(data_finite);
+    t=1:n;
+    p=polyfit(t,data_finite,1); %linear fit
+    data_fit=p(1)*t + p(2);
+    data_det_finite=data_finite-data_fit;
+    data_det=data;
+    data_det(isfinite(data))=data_det_finite;
+end
 
 end
 
