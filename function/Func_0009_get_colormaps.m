@@ -57,6 +57,8 @@ switch colormapname
         colormap = bwrmap;
     case('jet')
         colormap =jet;
+    case('gray')
+        colormap = [0.8 0.8 0.8];
 end
 
 error_status=1;

@@ -7,13 +7,13 @@ tmp.fs=filesep;
 addpath(genpath([tmp.dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', tmp.fs, 'function']));
             [tmp.dropboxpath, tmp.error_status] = Func_0008_set_dropbox_path(computer);
 
-dirs.root='/Volumes/kyy_raid/kimyy/Model/CMIP/CMIP6_analysis/tos/NA_reg/feb/runmean_9';
-dirs.figroot='/Volumes/kyy_raid/kimyy/Figure/CMIP/CMIP6_analysis/tos/NA_reg/feb/runmean_9';
-dirs.root='/Volumes/kyy_raid/kimyy/Model/CMIP/CMIP6_analysis/tos/NA_reg/feb/runmean_9/duplicated';
-dirs.figroot='/Volumes/kyy_raid/kimyy/Figure/CMIP/CMIP6_analysis/tos/NA_reg/feb/runmean_9/duplicated';
+% dirs.root='/Volumes/kyy_raid/kimyy/Model/CMIP/CMIP6_analysis/wspd/Gobi_reg/apr/runmean_9';
+% dirs.figroot='/Volumes/kyy_raid/kimyy/Figure/CMIP/CMIP6_analysis/wspd/Gobi_reg/apr/runmean_9';
+dirs.root='/Volumes/kyy_raid/kimyy/Model/CMIP/CMIP6_analysis/wspd/Gobi_reg/apr/runmean_9/duplicated';
+dirs.figroot='/Volumes/kyy_raid/kimyy/Figure/CMIP/CMIP6_analysis/wspd/Gobi_reg/apr/runmean_9/duplicated';
 dir_res=dir(dirs.root);
 
-tmp.varn='tos';
+tmp.varn='wspd';
 
 tmp.fs=filesep;
 tmp.f_num=length(dir_res);
@@ -87,27 +87,27 @@ for ind_f=1:tmp.f_num
         RemoveWhiteSpace([], 'file', tmp.figname);
         close all;
 
-
-% %         %% var plot (fut)
-% %         plot(1./freq,CMIP6_fut{ind_f}.var, '-o', 'linewidth', 2);
-% %         hold on
-% %         plot(1./freq,CMIP6_fut{ind_f}.psd_sig, '--*', 'linewidth', 2);
-% %         xlabel('Period(Y)');
-% %         ylabel('Variance');
-% %         title(CMIP6_fut{ind_f}.model)
-% %         legend('fut', 'sig-95%')
-% %         
-% %         set(gca, 'fontsize', 20);
-% %         grid minor
-% % 
-% %         dirs.figdir=[dirs.figroot, tmp.fs, 'var'];
-% %         system(['mkdir -p ', dirs.figdir]);
-% %         tmp.figname=[dirs.figdir, tmp.fs, ...
-% %                 'CMIP6_fut_', CMIP6_hist{ind_f}.model, '_', 'var_', tmp.varn, '.tif'];
-% %         set(gcf, 'PaperPosition', [0, 0, 6, 4]);
-% %         saveas(gcf,tmp.figname,'tif');
-% %         RemoveWhiteSpace([], 'file', tmp.figname);
-% %         close all;
+% % % 
+% % % % %         %% var plot (fut)
+% % % % %         plot(1./freq,CMIP6_fut{ind_f}.var, '-o', 'linewidth', 2);
+% % % % %         hold on
+% % % % %         plot(1./freq,CMIP6_fut{ind_f}.psd_sig, '--*', 'linewidth', 2);
+% % % % %         xlabel('Period(Y)');
+% % % % %         ylabel('Variance');
+% % % % %         title(CMIP6_fut{ind_f}.model)
+% % % % %         legend('fut', 'sig-95%')
+% % % % %         
+% % % % %         set(gca, 'fontsize', 20);
+% % % % %         grid minor
+% % % % % 
+% % % % %         dirs.figdir=[dirs.figroot, tmp.fs, 'var'];
+% % % % %         system(['mkdir -p ', dirs.figdir]);
+% % % % %         tmp.figname=[dirs.figdir, tmp.fs, ...
+% % % % %                 'CMIP6_fut_', CMIP6_hist{ind_f}.model, '_', 'var_', tmp.varn, '.tif'];
+% % % % %         set(gcf, 'PaperPosition', [0, 0, 6, 4]);
+% % % % %         saveas(gcf,tmp.figname,'tif');
+% % % % %         RemoveWhiteSpace([], 'file', tmp.figname);
+% % % % %         close all;
 
 
         %% raw-det plot
@@ -115,7 +115,7 @@ for ind_f=1:tmp.f_num
         hold on
         plot(1:50,CMIP6_fut{ind_f}.data_det, 'linewidth', 2);
         xlabel('Year');
-        ylabel(['Temp(^oC)']);
+        ylabel(['WSPD(m/s)']);
         title(CMIP6_hist{ind_f}.model)
         legend('hist', 'fut')
        
@@ -136,7 +136,7 @@ for ind_f=1:tmp.f_num
         hold on
         plot(1:50,CMIP6_fut{ind_f}.data, 'linewidth', 2);
         xlabel('Year');
-        ylabel(['Temp(^oC)']);
+        ylabel(['WSPD(m/s)']);
         title(CMIP6_hist{ind_f}.model)
         legend('hist', 'fut')
        
@@ -182,13 +182,13 @@ for ind_f=1:tmp.f_num
 
 
         %% hist file save
-        tmp.sf_name=[dirs.s_dir, tmp.fs, 'HIST_NASST_spectrum_', CMIP6_hist{ind_f}.model, '.nc'];
+        tmp.sf_name=[dirs.s_dir, tmp.fs, 'HIST_GobiWSPD_spectrum_', CMIP6_hist{ind_f}.model, '.nc'];
         CMIP6_hist{ind_f}.years=1961:2010;
         ncid = netcdf.create(tmp.sf_name, 'NETCDF4');
         freq_dimid = netcdf.defDim(ncid, 'frequency', length(freq));
         year_dimid = netcdf.defDim(ncid, 'year', length(CMIP6_hist{ind_f}.years));
         netcdf.putAtt(ncid,netcdf.getConstant('NC_GLOBAL'), ...
-                            'source', [' Spectral analysis from CMIP6_ ',CMIP6_hist{ind_f}.model, '_Feb_NASST_9y_runmean' ]);
+                            'source', [' Spectral analysis from CMIP6_ ',CMIP6_hist{ind_f}.model, '_Apr_GobiWSPD_9y_runmean' ]);
         netcdf.putAtt(ncid,netcdf.getConstant('NC_GLOBAL'), ...
                             'author', 'Created by Y.Y.Kim');
         netcdf.putAtt(ncid,netcdf.getConstant('NC_GLOBAL'), ...
@@ -203,28 +203,28 @@ for ind_f=1:tmp.f_num
         netcdf.putAtt(ncid,year_varid,'units','year');
 
         data_varid=netcdf.defVar(ncid, 'data', 'NC_DOUBLE', year_dimid);
-        netcdf.putAtt(ncid,data_varid,'long_name','detrended 9 year running mean NASST');
-        netcdf.putAtt(ncid,data_varid,'units','^oC');
+        netcdf.putAtt(ncid,data_varid,'long_name','detrended 9 year running mean GobiWSPD');
+        netcdf.putAtt(ncid,data_varid,'units','m/s');
 
         psd_varid=netcdf.defVar(ncid, 'psd', 'NC_DOUBLE', freq_dimid);
         netcdf.putAtt(ncid,psd_varid,'long_name','Power Spectral Density');
-        netcdf.putAtt(ncid,psd_varid,'units','^oC^2*year');
+        netcdf.putAtt(ncid,psd_varid,'units','(m/s)^2*year');
 
         psd_sig_varid=netcdf.defVar(ncid, 'psd_sig', 'NC_DOUBLE', freq_dimid);
         netcdf.putAtt(ncid,psd_sig_varid,'long_name','significant psd');
-        netcdf.putAtt(ncid,psd_sig_varid,'units','^oC^2*year');
+        netcdf.putAtt(ncid,psd_sig_varid,'units','(m/s)^2*year');
 
         markov_sig95_varid=netcdf.defVar(ncid, 'marcov_sig95', 'NC_DOUBLE', freq_dimid);
         netcdf.putAtt(ncid,markov_sig95_varid,'long_name','95% Statistical significance psd based on Marcov process');
-        netcdf.putAtt(ncid,markov_sig95_varid,'units','^oC^2*year');
+        netcdf.putAtt(ncid,markov_sig95_varid,'units','(m/s)^2*year');
         
         variance_varid=netcdf.defVar(ncid, 'variance', 'NC_DOUBLE', freq_dimid);
         netcdf.putAtt(ncid,variance_varid,'long_name','Variance');
-        netcdf.putAtt(ncid,variance_varid,'units','^oC^2');
+        netcdf.putAtt(ncid,variance_varid,'units','(m/s)^2');
 
         variance_sig_varid=netcdf.defVar(ncid, 'variance_sig', 'NC_DOUBLE', freq_dimid);
         netcdf.putAtt(ncid,variance_sig_varid,'long_name','significant variance');
-        netcdf.putAtt(ncid,variance_sig_varid,'units','^oC^2');
+        netcdf.putAtt(ncid,variance_sig_varid,'units','(m/s)^2');
         
         netcdf.endDef(ncid);
 
@@ -241,12 +241,12 @@ for ind_f=1:tmp.f_num
 
         %% future file save
         CMIP6_fut{ind_f}.years=2047:2096;
-        tmp.sf_name=[dirs.s_dir, tmp.fs, 'SSP585_NASST_spectrum_', CMIP6_fut{ind_f}.model, '.nc'];
+        tmp.sf_name=[dirs.s_dir, tmp.fs, 'SSP585_GobiWSPD_spectrum_', CMIP6_fut{ind_f}.model, '.nc'];
         ncid = netcdf.create(tmp.sf_name, 'NETCDF4');
         freq_dimid = netcdf.defDim(ncid, 'frequency', length(freq));
         year_dimid = netcdf.defDim(ncid, 'year', length(CMIP6_fut{ind_f}.years));
         netcdf.putAtt(ncid,netcdf.getConstant('NC_GLOBAL'), ...
-                            'source', [' Spectral analysis from CMIP6_ ',CMIP6_hist{ind_f}.model, '_Feb_NASST_9y_runmean' ]);
+                            'source', [' Spectral analysis from CMIP6_ ',CMIP6_hist{ind_f}.model, '_Apr_GobiWSPD_9y_runmean' ]);
         netcdf.putAtt(ncid,netcdf.getConstant('NC_GLOBAL'), ...
                             'author', 'Created by Y.Y.Kim');
         netcdf.putAtt(ncid,netcdf.getConstant('NC_GLOBAL'), ...
@@ -261,28 +261,28 @@ for ind_f=1:tmp.f_num
         netcdf.putAtt(ncid,year_varid,'units','year');
 
         data_varid=netcdf.defVar(ncid, 'data', 'NC_DOUBLE', year_dimid);
-        netcdf.putAtt(ncid,data_varid,'long_name','detrended 9 year running mean NASST');
-        netcdf.putAtt(ncid,data_varid,'units','^oC');
+        netcdf.putAtt(ncid,data_varid,'long_name','detrended 9 year running mean GobiWSPD');
+        netcdf.putAtt(ncid,data_varid,'units','m/s');
 
         psd_varid=netcdf.defVar(ncid, 'psd', 'NC_DOUBLE', freq_dimid);
         netcdf.putAtt(ncid,psd_varid,'long_name','Power Spectral Density');
-        netcdf.putAtt(ncid,psd_varid,'units','^oC^2*year');
+        netcdf.putAtt(ncid,psd_varid,'units','(m/s)^2*year');
 
         psd_sig_varid=netcdf.defVar(ncid, 'psd_sig', 'NC_DOUBLE', freq_dimid);
         netcdf.putAtt(ncid,psd_sig_varid,'long_name','significant psd');
-        netcdf.putAtt(ncid,psd_sig_varid,'units','^oC^2*year');
+        netcdf.putAtt(ncid,psd_sig_varid,'units','(m/s)^2*year');
 
         markov_sig95_varid=netcdf.defVar(ncid, 'marcov_sig95', 'NC_DOUBLE', freq_dimid);
         netcdf.putAtt(ncid,markov_sig95_varid,'long_name','95% Statistical significance psd based on Marcov process');
-        netcdf.putAtt(ncid,markov_sig95_varid,'units','^oC^2*year');
+        netcdf.putAtt(ncid,markov_sig95_varid,'units','(m/s)^2*year');
         
         variance_varid=netcdf.defVar(ncid, 'variance', 'NC_DOUBLE', freq_dimid);
         netcdf.putAtt(ncid,variance_varid,'long_name','Variance');
-        netcdf.putAtt(ncid,variance_varid,'units','^oC^2');
+        netcdf.putAtt(ncid,variance_varid,'units','(m/s)^2');
 
         variance_sig_varid=netcdf.defVar(ncid, 'variance_sig', 'NC_DOUBLE', freq_dimid);
         netcdf.putAtt(ncid,variance_sig_varid,'long_name','significant variance');
-        netcdf.putAtt(ncid,variance_sig_varid,'units','^oC^2');
+        netcdf.putAtt(ncid,variance_sig_varid,'units','(m/s)^2');
         
         netcdf.endDef(ncid);
 
@@ -317,7 +317,7 @@ for ind_f=1:tmp.f_num
         plot(tmp.time,tmp.data, 'linewidth', 2);
         hold on
         xlabel('Year');
-        ylabel(['Temp(^oC)']);
+        ylabel(['WSPD(m/s)']);
         
         set(gca, 'fontsize', 20);
         grid minor
@@ -343,7 +343,7 @@ for ind_f=1:tmp.f_num
         plot(tmp.time,tmp.data_det, 'linewidth', 2);
         hold on
         xlabel('Year');
-        ylabel(['Temp(^oC)']);
+        ylabel(['WSPD(m/s)']);
         
         set(gca, 'fontsize', 20);
         grid minor
