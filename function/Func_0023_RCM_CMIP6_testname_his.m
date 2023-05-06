@@ -43,6 +43,8 @@ function [testname_his, error_status] = Func_0023_RCM_CMIP6_testname_his(testnam
             testname_his='ens2204';
         case {'prob_ens2203'}
             testname_his='prob_ens2204';
+        case {'ENS4_fut'}
+            testname_his='ENS4_hist';
            
     end
     error_status=1;

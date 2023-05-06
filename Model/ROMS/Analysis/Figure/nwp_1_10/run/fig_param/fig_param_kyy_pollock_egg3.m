@@ -1,8 +1,8 @@
 % % this script is for north western pacific region figure
 
 % % set colorbar parameter
-load C:\Users\user\Dropbox\source\matlab\Common\Figure\jet_mod  % % set colormap (jet_modified)
-run('C:\Users\user\Dropbox\source\matlab\Common\Figure\bwr_map')  % % set colormap (blue and white)
+load /Volumes/kyy_raid/kimyy/Dropbox/source/matlab/Common/Figure/jet_mod  % % set colormap (jet_modified)
+run('/Volumes/kyy_raid/kimyy/Dropbox/source/matlab/Common/Figure/bwr_map')  % % set colormap (blue and white)
 % for i = 1:3
 %     bwrmap2(1:9901,i)=interp1((1:100)',bwrmap(1:100,i),(1:0.01:100)');
 % end
@@ -89,18 +89,18 @@ m_contour_fontweight = 'bold';
 m_quiver_title_fontsize = 20;
 m_quiver_x_interval = 3;
 m_quiver_y_interval = 3;
-m_quiver_vector_size = 3;
+m_quiver_vector_size = 4;
 m_quiver_vector_color = 'k';
 m_quiver_LineWidth = 0.5;
 % m_quiver_ref_vec_x_range = 390:395;
 % m_quiver_ref_vec_y_range = 745:750;
-m_quiver_ref_u_value = 0.5;
+m_quiver_ref_u_value = 0.2;
 m_quiver_ref_v_value = m_quiver_ref_u_value/10000.0;
 m_quiver_ref_text = [num2str(m_quiver_ref_u_value),' m/s'];
 m_quiver_ref_u_diff_value = 0.1;
 m_quiver_ref_v_diff_value = m_quiver_ref_u_value/10000.0;
 m_quiver_ref_diff_text = [num2str(m_quiver_ref_u_diff_value),' m/s'];
-m_quiver_ref_text_fontsize = 20;
+m_quiver_ref_text_fontsize = 15;
 m_quiver_ref_text_x_location = 127.5;
 m_quiver_ref_text_y_location = 37.5;
 

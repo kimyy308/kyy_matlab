@@ -8,7 +8,11 @@ RCM_info.model_reana = 'nwp_1_10';
 
 % RCM_info.name={ 'test2127'};
 % RCM_info.name={'test2117', 'test2118', 'test2119', 'test2120', 'test2121'};
-RCM_info.name={'test2127', 'test2128', 'test2129', 'test2130', 'test2131'};
+% RCM_info.name={'test2127', 'test2128', 'test2129', 'test2130', 'test2131'};
+% RCM_info.name={'test2127', 'test2128', 'test2129', 'test2130'};
+% RCM_info.name={'test2117', 'test2118', 'test2119', 'test2120'};
+RCM_info.name={'test2127', 'test2128', 'test2129', 'test2130'};
+
 % 
 RCM_info.model = 'nwp_1_20';
 
@@ -21,8 +25,8 @@ RCM_info.saveroot_reana = ['D:', filesep, 'Data', filesep, 'Model', filesep, ...
 RCM_info.saveroot = ['D:', filesep, 'Data', filesep, 'Model', filesep, ...
     'ROMS', filesep, RCM_info.model, filesep, 'backup_surf', filesep];
 RCM_info.phase = 'run';  % run or spinup
-RCM_info.region = {'EKB2'}; % NWP, AKP4, ES_KHOA, YS, ...
-% RCM_info.region = {'pollock_egg3'}; % NWP, AKP4, ES_KHOA, YS, ...
+% RCM_info.region = {'EKB2'}; % NWP, AKP4, ES_KHOA, YS, ...
+RCM_info.region = {'pollock_egg3'}; % NWP, AKP4, ES_KHOA, YS, ...
 
 RCM_info.vars = {'SST'};
 
@@ -30,10 +34,10 @@ RCM_info.vars = {'SST'};
 % RCM_info.years = [2015:2050, 2081:2100];  
 % RCM_info.years = [1983:1987];  
 % RCM_info.years = [1988:1992];  
-RCM_info.years = [1995:2014];  
+% RCM_info.years = [1995:2014];  
 % RCM_info.years = [1993:2021];  
 % RCM_info.years = [2081:2100];  
-% RCM_info.years = [2015:2100];  
+RCM_info.years = [2015:2100];  
 
 % seasons_group={'February', 'January', 'JF-'};
 seasons_group={'JF-'};
@@ -45,9 +49,10 @@ for seasons_groupi=1:length(seasons_group)
             for varind2=1:length(RCM_info.vars)
 
                 tmp.fs=filesep;  
-                addpath(genpath('C:\Users\User\Dropbox\source\matlab\Model\ROMS\Analysis\Figure\nwp_1_20\run\MICT_pollack\2022_future_pollock\subroutine\'))
+%                 addpath(genpath('C:/Users/User/Dropbox/source/matlab/Model/ROMS/Analysis/Figure/nwp_1_20/run/MICT_pollack/2022_future_pollock/subroutine/'))
+                addpath(genpath('/Volumes/kyy_raid/kimyy/Dropbox/source/matlab/Model/ROMS/Analysis/Figure/nwp_1_20/run/MICT_pollack/2022_future_pollock/subroutine/'))
 
-                tmp.dropboxpath = 'C:\Users\User\Dropbox';
+                tmp.dropboxpath = '/Volumes/kyy_raid/kimyy/Dropbox';
                 addpath(genpath([tmp.dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', tmp.fs, 'function']));
                 [tmp.dropboxpath, tmp.error_status] = Func_0008_set_dropbox_path(computer);
                 addpath(genpath([tmp.dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', tmp.fs, 'Model' ...
@@ -64,13 +69,16 @@ for seasons_groupi=1:length(seasons_group)
 
     %             tmp.variable ='temp';
                 tmp.variable=RCM_info.vars{varind2};
+        
 
-                dirs.figrawdir =strcat('D:\Research\Ph_D_course\2022_pollock_future\figure',filesep, 'all', filesep); % % where figure files will be saved            
-                tmp.param_script =['C:\Users\user\Dropbox\source\matlab\Model\ROMS\Analysis\Figure\', RCM_info.model, '\run\fig_param\fig_param2_kyy_', tmp.regionname, '.m'];
-                dirs.filedir = strcat('D:\Data\Model\ROMS\', RCM_info.model, '\backup_surf\', tmp.testname, '\run\'); % % where data files are          
-                dirs.matdir = strcat('D:\Data\Model\ROMS\', RCM_info.model, '\', tmp.testname, '\run\mean\');
-                dirs.matdir_reana = strcat('D:\Data\Model\ROMS\', RCM_info.model_reana, '\', tmp.testname_reana, '\run\mean\');
-                dirs.griddir = strcat('D:\Data\Model\ROMS\', RCM_info.model, '\backup_surf\'); % % where grid data files are            
+                dirs.figrawdir =strcat('/Users/kimyy/Desktop/backup/Research/Ph_D_course/2022_pollock_future/figure',filesep, 'all', filesep); % % where figure files will be saved            
+%                 tmp.param_script =['C:/Users/user/Dropbox/source/matlab/Model/ROMS/Analysis/Figure/', RCM_info.model, '/run/fig_param/fig_param2_kyy_', tmp.regionname, '.m'];
+                param_script =[tmp.dropboxpath, '/source/matlab/Model/ROMS/Analysis/Figure/', RCM_info.model, '/run/fig_param/fig_param2_kyy_', tmp.regionname, '.m'];
+
+                dirs.filedir = strcat('/Volumes/kyy_raid/Data/Model/ROMS/', RCM_info.model, '/backup_surf/', tmp.testname, '/run/'); % % where data files are          
+                dirs.matdir = strcat('/Volumes/kyy_raid/Data/Model/ROMS/', RCM_info.model, '/', tmp.testname, '/run/mean/');
+                dirs.matdir_reana = strcat('/Volumes/kyy_raid/Data/Model/ROMS/', RCM_info.model_reana, '/', tmp.testname_reana, '/run/mean/');
+                dirs.griddir = strcat('/Volumes/kyy_raid/Data/Model/ROMS/', RCM_info.model, '/backup_surf/'); % % where grid data files are            
 
                 tmp.matname = [dirs.matdir, tmp.testname, '_', tmp.regionname, '_', tmp.variable,...
                         '_mean_', num2str(min(RCM_info.years),'%04i'), '-', num2str(max(RCM_info.years),'%04i'),...
@@ -121,7 +129,9 @@ dirs.figdir=[dirs.figrawdir,'ts', tmp.fs, tmp.regionname, tmp.fs, tmp.variable, 
             set(mslplot2_all{2},'Marker','^');
             set(mslplot2_all{3},'Marker','o');
             set(mslplot2_all{4},'Marker','+');
-            set(mslplot2_all{5},'Marker','square');
+            if length(RCM_info.name) >=5
+                set(mslplot2_all{5},'Marker','square');
+            end
 %             set(mslplot2_all{6},'Marker','pentagram');
             %% ens
             mslplot2_all{testind+2}=plot(RCM_info.years,RCM_all_data.ens.spa_yearly_mean,'r');
@@ -138,8 +148,8 @@ dirs.figdir=[dirs.figrawdir,'ts', tmp.fs, tmp.regionname, tmp.fs, tmp.variable, 
 %             ylim([-2 13]) %EKB2, 95-14
 %             ylim([2 12]) %pollock_egg3, 95-14
 %             ylim([2 18]) %EKB2, 2081-2100
-            ylim([-3 18]) %EKB2, 2015-2100
-
+%             ylim([-3 18]) %EKB2, 2015-2100
+            ylim([2 18]) %pollock_egg3, 2015-2100
 %             set(mslplot_all{5},'LineWidth',2);
 %             set(mslplot2_all{5},'LineWidth',2);
 %             set(mslplot,'LineWidth',2);
@@ -171,7 +181,7 @@ dirs.figdir=[dirs.figrawdir,'ts', tmp.fs, tmp.regionname, tmp.fs, tmp.variable, 
             set(gcf,'PaperPosition', [0 0 24 12])   
             hold off
             saveas(gcf,tmp.tifname,'jpg'); RemoveWhiteSpace([], 'file', tmp.tifname);
-%             save(['D:\Data\Model\ROMS\nwp_1_20\transport_all\', scenname, '_RCM_all.mat'], 'xData_yearly', 'trdata2_yearly');
+%             save(['D:/Data/Model/ROMS/nwp_1_20/transport_all/', scenname, '_RCM_all.mat'], 'xData_yearly', 'trdata2_yearly');
             grid off
 %         end
         close all;

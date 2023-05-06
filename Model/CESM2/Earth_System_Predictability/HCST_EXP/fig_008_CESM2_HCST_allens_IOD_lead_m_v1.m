@@ -18,7 +18,7 @@ cfg.var='SST';
 dirs.hcstroot=['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/HCST_EXP/archive/atm/', cfg.var];
 dirs.obsroot=['/Volumes/kyy_raid/kimyy/Observation/ERSST/monthly_reg_cam'];
 dirs.figroot=['/Volumes/kyy_raid/kimyy/Figure/CESM2/ESP/HCST_EXP/archive/atm/', cfg.var];
-cfg.iyears=1991:2020;
+cfg.iyears=1970:2020;
 cfg.months=1:12;
 % cfg.scenname='HIST';
 cfg.gnm='f09_g17';
@@ -37,6 +37,8 @@ cfg.len_t= cfg.len_t_y * cfg.len_t_m;
 cfg.region1 = 'IODw';
 cfg.region2 = 'IODe';
 cfg.region = 'IOD';
+
+cfg.max_lead_month=12;
 %% grid set(mask from model)
 % tmp.gridname = [dirs.hcstroot, tmp.fs, 'grid.nc'];
 % 
@@ -200,8 +202,8 @@ tmp.ld=length(data.(varn.modelvar1_all));
 data.(varn.obsvar1_clim)=reshape(data.(varn.obsvar1_all), [12, tmp.ld_obs/12]);
 data.(varn.obsvar1_clim)=mean(data.(varn.obsvar1_clim),2,'omitnan');
 
-data.(varn.obsvar1_clim)=reshape(data.(varn.obsvar1_all)-data.(varn.obsvar1_fit)(tmp.ld_obs), [12, tmp.ld_obs/12]);
-data.(varn.obsvar2_clim)=reshape(data.(varn.obsvar2_all)-data.(varn.obsvar2_fit)(tmp.ld_obs), [12, tmp.ld_obs/12]);
+data.(varn.obsvar1_clim)=reshape(data.(varn.obsvar1_all)-data.(varn.obsvar1_fit)(1:tmp.ld_obs), [12, tmp.ld_obs/12]);
+data.(varn.obsvar2_clim)=reshape(data.(varn.obsvar2_all)-data.(varn.obsvar2_fit)(1:tmp.ld_obs), [12, tmp.ld_obs/12]);
 data.(varn.modelvar1_clim)=reshape(data.(varn.modelvar1_all)-data.(varn.modelvar1_fit), [12, tmp.ld/12]);
 data.(varn.modelvar2_clim)=reshape(data.(varn.modelvar2_all)-data.(varn.modelvar2_fit), [12, tmp.ld/12]);
 
@@ -213,7 +215,8 @@ data.(varn.modelvar2_clim)=mean(data.(varn.modelvar2_clim),2,'omitnan');
 %% make anomaly for nino index
 for lmonth=0:cfg.proj_year*12-1
     tmp.lmonth_str=num2str(lmonth, '%03i');
-    tmp.avgwin_min=find(cfg.iyears==1996)-floor(lmonth/12);
+%     tmp.avgwin_min=find(cfg.iyears==1996)-floor(lmonth/12);
+    tmp.avgwin_min=find(cfg.iyears==min(cfg.iyears)+5)-floor(lmonth/12);
     tmp.avgwin_max=find(cfg.iyears==2020)-floor(lmonth/12);
     
     tmp.tind_fit=(cfg.iyears-min(cfg.iyears))*12+1 + lmonth;
@@ -252,9 +255,23 @@ for lmonth=0:cfg.proj_year*12-1
     data.(varn.obsvar2_ano_lm)=data.(varn.obsvar2_lm) ...
         - data.(varn.obsvar2_fit)(tmp.tind_fit) ...
         - data.(varn.obsvar2_clim)(tmp.tind_clim);
+
+    %% normalization
+    tmp.m1_std=std(data.(varn.modelvar1_ano_lm), 'omitnan');
+    tmp.m2_std=std(data.(varn.modelvar2_ano_lm), 'omitnan');
+    tmp.o1_std=std(data.(varn.obsvar1_ano_lm), 'omitnan');
+    tmp.o2_std=std(data.(varn.obsvar2_ano_lm), 'omitnan');
+    data.(varn.modelvar1_ano_lm)= data.(varn.modelvar1_ano_lm) ./tmp.m1_std; 
+    data.(varn.modelvar2_ano_lm)= data.(varn.modelvar2_ano_lm) ./tmp.m2_std; 
+    data.(varn.obsvar1_ano_lm) = data.(varn.obsvar1_ano_lm) ./tmp.o1_std;
+    data.(varn.obsvar2_ano_lm) = data.(varn.obsvar2_ano_lm) ./tmp.o2_std;
+
+    %% get IOD
 %     data.(tmp.assmvar_ano_lm)=data.(tmp.assmvar_lm)-tmp.assm_ltm;
     data.(varn.modelvar_ano_lm)=data.(varn.modelvar1_ano_lm) - data.(varn.modelvar2_ano_lm);
     data.(varn.obsvar_ano_lm)=data.(varn.obsvar1_ano_lm) - data.(varn.obsvar2_ano_lm);
+
+    %% running mean
     varn.modelvar_ano_lm_rm=[cfg.region, 'm_', varn.varname, '_model_ano_',  '_l', tmp.lmonth_str, '_rm'];
     varn.obsvar_ano_lm_rm=[cfg.region, 'm_', varn.varname, '_obs_ano_',  '_l', tmp.lmonth_str, '_rm'];
     varn.modelvar1_ano_lm_rm=[cfg.region1, 'm_', varn.varname, '_model_ano_',  '_l', tmp.lmonth_str, '_rm'];
@@ -272,6 +289,22 @@ for lmonth=0:cfg.proj_year*12-1
     data.(varn.modelvar2_ano_lm_rm)=movmean(data.(varn.modelvar2_ano_lm), tmp.rm_window, 'Endpoints', 'fill');
     data.(varn.obsvar2_ano_lm_rm)=movmean(data.(varn.obsvar2_ano_lm), tmp.rm_window, 'Endpoints', 'fill');
 %     data.(tmp.assmvar_ano_lm_rm)=movmean(data.(tmp.assmvar_ano_lm), tmp.rm_window, 'Endpoints', 'fill');
+
+    %% normalization (running mean variables)
+    tmp.m_std=std(data.(varn.modelvar_ano_lm), 'omitnan');
+    tmp.o_std=std(data.(varn.obsvar_ano_lm_rm), 'omitnan');
+    tmp.m1_std=std(data.(varn.modelvar1_ano_lm), 'omitnan');
+    tmp.m2_std=std(data.(varn.modelvar2_ano_lm), 'omitnan');
+    tmp.o1_std=std(data.(varn.obsvar1_ano_lm), 'omitnan');
+    tmp.o2_std=std(data.(varn.obsvar2_ano_lm), 'omitnan');
+
+    data.(varn.modelvar_ano_lm_rm) = data.(varn.modelvar_ano_lm_rm) ./ tmp.m_std;
+    data.(varn.obsvar_ano_lm_rm) = data.(varn.obsvar_ano_lm_rm) ./ tmp.o_std;
+    data.(varn.modelvar1_ano_lm_rm) = data.(varn.modelvar1_ano_lm_rm) ./ tmp.m1_std;
+    data.(varn.obsvar1_ano_lm_rm) = data.(varn.obsvar1_ano_lm_rm)./ tmp.m2_std;
+    data.(varn.modelvar2_ano_lm_rm) = data.(varn.modelvar2_ano_lm_rm) ./ tmp.o1_std;
+    data.(varn.obsvar2_ano_lm_rm) = data.(varn.obsvar2_ano_lm_rm)./ tmp.o2_std;
+
 end
 
 % plot(data.('IODm_SST_model_ano__l000_rm'))
@@ -307,7 +340,7 @@ data.time_leap_extended=datenum(data.time_vec_extended);
     dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, cfg.region, filesep, 'Timeseries'];
     system(['mkdir -p ', dirs.figdir]);
 %         for lmonth=0:cfg.proj_year*12-1
-    for lmonth=0:35
+    for lmonth=0:cfg.max_lead_month
         tmp.lmonth_str=num2str(lmonth, '%03i');
         varn.modelvar_ano_lm_rm=[cfg.region, 'm_', varn.varname, '_model_ano_',  '_l', tmp.lmonth_str, '_rm'];
         varn.obsvar_ano_lm_rm=[cfg.region, 'm_', varn.varname, '_obs_ano_',  '_l', tmp.lmonth_str, '_rm'];
@@ -321,9 +354,9 @@ data.time_leap_extended=datenum(data.time_vec_extended);
         data.([cfg.region, 'm_', varn.varname, '_corr'])(lmonth+1)=tmp.corrcoef(1,2);
     end
     %% correlation coefficient of NINO3.4 ind, function of lead year (3-mon running mean)
-        cfg.figname=[dirs.figdir, filesep, cfg.region, 'm_hcst_obs_91-20m', '_corr_leadm_3rm', '.tif'];
+        cfg.figname=[dirs.figdir, filesep, cfg.region, 'm_hcst_obs_70-20m', '_corr_leadm_3rm', '.tif'];
 %             bar(0:cfg.proj_year*12-1,data.([cfg.region, 'm_', varn.varname, '_corr']),  'linewidth', 2)
-        bar(1:36,data.([cfg.region, 'm_', varn.varname, '_corr'])(1:36),  'linewidth', 2)
+        bar(1:cfg.max_lead_month,data.([cfg.region, 'm_', varn.varname, '_corr'])(1:cfg.max_lead_month),  'linewidth', 2)
         xlabel('Lead month'); ylabel(['corr. coef.,', cfg.region , ', obs']);
         set(gca, 'fontsize', 20)
         grid minor
@@ -339,7 +372,7 @@ data.time_leap_extended=datenum(data.time_vec_extended);
     dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, cfg.region, filesep, 'Timeseries'];
     system(['mkdir -p ', dirs.figdir]);
 %         for lmonth=0:cfg.proj_year*12-1
-    for lmonth=0:35
+    for lmonth=0:cfg.max_lead_month
         tmp.lmonth_str=num2str(lmonth, '%03i');
         varn.modelvar1_ano_lm_rm=[cfg.region1, 'm_', varn.varname, '_model_ano_',  '_l', tmp.lmonth_str, '_rm'];
         varn.obsvar1_ano_lm_rm=[cfg.region1, 'm_', varn.varname, '_obs_ano_',  '_l', tmp.lmonth_str, '_rm'];
@@ -353,9 +386,9 @@ data.time_leap_extended=datenum(data.time_vec_extended);
         data.([cfg.region1, 'm_', varn.varname, '_corr'])(lmonth+1)=tmp.corrcoef(1,2);
     end
     %% correlation coefficient of NINO3.4 ind, function of lead year (3-mon running mean)
-        cfg.figname=[dirs.figdir, filesep, cfg.region1, 'm_hcst_obs_91-20m', '_corr_leadm_3rm', '.tif'];
+        cfg.figname=[dirs.figdir, filesep, cfg.region1, 'm_hcst_obs_70-20m', '_corr_leadm_3rm', '.tif'];
 %             bar(0:cfg.proj_year*12-1,data.([cfg.region, 'm_', varn.varname, '_corr']),  'linewidth', 2)
-        bar(1:36,data.([cfg.region1, 'm_', varn.varname, '_corr'])(1:36),  'linewidth', 2)
+        bar(1:cfg.max_lead_month,data.([cfg.region1, 'm_', varn.varname, '_corr'])(1:cfg.max_lead_month),  'linewidth', 2)
         xlabel('Lead month'); ylabel(['corr. coef.,', cfg.region1 , ', obs']);
         set(gca, 'fontsize', 20)
         grid minor
@@ -371,7 +404,7 @@ data.time_leap_extended=datenum(data.time_vec_extended);
     dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, cfg.region, filesep, 'Timeseries'];
     system(['mkdir -p ', dirs.figdir]);
 %         for lmonth=0:cfg.proj_year*12-1
-    for lmonth=0:35
+    for lmonth=0:cfg.max_lead_month
         tmp.lmonth_str=num2str(lmonth, '%03i');
         varn.modelvar2_ano_lm_rm=[cfg.region2, 'm_', varn.varname, '_model_ano_',  '_l', tmp.lmonth_str, '_rm'];
         varn.obsvar2_ano_lm_rm=[cfg.region2, 'm_', varn.varname, '_obs_ano_',  '_l', tmp.lmonth_str, '_rm'];
@@ -385,9 +418,9 @@ data.time_leap_extended=datenum(data.time_vec_extended);
         data.([cfg.region2, 'm_', varn.varname, '_corr'])(lmonth+1)=tmp.corrcoef(1,2);
     end
     %% correlation coefficient of NINO3.4 ind, function of lead year (3-mon running mean)
-        cfg.figname=[dirs.figdir, filesep, cfg.region2, 'm_hcst_obs_91-20m', '_corr_leadm_3rm', '.tif'];
+        cfg.figname=[dirs.figdir, filesep, cfg.region2, 'm_hcst_obs_70-20m', '_corr_leadm_3rm', '.tif'];
 %             bar(0:cfg.proj_year*12-1,data.([cfg.region, 'm_', varn.varname, '_corr']),  'linewidth', 2)
-        bar(1:36,data.([cfg.region2, 'm_', varn.varname, '_corr'])(1:36),  'linewidth', 2)
+        bar(1:cfg.max_lead_month,data.([cfg.region2, 'm_', varn.varname, '_corr'])(1:cfg.max_lead_month),  'linewidth', 2)
         xlabel('Lead month'); ylabel(['corr. coef.,', cfg.region2 , ', obs']);
         set(gca, 'fontsize', 20)
         grid minor
@@ -402,7 +435,7 @@ data.time_leap_extended=datenum(data.time_vec_extended);
 %% spaghetti plot (region) by lead month -----------
 system(['mkdir -p ', dirs.figdir]);
 %         for lmonth=0:cfg.proj_year*12-1
-for lmonth=0:35
+for lmonth=0:cfg.max_lead_month
     tmp.lmonth_str=num2str(lmonth, '%03i');
     varn.modelvar_ano_lm_rm=[cfg.region, 'm_', varn.varname, '_model_ano_',  '_l', tmp.lmonth_str, '_rm'];
     varn.obsvar_ano_lm_rm=[cfg.region, 'm_', varn.varname, '_obs_ano_',  '_l', tmp.lmonth_str, '_rm'];
@@ -418,7 +451,7 @@ end
 hold off
 axis tight
     
-cfg.figname=[dirs.figdir, filesep, 'spaghetti_', cfg.region, 'm_hcst_obs_91-20m', '_corr_leadm_3rm', '.tif'];
+cfg.figname=[dirs.figdir, filesep, 'spaghetti_', cfg.region, 'm_hcst_obs_70-20m', '_corr_leadm_3rm', '.tif'];
 xlabel('Year'); ylabel('()');
 set(gca, 'fontsize', 20)
 grid minor
@@ -433,7 +466,7 @@ close all;
 %% spaghetti plot (region1) by lead month -----------
 system(['mkdir -p ', dirs.figdir]);
 %         for lmonth=0:cfg.proj_year*12-1
-for lmonth=0:35
+for lmonth=0:cfg.max_lead_month
     tmp.lmonth_str=num2str(lmonth, '%03i');
     varn.modelvar1_ano_lm_rm=[cfg.region1, 'm_', varn.varname, '_model_ano_',  '_l', tmp.lmonth_str, '_rm'];
     varn.obsvar1_ano_lm_rm=[cfg.region1, 'm_', varn.varname, '_obs_ano_',  '_l', tmp.lmonth_str, '_rm'];
@@ -449,7 +482,7 @@ end
 hold off
 axis tight
     
-cfg.figname=[dirs.figdir, filesep, 'spaghetti_', cfg.region1, 'm_hcst_obs_91-20m', '_corr_leadm_3rm', '.tif'];
+cfg.figname=[dirs.figdir, filesep, 'spaghetti_', cfg.region1, 'm_hcst_obs_70-20m', '_corr_leadm_3rm', '.tif'];
 xlabel('Year'); ylabel('()');
 set(gca, 'fontsize', 20)
 grid minor
@@ -463,7 +496,7 @@ close all;
 %% spaghetti plot (region2) by lead month -----------
 system(['mkdir -p ', dirs.figdir]);
 %         for lmonth=0:cfg.proj_year*12-1
-for lmonth=0:35
+for lmonth=0:cfg.max_lead_month
     tmp.lmonth_str=num2str(lmonth, '%03i');
     varn.modelvar2_ano_lm_rm=[cfg.region2, 'm_', varn.varname, '_model_ano_',  '_l', tmp.lmonth_str, '_rm'];
     varn.obsvar2_ano_lm_rm=[cfg.region2, 'm_', varn.varname, '_obs_ano_',  '_l', tmp.lmonth_str, '_rm'];
@@ -479,7 +512,7 @@ end
 hold off
 axis tight
     
-cfg.figname=[dirs.figdir, filesep, 'spaghetti_', cfg.region2, 'm_hcst_obs_91-20m', '_corr_leadm_3rm', '.tif'];
+cfg.figname=[dirs.figdir, filesep, 'spaghetti_', cfg.region2, 'm_hcst_obs_70-20m', '_corr_leadm_3rm', '.tif'];
 xlabel('Year'); ylabel('()');
 set(gca, 'fontsize', 20)
 grid minor
@@ -508,7 +541,7 @@ xlabel('Year'); ylabel('^oC');
 set(gca, 'fontsize', 20)
 grid minor
 set(gcf, 'PaperPosition', [0, 0, 8, 4]);
-cfg.figname=[dirs.figdir, filesep, 'spaghetti_', cfg.region1, '_SST_hcst_obs_91-20m', '.tif'];
+cfg.figname=[dirs.figdir, filesep, 'spaghetti_', cfg.region1, '_SST_hcst_obs_70-20m', '.tif'];
 saveas(gcf,cfg.figname,'tif');
 RemoveWhiteSpace([], 'file', cfg.figname);
 close all;
@@ -530,7 +563,7 @@ xlabel('Year'); ylabel('^oC');
 set(gca, 'fontsize', 20)
 grid minor
 set(gcf, 'PaperPosition', [0, 0, 8, 4]);
-cfg.figname=[dirs.figdir, filesep, 'spaghetti_', cfg.region2, '_SST_hcst_obs_91-20m', '.tif'];
+cfg.figname=[dirs.figdir, filesep, 'spaghetti_', cfg.region2, '_SST_hcst_obs_70-20m', '.tif'];
 saveas(gcf,cfg.figname,'tif');
 RemoveWhiteSpace([], 'file', cfg.figname);
 close all;

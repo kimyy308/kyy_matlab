@@ -55,15 +55,17 @@
         
         pc{testnameind,2}=m_pcolor(lon_rho',lat_rho', mean_data'.*mask_model','parent',ax{testnameind,2});
 
-        colormap(ax{testnameind,2},jet_mod);
-        caxis([0, 15]);
+%         colormap(ax{testnameind,2},jet_mod);
+        colormap(ax{testnameind,2},jet);
+%         caxis([0, 15]);
+        caxis([-2, 20]);
         shading(gca,m_pcolor_shading_method);   
 
         m_grid('fontsize', m_grid_fontsize, 'tickdir', m_grid_tickdir_type, 'box', m_grid_box_type,  ...
                'xticklabels', [], 'yticklabels', [], 'backcolor', 'none','parent', ax{testnameind,2});
         col_bar{testnameind,2}=colorbar;
     %                 set(col_bar{testnameind,2}, 'TickLabels', []);
-        set(col_bar{testnameind,2}, 'fontsize',m_grid_fontsize+5);
+        set(col_bar{testnameind,2}, 'fontsize',m_grid_fontsize);
 
 
         ax{testnameind,3}=axes;
@@ -74,9 +76,13 @@
         m_grid('fontsize', m_grid_fontsize, 'tickdir', m_grid_tickdir_type, 'box', m_grid_box_type,  ...
                'backcolor', 'none','parent', ax{testnameind,3});
         col_bar{testnameind,3}=colorbar;
-        caxis([0, 15]);
-        colormap(ax{testnameind,3},jet_mod);
-        set(col_bar{testnameind,3}, 'fontsize',m_grid_fontsize+5);
+%         caxis([0, 15]);
+        caxis([-2, 20]);
+        
+%         colormap(ax{testnameind,3},jet_mod);
+        colormap(ax{testnameind,3},jet);
+        
+        set(col_bar{testnameind,3}, 'fontsize',m_grid_fontsize);
     %                 set(gca, 'fontsize', m_grid_fontsize)
 
         titlename = strcat('SST, ',testname, ',(', ...
@@ -89,7 +95,7 @@
         set(gcf, 'PaperSize', [hor_paper_size_x, hor_paper_size_y]);
         set(gcf,'PaperPosition', [paper_position_hor paper_position_ver paper_position_width paper_position_height]) 
 
-        saveas(gcf,jpgname,'tif');
+        saveas(gcf,jpgname,'tif'); RemoveWhiteSpace([], 'file', jpgname);
 
         disp(' ')
         disp([fig_name, ' plot is created.'])

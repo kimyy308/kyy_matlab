@@ -38,9 +38,12 @@ pft=fft(data); % complex double
 pft(1) = []; % value with 1/n freq (~ 0 freq; n period ~inifinte period)) is mean value of results
 pft_real=real(pft)'; % real part of pft
 pft_imag=imag(pft)'; % imaginary part of pft
-psd= (1./n) .* 2 .* abs(pft(1:floor(n/2))).^2 / 0.3974;  %pft (2~n/2) only. 2/n+1 ~ n: duplicated 
+psd= (1./n) .* 2 .* abs(pft(1:floor(n/2))).^2 / 0.3974;  %pft (2~n/2) only. 2/n+1 ~ n: duplicated, %NG = 0.3974; % Noise Gain of Hamming Window
 
-[psd2, freq2]=pwelch(data,25,1,49,1);
+
+% example: [Pxx,F,Pxxc]=pwelch(X,WINDOW,NOVERLAP,NFFT,Fs,'ConfidenceLevel',0.95);
+[psd2, freq2]=pwelch(data,4,1,[],1,'ConfidenceLevel',0.95);
+% [psd2, freq2]=pwelch(data,4,1,49,1);
 % freq2=freq2/pi;
 % pwelch(data)
 % h=spectrum.welch;
@@ -87,14 +90,4 @@ psd_sig = Red ./ DOF .* Chi_sq; % Rednoise significance level
 
 
 end
-
-
-% Daewon's test code
-% x = test; 
-% h = spectrum.welch;    % Create a Welch spectral estimator.
-% Hpsd = psd(h,x);             % Calculate the PSD
-% f=Hpsd.Frequencies;
-% power=Hpsd.Data;
-% figure
-% loglog(f,power)
 

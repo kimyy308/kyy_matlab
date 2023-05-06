@@ -20,11 +20,46 @@ for varind2=1:length(RCM_info.vars)
         tmp.matname = [dirs.matdir, tmp.testname, '_', tmp.regionname, '_', tmp.variable,...
             '_mean_', num2str(min(RCM_info.years),'%04i'), '-', num2str(max(RCM_info.years),'%04i'),...
         '_', RCM_info.season, '.mat'];
-        if (exist(tmp.matname , 'file') ~= 2)
-            disp('please get data from subroutine_004_001 first')
-        else
-            load(tmp.matname, 'RCM_data', 'RCM_grid');
-        end 
+        switch tmp.testname
+            case 'ENS4_hist'
+               tmp.tset= {'test2117', 'test2118','test2119','test2120'};
+               for titi=1:4
+                    tmp.ttname=tmp.tset{titi};
+                    dirs.ttmatdir = strcat('/Volumes/kyy_raid/Data/Model/ROMS/', RCM_info.model, '/', tmp.ttname, '/run/mean/');
+                    tmp.matname = [dirs.ttmatdir, tmp.ttname, '_', tmp.regionname, '_', tmp.variable,...
+                        '_mean_', num2str(min(RCM_info.years),'%04i'), '-', num2str(max(RCM_info.years),'%04i'),...
+                    '_', RCM_info.season, '.mat'];
+                    if (exist(tmp.matname , 'file') ~= 2)
+                        disp('please get data from subroutine_004_001 first')
+                    else
+                        load(tmp.matname, 'RCM_data', 'RCM_grid');
+                    end 
+                    tmp.tmean(:,:,titi)=RCM_data.mean;
+               end
+               RCM_data.mean=mean(tmp.tmean,3);
+           case 'ENS4_fut'
+               tmp.tset= {'test2127', 'test2128','test2129','test2130'};
+               for titi=1:4
+                    tmp.ttname=tmp.tset{titi};
+                    dirs.ttmatdir = strcat('/Volumes/kyy_raid/Data/Model/ROMS/', RCM_info.model, '/', tmp.ttname, '/run/mean/');
+                    tmp.matname = [dirs.ttmatdir, tmp.ttname, '_', tmp.regionname, '_', tmp.variable,...
+                        '_mean_', num2str(min(RCM_info.years),'%04i'), '-', num2str(max(RCM_info.years),'%04i'),...
+                    '_', RCM_info.season, '.mat'];
+                    if (exist(tmp.matname , 'file') ~= 2)
+                        disp('please get data from subroutine_004_001 first')
+                    else
+                        load(tmp.matname, 'RCM_data', 'RCM_grid');
+                    end 
+                    tmp.tmean(:,:,titi)=RCM_data.mean;
+               end
+               RCM_data.mean=mean(tmp.tmean,3);
+            otherwise
+                if (exist(tmp.matname , 'file') ~= 2)
+                    disp('please get data from subroutine_004_001 first')
+                else
+                    load(tmp.matname, 'RCM_data', 'RCM_grid');
+                end 
+        end
         
         if(strcmp(tmp.variable, 'SST'))
             RCM_data.mean=RCM_data.mean;
@@ -44,7 +79,7 @@ for varind2=1:length(RCM_info.vars)
         m_pcolor(RCM_grid.cut_lon_rho',RCM_grid.cut_lat_rho',RCM_data.mean');
         shading(gca,param.m_pcolor_shading_method);   
         if(strcmp(tmp.variable, 'SST'))
-            [C,h2]=m_contour(RCM_grid.cut_lon_rho',RCM_grid.cut_lat_rho', RCM_data.mean', [2, 5], 'color','k', ...
+            [C,h2]=m_contour(RCM_grid.cut_lon_rho',RCM_grid.cut_lat_rho', RCM_data.mean', [2, 5, 10], 'color','k', ...
                     'linewidth', 1.5, 'linestyle', '-');
                 clabel(C,h2,'FontSize',13,'Color','k', ...
                     'labelspacing', 50000,'Rotation', 0,'fontweight', 'bold');

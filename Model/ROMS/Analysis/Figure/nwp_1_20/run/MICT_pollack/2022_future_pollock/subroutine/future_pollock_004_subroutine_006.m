@@ -3,12 +3,12 @@
 
 RCM_info.years_ssp =RCM_info.years;
 tmp.testname_ssp = tmp.testname;
-dirs.filedir_ssp = strcat('D:\Data\Model\ROMS\', RCM_info.model, '\backup_surf\', tmp.testname_ssp, '\run\'); % % where data files are          
-dirs.matdir_ssp = strcat('D:\Data\Model\ROMS\', RCM_info.model, '\', tmp.testname_ssp, '\run\mean\');
+dirs.filedir_ssp = strcat('/Volumes/kyy_raid/Data/Model/ROMS/', RCM_info.model, '/backup_surf/', tmp.testname_ssp, '/run/'); % % where data files are          
+dirs.matdir_ssp = strcat('/Volumes/kyy_raid/Data/Model/ROMS/', RCM_info.model, '/', tmp.testname_ssp, '/run/mean/');
 
 [tmp.testname_his, tmp.error_status] = Func_0023_RCM_CMIP6_testname_his(tmp.testname_ssp);
-dirs.filedir_his = strcat('D:\Data\Model\ROMS\', RCM_info.model, '\backup_surf\', tmp.testname_his, '\run\'); % % where data files are          
-dirs.matdir_his = strcat('D:\Data\Model\ROMS\', RCM_info.model, '\', tmp.testname_his, '\run\mean\');
+dirs.filedir_his = strcat('/Volumes/kyy_raid/Data/Model/ROMS/', RCM_info.model, '/backup_surf/', tmp.testname_his, '/run/'); % % where data files are          
+dirs.matdir_his = strcat('/Volumes/kyy_raid/Data/Model/ROMS/', RCM_info.model, '/', tmp.testname_his, '/run/mean/');
 
 
 for varind2=1:length(RCM_info.vars)
@@ -26,31 +26,69 @@ for varind2=1:length(RCM_info.vars)
         num2str(max(RCM_info.years),'%04i'), '_', RCM_info.season,'.tif'); %% ~_year_month.jpg
     if (exist(tmp.tifname , 'file') ~= 2 || fig_flag==2)      
         run(tmp.param_script);
-        
-       %% set data file name (mat) and reading (ssp)
-        tmp.matname_ssp = [dirs.matdir_ssp, tmp.testname_ssp, '_', tmp.regionname, '_', tmp.variable,...
-            '_mean_', num2str(min(RCM_info.years_ssp),'%04i'), '-', num2str(max(RCM_info.years_ssp),'%04i'),...
-        '_', RCM_info.season, '.mat'];
-        if (exist(tmp.matname_ssp , 'file') ~= 2)
-            disp('please get data from subroutine_004_001 first')
-        else
-            load(tmp.matname_ssp, 'RCM_data', 'RCM_grid');
-        end 
-        RCM_data_ssp = RCM_data;
-       
-       %% set data file name (mat) and reading (his)
-        tmp.matname_his = [dirs.matdir_his, tmp.testname_his, '_', tmp.regionname, '_', tmp.variable,...
-            '_mean_', num2str(min(RCM_info.years_his),'%04i'), '-', num2str(max(RCM_info.years_his),'%04i'),...
-        '_', RCM_info.season, '.mat'];
-        if (exist(tmp.matname_his , 'file') ~= 2)
-            disp('please get data from subroutine_004_001 first')
-        else
-            load(tmp.matname_his, 'RCM_data', 'RCM_grid');
-        end 
-        RCM_data_his = RCM_data;
-        
-        %% calculation of difference
-        RCM_data.mean=RCM_data_ssp.mean - RCM_data_his.mean;
+        switch tmp.testname
+           case 'ENS4_fut'
+               %% hist
+               tmp.tset= {'test2117', 'test2118','test2119','test2120'};
+               for titi=1:4
+                    tmp.ttname=tmp.tset{titi};
+                    dirs.ttmatdir = strcat('/Volumes/kyy_raid/Data/Model/ROMS/', RCM_info.model, '/', tmp.ttname, '/run/mean/');
+                    tmp.matname = [dirs.ttmatdir, tmp.ttname, '_', tmp.regionname, '_', tmp.variable,...
+                        '_mean_', num2str(min(RCM_info.years_his),'%04i'), '-', num2str(max(RCM_info.years_his),'%04i'),...
+                    '_', RCM_info.season, '.mat'];
+                    if (exist(tmp.matname , 'file') ~= 2)
+                        disp('please get data from subroutine_004_001 first')
+                    else
+                        load(tmp.matname, 'RCM_data', 'RCM_grid');
+                    end 
+                    tmp.tmean_hist(:,:,titi)=RCM_data.mean;
+               end
+
+            %% fut
+               tmp.tset= {'test2127', 'test2128','test2129','test2130'};
+               for titi=1:4
+                    tmp.ttname=tmp.tset{titi};
+                    dirs.ttmatdir = strcat('/Volumes/kyy_raid/Data/Model/ROMS/', RCM_info.model, '/', tmp.ttname, '/run/mean/');
+                    tmp.matname = [dirs.ttmatdir, tmp.ttname, '_', tmp.regionname, '_', tmp.variable,...
+                        '_mean_', num2str(min(RCM_info.years_ssp),'%04i'), '-', num2str(max(RCM_info.years_ssp),'%04i'),...
+                    '_', RCM_info.season, '.mat'];
+                    if (exist(tmp.matname , 'file') ~= 2)
+                        disp('please get data from subroutine_004_001 first')
+                    else
+                        load(tmp.matname, 'RCM_data', 'RCM_grid');
+                    end 
+                    tmp.tmean_fut(:,:,titi)=RCM_data.mean;
+               end
+
+           %% calculation of difference
+                RCM_data.mean=mean(tmp.tmean_fut, 3) - mean(tmp.tmean_hist, 3);
+            otherwise
+                %% set data file name (mat) and reading (ssp)
+                tmp.matname_ssp = [dirs.matdir_ssp, tmp.testname_ssp, '_', tmp.regionname, '_', tmp.variable,...
+                    '_mean_', num2str(min(RCM_info.years_ssp),'%04i'), '-', num2str(max(RCM_info.years_ssp),'%04i'),...
+                '_', RCM_info.season, '.mat'];
+                if (exist(tmp.matname_ssp , 'file') ~= 2)
+                    disp('please get data from subroutine_004_001 first')
+                else
+                    load(tmp.matname_ssp, 'RCM_data', 'RCM_grid');
+                end 
+                RCM_data_ssp = RCM_data;
+               
+               %% set data file name (mat) and reading (his)
+                tmp.matname_his = [dirs.matdir_his, tmp.testname_his, '_', tmp.regionname, '_', tmp.variable,...
+                    '_mean_', num2str(min(RCM_info.years_his),'%04i'), '-', num2str(max(RCM_info.years_his),'%04i'),...
+                '_', RCM_info.season, '.mat'];
+                if (exist(tmp.matname_his , 'file') ~= 2)
+                    disp('please get data from subroutine_004_001 first')
+                else
+                    load(tmp.matname_his, 'RCM_data', 'RCM_grid');
+                end 
+                RCM_data_his = RCM_data;
+                
+                %% calculation of difference
+                RCM_data.mean=RCM_data_ssp.mean - RCM_data_his.mean;
+        end
+
         [tmp.m_value, tmp.error_status] = Func_0011_get_area_weighted_mean(RCM_data.mean, RCM_grid.cut_lon_rho, RCM_grid.cut_lat_rho);
 
         RCM_grid.mask_model = double(inpolygon(RCM_grid.cut_lon_rho,RCM_grid.cut_lat_rho,RCM_grid.refpolygon(:,1),RCM_grid.refpolygon(:,2)));
@@ -90,7 +128,8 @@ for varind2=1:length(RCM_info.vars)
         switch tmp.variable
             case {'SST'}
 %                 caxis(param.colorbar_lev);
-                caxis([4.5 5.5])
+%                 caxis([4 5.5])
+                caxis([3 5])                
                 colormap(flip(autumn));
             case {'SSH'}
                 caxis([0.4 0.8])

@@ -109,7 +109,7 @@ if (exist(jpgname , 'file') ~= 2 || fig_flag==2)
     set(gcf, 'PaperSize', [hor_paper_size_x, hor_paper_size_y]);
     set(gcf,'PaperPosition', [paper_position_hor paper_position_ver paper_position_width paper_position_height]) 
 
-    saveas(gcf,jpgname,'tif');
+    saveas(gcf,jpgname,'tif'); RemoveWhiteSpace([], 'file', jpgname);
 
     disp(' ')
     disp([fig_name, ' plot is created.'])

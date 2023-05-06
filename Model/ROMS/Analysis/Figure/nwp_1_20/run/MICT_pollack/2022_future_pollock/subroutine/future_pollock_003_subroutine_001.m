@@ -128,9 +128,13 @@ if (exist(tmp.tifname , 'file') ~= 2 || flags.fig_switch(flagi)==2)
     ax{tmp.testnameind,2}=axes;
     pc{tmp.testnameind,2}=m_pcolor(RCM_grid.lon_rho',RCM_grid.lat_rho', tmp.mean_data','parent',ax{tmp.testnameind,2});
 %     colormap(ax{tmp.testnameind,2},jet);
-    colormap(ax{tmp.testnameind,2},parula);
+%     colormap(ax{tmp.testnameind,2},parula);
+    cmp.wr_08=Func_0009_get_colormaps('wr_08', tmp.dropboxpath);
+    colormap(ax{tmp.testnameind,2},cmp.wr_08);
+
+%     caxis([0, 1.0]);
+    caxis([0, 0.8]);
     
-    caxis([0, 1.0]);
     shading(gca,param.m_pcolor_shading_method);   
 
     m_grid('fontsize', param.m_grid_fontsize, 'tickdir', param.m_grid_tickdir_type, 'box', param.m_grid_box_type,  ...
@@ -300,8 +304,12 @@ if (exist(tmp.tifname , 'file') ~= 2 || flags.fig_switch(flagi)==2)
     ax{tmp.testnameind,2}=axes;
     pc{tmp.testnameind,2}=m_pcolor(RCM_grid.lon_rho',RCM_grid.lat_rho', tmp.mean_data','parent',ax{tmp.testnameind,2});
 %     colormap(ax{tmp.testnameind,2},jet);
-    colormap(ax{tmp.testnameind,2},parula);
-    caxis([0, 1.0]);
+%     colormap(ax{tmp.testnameind,2},parula);
+    cmp.wr_08=Func_0009_get_colormaps('wr_08', tmp.dropboxpath);
+    colormap(ax{tmp.testnameind,2},cmp.wr_08);
+    
+%     caxis([0, 1.0]);
+    caxis([0, 0.8]);
     shading(gca,param.m_pcolor_shading_method);   
 
     m_grid('fontsize', param.m_grid_fontsize, 'tickdir', param.m_grid_tickdir_type, 'box', param.m_grid_box_type,  ...

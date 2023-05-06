@@ -52,9 +52,26 @@ switch colormapname
             filesep, 'Figure', filesep, 'jet_mod.mat'])  % % set colormap (jet_modified)
         colormap = jet_mod;
     case('bwr')
+%         load([dropboxpath, filesep, 'source', filesep, 'matlab', filesep, 'Common', ...
+%             filesep, 'Figure', filesep, 'bwr_map.mat'])  % % set colormap (bwrmap)
+        bwrmap = customcolormap_preset('red-white-blue');
+        colormap = bwrmap;
+    case('wr')
+%         bwrmap = customcolormap_preset('red-white-blue');
         load([dropboxpath, filesep, 'source', filesep, 'matlab', filesep, 'Common', ...
             filesep, 'Figure', filesep, 'bwr_map.mat'])  % % set colormap (bwrmap)
-        colormap = bwrmap;
+        colormap = bwrmap(51:100,:);
+    case('bwr_10')
+        colormap = customcolormap_preset('red-white-blue_10');
+    case('wr_10')
+        colormap = customcolormap_preset('red-white-blue_20');
+        colormap=colormap(11:20,:);
+    case('bw_10')
+        colormap = customcolormap_preset('red-white-blue_20');
+        colormap=colormap(1:10,:);
+    case('wr_08')
+        colormap = customcolormap_preset('red-white-blue_16');
+        colormap=colormap(9:16,:);
     case('jet')
         colormap =jet;
     case('gray')

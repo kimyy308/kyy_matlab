@@ -21,8 +21,8 @@ if testnameind==1
             for sub_testnameind=1:length(RCM_info.name)
                 tmp_sub.testname_ssp=RCM_info.name{sub_testnameind};
                 [tmp_sub.testname_his, tmp.error_status] = Func_0023_RCM_CMIP6_testname_his(tmp_sub.testname_ssp);
-                dirs_sub.filedir_his = strcat('D:\Data\Model\ROMS\nwp_1_20\', tmp_sub.testname_his, '\pollock\'); % % where data files are
-                dirs_sub.savedir_his = strcat('D:\Data\Model\ROMS\nwp_1_20\', tmp_sub.testname_his, '\pollock\');
+                dirs_sub.filedir_his = strcat('/Volumes/kyy_raid/Data/Model/ROMS/nwp_1_20/', tmp_sub.testname_his, '/pollock/'); % % where data files are
+                dirs_sub.savedir_his = strcat('/Volumes/kyy_raid/Data/Model/ROMS/nwp_1_20/', tmp_sub.testname_his, '/pollock/');
 
                 %%    initialization
                 if sub_testnameind==1
@@ -124,7 +124,7 @@ if testnameind==1
             m_proj(param.m_proj_name,'lon',[RCM_grid.domain(1) RCM_grid.domain(2)],'lat',[RCM_grid.domain(3) RCM_grid.domain(4)]);
             ax{tmp.testnameind,2}=axes;
             pc{tmp.testnameind,2}=m_pcolor(RCM_grid.lon_rho',RCM_grid.lat_rho', tmp.mean_data','parent',ax{tmp.testnameind,2});
-            colormap(ax{tmp.testnameind,2},jet);
+            colormap(ax{tmp.testnameind,2},jet(10));
 %             colormap(ax{tmp.testnameind,2},parula);
 
             caxis([0, 200]);
@@ -180,8 +180,8 @@ if testnameind==1
 
             for sub_testnameind=1:length(RCM_info.name)
                 tmp_sub.testname_ssp=RCM_info.name{sub_testnameind};
-                dirs_sub.filedir_ssp = strcat('D:\Data\Model\ROMS\nwp_1_20\', tmp_sub.testname_ssp, '\pollock\'); % % where data files are
-                dirs_sub.savedir_ssp = strcat('D:\Data\Model\ROMS\nwp_1_20\', tmp_sub.testname_ssp, '\pollock\');
+                dirs_sub.filedir_ssp = strcat('/Volumes/kyy_raid/Data/Model/ROMS/nwp_1_20/', tmp_sub.testname_ssp, '/pollock/'); % % where data files are
+                dirs_sub.savedir_ssp = strcat('/Volumes/kyy_raid/Data/Model/ROMS/nwp_1_20/', tmp_sub.testname_ssp, '/pollock/');
 
                 %%    initialization
                 if sub_testnameind==1
@@ -286,7 +286,7 @@ if testnameind==1
             m_proj(param.m_proj_name,'lon',[RCM_grid.domain(1) RCM_grid.domain(2)],'lat',[RCM_grid.domain(3) RCM_grid.domain(4)]);
             ax{tmp.testnameind,2}=axes;
             pc{tmp.testnameind,2}=m_pcolor(RCM_grid.lon_rho',RCM_grid.lat_rho', tmp.mean_data','parent',ax{tmp.testnameind,2});
-            colormap(ax{tmp.testnameind,2},jet);
+            colormap(ax{tmp.testnameind,2},jet(10));
 %             colormap(ax{tmp.testnameind,2},parula);
 
 %             caxis([0, 1.0]);
@@ -381,7 +381,7 @@ if testnameind==1
             ax{tmp.testnameind,2}=axes;
             pc{tmp.testnameind,2}=m_pcolor(RCM_grid.lon_rho',RCM_grid.lat_rho', tmp.mean_data','parent',ax{tmp.testnameind,2});
         %     colormap(ax{tmp.testnameind,2},jet);
-            colormap(ax{tmp.testnameind,2},cmaps.byrmap3);
+            colormap(ax{tmp.testnameind,2},cmaps.bwr_10);
 
             caxis([-50, 50]);
             shading(gca,param.m_pcolor_shading_method);   
@@ -478,7 +478,7 @@ if testnameind==1
             ax{tmp.testnameind,2}=axes;
             pc{tmp.testnameind,2}=m_pcolor(RCM_grid.lon_rho',RCM_grid.lat_rho', tmp.mean_data','parent',ax{tmp.testnameind,2});
         %     colormap(ax{tmp.testnameind,2},jet);
-            colormap(ax{tmp.testnameind,2},cmaps.byrmap3);
+            colormap(ax{tmp.testnameind,2},cmaps.bwr_10);
 
             caxis([-200, 200]);
             shading(gca,param.m_pcolor_shading_method);   
@@ -577,12 +577,12 @@ if testnameind==1
             ax{tmp.testnameind,2}=axes;
             pc{tmp.testnameind,2}=m_pcolor(RCM_grid.lon_rho',RCM_grid.lat_rho', tmp.mean_data','parent',ax{tmp.testnameind,2});
         %     colormap(ax{tmp.testnameind,2},jet);
-%             colormap(ax{tmp.testnameind,2},cmaps.byrmap);
+%             colormap(ax{tmp.testnameind,2},cmaps.bwr_10);
             
-            colormap(ax{tmp.testnameind,2},cmaps.bymap3);
+            colormap(ax{tmp.testnameind,2},cmaps.bw_10);
             caxis([-100, 0]);
             if strcmp(RCM_info.name{1}, 't17s_t27c')
-                colormap(ax{tmp.testnameind,2},cmaps.byrmap);
+                colormap(ax{tmp.testnameind,2},cmaps.bwr_10);
                 caxis([-100, 100]);
             end
             shading(gca,param.m_pcolor_shading_method);   
@@ -688,8 +688,8 @@ if testnameind==1
             pc{tmp.testnameind,2}=m_pcolor(RCM_grid.lon_rho',RCM_grid.lat_rho', tmp.mean_data','parent',ax{tmp.testnameind,2});
 
         %     colormap(ax{tmp.testnameind,2},jet);
-%             colormap(ax{tmp.testnameind,2},cmaps.bymap3);
-            colormap(ax{tmp.testnameind,2},cmaps.byrmap);
+%             colormap(ax{tmp.testnameind,2},cmaps.bw_10);
+            colormap(ax{tmp.testnameind,2},cmaps.bwr_10);
 
             caxis([-25, 25]);
             shading(gca,param.m_pcolor_shading_method);   
@@ -795,8 +795,8 @@ if testnameind==1
             pc{tmp.testnameind,2}=m_pcolor(RCM_grid.lon_rho',RCM_grid.lat_rho', tmp.mean_data','parent',ax{tmp.testnameind,2});
 
         %     colormap(ax{tmp.testnameind,2},jet);
-%             colormap(ax{tmp.testnameind,2},cmaps.bymap3);
-            colormap(ax{tmp.testnameind,2},cmaps.byrmap);
+%             colormap(ax{tmp.testnameind,2},cmaps.bw_10);
+            colormap(ax{tmp.testnameind,2},cmaps.bwr_10);
 
             caxis([-25, 25]);
             shading(gca,param.m_pcolor_shading_method);   

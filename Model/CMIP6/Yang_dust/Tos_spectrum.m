@@ -7,10 +7,13 @@ tmp.fs=filesep;
 addpath(genpath([tmp.dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', tmp.fs, 'function']));
             [tmp.dropboxpath, tmp.error_status] = Func_0008_set_dropbox_path(computer);
 
-dirs.root='/Volumes/kyy_raid/kimyy/Model/CMIP/CMIP6_analysis/tos/NA_reg/feb/runmean_9';
-dirs.figroot='/Volumes/kyy_raid/kimyy/Figure/CMIP/CMIP6_analysis/tos/NA_reg/feb/runmean_9';
-dirs.root='/Volumes/kyy_raid/kimyy/Model/CMIP/CMIP6_analysis/tos/NA_reg/feb/runmean_9/duplicated';
-dirs.figroot='/Volumes/kyy_raid/kimyy/Figure/CMIP/CMIP6_analysis/tos/NA_reg/feb/runmean_9/duplicated';
+% Mon='feb';
+Mon='mar';
+
+dirs.root=['/Volumes/kyy_raid/kimyy/Model/CMIP/CMIP6_analysis/tos/NA_reg/', Mon, '/runmean_9'];
+dirs.figroot=['/Volumes/kyy_raid/kimyy/Figure/CMIP/CMIP6_analysis/tos/NA_reg/', Mon, '/runmean_9'];
+dirs.root=['/Volumes/kyy_raid/kimyy/Model/CMIP/CMIP6_analysis/tos/NA_reg/', Mon, '/runmean_9/duplicated'];
+dirs.figroot=['/Volumes/kyy_raid/kimyy/Figure/CMIP/CMIP6_analysis/tos/NA_reg/', Mon, '/runmean_9/duplicated'];
 dir_res=dir(dirs.root);
 
 tmp.varn='tos';

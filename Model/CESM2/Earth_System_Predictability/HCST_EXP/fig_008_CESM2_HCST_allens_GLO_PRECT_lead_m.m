@@ -16,31 +16,31 @@ addpath(genpath([tmp.dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', tmp.fs, 'f
             [tmp.dropboxpath, tmp.error_status] = Func_0008_set_dropbox_path(computer);
 
 %% model configuration
-cfg.var='SST';
+cfg.var='PRECT';
 
 dirs.hcstroot=['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/HCST_EXP/archive/atm/', cfg.var];
-dirs.obsroot=['/Volumes/kyy_raid/kimyy/Observation/ERSST/monthly_reg_cam'];
+dirs.obsroot=['/Volumes/kyy_raid/kimyy/Observation/GPCP/monthly_reg_cam'];
 dirs.figroot=['/Volumes/kyy_raid/kimyy/Figure/CESM2/ESP/HCST_EXP/archive/atm/', cfg.var];
 
-cfg.iyears=1970:2019;
+cfg.iyears=1979:2019;
 cfg.months=1:12;
 % cfg.scenname='HIST';
 cfg.gnm='f09_g17';
 % cfg.assm_factor='10';
 % cfg.ens_member='1';
-cfg.proj_year=3;
+cfg.proj_year=5;
 
 % cfg.obsnames={'en4.2_ba'};
 % cfg.ensnames={'ba-10p1'};
 
 cfg.component='atm';
-cfg.varnames={'SST'};
+% cfg.varnames={'PRECT'};
 cfg.len_t_y = length(cfg.iyears);
 cfg.len_t_m = length(cfg.months);
 cfg.len_t= cfg.len_t_y * cfg.len_t_m;
 % cfg.len_obs= length(cfg.obsnames);
 % cfg.len_ens= length(cfg.ensnames);
-cfg.region = 'NINO34';
+cfg.region = 'GLO';
 
 %% grid set(mask from model)
 % tmp.gridname = [dirs.hcstroot, tmp.fs, 'grid.nc'];
@@ -64,9 +64,9 @@ for iyear=min(cfg.iyears):max(cfg.iyears)
     cfg.casename=[cfg.casename_m, '_i', tmp.iyear_str];
     dirs.datadir= [dirs.hcstroot, filesep, cfg.casename_m, filesep, cfg.casename, tmp.fs, cfg.region];
 
-    tmp.modelvar = ['nino34m_', tmp.varname, '_model_',  'i', tmp.iyear_str];
-%     tmp.assmvar = ['nino34m_', tmp.varname, '_assm_',  '_i', tmp.iyear_str];
-    tmp.obsvar = ['nino34m_', tmp.varname, '_obs_',  'i', tmp.iyear_str];
+    tmp.modelvar = [cfg.region, 'm_', tmp.varname, '_model_',  'i', tmp.iyear_str];
+%     tmp.assmvar = [cfg.region, 'm_', tmp.varname, '_assm_',  '_i', tmp.iyear_str];
+    tmp.obsvar = [cfg.region, 'm_', tmp.varname, '_obs_',  'i', tmp.iyear_str];
 
     for fy = iyear:iyear+cfg.proj_year-1
         tmp.fy=fy;
@@ -75,13 +75,13 @@ for iyear=min(cfg.iyears):max(cfg.iyears)
             tmp.mon_str=num2str(mon, '%02i');
             cfg.datafilename=[dirs.datadir, filesep, ...
                 'M_', cfg.region, '_', tmp.varname, '_', cfg.gnm, '.hcst.', cfg.casename, '.cam.h0.', tmp.fy_str, '-', tmp.mon_str, '.nc'];
-            data.(tmp.modelvar)((fy-iyear)*12+mon)=ncread(cfg.datafilename, tmp.varname);
+            data.(tmp.modelvar)((fy-iyear)*12+mon)=ncread(cfg.datafilename, tmp.varname) .* 1000 * 86400; %m/s -> mm/day
             data.time_tmp((fy-iyear)*12+mon)=ncread(cfg.datafilename, 'time');
-            cfg.obsfnm = [dirs.obsroot, tmp.fs, cfg.region, tmp.fs, 'M_', cfg.region, '_', 'ersst_reg_cesm2.v5.',tmp.fy_str,tmp.mon_str, '.nc'];
+            cfg.obsfnm = [dirs.obsroot, tmp.fs, cfg.region, tmp.fs, 'M_', cfg.region, '_', 'GPCP_reg_cesm2.v5.',tmp.fy_str,tmp.mon_str, '.nc'];
             if exist(cfg.obsfnm)==0
                 data.(tmp.obsvar)((fy-iyear)*12+mon)=NaN;
             else
-                data.(tmp.obsvar)((fy-iyear)*12+mon)=ncread(cfg.obsfnm, 'sst');
+                data.(tmp.obsvar)((fy-iyear)*12+mon)=ncread(cfg.obsfnm, 'precip');
             end
         end
     end
@@ -95,7 +95,7 @@ for iyear=min(cfg.iyears):max(cfg.iyears)
     %% assign variables according to lead year
     for lmonth=0:cfg.proj_year*12-1
         tmp.lmonth_str=num2str(lmonth, '%03i');
-        tmp.modelvar_lm=['nino34m_', tmp.varname, '_model',  '_l', tmp.lmonth_str];
+        tmp.modelvar_lm=[cfg.region, 'm_', tmp.varname, '_model',  '_l', tmp.lmonth_str];
         tmp.mdata= data.(tmp.modelvar)(lmonth+1);
         tmp.mind=(iyear-min(cfg.iyears))+1;
         data.(tmp.modelvar_lm)(tmp.mind)=tmp.mdata;
@@ -103,9 +103,9 @@ for iyear=min(cfg.iyears):max(cfg.iyears)
     end
     tmp.yind=(iyear-min(cfg.iyears))*12+1:(iyear-min(cfg.iyears))*12+12;
     tmp.ydata= data.(tmp.obsvar)(1:12);
-    data.(['nino34m_', tmp.varname, '_obs'])(tmp.yind)= tmp.ydata;
+    data.([cfg.region, 'm_', tmp.varname, '_obs'])(tmp.yind)= tmp.ydata;
 %     tmp.ydata= ncread(cfg.datafilename, ['nino34m_assm_', tmp.varname], [1], 12);
-%     data.(['nino34m_', tmp.varname, '_assm_', tmp.obsname_simple])(tmp.yind)= tmp.ydata;
+%     data.([cfg.region, 'm_', tmp.varname, '_assm_', tmp.obsname_simple])(tmp.yind)= tmp.ydata;
     data.time_leap(tmp.yind)=data.time_tmp_leap(1:12);
     data.time_vec(tmp.yind,:)= data.time_vec_tmp(1:12,:);
 
@@ -121,10 +121,10 @@ for iyear=min(cfg.iyears):max(cfg.iyears)
     for lmonth=0:cfg.proj_year*12-1
         tmp.lmonth_str=num2str(lmonth, '%03i');
         tmp.yind=(iyear-min(cfg.iyears))+1;
-        tmp.obsvar_lm=['nino34m_', tmp.varname, '_obs_',  '_l', tmp.lmonth_str];
-        tmp.obsvar=['nino34m_', tmp.varname, '_obs'];
-%             tmp.assmvar_lm=['nino34m_', tmp.varname, '_assm_',  '_l', tmp.lmonth_str];
-%             tmp.assmvar=['nino34m_', tmp.varname, '_assm_', tmp.obsname_simple];
+        tmp.obsvar_lm=[cfg.region, 'm_', tmp.varname, '_obs_',  '_l', tmp.lmonth_str];
+        tmp.obsvar=[cfg.region, 'm_', tmp.varname, '_obs'];
+%             tmp.assmvar_lm=[cfg.region, 'm_', tmp.varname, '_assm_',  '_l', tmp.lmonth_str];
+%             tmp.assmvar=[cfg.region, 'm_', tmp.varname, '_assm_', tmp.obsname_simple];
         tmp.mind=(iyear-min(cfg.iyears))*12+lmonth+1;
         if tmp.mind<=length(data.(tmp.obsvar))
             tmp.ydata_obs=data.(tmp.obsvar)(tmp.mind);
@@ -151,25 +151,28 @@ for lmonth=0:cfg.proj_year*12-1
     tmp.avgwin=tmp.avgwin_min:tmp.avgwin_max;
     tmp.Nwin=length(tmp.avgwin);
 
-    tmp.modelvar_lm=['nino34m_', tmp.varname, '_model',  '_l', tmp.lmonth_str];
-    tmp.obsvar_lm=['nino34m_', tmp.varname, '_obs_',  '_l', tmp.lmonth_str];
-%     tmp.assmvar_lm=['nino34m_', tmp.varname, '_assm_',  '_l', tmp.lmonth_str];
+    tmp.modelvar_lm=[cfg.region, 'm_', tmp.varname, '_model',  '_l', tmp.lmonth_str];
+    tmp.obsvar_lm=[cfg.region, 'm_', tmp.varname, '_obs_',  '_l', tmp.lmonth_str];
+%     tmp.assmvar_lm=[cfg.region, 'm_', tmp.varname, '_assm_',  '_l', tmp.lmonth_str];
 
-    tmp.modelvar_ano_lm=['nino34m_', tmp.varname, '_model_ano_',  '_l', tmp.lmonth_str];
-    tmp.obsvar_ano_lm=['nino34m_', tmp.varname, '_obs_ano_',  '_l', tmp.lmonth_str];
-%     tmp.assmvar_ano_lm=['nino34m_', tmp.varname, '_assm_ano_',  '_l', tmp.lmonth_str];
+    tmp.modelvar_ano_lm=[cfg.region, 'm_', tmp.varname, '_model_ano_',  '_l', tmp.lmonth_str];
+    tmp.obsvar_ano_lm=[cfg.region, 'm_', tmp.varname, '_obs_ano_',  '_l', tmp.lmonth_str];
+%     tmp.assmvar_ano_lm=[cfg.region, 'm_', tmp.varname, '_assm_ano_',  '_l', tmp.lmonth_str];
 
     tmp.model_ltm=mean(data.(tmp.modelvar_lm)(tmp.avgwin_min:tmp.avgwin_max));
     tmp.obs_ltm=mean(data.(tmp.obsvar_lm)(tmp.avgwin_min:tmp.avgwin_max));
+%     tmp.model_ltm=273.15;
+%     tmp.obs_ltm=0;
+
 %     tmp.assm_ltm=mean(data.(tmp.assmvar_lm)(tmp.avgwin_min:tmp.avgwin_max));
 
     data.(tmp.modelvar_ano_lm)=data.(tmp.modelvar_lm)-tmp.model_ltm;
     data.(tmp.obsvar_ano_lm)=data.(tmp.obsvar_lm)-tmp.obs_ltm;
 %     data.(tmp.assmvar_ano_lm)=data.(tmp.assmvar_lm)-tmp.assm_ltm;
 
-    tmp.modelvar_ano_lm_rm=['nino34m_', tmp.varname, '_model_ano_',  '_l', tmp.lmonth_str, '_rm'];
-    tmp.obsvar_ano_lm_rm=['nino34m_', tmp.varname, '_obs_ano_',  '_l', tmp.lmonth_str, '_rm'];
-%     tmp.assmvar_ano_lm_rm=['nino34m_', tmp.varname, '_assm_ano_',  '_l', tmp.lmonth_str, '_rm'];
+    tmp.modelvar_ano_lm_rm=[cfg.region, 'm_', tmp.varname, '_model_ano_',  '_l', tmp.lmonth_str, '_rm'];
+    tmp.obsvar_ano_lm_rm=[cfg.region, 'm_', tmp.varname, '_obs_ano_',  '_l', tmp.lmonth_str, '_rm'];
+%     tmp.assmvar_ano_lm_rm=[cfg.region, 'm_', tmp.varname, '_assm_ano_',  '_l', tmp.lmonth_str, '_rm'];
     
 %% movmean for averaged rm_window years -> wrong, so rm_window should set to 1
     tmp.rm_window=1;
@@ -181,8 +184,8 @@ for lmonth=0:cfg.proj_year*12-1
     tmp.sig_0=sqrt( data.(tmp.obsvar_ano_lm_rm)(tmp.avgwin).^2 ./ tmp.Nwin ); %denominator (sigma_0)
     tmp.RMSE=sqrt((data.(tmp.modelvar_ano_lm_rm)(tmp.avgwin)-data.(tmp.obsvar_ano_lm_rm)(tmp.avgwin)).^2 ./ tmp.Nwin);
     
-    tmp.modelvar_RMSE=['nino34m_', tmp.varname, '_RMSE_',  '_l', tmp.lmonth_str, '_rm'];
-    data.(['nino34m_', tmp.varname, '_RMSE'])(lmonth+1)=tmp.RMSE / tmp.sig_0;
+    tmp.modelvar_RMSE=[cfg.region, 'm_', tmp.varname, '_RMSE_',  '_l', tmp.lmonth_str, '_rm'];
+    data.([cfg.region, 'm_', tmp.varname, '_RMSE'])(lmonth+1)=tmp.RMSE / tmp.sig_0;
 end
 
 %% set time value for figure
@@ -203,24 +206,24 @@ data.time_leap_extended=datenum(data.time_vec_extended);
     for lmonth=0:cfg.proj_year*12-1
 %     for lmonth=0:35
         tmp.lmonth_str=num2str(lmonth, '%03i');
-        tmp.modelvar_ano_lm_rm=['nino34m_', tmp.varname, '_model_ano_',  '_l', tmp.lmonth_str, '_rm'];
-        tmp.obsvar_ano_lm_rm=['nino34m_', tmp.varname, '_obs_ano_',  '_l', tmp.lmonth_str, '_rm'];
-%         tmp.assmvar_ano_lm_rm=['nino34m_', tmp.varname, '_assm_ano_',  '_l', tmp.lmonth_str, '_rm'];
+        tmp.modelvar_ano_lm_rm=[cfg.region, 'm_', tmp.varname, '_model_ano_',  '_l', tmp.lmonth_str, '_rm'];
+        tmp.obsvar_ano_lm_rm=[cfg.region, 'm_', tmp.varname, '_obs_ano_',  '_l', tmp.lmonth_str, '_rm'];
+%         tmp.assmvar_ano_lm_rm=[cfg.region, 'm_', tmp.varname, '_assm_ano_',  '_l', tmp.lmonth_str, '_rm'];
         
         tmp.md=data.(tmp.modelvar_ano_lm_rm);
         tmp.obs=data.(tmp.obsvar_ano_lm_rm);
 %         tmp.assm=data.(tmp.assmvar_ano_lm_rm);
         tmp.tind= (cfg.iyears-min(cfg.iyears))*12+1+lmonth;
         tmp.corrcoef=corrcoef(tmp.md(isfinite(tmp.obs)), tmp.obs(isfinite(tmp.obs)));
-        data.(['nino34m_', tmp.varname, '_corr'])(lmonth+1)=tmp.corrcoef(1,2);
+        data.([cfg.region, 'm_', tmp.varname, '_corr'])(lmonth+1)=tmp.corrcoef(1,2);
     end
 
     %% correlation coefficient of NINO3.4 ind, function of lead year
-    cfg.figname=[dirs.figdir, filesep, 'nino34m_hcst_obs_',str.iy_min, '-', str.iy_max, 'm', '_corr_leadm', '.tif'];
-%             bar(0:cfg.proj_year*12-1,data.(['nino34m_', tmp.varname, '_corr']),  'linewidth', 2)
-    bar(1:cfg.proj_year*12,data.(['nino34m_', tmp.varname, '_corr'])(1:cfg.proj_year*12),  'linewidth', 2);
+    cfg.figname=[dirs.figdir, filesep, cfg.region, 'm_hcst_obs_',str.iy_min, '-', str.iy_max, 'm', '_corr_leadm', '.tif'];
+%             bar(0:cfg.proj_year*12-1,data.([cfg.region, 'm_', tmp.varname, '_corr']),  'linewidth', 2)
+    bar(1:cfg.proj_year*12,data.([cfg.region, 'm_', tmp.varname, '_corr'])(1:cfg.proj_year*12),  'linewidth', 2);
 
-    xlabel('Lead month'); ylabel(['corr. coef.,', 'Nino3.4' , ', obs']);
+    xlabel('Lead month'); ylabel(['corr. coef.,', cfg.region , ', obs']);
     set(gca, 'fontsize', 20);
     grid minor
     ylim([-0.4 1]);
@@ -230,11 +233,11 @@ data.time_leap_extended=datenum(data.time_vec_extended);
     
 
     %% nRMSE of NINO3.4 ind, function of lead year
-    cfg.figname=[dirs.figdir, filesep, 'nino34m_hcst_obs_',str.iy_min, '-', str.iy_max, 'm', '_nRMSE_leadm', '.tif'];
-%             bar(0:cfg.proj_year*12-1,data.(['nino34m_', tmp.varname, '_corr']),  'linewidth', 2)
-    bar(1:cfg.proj_year*12, data.(['nino34m_', tmp.varname, '_RMSE'])(1:cfg.proj_year*12),  'linewidth', 2);
+    cfg.figname=[dirs.figdir, filesep, cfg.region, 'm_hcst_obs_',str.iy_min, '-', str.iy_max, 'm', '_nRMSE_leadm', '.tif'];
+%             bar(0:cfg.proj_year*12-1,data.([cfg.region, 'm_', tmp.varname, '_corr']),  'linewidth', 2)
+    bar(1:cfg.proj_year*12, data.([cfg.region, 'm_', tmp.varname, '_RMSE'])(1:cfg.proj_year*12),  'linewidth', 2);
 
-    xlabel('Lead month'); ylabel(['nRMSE.,', 'Nino3.4']);
+    xlabel('Lead month'); ylabel(['nRMSE.,', cfg.region]);
     set(gca, 'fontsize', 20);
     grid minor
     ylim([0.2 1.3]);
@@ -249,8 +252,8 @@ data.time_leap_extended=datenum(data.time_vec_extended);
 % % % % %         for lmonth=0:cfg.proj_year*12-1
 % % % %     for lmonth=0:35
 % % % %         tmp.lmonth_str=num2str(lmonth, '%03i');
-% % % %         tmp.modelvar_ano_lm_rm=['nino34m_', tmp.varname, '_model_ano_',  '_l', tmp.lmonth_str, '_rm'];
-% % % %         tmp.obsvar_ano_lm_rm=['nino34m_', tmp.varname, '_obs_ano_',  '_l', tmp.lmonth_str, '_rm'];
+% % % %         tmp.modelvar_ano_lm_rm=[cfg.region, 'm_', tmp.varname, '_model_ano_',  '_l', tmp.lmonth_str, '_rm'];
+% % % %         tmp.obsvar_ano_lm_rm=[cfg.region, 'm_', tmp.varname, '_obs_ano_',  '_l', tmp.lmonth_str, '_rm'];
 % % % %         
 % % % %         tmp.md=data.(tmp.modelvar_ano_lm_rm);
 % % % %         tmp.obs=data.(tmp.obsvar_ano_lm_rm);
@@ -265,7 +268,7 @@ data.time_leap_extended=datenum(data.time_vec_extended);
 % % % %     
 % % % % %% correlation coefficient of NINO3.4 ind, function of lead year (3-mon running mean)
 % % % % cfg.figname=[dirs.figdir, filesep, 'spaghetti_nino34m_hcst_obs_', str.iy_min, '-', str.iy_max, 'm', '_corr_leadm', '.tif'];
-% % % % %             bar(0:cfg.proj_year*12-1,data.(['nino34m_', tmp.varname, '_corr']),  'linewidth', 2)
+% % % % %             bar(0:cfg.proj_year*12-1,data.([cfg.region, 'm_', tmp.varname, '_corr']),  'linewidth', 2)
 % % % % 
 % % % % xlabel('Year'); ylabel('()');
 % % % % set(gca, 'fontsize', 20)
@@ -280,8 +283,8 @@ data.time_leap_extended=datenum(data.time_vec_extended);
 tmp.jet=jet(cfg.proj_year*12);
 for lmonth=0:cfg.proj_year*12-1
     tmp.lmonth_str=num2str(lmonth, '%03i');
-%     tmp.modelvar_ano_lm_rm=['nino34m_', tmp.varname, '_model_ano_',  '_l', tmp.lmonth_str, '_rm'];
-    tmp.modelvar_ano_lm_rm=['nino34m_', tmp.varname, '_model_ano_',  '_l', tmp.lmonth_str];
+%     tmp.modelvar_ano_lm_rm=[cfg.region, 'm_', tmp.varname, '_model_ano_',  '_l', tmp.lmonth_str, '_rm'];
+    tmp.modelvar_ano_lm_rm=[cfg.region, 'm_', tmp.varname, '_model_ano_',  '_l', tmp.lmonth_str];
     tmp.plottime=min(cfg.iyears)+1/24+lmonth*1/12 : 1 : max(cfg.iyears)-1/24+lmonth*1/12;
     tmp.md=data.(tmp.modelvar_ano_lm_rm);
     tmp.plottime=cfg.iyears+1/24+lmonth*(1/12);
@@ -297,18 +300,18 @@ title(cax,'LM');
 tmp=rmfield(tmp, 'obs');
 
 for lmonth=0:cfg.proj_year*12-1
-%     tmp.obsvar_ano_lm_rm=['nino34m_', tmp.varname, '_obs_ano_',  '_l', tmp.lmonth_str, '_rm'];
+%     tmp.obsvar_ano_lm_rm=[cfg.region, 'm_', tmp.varname, '_obs_ano_',  '_l', tmp.lmonth_str, '_rm'];
     tmp.lmonth_str=num2str(lmonth, '%03i');
-    tmp.obsvar_ano_lm_rm=['nino34m_', tmp.varname, '_obs_ano_',  '_l', tmp.lmonth_str];
+    tmp.obsvar_ano_lm_rm=[cfg.region, 'm_', tmp.varname, '_obs_ano_',  '_l', tmp.lmonth_str];
     tmp.obs(1+lmonth:12:(length(cfg.iyears)-1)*12+1+lmonth)=data.(tmp.obsvar_ano_lm_rm);
 end
 
-tmp.plottime=min(cfg.iyears)+1/24:1/12:max(cfg.iyears)-1/24+36*1/12;
+tmp.plottime=min(cfg.iyears)+1/24:1/12:max(cfg.iyears)-1/24+(cfg.proj_year*12)*1/12;
 plot(tmp.plottime, tmp.obs, 'k', 'linewidth',2)
 hold off
 axis tight
-cfg.figname=[dirs.figdir, filesep, 'spaghetti_nino34m_hcst_obs_oneline', '_', str.iy_min, '-', str.iy_max, '_leadm', '.tif'];
-xlabel('Year'); ylabel('Nino 3.4 Index');
+cfg.figname=[dirs.figdir, filesep, 'spaghetti_', cfg.region, 'm_hcst_obs_oneline', '_', str.iy_min, '-', str.iy_max, '_leadm', '.tif'];
+xlabel('Year'); ylabel(cfg.region);
 set(gca, 'fontsize', 20)
 grid minor
 set(gcf, 'PaperPosition', [0, 0, 8, 4]);
@@ -320,15 +323,15 @@ close all;
 
 
 
-%% spaghetti plot (SST raw)
+%% spaghetti plot (cfg.var raw)
 for iyear=min(cfg.iyears):max(cfg.iyears)
     tmp.iyear_str=num2str(iyear);
     tmp.plottime=iyear+1/24 : 1/12 : iyear+cfg.proj_year - 1/24;
-    tmp.modelvar=['nino34m_', tmp.varname, '_model_',  'i', tmp.iyear_str];
-    tmp.obsvar=['nino34m_', tmp.varname, '_obs_',  'i', tmp.iyear_str];
+    tmp.modelvar=[cfg.region, 'm_', tmp.varname, '_model_',  'i', tmp.iyear_str];
+    tmp.obsvar=[cfg.region, 'm_', tmp.varname, '_obs_',  'i', tmp.iyear_str];
     
-    plot(tmp.plottime,data.(tmp.modelvar)-273.15,'b');
     hold on
+    plot(tmp.plottime,data.(tmp.modelvar),'b');
     plot(tmp.plottime,data.(tmp.obsvar),'k', 'linewidth',3);
 end
 axis tight
@@ -337,7 +340,7 @@ xlabel('Year'); ylabel('^oC');
 set(gca, 'fontsize', 20)
 grid minor
 set(gcf, 'PaperPosition', [0, 0, 8, 4]);
-cfg.figname=[dirs.figdir, filesep, 'spaghetti_', 'SST_hcst_obs_', str.iy_min, '-', str.iy_max,'_proj_',cfg.proj_year,  'y.tif'];
+cfg.figname=[dirs.figdir, filesep, 'spaghetti_', cfg.var,'_hcst_obs_', str.iy_min, '-', str.iy_max,'_proj_',num2str(cfg.proj_year),  'y.tif'];
 saveas(gcf,cfg.figname,'tif');
 RemoveWhiteSpace([], 'file', cfg.figname);
 close all;
@@ -355,22 +358,22 @@ close all;
 % %         for lmonth=0:cfg.proj_year*12-1
 %     for lmonth=0:35
 %         tmp.lmonth_str=num2str(lmonth, '%03i');
-%         tmp.modelvar_ano_lm_rm=['nino34m_', tmp.varname, '_model_ano_',  '_l', tmp.lmonth_str, '_rm'];
-%         tmp.obsvar_ano_lm_rm=['nino34m_', tmp.varname, '_obs_ano_',  '_l', tmp.lmonth_str, '_rm'];
-%         tmp.assmvar_ano_lm_rm=['nino34m_', tmp.varname, '_assm_ano_',  '_l', tmp.lmonth_str, '_rm'];
+%         tmp.modelvar_ano_lm_rm=[cfg.region, 'm_', tmp.varname, '_model_ano_',  '_l', tmp.lmonth_str, '_rm'];
+%         tmp.obsvar_ano_lm_rm=[cfg.region, 'm_', tmp.varname, '_obs_ano_',  '_l', tmp.lmonth_str, '_rm'];
+%         tmp.assmvar_ano_lm_rm=[cfg.region, 'm_', tmp.varname, '_assm_ano_',  '_l', tmp.lmonth_str, '_rm'];
 % 
 %         tmp.md=data.(tmp.modelvar_ano_lm_rm);
 %         tmp.obs=data.(tmp.obsvar_ano_lm_rm);
 % %         tmp.assm=data.(tmp.assmvar_ano_lm_rm);
 % 
 %         tmp.corrcoef=corrcoef(tmp.md(isfinite(tmp.assm)), tmp.assm(isfinite(tmp.assm)));
-%         data.(['nino34m_', tmp.varname, '_corr'])(lmonth+1)=tmp.corrcoef(1,2);
+%         data.([cfg.region, 'm_', tmp.varname, '_corr'])(lmonth+1)=tmp.corrcoef(1,2);
 %     end
 % 
 %     %% correlation coefficient of NINO3.4 ind, function of lead year (3-mon running mean)
-%         cfg.figname=[dirs.figdir, filesep, 'nino34m_hcst_assm_91-20m', '_corr_leadm_3rm', '.tif'];
-% %             bar(0:cfg.proj_year*12-1,data.(['nino34m_', tmp.varname, '_corr']),  'linewidth', 2)
-%         bar(1:36,data.(['nino34m_', tmp.varname, '_corr'])(1:36),  'linewidth', 2)
+%         cfg.figname=[dirs.figdir, filesep, cfg.region, 'm_hcst_assm_91-20m', '_corr_leadm_3rm', '.tif'];
+% %             bar(0:cfg.proj_year*12-1,data.([cfg.region, 'm_', tmp.varname, '_corr']),  'linewidth', 2)
+%         bar(1:36,data.([cfg.region, 'm_', tmp.varname, '_corr'])(1:36),  'linewidth', 2)
 % 
 %         xlabel('Lead month'); ylabel(['corr. coef.,', 'Nino3.4' , ', assm-ba']);
 %         set(gca, 'fontsize', 20)

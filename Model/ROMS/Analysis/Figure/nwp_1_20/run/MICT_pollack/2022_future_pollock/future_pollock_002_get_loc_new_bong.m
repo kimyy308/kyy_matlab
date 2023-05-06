@@ -11,7 +11,6 @@ all_testname = {'ens2203'};
 all_region ={'pollock_egg3'};
 
 % all_region ={'ES_KHOA','YS_KHOA', 'SS_KHOA'};
-
 for testnameind=1:length(all_testname)
     for regionind=1:length(all_region)
         clearvars '*' -except regionind testnameind all_region all_testname

@@ -9,20 +9,24 @@ all_region ={'pollock_egg3'};
 % all_region ={'ES'};
 % all_region ={'ES_KHOA','YS_KHOA', 'SS_KHOA'};
 
-
 for testnameind=1:length(all_testname)
     for regionind=1:length(all_region)
         clearvars '*' -except regionind testnameind all_region all_testname
         % % % 
-        dropboxpath='C:\users\user/Dropbox/';
+%         dropboxpath='C:/users/user/Dropbox/';
+        dropboxpath = '/Volumes/kyy_raid/kimyy/Dropbox';
+
 %         addpath(genpath([dropboxpath '/source/matlab/Common/m_map']));
 %         addpath(genpath([dropboxpath '/source/matlab/Common/Figure']));
 %         addpath(genpath([dropboxpath '/source/matlab/Common/netcdf_old']));
 %         addpath(genpath([dropboxpath '/source/matlab/Model/ROMS/Grid_kyy']));
 %         addpath(genpath([dropboxpath '/source/matlab/Model/ROMS/Roms_tools/mat_tool']));
 %         addpath(genpath([matlabroot,'/toolbox/matlab/imagesci/'])); %% add new netcdf path
-        addpath(genpath('C:\Users\User\Dropbox\source\matlab\Model\ROMS\Analysis\Figure\nwp_1_10\run\MICT_pollack\paper\subroutine\'))
-        addpath(genpath('C:\Users\User\Dropbox\source\matlab\function\'))
+%         addpath(genpath('C:/Users/User/Dropbox/source/matlab/Model/ROMS/Analysis/Figure/nwp_1_10/run/MICT_pollack/paper/subroutine/'))
+%         addpath(genpath('C:/Users/User/Dropbox/source/matlab/function/'))
+        addpath(genpath([dropboxpath, '/source/matlab/Model/ROMS/Analysis/Figure/nwp_1_10/run/MICT_pollack/paper/subroutine/']))
+        addpath(genpath([dropboxpath, '/source/matlab/function/']))
+
         [dropboxpath, erorr_status] = Func_0008_set_dropbox_path(computer);
         shadlev = [-2 2];
         % rms_shadlev = [0 4];
@@ -50,7 +54,7 @@ for testnameind=1:length(all_testname)
         inputyear = [1995:2014];
 %         inputyear = [2000:2009]; % % put year which you want to plot [year year ...]
 %         inputyear = [2010:2019]; % % put year which you want to plot [year year ...]
-        
+
 %         allyear =[1983];
 %         allyear=[1983:1990];
 %         allyear=[1983:1992];
@@ -73,11 +77,17 @@ for testnameind=1:length(all_testname)
 % % %         switch region
         [refpolygon, lonlat, error_status] = Func_0007_get_polygon_data_from_regionname(regionname);
 
-        param_script =['C:\users\user/Dropbox/source/matlab/Model/ROMS/Analysis/Figure/nwp_1_10/run/fig_param/fig_param_kyy_', regionname, '.m'];
-        figrawdir =strcat('D:\research\Ph_D_course\2021_Particle tracking of the walleye pollock\figure\', testname, '\DA\'); % % where figure files will be saved
-        filedir = strcat('D:\Data\Model\ROMS\nwp_1_10\test06\DA\'); % % where data files are
-        savedir = strcat('D:\Data\Model\ROMS\nwp_1_10\test06\DA\pollock_6\');
-        inputdir = ['/home/auto/MAMS/Data/01_NWP_1_10/Input/'];
+%         param_script =['C:/users/user/Dropbox/source/matlab/Model/ROMS/Analysis/Figure/nwp_1_10/run/fig_param/fig_param_kyy_', regionname, '.m'];
+%         figrawdir =strcat('D:/research/Ph_D_course/2021_Particle tracking of the walleye pollock/figure/', testname, '/DA/'); % % where figure files will be saved
+%         filedir = strcat('D:/Data/Model/ROMS/nwp_1_10/test06/DA/'); % % where data files are
+%         savedir = strcat('D:/Data/Model/ROMS/nwp_1_10/test06/DA/pollock_6/');
+%         inputdir = ['/home/auto/MAMS/Data/01_NWP_1_10/Input/'];
+
+        param_script =[dropboxpath, '/source/matlab/Model/ROMS/Analysis/Figure/nwp_1_10/run/fig_param/fig_param_kyy_', regionname, '.m'];
+        figrawdir=strcat('/Users/kimyy/Desktop/backup/Research/Ph_D_course/2022_pollock_future/figure/', testname, '/DA/'); % % where figure files will be saved
+        filedir= strcat('/Volumes/kyy_raid/Data/Model/ROMS/nwp_1_10/test06/DA/'); % % where data files are
+        savedir = strcat('/Volumes/kyy_raid/Data/Model/ROMS/nwp_1_10/test06/DA/pollock_6/');
+
         mkdir(savedir);
         LTRANS_testname='Pollock6';
         
@@ -244,52 +254,56 @@ for testnameind=1:length(all_testname)
             fig_flags{flagi,2}=0;
         end
 %         fig_flags{63,2}=2; 
-        fig_flags{65,2}=2; 
+%         fig_flags{1,2}=2; % spawning ratio 
+%         fig_flags{14,2}=2;  % vec plot
+%         fig_flags{31,2}=2;  % SST plot
+        fig_flags{65,2}=2; % tracking 
+
 
         
-        figdir=[figrawdir,LTRANS_testname, '\', regionname, '\spawn\'];
+        figdir=[figrawdir,LTRANS_testname, '/', regionname, '/spawn/'];
         if (exist(strcat(figdir) , 'dir') ~= 7)
             mkdir(strcat(figdir));
         end 
         outfile = strcat(figdir,regionname);
         
-        spdiff_figdir=[figrawdir,LTRANS_testname, '\', regionname, '\spawn_diff\'];
+        spdiff_figdir=[figrawdir,LTRANS_testname, '/', regionname, '/spawn_diff/'];
         if (exist(strcat(spdiff_figdir) , 'dir') ~= 7)
             mkdir(strcat(spdiff_figdir));
         end 
         spdiff_outfile = strcat(spdiff_figdir,regionname);
         
-        climfigdir=[figrawdir,LTRANS_testname, '\', regionname, '\clim\'];
+        climfigdir=[figrawdir,LTRANS_testname, '/', regionname, '/clim/'];
         if (exist(strcat(climfigdir) , 'dir') ~= 7)
             mkdir(strcat(climfigdir));
         end 
         climoutfile = strcat(climfigdir,regionname);
         
-        clim_atfigdir=[figrawdir,LTRANS_testname, '\', regionname, '\clim_at\'];
+        clim_atfigdir=[figrawdir,LTRANS_testname, '/', regionname, '/clim_at/'];
         if (exist(strcat(clim_atfigdir) , 'dir') ~= 7)
             mkdir(strcat(clim_atfigdir));
         end 
         clim_at_outfile = strcat(clim_atfigdir,regionname);
         
-        clim_diff_figdir=[figrawdir,LTRANS_testname, '\', regionname, '\clim_diff\'];
+        clim_diff_figdir=[figrawdir,LTRANS_testname, '/', regionname, '/clim_diff/'];
         if (exist(strcat(clim_diff_figdir) , 'dir') ~= 7)
             mkdir(strcat(clim_diff_figdir));
         end 
         clim_diff_outfile = strcat(clim_diff_figdir,regionname);
         
-        clim_atdiff_figdir=[figrawdir,LTRANS_testname, '\', regionname, '\clim_atdiff\'];
+        clim_atdiff_figdir=[figrawdir,LTRANS_testname, '/', regionname, '/clim_atdiff/'];
         if (exist(strcat(clim_atdiff_figdir) , 'dir') ~= 7)
             mkdir(strcat(clim_atdiff_figdir));
         end 
         clim_atdiff_outfile = strcat(clim_atdiff_figdir,regionname);
         
-        all_figdir=[figrawdir,LTRANS_testname, '\', regionname, '\all\'];
+        all_figdir=[figrawdir,LTRANS_testname, '/', regionname, '/all/'];
         if (exist(strcat(all_figdir) , 'dir') ~= 7)
             mkdir(strcat(all_figdir));
         end 
         all_outfile = strcat(all_figdir,regionname);
         
-        regime_figdir=[figrawdir,LTRANS_testname, '\', regionname, '\regime_shift\'];
+        regime_figdir=[figrawdir,LTRANS_testname, '/', regionname, '/regime_shift/'];
         if (exist(strcat(regime_figdir) , 'dir') ~= 7)
             mkdir(strcat(regime_figdir));
         end 

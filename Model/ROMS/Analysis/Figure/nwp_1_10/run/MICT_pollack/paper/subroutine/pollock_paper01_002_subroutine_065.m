@@ -52,7 +52,7 @@ if (exist(jpgname , 'file') ~= 2 || fig_flag==2)
     ax{testnameind,2}=axes;
     set(ax{testnameind,2},'pos',pos_ax{testnameind});
     pc{testnameind,2}=m_pcolor(lon_rho',lat_rho', mean_data','parent',ax{testnameind,2});
-    colormap(ax{testnameind,2},jet);
+    colormap(ax{testnameind,2},jet(10));
     caxis([1, 200]);
     shading(gca,m_pcolor_shading_method);   
     m_grid('fontsize', m_grid_fontsize, 'tickdir', m_grid_tickdir_type, 'box', m_grid_box_type,  ...

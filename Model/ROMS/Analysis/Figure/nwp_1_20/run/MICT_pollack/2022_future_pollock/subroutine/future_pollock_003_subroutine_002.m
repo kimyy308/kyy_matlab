@@ -123,7 +123,7 @@ for checkti=1:length(RCM_info.checktime)
         m_proj(param.m_proj_name,'lon',[RCM_grid.domain(1) RCM_grid.domain(2)],'lat',[RCM_grid.domain(3) RCM_grid.domain(4)]);
         ax{tmp.testnameind,2}=axes;
         pc{tmp.testnameind,2}=m_pcolor(RCM_grid.lon_rho',RCM_grid.lat_rho', tmp.mean_data','parent',ax{tmp.testnameind,2});
-        colormap(ax{tmp.testnameind,2},jet);
+        colormap(ax{tmp.testnameind,2},jet(10));
         caxis([0, 200]);
         shading(gca,param.m_pcolor_shading_method);   
 
@@ -275,7 +275,7 @@ for checkti=1:length(RCM_info.checktime)
         m_proj(param.m_proj_name,'lon',[RCM_grid.domain(1) RCM_grid.domain(2)],'lat',[RCM_grid.domain(3) RCM_grid.domain(4)]);
         ax{tmp.testnameind,2}=axes;
         pc{tmp.testnameind,2}=m_pcolor(RCM_grid.lon_rho',RCM_grid.lat_rho', tmp.mean_data','parent',ax{tmp.testnameind,2});
-        colormap(ax{tmp.testnameind,2},jet);
+        colormap(ax{tmp.testnameind,2},jet(10));
 %         caxis([0.1, 1.0]);
         caxis([0, 200]);
 
@@ -374,7 +374,7 @@ end
 % % %     ax{testnameind,2}=axes;
 % % %     set(ax{testnameind,2},'pos',pos_ax{testnameind});
 % % %     pc{testnameind,2}=m_pcolor(lon_rho',lat_rho', mean_data','parent',ax{testnameind,2});
-% % %     colormap(ax{testnameind,2},jet);
+% % %     colormap(ax{testnameind,2},jet(10));
 % % %     caxis([1, 100]);
 % % %     shading(gca,m_pcolor_shading_method);   
 % % %     m_grid('fontsize', m_grid_fontsize, 'tickdir', m_grid_tickdir_type, 'box', m_grid_box_type,  ...

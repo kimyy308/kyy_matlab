@@ -16,25 +16,89 @@ tmp.tifname=strcat(dirs.figdir, tmp.testname, '_surf_', 'vec', '_', ...
 if (exist(tmp.tifname , 'file') ~= 2 || fig_flag==2)      
     run(tmp.param_script);
 %% set data file name (mat) for reading
-    tmp.matname_u = [dirs.matdir, tmp.testname, '_', tmp.regionname, '_', 'u',...
-        '_mean_', num2str(min(RCM_info.years),'%04i'), '-', num2str(max(RCM_info.years),'%04i'),...
-    '_', RCM_info.season, '.mat'];
-    if (exist(tmp.matname_u , 'file') ~= 2)
-        disp('please get data from subroutine_004_001 first')
-    else
-        load(tmp.matname_u);
-        RCM_data_u=RCM_data;
-    end 
     
-    tmp.matname_v = [dirs.matdir, tmp.testname, '_', tmp.regionname, '_', 'v',...
-        '_mean_', num2str(min(RCM_info.years),'%04i'), '-', num2str(max(RCM_info.years),'%04i'),...
-    '_', RCM_info.season, '.mat'];
-    if (exist(tmp.matname_v , 'file') ~= 2)
-        disp('please get data from subroutine_004_001 first')
-    else
-        load(tmp.matname_v);
-        RCM_data_v=RCM_data;
-    end 
+    switch tmp.testname
+            case 'ENS4_hist'
+               tmp.tset= {'test2117', 'test2118','test2119','test2120'};
+               for titi=1:4
+                    tmp.ttname=tmp.tset{titi};
+                    dirs.ttmatdir = strcat('/Volumes/kyy_raid/Data/Model/ROMS/', RCM_info.model, '/', tmp.ttname, '/run/mean/');
+                    tmp.matname_u = [dirs.ttmatdir, tmp.ttname, '_', tmp.regionname, '_', 'u',...
+                        '_mean_', num2str(min(RCM_info.years),'%04i'), '-', num2str(max(RCM_info.years),'%04i'),...
+                    '_', RCM_info.season, '.mat'];
+                    if (exist(tmp.matname_u , 'file') ~= 2)
+                        disp('please get data from subroutine_004_001 first')
+                    else
+                        load(tmp.matname_u);
+                    end 
+                    RCM_data_u=RCM_data;
+                    tmp.tmean_u(:,:,titi)=RCM_data.mean;
+
+                    tmp.matname_v = [dirs.ttmatdir, tmp.ttname, '_', tmp.regionname, '_', 'v',...
+                        '_mean_', num2str(min(RCM_info.years),'%04i'), '-', num2str(max(RCM_info.years),'%04i'),...
+                    '_', RCM_info.season, '.mat'];
+                    if (exist(tmp.matname_v , 'file') ~= 2)
+                        disp('please get data from subroutine_004_001 first')
+                    else
+                        load(tmp.matname_v);
+                    end 
+                    RCM_data_v=RCM_data;
+                    tmp.tmean_v(:,:,titi)=RCM_data.mean;
+               end
+               RCM_data_u.mean=mean(tmp.tmean_u,3);
+               RCM_data_v.mean=mean(tmp.tmean_v,3);
+           case 'ENS4_fut'
+               tmp.tset= {'test2127', 'test2128','test2129','test2130'};
+               for titi=1:4
+                    tmp.ttname=tmp.tset{titi};
+                    dirs.ttmatdir = strcat('/Volumes/kyy_raid/Data/Model/ROMS/', RCM_info.model, '/', tmp.ttname, '/run/mean/');
+                    tmp.matname_u = [dirs.ttmatdir, tmp.ttname, '_', tmp.regionname, '_', 'u',...
+                        '_mean_', num2str(min(RCM_info.years),'%04i'), '-', num2str(max(RCM_info.years),'%04i'),...
+                    '_', RCM_info.season, '.mat'];
+                    if (exist(tmp.matname_u , 'file') ~= 2)
+                        disp('please get data from subroutine_004_001 first')
+                    else
+                        load(tmp.matname_u);
+                    end 
+                    RCM_data_u=RCM_data;
+                    tmp.tmean_u(:,:,titi)=RCM_data.mean;
+
+                    tmp.matname_v = [dirs.ttmatdir, tmp.ttname, '_', tmp.regionname, '_', 'v',...
+                        '_mean_', num2str(min(RCM_info.years),'%04i'), '-', num2str(max(RCM_info.years),'%04i'),...
+                    '_', RCM_info.season, '.mat'];
+                    if (exist(tmp.matname_v , 'file') ~= 2)
+                        disp('please get data from subroutine_004_001 first')
+                    else
+                        load(tmp.matname_v);
+                    end 
+                    RCM_data_v=RCM_data;
+                    tmp.tmean_v(:,:,titi)=RCM_data.mean;
+               end
+               RCM_data_u.mean=mean(tmp.tmean_u,3);
+               RCM_data_v.mean=mean(tmp.tmean_v,3);
+            otherwise
+                tmp.matname_u = [dirs.matdir, tmp.testname, '_', tmp.regionname, '_', 'u',...
+                    '_mean_', num2str(min(RCM_info.years),'%04i'), '-', num2str(max(RCM_info.years),'%04i'),...
+                '_', RCM_info.season, '.mat'];
+                if (exist(tmp.matname_u , 'file') ~= 2)
+                    disp('please get data from subroutine_004_001 first')
+                else
+                    load(tmp.matname_u);
+                    RCM_data_u=RCM_data;
+                end 
+                
+                tmp.matname_v = [dirs.matdir, tmp.testname, '_', tmp.regionname, '_', 'v',...
+                    '_mean_', num2str(min(RCM_info.years),'%04i'), '-', num2str(max(RCM_info.years),'%04i'),...
+                '_', RCM_info.season, '.mat'];
+                if (exist(tmp.matname_v , 'file') ~= 2)
+                    disp('please get data from subroutine_004_001 first')
+                else
+                    load(tmp.matname_v);
+                    RCM_data_v=RCM_data;
+                end 
+        end
+
+    
 
     RCM_grid.mask_model = double(inpolygon(RCM_grid.cut_lon_rho,RCM_grid.cut_lat_rho,RCM_grid.refpolygon(:,1),RCM_grid.refpolygon(:,2)));
     RCM_grid.mask_model(RCM_grid.mask_model==0)=NaN;

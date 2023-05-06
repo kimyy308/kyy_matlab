@@ -120,7 +120,6 @@ for varind=1:length(config.varnames)
                 end
                 %% read data
                 for yind=1:length(config.years)
-    
                     tmp.year=config.years(yind); tmp.yearstr=num2str(tmp.year, '%04i');
                     disp([tmp.varname, ', ', tmp.obsname, ', ', tmp.ensname, ', ', tmp.yearstr]);
     

@@ -18,8 +18,8 @@ if testnameind==1
         for sub_testnameind=1:length(RCM_info.name)
             tmp_sub.testname_ssp=RCM_info.name{sub_testnameind};
             [tmp_sub.testname_his, tmp.error_status] = Func_0023_RCM_CMIP6_testname_his(tmp_sub.testname_ssp);
-            dirs_sub.filedir_his = strcat('D:\Data\Model\ROMS\nwp_1_20\', tmp_sub.testname_his, '\pollock\'); % % where data files are
-            dirs_sub.savedir_his = strcat('D:\Data\Model\ROMS\nwp_1_20\', tmp_sub.testname_his, '\pollock\');
+            dirs_sub.filedir_his = strcat('/Volumes/kyy_raid/Data/Model/ROMS/nwp_1_20/', tmp_sub.testname_his, '/pollock/'); % % where data files are
+            dirs_sub.savedir_his = strcat('/Volumes/kyy_raid/Data/Model/ROMS/nwp_1_20/', tmp_sub.testname_his, '/pollock/');
 
             %%    initialization
             if sub_testnameind==1
@@ -109,9 +109,13 @@ if testnameind==1
         ax{tmp.testnameind,2}=axes;
         pc{tmp.testnameind,2}=m_pcolor(RCM_grid.lon_rho',RCM_grid.lat_rho', tmp.mean_data','parent',ax{tmp.testnameind,2});
     %     colormap(ax{tmp.testnameind,2},jet);
-        colormap(ax{tmp.testnameind,2},parula);
+%         colormap(ax{tmp.testnameind,2},parula);
+        cmp.wr_08=Func_0009_get_colormaps('wr_08', tmp.dropboxpath);
+        colormap(ax{tmp.testnameind,2},cmp.wr_08);
 
-        caxis([0, 1.0]);
+%         caxis([0, 1.0]);
+        caxis([0, 0.8]);
+        
         shading(gca,param.m_pcolor_shading_method);   
 
         m_grid('fontsize', param.m_grid_fontsize, 'tickdir', param.m_grid_tickdir_type, 'box', param.m_grid_box_type,  ...
@@ -171,8 +175,8 @@ if testnameind==1
 
         for sub_testnameind=1:length(RCM_info.name)
             tmp_sub.testname_ssp=RCM_info.name{sub_testnameind};
-            dirs_sub.filedir_ssp = strcat('D:\Data\Model\ROMS\nwp_1_20\', tmp_sub.testname_ssp, '\pollock\'); % % where data files are
-            dirs_sub.savedir_ssp = strcat('D:\Data\Model\ROMS\nwp_1_20\', tmp_sub.testname_ssp, '\pollock\');
+            dirs_sub.filedir_ssp = strcat('/Volumes/kyy_raid/Data/Model/ROMS/nwp_1_20/', tmp_sub.testname_ssp, '/pollock/'); % % where data files are
+            dirs_sub.savedir_ssp = strcat('/Volumes/kyy_raid/Data/Model/ROMS/nwp_1_20/', tmp_sub.testname_ssp, '/pollock/');
 
             %%    initialization
             if sub_testnameind==1
@@ -262,9 +266,11 @@ if testnameind==1
         ax{tmp.testnameind,2}=axes;
         pc{tmp.testnameind,2}=m_pcolor(RCM_grid.lon_rho',RCM_grid.lat_rho', tmp.mean_data','parent',ax{tmp.testnameind,2});
     %     colormap(ax{tmp.testnameind,2},jet);
-        colormap(ax{tmp.testnameind,2},parula);
-
-        caxis([0, 1.0]);
+%         colormap(ax{tmp.testnameind,2},parula);
+        cmp.wr_08=Func_0009_get_colormaps('wr_08', tmp.dropboxpath);
+        colormap(ax{tmp.testnameind,2},cmp.wr_08);
+%         caxis([0, 1.0]);
+        caxis([0, 0.8]);
         shading(gca,param.m_pcolor_shading_method);   
 
         m_grid('fontsize', param.m_grid_fontsize, 'tickdir', param.m_grid_tickdir_type, 'box', param.m_grid_box_type,  ...
@@ -316,7 +322,7 @@ if testnameind==1
     if (exist(tmp.tifname , 'file') ~= 2 || flags.fig_switch(flagi)==2)
 
         run(tmp.param_script);
-
+        
         tmp.mean_data= tmp.mean_data_ssp-tmp.mean_data_his;
         
         RCM_grid.mask_EKBcoast = double(inpolygon(RCM_grid.lon_rho,RCM_grid.lat_rho,[127 127 132 132],tmp.refpolygon(:,2)));
@@ -327,6 +333,8 @@ if testnameind==1
         RCM_grid.mask_model2 = double(inpolygon(RCM_grid.lon_rho,RCM_grid.lat_rho,tmp.refpolygon(:,1),tmp.refpolygon(:,2)));
         RCM_grid.mask_model2(RCM_grid.mask_model2==0)=NaN;
         tmp.mean_data = tmp.mean_data .* RCM_grid.mask_model2;
+        tmp.mean_data_ssp=tmp.mean_data_ssp .* RCM_grid.mask_model2;
+        tmp.mean_data_his=tmp.mean_data_his  .* RCM_grid.mask_model2;
 
         [tmp.mean_egg_mask, tmp.error_status] = Func_0011_get_area_weighted_mean(tmp.mean_data, RCM_grid.lon_rho, RCM_grid.lat_rho);
 
@@ -363,7 +371,7 @@ if testnameind==1
         ax{tmp.testnameind,2}=axes;
         pc{tmp.testnameind,2}=m_pcolor(RCM_grid.lon_rho',RCM_grid.lat_rho', tmp.mean_data','parent',ax{tmp.testnameind,2});
     %     colormap(ax{tmp.testnameind,2},jet);
-        colormap(ax{tmp.testnameind,2},cmaps.byrmap3);
+        colormap(ax{tmp.testnameind,2},cmaps.bwr_10);
 
         caxis([-1, 1]);
         shading(gca,param.m_pcolor_shading_method);   
@@ -384,13 +392,13 @@ if testnameind==1
         set(gcf, 'PaperSize', [param.hor_paper_size_x, param.hor_paper_size_y]);
         set(gcf,'PaperPosition', [param.paper_position_hor param.paper_position_ver param.paper_position_width param.paper_position_height]) 
 
-        [tmp.indw, tmp.inde, tmp.inds, tmp.indn]=Func_0012_findind_Y(1/10,[128, 130, 36, 39],RCM_grid.lon_rho,RCM_grid.lat_rho); % southern EKB
+        [tmp.indw, tmp.inde, tmp.inds, tmp.indn]=Func_0012_findind_Y(1/10,[127, 130, 36, 39],RCM_grid.lon_rho,RCM_grid.lat_rho); % southern EKB
         sEKB_lon=RCM_grid.lon_rho(tmp.indw:tmp.inde,tmp.inds:tmp.indn);
         sEKB_lat=RCM_grid.lat_rho(tmp.indw:tmp.inde,tmp.inds:tmp.indn);
         sEKB_data=tmp.mean_data(tmp.indw:tmp.inde,tmp.inds:tmp.indn);
         [sEKB_mean, error_status] = Func_0011_get_area_weighted_mean(sEKB_data, sEKB_lon, sEKB_lat)
         
-        [indw, inde, inds, indn]=Func_0012_findind_Y(1/10,[128, 130, 39, 41],RCM_grid.lon_rho,RCM_grid.lat_rho); % southern EKB
+        [indw, inde, inds, indn]=Func_0012_findind_Y(1/10,[127, 130, 39, 41],RCM_grid.lon_rho,RCM_grid.lat_rho); % southern EKB
         nEKB_lon=RCM_grid.lon_rho(indw:inde,inds:indn);
         nEKB_lat=RCM_grid.lat_rho(indw:inde,inds:indn);
         nEKB_data=tmp.mean_data(indw:inde,inds:indn);
@@ -469,9 +477,9 @@ if testnameind==1
         ax{tmp.testnameind,2}=axes;
         pc{tmp.testnameind,2}=m_pcolor(RCM_grid.lon_rho',RCM_grid.lat_rho', tmp.mean_data','parent',ax{tmp.testnameind,2});
     %     colormap(ax{tmp.testnameind,2},jet);
-        colormap(ax{tmp.testnameind,2},cmaps.bymap3);
+        colormap(ax{tmp.testnameind,2},cmaps.bw_10);
 
-        caxis([-100, -50]);
+        caxis([-100, 0]);
         shading(gca,param.m_pcolor_shading_method);   
 
         m_grid('fontsize', param.m_grid_fontsize, 'tickdir', param.m_grid_tickdir_type, 'box', param.m_grid_box_type,  ...

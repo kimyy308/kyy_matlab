@@ -10,7 +10,7 @@ function [data_det] = Func_0028_detrend_linear_1d(data, nanflag)
 %  nanflag      'omitnan' (optional)
 %
 %  output:
-%  psd          linearly detrended data (t)
+%  data_det     linearly detrended data (t)
 %
 %  e-mail:      kimyy308@pusan.ac.kr
 %

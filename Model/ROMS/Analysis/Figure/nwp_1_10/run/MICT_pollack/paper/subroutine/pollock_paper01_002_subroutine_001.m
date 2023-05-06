@@ -70,7 +70,10 @@
     pc{testnameind,2}=m_pcolor(lon_rho',lat_rho', mean_data','parent',ax{testnameind,2});
 %     colormap(ax{testnameind,2},jet);
     colormap(ax{testnameind,2},parula);
-    caxis([0, 1.0]);
+    cmp.wr_08=Func_0009_get_colormaps('wr_08', dropboxpath);
+        colormap(ax{testnameind,2},cmp.wr_08);
+%     caxis([0, 1.0]);
+    caxis([0, 0.8]);    
     shading(gca,m_pcolor_shading_method);   
 
     m_grid('fontsize', m_grid_fontsize, 'tickdir', m_grid_tickdir_type, 'box', m_grid_box_type,  ...

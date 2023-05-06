@@ -1,4 +1,4 @@
-% %  Created 30-Jan-2023 by Yong-Yub Kim lead month
+% %  Created 27-Mar-2023 by Yong-Yub Kim lead month
 
 clc; clear all; close all;
 warning off;
@@ -23,6 +23,8 @@ dirs.obsroot=['/Volumes/kyy_raid/kimyy/Observation/ERSST/monthly_reg_cam'];
 dirs.figroot=['/Volumes/kyy_raid/kimyy/Figure/CESM2/ESP/HCST_EXP/archive/atm/', cfg.var];
 
 cfg.iyears=1970:2019;
+% cfg.iyears=1982:2016;
+
 cfg.months=1:12;
 % cfg.scenname='HIST';
 cfg.gnm='f09_g17';
@@ -85,8 +87,13 @@ for iyear=min(cfg.iyears):max(cfg.iyears)
             end
         end
     end
-    
-    %% read variables
+
+    %% 3-month moving mean (seasonal ENSO forecast); 
+    tmp.rm_window=[0 2]; %forward 3-month mean
+    data.(tmp.modelvar) = movmean(data.(tmp.modelvar), tmp.rm_window, 'Endpoints', 'fill');
+    data.(tmp.obsvar) = movmean(data.(tmp.obsvar), tmp.rm_window, 'Endpoints', 'fill');
+
+    %% read variables (assign variable to new one by lead month)
 %     data.time_tmp=ncread(cfg.datafilename, 'time');
     data.time_tmp_leap=daynoleap2datenum(data.time_tmp, 0)-1; % reflection of leap year and -1 for month correction
     data.time_vec_tmp=datevec(data.time_tmp_leap);
@@ -177,12 +184,55 @@ for lmonth=0:cfg.proj_year*12-1
     data.(tmp.obsvar_ano_lm_rm)=movmean(data.(tmp.obsvar_ano_lm), tmp.rm_window, 'Endpoints', 'fill');
 %     data.(tmp.assmvar_ano_lm_rm)=movmean(data.(tmp.assmvar_ano_lm), tmp.rm_window, 'Endpoints', 'fill');
     
+    %% separate El Nino(>=0.5), La Nina year (<=-0.5)
+    if lmonth==0
+        data.Y_Elnino=find(data.(tmp.obsvar_ano_lm_rm)>=0.5);
+        data.Y_Elnino(data.Y_Elnino>max(tmp.avgwin)-floor((cfg.proj_year*12-1)/12))=[];
+%         data.Y_Elnino(data.Y_Elnino<min(tmp.avgwin)+cfg.proj_year-1)=[];
+        data.Y_Lanina=find(data.(tmp.obsvar_ano_lm_rm)<=-0.5);
+        data.Y_Lanina(data.Y_Lanina>max(tmp.avgwin)-floor((cfg.proj_year*12-1)/12))=[];
+%         data.Y_Lanina(data.Y_Lanina<min(tmp.avgwin)+cfg.proj_year-1)=[];
+        data.Y_Neutral=find(data.(tmp.obsvar_ano_lm_rm)<0.5 & data.(tmp.obsvar_ano_lm_rm)>-0.5);
+        data.Y_Neutral(data.Y_Neutral>max(tmp.avgwin)-floor((cfg.proj_year*12-1)/12))=[];
+%         data.Y_Neutral(data.Y_Neutral<min(tmp.avgwin)+cfg.proj_year-1)=[];
+
+        %% get the number of years
+        tmp.NoY=min([length(data.Y_Elnino), length(data.Y_Lanina), length(data.Y_Neutral)]);
+        [tmp.El_val, tmp.El_ind]=sort(data.(tmp.obsvar_ano_lm_rm)(data.Y_Elnino), 'descend'); % high -> low
+        [tmp.Ln_val, tmp.Ln_ind]=sort(data.(tmp.obsvar_ano_lm_rm)(data.Y_Lanina), 'ascend'); % low -> high
+        [tmp.N_val, tmp.N_ind]=sort(abs(data.(tmp.obsvar_ano_lm_rm)(data.Y_Neutral)), 'ascend'); % low -> high (abs)
+        
+        %% choose same number of years
+        data.Y_Elnino = data.Y_Elnino(tmp.El_ind(1:tmp.NoY));
+        data.Y_Lanina = data.Y_Lanina(tmp.Ln_ind(1:tmp.NoY));
+        data.Y_Neutral = data.Y_Neutral(tmp.N_ind(1:tmp.NoY));
+        
+    end
+
     %% nRMSE get
-    tmp.sig_0=sqrt( data.(tmp.obsvar_ano_lm_rm)(tmp.avgwin).^2 ./ tmp.Nwin ); %denominator (sigma_0)
-    tmp.RMSE=sqrt((data.(tmp.modelvar_ano_lm_rm)(tmp.avgwin)-data.(tmp.obsvar_ano_lm_rm)(tmp.avgwin)).^2 ./ tmp.Nwin);
-    
-    tmp.modelvar_RMSE=['nino34m_', tmp.varname, '_RMSE_',  '_l', tmp.lmonth_str, '_rm'];
-    data.(['nino34m_', tmp.varname, '_RMSE'])(lmonth+1)=tmp.RMSE / tmp.sig_0;
+    tmp.sig_0=sqrt( sum( data.(tmp.obsvar_ano_lm_rm)(tmp.avgwin).^2 ) ./ tmp.Nwin ); %denominator (sigma_0)
+    tmp.RMSE=sqrt( sum( ( data.(tmp.modelvar_ano_lm_rm)(tmp.avgwin)-data.(tmp.obsvar_ano_lm_rm)(tmp.avgwin) ).^2 ) ./ tmp.Nwin );
+    data.(['nino34m_', tmp.varname, '_RMSE'])(lmonth+1)=tmp.RMSE ./ tmp.sig_0;
+
+    %% nRMSE get (Elnino start)
+    tmp.Nwin_Elnino=length(data.Y_Elnino);
+    tmp.sig_0=sqrt( sum( data.(tmp.obsvar_ano_lm_rm)(data.Y_Elnino).^2 ) ./ tmp.Nwin_Elnino ); %denominator (sigma_0)
+    tmp.RMSE=sqrt( sum( ( data.(tmp.modelvar_ano_lm_rm)(data.Y_Elnino)-data.(tmp.obsvar_ano_lm_rm)(data.Y_Elnino) ).^2 ) ./ tmp.Nwin_Elnino);
+    data.(['nino34m_', tmp.varname, '_RMSE_Elnino'])(lmonth+1)=tmp.RMSE ./ tmp.sig_0;
+
+    %% nRMSE get (Lanina start)
+    tmp.Nwin_Lanina=length(data.Y_Lanina);
+    tmp.sig_0=sqrt( sum( data.(tmp.obsvar_ano_lm_rm)(data.Y_Lanina).^2 ) ./ tmp.Nwin_Lanina ); %denominator (sigma_0)
+    tmp.RMSE=sqrt( sum( ( data.(tmp.modelvar_ano_lm_rm)(data.Y_Lanina)-data.(tmp.obsvar_ano_lm_rm)(data.Y_Lanina) ).^2 ) ./ tmp.Nwin_Lanina);
+    data.(['nino34m_', tmp.varname, '_RMSE_Lanina'])(lmonth+1)=tmp.RMSE ./ tmp.sig_0;
+
+    %% nRMSE get (Neutral start)
+    tmp.Nwin_Neutral=length(data.Y_Neutral);
+    tmp.sig_0=sqrt( sum( data.(tmp.obsvar_ano_lm_rm)(data.Y_Neutral).^2 ) ./ tmp.Nwin_Neutral ); %denominator (sigma_0)
+    tmp.RMSE=sqrt( sum( ( data.(tmp.modelvar_ano_lm_rm)(data.Y_Neutral)-data.(tmp.obsvar_ano_lm_rm)(data.Y_Neutral) ).^2 ) ./ tmp.Nwin_Neutral);
+    data.(['nino34m_', tmp.varname, '_RMSE_Neutral'])(lmonth+1)=tmp.RMSE ./ tmp.sig_0;
+
+
 end
 
 %% set time value for figure
@@ -202,23 +252,44 @@ data.time_leap_extended=datenum(data.time_vec_extended);
     system(['mkdir -p ', dirs.figdir]);
     for lmonth=0:cfg.proj_year*12-1
 %     for lmonth=0:35
+
         tmp.lmonth_str=num2str(lmonth, '%03i');
         tmp.modelvar_ano_lm_rm=['nino34m_', tmp.varname, '_model_ano_',  '_l', tmp.lmonth_str, '_rm'];
         tmp.obsvar_ano_lm_rm=['nino34m_', tmp.varname, '_obs_ano_',  '_l', tmp.lmonth_str, '_rm'];
 %         tmp.assmvar_ano_lm_rm=['nino34m_', tmp.varname, '_assm_ano_',  '_l', tmp.lmonth_str, '_rm'];
-        
+
         tmp.md=data.(tmp.modelvar_ano_lm_rm);
         tmp.obs=data.(tmp.obsvar_ano_lm_rm);
 %         tmp.assm=data.(tmp.assmvar_ano_lm_rm);
-        tmp.tind= (cfg.iyears-min(cfg.iyears))*12+1+lmonth;
+%         tmp.tind= (cfg.iyears-min(cfg.iyears))*12+1+lmonth;
         tmp.corrcoef=corrcoef(tmp.md(isfinite(tmp.obs)), tmp.obs(isfinite(tmp.obs)));
         data.(['nino34m_', tmp.varname, '_corr'])(lmonth+1)=tmp.corrcoef(1,2);
+
+        %% Elnino start case
+        tmp.md=data.(tmp.modelvar_ano_lm_rm)(data.Y_Elnino);
+        tmp.obs=data.(tmp.obsvar_ano_lm_rm)(data.Y_Elnino);
+        tmp.corrcoef=corrcoef(tmp.md(isfinite(tmp.obs)), tmp.obs(isfinite(tmp.obs)));
+        data.(['nino34m_', tmp.varname, '_corr_Elnino'])(lmonth+1)=tmp.corrcoef(1,2);
+
+        %% Lanina start case
+        tmp.md=data.(tmp.modelvar_ano_lm_rm)(data.Y_Lanina);
+        tmp.obs=data.(tmp.obsvar_ano_lm_rm)(data.Y_Lanina);
+        tmp.corrcoef=corrcoef(tmp.md(isfinite(tmp.obs)), tmp.obs(isfinite(tmp.obs)));
+        data.(['nino34m_', tmp.varname, '_corr_Lanina'])(lmonth+1)=tmp.corrcoef(1,2);
+
+        %% Neutral start case
+        tmp.md=data.(tmp.modelvar_ano_lm_rm)(data.Y_Neutral);
+        tmp.obs=data.(tmp.obsvar_ano_lm_rm)(data.Y_Neutral);
+        tmp.corrcoef=corrcoef(tmp.md(isfinite(tmp.obs)), tmp.obs(isfinite(tmp.obs)));
+        data.(['nino34m_', tmp.varname, '_corr_Neutral'])(lmonth+1)=tmp.corrcoef(1,2);
     end
+    
+    %% lmonth=0 is not computed. computation from lmonth=1.
 
     %% correlation coefficient of NINO3.4 ind, function of lead year
-    cfg.figname=[dirs.figdir, filesep, 'nino34m_hcst_obs_',str.iy_min, '-', str.iy_max, 'm', '_corr_leadm', '.tif'];
+    cfg.figname=[dirs.figdir, filesep, 'nino34m_hcst_obs_',str.iy_min, '-', str.iy_max, 'm', '_corr_leadm_3rm', '.tif'];
 %             bar(0:cfg.proj_year*12-1,data.(['nino34m_', tmp.varname, '_corr']),  'linewidth', 2)
-    bar(1:cfg.proj_year*12,data.(['nino34m_', tmp.varname, '_corr'])(1:cfg.proj_year*12),  'linewidth', 2);
+    bar(1:cfg.proj_year*12, data.(['nino34m_', tmp.varname, '_corr'])(1:cfg.proj_year*12),  'linewidth', 2);
 
     xlabel('Lead month'); ylabel(['corr. coef.,', 'Nino3.4' , ', obs']);
     set(gca, 'fontsize', 20);
@@ -227,22 +298,158 @@ data.time_leap_extended=datenum(data.time_vec_extended);
     saveas(gcf,cfg.figname,'tif');
     RemoveWhiteSpace([], 'file', cfg.figname);
     close all;
+
+    %% correlation coefficient of NINO3.4 ind, function of lead year (Elnino start only)
+    cfg.figname=[dirs.figdir, filesep, 'nino34m_hcst_obs_Elnino_',str.iy_min, '-', str.iy_max, 'm', '_corr_leadm_3rm', '.tif'];
+    bar(1:cfg.proj_year*12, data.(['nino34m_', tmp.varname, '_corr_Elnino'])(1:cfg.proj_year*12),  'linewidth', 2);
+
+    xlabel('Lead month'); ylabel(['corr. coef.,', 'Nino3.4 (E-init)']);
+    set(gca, 'fontsize', 20);
+    grid minor
+    ylim([-0.4 1]);
+    saveas(gcf,cfg.figname,'tif');
+    RemoveWhiteSpace([], 'file', cfg.figname);
+    close all;
+
+    %% correlation coefficient of NINO3.4 ind, function of lead year (Lanina start only)
+    cfg.figname=[dirs.figdir, filesep, 'nino34m_hcst_obs_Lanina_',str.iy_min, '-', str.iy_max, 'm', '_corr_leadm_3rm', '.tif'];
+    bar(1:cfg.proj_year*12, data.(['nino34m_', tmp.varname, '_corr_Lanina'])(1:cfg.proj_year*12),  'linewidth', 2);
+
+    xlabel('Lead month'); ylabel(['corr. coef.,', 'Nino3.4 (L-init)']);
+    set(gca, 'fontsize', 20);
+    grid minor
+    ylim([-0.4 1]);
+    saveas(gcf,cfg.figname,'tif');
+    RemoveWhiteSpace([], 'file', cfg.figname);
+    close all;
+
+    %% correlation coefficient of NINO3.4 ind, function of lead year (Neutral start only)
+    cfg.figname=[dirs.figdir, filesep, 'nino34m_hcst_obs_Neutral_',str.iy_min, '-', str.iy_max, 'm', '_corr_leadm_3rm', '.tif'];
+    bar(1:cfg.proj_year*12, data.(['nino34m_', tmp.varname, '_corr_Neutral'])(1:cfg.proj_year*12),  'linewidth', 2);
+
+    xlabel('Lead month'); ylabel(['corr. coef.,', 'Nino3.4 (L-init)']);
+    set(gca, 'fontsize', 20);
+    grid minor
+    ylim([-0.4 1]);
+    saveas(gcf,cfg.figname,'tif');
+    RemoveWhiteSpace([], 'file', cfg.figname);
+    close all;
+
+    %% correlation coefficient of NINO3.4 ind, function of lead year (All, Elnino, Lanina, Neutral start)
+    cfg.figname=[dirs.figdir, filesep, 'nino34m_hcst_obs_All_',str.iy_min, '-', str.iy_max, 'm', '_corr_leadm_3rm', '.tif'];
+    plot(1:cfg.proj_year*12,data.(['nino34m_', tmp.varname, '_corr'])(1:cfg.proj_year*12),...
+        '-o', 'color', 'k', 'linewidth', 2);
+    hold on
+    plot(1:cfg.proj_year*12,data.(['nino34m_', tmp.varname, '_corr_Elnino'])(1:cfg.proj_year*12),...
+        '-o', 'color', 'r', 'linewidth', 2);
+    plot(1:cfg.proj_year*12,data.(['nino34m_', tmp.varname, '_corr_Lanina'])(1:cfg.proj_year*12),...
+        '-o', 'color', 'b', 'linewidth', 2);
+    plot(1:cfg.proj_year*12,data.(['nino34m_', tmp.varname, '_corr_Neutral'])(1:cfg.proj_year*12),...
+        '-o', 'color', 'g', 'linewidth', 2);
+    xlabel('Lead month'); ylabel(['corr. coef.,', 'Nino3.4']);
+    set(gca, 'fontsize', 20);
+    grid minor
+    ylim([-0.4 1]);
+    legend({'All', 'E-start', 'L-start', 'N-start'})
+    saveas(gcf,cfg.figname,'tif');
+    RemoveWhiteSpace([], 'file', cfg.figname);
+    close all;
     
 
     %% nRMSE of NINO3.4 ind, function of lead year
-    cfg.figname=[dirs.figdir, filesep, 'nino34m_hcst_obs_',str.iy_min, '-', str.iy_max, 'm', '_nRMSE_leadm', '.tif'];
-%             bar(0:cfg.proj_year*12-1,data.(['nino34m_', tmp.varname, '_corr']),  'linewidth', 2)
+    cfg.figname=[dirs.figdir, filesep, 'nino34m_hcst_obs_',str.iy_min, '-', str.iy_max, 'm', '_nRMSE_leadm_3rm', '.tif'];
     bar(1:cfg.proj_year*12, data.(['nino34m_', tmp.varname, '_RMSE'])(1:cfg.proj_year*12),  'linewidth', 2);
 
     xlabel('Lead month'); ylabel(['nRMSE.,', 'Nino3.4']);
     set(gca, 'fontsize', 20);
     grid minor
-    ylim([0.2 1.3]);
+    ylim([0.2 1.8]);
+    saveas(gcf,cfg.figname,'tif');
+    RemoveWhiteSpace([], 'file', cfg.figname);
+    close all;
+ 
+    %% nRMSE of NINO3.4 ind, function of lead year (Elnino start only)
+    cfg.figname=[dirs.figdir, filesep, 'nino34m_hcst_obs_',str.iy_min, '-', str.iy_max, 'm', '_nRMSE_Elnino_leadm_3rm', '.tif'];
+    bar(1:cfg.proj_year*12, data.(['nino34m_', tmp.varname, '_RMSE_Elnino'])(1:cfg.proj_year*12),  'linewidth', 2);
+
+    xlabel('Lead month'); ylabel(['nRMSE.,', 'Nino3.4 (E-init)']);
+    set(gca, 'fontsize', 20);
+    grid minor
+    ylim([0.2 1.8]);
     saveas(gcf,cfg.figname,'tif');
     RemoveWhiteSpace([], 'file', cfg.figname);
     close all;
 
+    %% nRMSE of NINO3.4 ind, function of lead year (Lanina start only)
+    cfg.figname=[dirs.figdir, filesep, 'nino34m_hcst_obs_',str.iy_min, '-', str.iy_max, 'm', '_nRMSE_Lanina_leadm_3rm', '.tif'];
+    bar(1:cfg.proj_year*12, data.(['nino34m_', tmp.varname, '_RMSE_Lanina'])(1:cfg.proj_year*12),  'linewidth', 2);
+
+    xlabel('Lead month'); ylabel(['nRMSE.,', 'Nino3.4 (L-init)']);
+    set(gca, 'fontsize', 20);
+    grid minor
+    ylim([0.2 1.8]);
+    saveas(gcf,cfg.figname,'tif');
+    RemoveWhiteSpace([], 'file', cfg.figname);
+    close all;
+
+    %% nRMSE of NINO3.4 ind, function of lead year (All, Elnino, Lanina, Neutral start)
+    cfg.figname=[dirs.figdir, filesep, 'nino34m_hcst_obs_',str.iy_min, '-', str.iy_max, 'm', '_nRMSE_All_leadm_3rm', '.tif'];
+    plot(1:cfg.proj_year*12,data.(['nino34m_', tmp.varname, '_RMSE'])(1:cfg.proj_year*12),  ...
+        '-o', 'color', 'k', 'linewidth', 2);
+    hold on
+    plot(1:cfg.proj_year*12,data.(['nino34m_', tmp.varname, '_RMSE_Elnino'])(1:cfg.proj_year*12),  ...
+        '-o', 'color', 'r', 'linewidth', 2);
+    plot(1:cfg.proj_year*12,data.(['nino34m_', tmp.varname, '_RMSE_Lanina'])(1:cfg.proj_year*12),  ...
+        '-o', 'color', 'b', 'linewidth', 2);
+    plot(1:cfg.proj_year*12,data.(['nino34m_', tmp.varname, '_RMSE_Neutral'])(1:cfg.proj_year*12),  ...
+        '-o', 'color', 'g', 'linewidth', 2);
+    xlabel('Lead month'); ylabel(['nRMSE.,', 'Nino3.4']);
+    set(gca, 'fontsize', 20);
+    grid minor
+    ylim([0.2 1.8]);
+    legend({'All', 'E-start', 'L-start', 'N-start'})
+    saveas(gcf,cfg.figname,'tif');
+    RemoveWhiteSpace([], 'file', cfg.figname);
+    close all;
 % end
+
+     %% correlation coefficient of NINO3.4 ind, function of lead year (to compare with SMYLE)
+    cfg.figname=[dirs.figdir, filesep, 'SMYLE_nino34m_hcst_obs_',str.iy_min, '-', str.iy_max, 'm', '_corr_leadm_3rm', '.tif'];
+%             bar(0:cfg.proj_year*12-1,data.(['nino34m_', tmp.varname, '_corr']),  'linewidth', 2)
+    plot(1:19,data.(['nino34m_', tmp.varname, '_corr'])(1:19),  ...
+        '-o', 'color', 'b', 'linewidth', 2);
+    hold on
+    plot(1:3:19,data.(['nino34m_', tmp.varname, '_corr'])(1:3:19),  ...
+        '-o', 'color', 'b', 'linewidth', 2, 'MarkerFaceColor', 'b');
+    line([1 19], [0.5 0.5], 'color', 'k', 'linewidth', 2)
+    xlabel('Lead month'); ylabel(['corr. coef.,', 'Nino3.4']);
+    set(gca, 'fontsize', 20);
+    grid minor
+    ylim([0.1 1]);
+    set(gcf, 'PaperPosition', [0, 0, 10, 4]);
+    saveas(gcf,cfg.figname,'tif');
+    RemoveWhiteSpace([], 'file', cfg.figname);
+    close all;
+    
+
+    %% nRMSE of NINO3.4 ind, function of lead year (to compare with SMYLE)
+    cfg.figname=[dirs.figdir, filesep, 'SMYLE_nino34m_hcst_obs_',str.iy_min, '-', str.iy_max, 'm', '_nRMSE_leadm_3rm', '.tif'];
+%             bar(0:cfg.proj_year*12-1,data.(['nino34m_', tmp.varname, '_corr']),  'linewidth', 2)
+    plot(1:19, data.(['nino34m_', tmp.varname, '_RMSE'])(1:19),  ...
+        '-o', 'color', 'b','linewidth', 2);
+    hold on
+    plot(1:3:19, data.(['nino34m_', tmp.varname, '_RMSE'])(1:3:19),  ...
+        '-o', 'color', 'b','linewidth', 2, 'MarkerFaceColor', 'b');
+    line([1 19], [1.0 1.0], 'color', 'k', 'linewidth', 2)
+    xlabel('Lead month'); ylabel(['nRMSE.,', 'Nino3.4']);
+    set(gca, 'fontsize', 20);
+    grid minor
+    ylim([0.2 1.8]);
+    set(gcf, 'PaperPosition', [0, 0, 10, 4]);
+    saveas(gcf,cfg.figname,'tif');
+    RemoveWhiteSpace([], 'file', cfg.figname);
+    close all;
+
 
 % % % % %% spaghetti plot (NINO34)
 % % % % system(['mkdir -p ', dirs.figdir]);
@@ -307,7 +514,7 @@ tmp.plottime=min(cfg.iyears)+1/24:1/12:max(cfg.iyears)-1/24+36*1/12;
 plot(tmp.plottime, tmp.obs, 'k', 'linewidth',2)
 hold off
 axis tight
-cfg.figname=[dirs.figdir, filesep, 'spaghetti_nino34m_hcst_obs_oneline', '_', str.iy_min, '-', str.iy_max, '_leadm', '.tif'];
+cfg.figname=[dirs.figdir, filesep, 'spaghetti_nino34m_hcst_obs_oneline', '_', str.iy_min, '-', str.iy_max, '_leadm_3rm', '.tif'];
 xlabel('Year'); ylabel('Nino 3.4 Index');
 set(gca, 'fontsize', 20)
 grid minor
@@ -337,7 +544,7 @@ xlabel('Year'); ylabel('^oC');
 set(gca, 'fontsize', 20)
 grid minor
 set(gcf, 'PaperPosition', [0, 0, 8, 4]);
-cfg.figname=[dirs.figdir, filesep, 'spaghetti_', 'SST_hcst_obs_', str.iy_min, '-', str.iy_max,'_proj_',cfg.proj_year,  'y.tif'];
+cfg.figname=[dirs.figdir, filesep, 'spaghetti_', 'SST_hcst_obs_', str.iy_min, '-', str.iy_max,'_proj_',cfg.proj_year,  'y_3rm.tif'];
 saveas(gcf,cfg.figname,'tif');
 RemoveWhiteSpace([], 'file', cfg.figname);
 close all;

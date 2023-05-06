@@ -8,10 +8,14 @@ warning off;
 
 % RCM_info.name={ 'test2127'};
 % RCM_info.name={'test2117', 'test2118', 'test2119', 'test2120', 'test2121', 'ens2202'};
-RCM_info.name={'test2127', 'test2128', 'test2129', 'test2130', 'test2131', 'ens2201'};
+% RCM_info.name={'test2127', 'test2128', 'test2129', 'test2130', 'test2131', 'ens2201'};
 % RCM_info.name={'test2128', 'test2129', 'test2131'};
 % RCM_info.name={'test2131'};
-% RCM_info.name={'ens2201'};
+% RCM_info.name={'ENS4_hist'};
+% RCM_info.name={'ENS4_fut'};
+
+% RCM_info.name={'test2117', 'test2118', 'test2119', 'test2120'};
+RCM_info.name={'test2127', 'test2128', 'test2129', 'test2130'};
 
 % 
 RCM_info.model = 'nwp_1_20';
@@ -51,8 +55,8 @@ RCM_info.years_his=[1995:2014];
 
 
 % seasons_group={'February', 'January', 'JF-'};
-% seasons_group={'JF-'};
-seasons_group={'all'};
+seasons_group={'JF-'};
+% seasons_group={'all'};
 
 RCM_grid.dl = 1/20;
 RCM_grid.gridname = {'lon_rho', 'lat_rho', 'lon_u', 'lat_u', 'lon_v', 'lat_v', 'lon_psi', 'lat_psi', 'pm', 'pn', 'f'};
@@ -66,8 +70,8 @@ for seasons_groupi=1:length(seasons_group)
             tmp.fs=filesep;  
             
             %%     set dropbox path
-            addpath(genpath('C:\Users\User\Dropbox\source\matlab\Model\ROMS\Analysis\Figure\nwp_1_20\run\MICT_pollack\2022_future_pollock\subroutine\'))
-            tmp.dropboxpath = 'C:\Users\User\Dropbox';
+                addpath(genpath('/Volumes/kyy_raid/kimyy/Dropbox/source/matlab/Model/ROMS/Analysis/Figure/nwp_1_20/run/MICT_pollack/2022_future_pollock/subroutine/'))
+            tmp.dropboxpath = '/Volumes/kyy_raid/kimyy/Dropbox';
             addpath(genpath([tmp.dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', tmp.fs, 'function']));
             [tmp.dropboxpath, tmp.error_status] = Func_0008_set_dropbox_path(computer);
             addpath(genpath([tmp.dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', tmp.fs, 'Model' ...
@@ -89,13 +93,13 @@ for seasons_groupi=1:length(seasons_group)
 
             tmp.variable ='temp';
             
-            dirs.figrawdir =strcat('D:\Research\Ph_D_course\2022_pollock_future\figure',filesep, RCM_info.model, filesep); % % where figure files will be saved            
-            tmp.param_script =['C:\Users\user\Dropbox\source\matlab\Model\ROMS\Analysis\Figure\', RCM_info.model, '\run\fig_param\fig_param2_kyy_', tmp.regionname, '.m'];
-            dirs.filedir = strcat('D:\Data\Model\ROMS\', RCM_info.model, '\backup_surf\', tmp.testname, '\run\'); % % where data files are          
-            dirs.matdir = strcat('D:\Data\Model\ROMS\', RCM_info.model, '\', tmp.testname, '\run\mean\');
-            dirs.griddir = strcat('D:\Data\Model\ROMS\', RCM_info.model, '\backup_surf\'); % % where grid data files are            
+            dirs.figrawdir =strcat('/Users/kimyy/Desktop/backup/Research/Ph_D_course/2022_pollock_future/figure',filesep, RCM_info.model, filesep); % % where figure files will be saved            
+            tmp.param_script =['/Volumes/kyy_raid/kimyy/Dropbox/source/matlab/Model/ROMS/Analysis/Figure/', RCM_info.model, '/run/fig_param/fig_param2_kyy_', tmp.regionname, '.m'];
+            dirs.filedir = strcat('/Volumes/kyy_raid/Data/Model/ROMS/', RCM_info.model, '/backup_surf/', tmp.testname, '/run/'); % % where data files are          
+            dirs.matdir = strcat('/Volumes/kyy_raid/Data/Model/ROMS/', RCM_info.model, '/', tmp.testname, '/run/mean/');
+            dirs.griddir = strcat('/Volumes/kyy_raid/Data/Model/ROMS/', RCM_info.model, '/backup_surf/'); % % where grid data files are            
             
-            dirs.matdir_reana = strcat('D:\Data\Model\ROMS\', 'nwp_1_10', '\', 'test06', '\run\mean\');
+            dirs.matdir_reana = strcat('/Volumes/kyy_raid/Data/Model/ROMS/', 'nwp_1_10', '/', 'test06', '/run/mean/');
             
             tmp.param_script =[tmp.dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', tmp.fs, 'Model', tmp.fs, ...
             'ROMS', tmp.fs, 'Analysis', tmp.fs, 'Figure', tmp.fs, 'nwp_1_20', tmp.fs, 'run', tmp.fs, ...
@@ -106,14 +110,14 @@ for seasons_groupi=1:length(seasons_group)
                 RCM_grid.(['filename_', RCM_grid.gridname{gridi}])=[dirs.griddir, 'NWP_pck_ocean_', RCM_grid.gridname{gridi}, '_NWP.nc'];
             end
             
-            flags.fig_switch(1)=1; % get data
+            flags.fig_switch(1)=0; % get data
             flags.fig_switch(2)=0; % temporal mean pcolor
             flags.fig_switch(3)=0; % yearly spatial mean time series
             flags.fig_switch(4)=0; % temporal mean vec
             flags.fig_switch(5)=0; % get RMSE and bias
             flags.fig_switch(6)=0; % temporal mean pcolor diff
             flags.fig_switch(7)=0; % temporal mean vec diff
-            flags.fig_switch(8)=2; % temporal mean windvec diff
+            flags.fig_switch(8)=0; % temporal mean windvec diff
 
 %             1/10 SST read
 %             comb
