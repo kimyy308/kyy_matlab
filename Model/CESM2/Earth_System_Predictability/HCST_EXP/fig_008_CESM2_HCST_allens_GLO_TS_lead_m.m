@@ -19,7 +19,7 @@ addpath(genpath([tmp.dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', tmp.fs, 'f
 cfg.var='TS';
 
 dirs.hcstroot=['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/HCST_EXP/archive/atm/', cfg.var];
-dirs.obsroot=['/Volumes/kyy_raid/kimyy/Observation/ERSST/monthly_reg_cam'];
+dirs.obsroot=['/Volumes/kyy_raid/kimyy/Observation/HadCRUT5/monthly_reg_cam'];
 dirs.figroot=['/Volumes/kyy_raid/kimyy/Figure/CESM2/ESP/HCST_EXP/archive/atm/', cfg.var];
 
 cfg.iyears=1960:2020;
@@ -34,7 +34,7 @@ cfg.proj_year=5;
 % cfg.ensnames={'ba-10p1'};
 
 cfg.component='atm';
-cfg.varnames={'SST'};
+cfg.varnames={'TS'};
 cfg.len_t_y = length(cfg.iyears);
 cfg.len_t_m = length(cfg.months);
 cfg.len_t= cfg.len_t_y * cfg.len_t_m;
@@ -73,18 +73,15 @@ for iyear=min(cfg.iyears):max(cfg.iyears)
         tmp.fy_str=num2str(tmp.fy, '%04i');
         for mon=1:12
             tmp.mon_str=num2str(mon, '%02i');
-%             cfg.datafilename=[dirs.datadir, filesep, ...
-%                 'M_', cfg.region, '_', tmp.varname, '_', cfg.gnm, '.hcst.', cfg.casename, '.cam.h0.', tmp.fy_str, '-', tmp.mon_str, '.nc'];
-%             data.(tmp.modelvar)((fy-iyear)*12+mon)=ncread(cfg.datafilename, tmp.varname);
             cfg.datafilename=[dirs.datadir, filesep, ...
-                'M_', cfg.region, '_', tmp.varname, '_', cfg.gnm, '.hcst.', 'ensmean_all_', 'i', tmp.iyear_str, '.cam.h0.', tmp.fy_str, '-', tmp.mon_str, '.nc'];
+                'M_', cfg.region, '_', tmp.varname, '_', cfg.gnm, '.hcst.', cfg.casename, '.cam.h0.', tmp.fy_str, '-', tmp.mon_str, '.nc'];
             data.(tmp.modelvar)((fy-iyear)*12+mon)=ncread(cfg.datafilename, tmp.varname);
             data.time_tmp((fy-iyear)*12+mon)=ncread(cfg.datafilename, 'time');
-            cfg.obsfnm = [dirs.obsroot, tmp.fs, cfg.region, tmp.fs, 'M_', cfg.region, '_', 'ersst_reg_cesm2.v5.',tmp.fy_str,tmp.mon_str, '.nc'];
+            cfg.obsfnm = [dirs.obsroot, tmp.fs, cfg.region, tmp.fs, 'M_', cfg.region, '_', 'HadCRUT5_reg_cesm2.',tmp.fy_str,tmp.mon_str, '.nc'];
             if exist(cfg.obsfnm)==0
                 data.(tmp.obsvar)((fy-iyear)*12+mon)=NaN;
             else
-                data.(tmp.obsvar)((fy-iyear)*12+mon)=ncread(cfg.obsfnm, 'sst');
+                data.(tmp.obsvar)((fy-iyear)*12+mon)=ncread(cfg.obsfnm, 'tas_mean');
             end
         end
     end
@@ -314,8 +311,7 @@ plot(tmp.plottime, tmp.obs, 'k', 'linewidth',2)
 hold off
 axis tight
 cfg.figname=[dirs.figdir, filesep, 'spaghetti_', cfg.region, 'm_hcst_obs_oneline', '_', str.iy_min, '-', str.iy_max, '_leadm', '.tif'];
-xlabel('Year'); ylabel('^oC');
-% ylabel(cfg.region);
+xlabel('Year'); ylabel('TS(K)');
 set(gca, 'fontsize', 20)
 grid minor
 set(gcf, 'PaperPosition', [0, 0, 8, 4]);

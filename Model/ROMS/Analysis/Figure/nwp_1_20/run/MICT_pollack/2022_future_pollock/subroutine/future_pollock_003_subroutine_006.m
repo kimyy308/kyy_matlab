@@ -49,7 +49,7 @@ if testnameind==1
                         
                         tmp.all_checktime=ncread(tmp.ncname, 'checktime');
                         tmp.ind_checktime=find(tmp.all_checktime==tmp.checktime);
-                    
+                        
                         tmp.egg_mask=squeeze(ncread(tmp.ncname, 'mask_par', [1 1 1 tmp.ind_checktime], [inf inf inf 1]));
                         tmp.lastday_m=size(tmp.egg_mask,3);
                         if yearij==1 && monthij==1 && sub_testnameind==1

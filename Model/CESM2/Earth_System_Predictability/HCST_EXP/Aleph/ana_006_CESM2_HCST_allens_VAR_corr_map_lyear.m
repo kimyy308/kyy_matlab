@@ -81,11 +81,20 @@ cfg.vars={'photoC_TOT_zint_100m',  'photoC_diat_zint_100m', 'photoC_diaz_zint_10
     'diaz_light_lim_surf', 'diaz_P_lim_surf', 'dustToSed', 'LWUP_F', 'O2_ZMIN_DEPTH', 'diat_N_lim_surf', ...
     'sp_Fe_lim_surf', 'sp_light_lim_surf', 'sp_N_lim_surf', 'sp_P_lim_surf'  };
 
-cfg.vars = {'sumChl'};
-cfg.vars = {'SST'};
+% cfg.vars = {'sumChl'};
+% cfg.vars = {'TEMPCLINE', 'NO3CLINE', 'UVEL55', 'VVEL55'};
+cfg.vars = {'UVEL55', 'VVEL55'};
+cfg.vars = {'IRON_FLUX'};
+% cfg.vars = {'UVEL145', 'VVEL145', 'NO3145', 'PO4145', 'Fe145', 'TEMP145'};
+% cfg.vars = {'NO3145', 'PO4145', 'Fe145', 'TEMP145'};
+cfg.vars = {'TS'};
+cfg.vars = {'GPP', 'NPP', 'TOTVEGC', 'TWS', 'aice', 'sithick'};
+cfg.vars = {'PRECT'};
 % tmp.dimids= [1, 2, 4];
-% cfg.vlayer=1; % surf 
+% cfg.vlayer=1; % surf, vertical slice 
+
 cfg.vlayer=1:10; % 10layer. don't put more than 15
+
 cfg.vlayer_1st=min(cfg.vlayer);
 cfg.vlayer_cnt=max(cfg.vlayer)-cfg.vlayer_1st+1;
 
@@ -144,7 +153,7 @@ for vari=1:length(cfg.vars)
     % grid.tarea = ncread(tmp.gridname, 'TAREA');
     
     switch cfg.comp
-        case 'ocn'
+        case {'ocn', 'ice'}
             grid.tlong=ncread(tmp.gridname, 'TLONG');
             grid.tlat=ncread(tmp.gridname, 'TLAT');
             grid.mask_ocn=ncread(tmp.maskname, 'open_ocean');
@@ -153,7 +162,7 @@ for vari=1:length(cfg.vars)
             grid.z_t=ncread(tmp.gridname, 'z_t')./100; % meter
             grid.dz=ncread(tmp.gridname, 'dz')./100; % meter
             grid.dz_res=reshape(grid.dz(cfg.vlayer), [1 1 length(grid.dz(cfg.vlayer))]);
-        case 'atm'
+        case {'atm', 'lnd'}
             grid.lon=ncread(tmp.gridname, 'lon');
             grid.lat=ncread(tmp.gridname, 'lat');
             [grid.tlat grid.tlong]=meshgrid(grid.lat, grid.lon);
@@ -169,6 +178,13 @@ for vari=1:length(cfg.vars)
         
     %% read & plot data
     tmp.varname=cfg.var;
+%     tmp.varn3=tmp.varname(end-2:end);
+%     switch tmp.varn3
+%         case '145'
+%             tmp.fvarname=tmp.varname(1:end-3);
+%         otherwise
+            tmp.fvarname=cfg.var;
+%     end
 
     clear tmp.ydata tmp.ydata_lens2 tmp.ydata_obs tmp.ydata_assm
 
@@ -219,8 +235,8 @@ for vari=1:length(cfg.vars)
                      ncid=netcdf.open(cfg.mod_fnm, 'NOWRITE');
 
                 end
-                tmpvarid=netcdf.inqVarID(ncid,tmp.varname);
-                [tmp.varname,tmp.xtype,tmp.dimids,tmp.natts]= netcdf.inqVar(ncid,tmpvarid);
+                tmpvarid=netcdf.inqVarID(ncid,tmp.fvarname);
+                [tmp.fvarname,tmp.xtype,tmp.dimids,tmp.natts]= netcdf.inqVar(ncid,tmpvarid);
                 if length(tmp.dimids)>3
                      tmp.dd=squeeze(netcdf.getVar(ncid,tmpvarid, [0 0 cfg.vlayer_1st-1 0], [grid.nlon grid.nlat cfg.vlayer_cnt 1]));
 %                      tmp.dd=tmp.dd.*grid.mask_ocn;
@@ -243,8 +259,8 @@ for vari=1:length(cfg.vars)
                      system(['csh ', '/mnt/lustre/proj/kimyy/Scripts/Model/CESM2/HCST/', 'hcst_ens_fix_matlab.csh ', ...
                         tmp.varname, ' ', tmp.iyear_str, ' ', tmp.fy_str, ' ', tmp.mon_str, ' ', cfg.comp]);
                      ncid=netcdf.open(cfg.mod_fnm, 'NOWRITE');
-                    tmpvarid=netcdf.inqVarID(ncid,tmp.varname);
-                    [tmp.varname,tmp.xtype,tmp.dimids,tmp.natts]= netcdf.inqVar(ncid,tmpvarid);
+                    tmpvarid=netcdf.inqVarID(ncid,tmp.fvarname);
+                    [tmp.fvarname,tmp.xtype,tmp.dimids,tmp.natts]= netcdf.inqVar(ncid,tmpvarid);
                     if length(tmp.dimids)>3
                          tmp.dd=squeeze(netcdf.getVar(ncid,tmpvarid, [0 0 cfg.vlayer_1st-1 0], [grid.nlon grid.nlat cfg.vlayer_cnt 1]));
     %                      tmp.dd=tmp.dd.*grid.mask_ocn;
@@ -274,7 +290,7 @@ for vari=1:length(cfg.vars)
                             tmp.varname, ' ', tmp.fy_str,  ' ', tmp.mon_str, ' ', cfg.comp]);
                          ncid=netcdf.open(cfg.lens2_fnm, 'NOWRITE');
                     end
-                    tmpvarid=netcdf.inqVarID(ncid,tmp.varname);
+                    tmpvarid=netcdf.inqVarID(ncid,tmp.fvarname);
                     if length(tmp.dimids)>3
                          tmp.dd=squeeze(netcdf.getVar(ncid,tmpvarid, [0 0 cfg.vlayer_1st-1 0], [grid.nlon grid.nlat cfg.vlayer_cnt 1]));
 %                          ddd=tmp.dd.*grid.dz_res; %% weight depth
@@ -315,7 +331,7 @@ for vari=1:length(cfg.vars)
                 if tmp.fy <= cfg.max_iy
                     cfg.assm_fnm=[dirs.assmdir, tmp.fs, tmp.varname, '_ensmean_', tmp.fy_str,'-', tmp.mon_str, '.nc'];
                     ncid=netcdf.open(cfg.assm_fnm, 'NOWRITE');
-                    tmpvarid=netcdf.inqVarID(ncid,tmp.varname);
+                    tmpvarid=netcdf.inqVarID(ncid,tmp.fvarname);
                     if length(tmp.dimids)>3
                         tmp.dd=squeeze(netcdf.getVar(ncid,tmpvarid, [0 0 cfg.vlayer_1st-1 0], [grid.nlon grid.nlat cfg.vlayer_cnt 1]));
 %                          ddd=tmp.dd.*grid.dz_res; %% weight depth
@@ -407,23 +423,34 @@ for vari=1:length(cfg.vars)
                      tmp.data_assm = data.([tmp.varname, '_assm'])(loni,lati,:);
                      tmp.data = squeeze(data.([tmp.varname, '_model', '_l', tmp.lyear_str])(loni,lati,:));
                      [tmp.corr, tmp.corr_p]=corrcoef(tmp.data(isfinite(tmp.data_assm)), tmp.data_assm(isfinite(tmp.data_assm)));
-                     
+                     tmp.data_det = Func_0028_detrend_linear_1d(squeeze(data.([tmp.varname, '_model', '_l', tmp.lyear_str])(loni,lati,:)), 'omitnan');                         
+                     tmp.data_assm_det = Func_0028_detrend_linear_1d(data.([tmp.varname, '_assm'])(loni,lati,:));
+                     [tmp.corr_det, tmp.corr_det_p]=corrcoef(tmp.data_det(isfinite(tmp.data_assm_det)), tmp.data_assm_det(isfinite(tmp.data_assm_det)));
+
+                     data.([tmp.varname, '_corr_assm', '_l', tmp.lyear_str])(loni,lati)=tmp.corr(1,2);
+                     data.([tmp.varname, '_corr_assm_p', '_l', tmp.lyear_str])(loni,lati)=tmp.corr_p(1,2);
+                     data.([tmp.varname, '_corr_assm_det', '_l', tmp.lyear_str])(loni,lati)=tmp.corr_det(1,2);
+                     data.([tmp.varname, '_corr_assm_det_p', '_l', tmp.lyear_str])(loni,lati)=tmp.corr_det_p(1,2);
+
                  %% hcst-lens2 ~ assm
                      tmp.data_hcst_lens2 = squeeze(data.([tmp.varname, '_model', '_l', tmp.lyear_str])(loni,lati,:)) - ...
                                     squeeze(data.([tmp.varname, '_lens2', '_l', tmp.lyear_str])(loni,lati,:));
                      [tmp.corr_int, tmp.corr_int_p]=corrcoef(tmp.data_hcst_lens2(isfinite(tmp.data_assm)), tmp.data_assm(isfinite(tmp.data_assm)));
     
-                     data.([tmp.varname, '_corr_assm', '_l', tmp.lyear_str])(loni,lati)=tmp.corr(1,2);
-                     data.([tmp.varname, '_corr_assm_p', '_l', tmp.lyear_str])(loni,lati)=tmp.corr_p(1,2);
+                     
                      data.([tmp.varname, '_corr_assm_int', '_l', tmp.lyear_str])(loni,lati)=tmp.corr_int(1,2);
                      data.([tmp.varname, '_corr_assm_int_p', '_l', tmp.lyear_str])(loni,lati)=tmp.corr_int_p(1,2);
     
                  %% corr lens2 ~ assm
                      tmp.lens2 = squeeze(data.([tmp.varname, '_lens2', '_l', tmp.lyear_str])(loni,lati,:));
                      [tmp.corr, tmp.corr_p]=corrcoef(tmp.lens2(isfinite(tmp.data_assm)), tmp.data_assm(isfinite(tmp.data_assm)));
-    
+                     tmp.lens2_det = Func_0028_detrend_linear_1d(squeeze(data.([tmp.varname, '_lens2', '_l', tmp.lyear_str])(loni,lati,:)), 'omitnan');                         
+                     [tmp.corr_det, tmp.corr_det_p]=corrcoef(tmp.lens2_det(isfinite(tmp.data_assm_det)), tmp.data_assm_det(isfinite(tmp.data_assm_det)));
+
                      data.([tmp.varname, '_corr_assm_lens2', '_l', tmp.lyear_str])(loni,lati)=tmp.corr(1,2);
                      data.([tmp.varname, '_corr_assm_lens2_p', '_l', tmp.lyear_str])(loni,lati)=tmp.corr_p(1,2);
+                     data.([tmp.varname, '_corr_assm_lens2_det', '_l', tmp.lyear_str])(loni,lati)=tmp.corr_det(1,2);
+                     data.([tmp.varname, '_corr_assm_lens2_det_p', '_l', tmp.lyear_str])(loni,lati)=tmp.corr_det_p(1,2);
     
                 
                  %% corr obs ~ hcst
@@ -687,6 +714,10 @@ function obsname_simple = f_obs_fname_module(comp)
             obsname_simple='.pop.h.';
         case 'atm'
             obsname_simple='.cam.h0.';
+        case 'lnd'
+            obsname_simple='.clm2.h0.';
+        case 'ice'
+            obsname_simple='.cice.h.';
     end
 end
 

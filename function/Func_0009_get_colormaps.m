@@ -66,6 +66,9 @@ switch colormapname
     case('wr_10')
         colormap = customcolormap_preset('red-white-blue_20');
         colormap=colormap(11:20,:);
+    case('wr_5')
+        colormap = customcolormap_preset('red-white-blue_10');
+        colormap=colormap(6:10,:);
     case('bw_10')
         colormap = customcolormap_preset('red-white-blue_20');
         colormap=colormap(1:10,:);

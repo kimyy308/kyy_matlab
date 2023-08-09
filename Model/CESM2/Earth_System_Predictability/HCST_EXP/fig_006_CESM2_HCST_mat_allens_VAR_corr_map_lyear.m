@@ -8,8 +8,10 @@ tmp.hostname=tmp.hostname(1:end-1);
 switch tmp.hostname
     case 'Yong-Yubs-iMac-Pro.local'
         tmp.dropboxpath = '/Volumes/kyy_raid/kimyy/Dropbox';
+        tmp.kimyypath = '/Volumes/kyy_raid/kimyy';
     case 'Yong-Yubui-MacBookPro.local'
         tmp.dropboxpath = '/Users/kimyy/Dropbox';
+        tmp.kimyypath = '/Users/kimyy';
     case {'da1', 'da2', 'da3', 'da4'}
         tmp.dropboxpath = '/mnt/lustre/proj/kimyy/Dropbox';
 end
@@ -42,7 +44,7 @@ cfg.vars = {'SST', 'PRECT', 'PSL', 'TS'};
 %     'sp_agg_zint_100m', 'sp_Fe_lim_Cweight_avg_100m', 'sp_Fe_lim_surf', ...
 %     'sp_light_lim_Cweight_avg_100m', 'sp_light_lim_surf', 'sp_loss_zint_100m', ...
 %     'sp_N_lim_Cweight_avg_100m', 'sp_N_lim_surf', 'sp_P_lim_Cweight_avg_100m', ...
-%     'sp_P_lim_surf', 'zoo_loss_zint_100m', 'photoC_TOT_zint_100m'};
+%     'sp_P_lim_surf', 'zoo_loss_zint_100m', 'photoC_TOT_zint_100m', 'sumChl'};
 % cfg.vars={'graze_diaz_zint_100m', 'zoo_loss_zint_100m', 'photoC_TOT_zint_100m'};
 % cfg.vars={'sp_P_lim_surf'};
 % cfg.vars = {'SST', 'PRECT', 'PSL', 'TS'};
@@ -52,9 +54,9 @@ cfg.vars = {'SST', 'PRECT', 'PSL', 'TS'};
 % cfg.vars = {'SSH', 'BSF'};
 % cfg.vars = {'photoC_diat_zint_100m', 'photoC_diaz_zint_100m', 'photoC_sp_zint_100m', 'photoC_TOT_zint_100m'};
 % % 'graze_diaz_zoo_zint_100m', 
-cfg.vars = {'PAR_avg', 'NO3', 'PO4', 'SiO3', 'Fe', ...
-    'diatChl', 'diazChl', 'spChl', 'diatC', 'diazC', 'spC', 'SSH', 'BSF', ...
-    'TEMP', 'UVEL', 'VVEL', 'WVEL', 'HBLT'};
+% cfg.vars = {'PAR_avg', 'NO3', 'PO4', 'SiO3', 'Fe', ...
+%     'diatChl', 'diazChl', 'spChl', 'diatC', 'diazC', 'spC', 'SSH', 'BSF', ...
+%     'TEMP', 'UVEL', 'VVEL', 'WVEL', 'HBLT'};
 % cfg.vars = {'SSH'};
 % cfg.vars = {'photoC_sp_zint_100m'};
 % cfg.vars = {'diazC'};
@@ -82,10 +84,22 @@ cfg.vars = {'PAR_avg', 'NO3', 'PO4', 'SiO3', 'Fe', ...
 %     'diaz_light_lim_surf', 'diaz_P_lim_surf', 'dustToSed', 'LWUP_F', 'O2_ZMIN_DEPTH', 'diat_N_lim_surf', ...
 %     'sp_Fe_lim_surf', 'sp_light_lim_surf', 'sp_N_lim_surf', 'sp_P_lim_surf'  };
 
-cfg.vars = {'sumChl'};
-% cfg.vars = {'SST'};
+% cfg.vars = {'TEMPCLINE'};
+% cfg.vars = {'UVEL55', 'VVEL55'};
+% cfg.vars = {'IRON_FLUX', 'TEMP145', 'UVEL145', 'VVEL145', 'NO3145', 'PO4145', 'Fe145'};
+
+% cfg.vars = {'sumChl'};
+
+cfg.vars = {'NPP', 'GPP', 'TOTVEGC', 'TWS', 'aice', 'sithick'};
+cfg.vars = {'AODDUST'};
+cfg.vars = {'TS'};
+cfg.vars = {'PRECT'};
+cfg.vars = {'SST'};
+
 
 cfg.vlayer=1:10; % 10layer. don't put more than 15
+% cfg.vlayer=1; % surface, vertical slice
+
 cfg.vlayer_1st=min(cfg.vlayer);
 cfg.vlayer_cnt=max(cfg.vlayer)-cfg.vlayer_1st+1;
 
@@ -109,8 +123,8 @@ tic;
 % dirs.lens2root=['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/LENS2/archive_analysis/', cfg.comp, '/', cfg.var];
 % dirs.assmroot=['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/ASSM_EXP/archive_analysis/', cfg.comp, '/', cfg.var];
 
-dirs.hcstmatroot=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', cfg.var];
-dirs.figroot=['/Users/kimyy/Figure/CESM2/ESP/HCST_EXP/archive/', cfg.comp,'/', cfg.var];
+dirs.hcstmatroot=[tmp.kimyypath, '/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', cfg.var];
+dirs.figroot=[tmp.kimyypath,'/Figure/CESM2/ESP/HCST_EXP/archive/', cfg.comp,'/', cfg.var];
 
 
 
@@ -134,8 +148,8 @@ cfg.casename_m = ['ens_all'];
 % f09_g17.hcst.en4.2_ba-10p1_i2021.pop.h.once.nc
 
 % [tmp.error_status, tmp.value]=system(['ls ', dirs.datadir, '/*once*']);  % b.e21.BHISTsmbb.f09_g17.assm.oras4_ba-10p1.pop.h.once.nc
-tmp.gridname = ['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/archive_transfer/', cfg.comp, '/grid.nc'];
-tmp.maskname = '/Users/kimyy/Model/CESM2/ESP/HCST_EXP/archive_transfer/ocn/RECCAP2_region_masks_all_v20210412_POP2_grid.nc';
+tmp.gridname = [tmp.kimyypath, '/Model/CESM2/ESP/HCST_EXP/archive_transfer/', cfg.comp, '/grid.nc'];
+tmp.maskname = [tmp.kimyypath, '/Model/CESM2/ESP/HCST_EXP/archive_transfer/ocn/RECCAP2_region_masks_all_v20210412_POP2_grid.nc'];
 
 % grid.region_mask=ncread(tmp.gridname, 'REGION_MASK'); 
 % grid.ocean_mask=NaN(size(grid.region_mask));
@@ -143,7 +157,7 @@ tmp.maskname = '/Users/kimyy/Model/CESM2/ESP/HCST_EXP/archive_transfer/ocn/RECCA
 % grid.tarea = ncread(tmp.gridname, 'TAREA');
 
 switch cfg.comp
-    case 'ocn'
+    case {'ocn', 'ice'}
         grid.tlong=ncread(tmp.gridname, 'TLONG');
         grid.tlat=ncread(tmp.gridname, 'TLAT');
         grid.mask_ocn=ncread(tmp.maskname, 'open_ocean');
@@ -151,7 +165,7 @@ switch cfg.comp
         grid.mask_ocn=grid.mask_ocn./grid.mask_ocn;
         grid.tarea=ncread(tmp.gridname, 'TAREA')/1000000.0; %(m^2 -> km^2)
         grid.tarea_60=grid.tarea; grid.tarea_60(grid.tlat>60 | grid.tlat<-60)=NaN;
-    case 'atm'
+    case {'atm', 'lnd'}
         grid.lon=ncread(tmp.gridname, 'lon');
         grid.lat=ncread(tmp.gridname, 'lat');
         [grid.tlat grid.tlong]=meshgrid(grid.lat, grid.lon);
@@ -1102,13 +1116,13 @@ for lyear=0:cfg.proj_year-1
 
     histind=1;
     for corrref=-1:0.1:-0.1
-        %hcst_int
+        %% hcst_int
         corr_histo.(['hcst_int_ind_l', tmp.lyear_str]){histind} = ...
             find(data.([tmp.varname, '_corr_assm_int', '_l', tmp.lyear_str])>=corrref & ...
             data.([tmp.varname, '_corr_assm_int', '_l', tmp.lyear_str])<corrref+0.1);
         corr_histo.(['hcst_int_area_l', tmp.lyear_str])(histind) = ...
             sum(grid.tarea_60(corr_histo.(['hcst_int_ind_l', tmp.lyear_str]){histind}), 'omitnan');
-        %lens2
+        %% lens2
         corr_histo.(['lens2_ind_l', tmp.lyear_str]){histind} = ...
             find(data.([tmp.varname, '_corr_assm_lens2', '_l', tmp.lyear_str])>=corrref & ...
             data.([tmp.varname, '_corr_assm_lens2', '_l', tmp.lyear_str])<corrref+0.1);
@@ -1118,14 +1132,14 @@ for lyear=0:cfg.proj_year-1
     end
 
     for corrref=0.1:0.1:1.0
-        %hcst_int
+        %% hcst_int
         corr_histo.(['hcst_int_ind_l', tmp.lyear_str]){histind} = ...
             find(data.([tmp.varname, '_corr_assm_int', '_l', tmp.lyear_str])>corrref-0.1 & ...
             data.([tmp.varname, '_corr_assm_int', '_l', tmp.lyear_str])<corrref);
         corr_histo.(['hcst_int_area_l', tmp.lyear_str])(histind) = ...
             sum(grid.tarea_60(corr_histo.(['hcst_int_ind_l', tmp.lyear_str]){histind}), 'omitnan');
 
-        %lens2
+        %% lens2
         corr_histo.(['lens2_ind_l', tmp.lyear_str]){histind} = ...
             find(data.([tmp.varname, '_corr_assm_lens2', '_l', tmp.lyear_str])>corrref-0.1 & ...
             data.([tmp.varname, '_corr_assm_lens2', '_l', tmp.lyear_str])<=corrref);
@@ -1333,10 +1347,16 @@ xline(0)
 
 switch cfg.comp
     case 'ocn'
-        ylim([0 10*10^11])
+        ylim([0 12*10^11])
         tmp.yref=1.*10^11;
+    case 'ice'
+        ylim([0 6.5*10^10])
+        tmp.yref=1.*10^10;
     case 'atm'
         ylim([0 14*10^13])
+        tmp.yref = 1.*10^13;
+    case 'lnd'
+        ylim([0 9*10^13])
         tmp.yref = 1.*10^13;
 end
 line([tmp.mean_group(1), tmp.mean_group(1)], [0, tmp.yref], 'color', fig_cfg.colororder(1,:), 'linewidth', 5);
@@ -1348,7 +1368,9 @@ line([tmp.mean_group(5), tmp.mean_group(5)], [0, tmp.yref], 'color', fig_cfg.col
 line([tmp.mean_group_ext, tmp.mean_group_ext], [0, tmp.yref], 'color', 'k', 'linewidth', 1, 'LineStyle','--');
 
 hold off
-legend('INT-L0', 'INT-L1', 'INT-L2', 'INT-L3', 'INT-L4', 'EXT', 'Location', 'northwest')
+% legend('INT-L0', 'INT-L1', 'INT-L2', 'INT-L3', 'INT-L4', 'EXT', 'Location', 'northwest')
+legend('INT-L1', 'INT-L2', 'INT-L3', 'INT-L4', 'INT-L5', 'LENS2', 'Location', 'northwest')
+
 grid minor
 xlim([-1 1])
 
@@ -1364,62 +1386,64 @@ close all;
 
 
 
-%% histogram - all (obs)
-fig_h = figure('name',fig_cfg.fig_name,'visible','off');
-
-% newcolors = {'#F00','#F80','#FF0','#0B0','#00F','#50F','#A0F'}; %rainbow
-newcolors = {'#F00','#F80','#0B0','#00F','#50F','#A0F'}; %rainbow (except yellow)
-
-colororder(newcolors)
-
-for lyear=0:cfg.proj_year-1
-    tmp.lyear_str=num2str(lyear, '%02i');
-    hold on 
-    plot(corr_ref_x,corr_histo.(['obs_hcst_int_area_l', tmp.lyear_str]), 'linewidth', -lyear+cfg.proj_year);
-    tmp.mean_group(lyear+1)=sum(corr_ref_x.*corr_histo.(['obs_hcst_int_area_l', tmp.lyear_str])) / ...
-        sum(corr_histo.(['obs_hcst_int_area_l', tmp.lyear_str]));
-end
-plot(corr_ref_x,corr_histo.obs_lens2_area_l01, 'k--', 'linewidth', 1);
-tmp.mean_group_ext = sum(corr_ref_x.*corr_histo.obs_lens2_area_l01) / ...
-        sum(corr_histo.obs_lens2_area_l01);
-fig_cfg.colororder=colororder;
-xline(0)
-%avg
-% xline(tmp.mean_group(1), 'color', fig_cfg.colororder(1,:), 'linewidth', 4);
-% xline(tmp.mean_group(2), 'color', fig_cfg.colororder(2,:), 'linewidth', 3);
-% xline(tmp.mean_group(3), 'color', fig_cfg.colororder(3,:), 'linewidth', 2);
-% xline(tmp.mean_group(4), 'color', fig_cfg.colororder(4,:), 'linewidth', 1);
-% xline(tmp.mean_group_ext, 'k--', 'linewidth', 1);
-
-switch cfg.comp
-    case 'ocn'
-        ylim([0 10*10^11])
-        tmp.yref=1.*10^11;
-    case 'atm'
-        ylim([0 14*10^13])
-        tmp.yref = 1.*10^13;
-end
-line([tmp.mean_group(1), tmp.mean_group(1)], [0, tmp.yref], 'color', fig_cfg.colororder(1,:), 'linewidth', 5);
-line([tmp.mean_group(2), tmp.mean_group(2)], [0, tmp.yref], 'color', fig_cfg.colororder(2,:), 'linewidth', 4);
-line([tmp.mean_group(3), tmp.mean_group(3)], [0, tmp.yref], 'color', fig_cfg.colororder(3,:), 'linewidth', 3);
-line([tmp.mean_group(4), tmp.mean_group(4)], [0, tmp.yref], 'color', fig_cfg.colororder(4,:), 'linewidth', 2);
-line([tmp.mean_group(5), tmp.mean_group(5)], [0, tmp.yref], 'color', fig_cfg.colororder(5,:), 'linewidth', 1);
-
-line([tmp.mean_group_ext, tmp.mean_group_ext], [0, tmp.yref], 'color', 'k', 'linewidth', 1, 'LineStyle','--');
-
-hold off
-legend('INT-L0', 'INT-L1', 'INT-L2', 'INT-L3', 'INT-L4', 'EXT', 'Location', 'northwest')
-grid minor
-xlim([-1 1])
-
-xlabel('R'); ylabel('Area (km^2)');
-set(gca, 'fontsize', 20)
-dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_histogram', filesep, 'obs_hcst_int'];
-if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-cfg.figname=[dirs.figdir, filesep, 'plot_obs_hcst_all_', tmp.varname, '.tif'];
-print(fig_h, cfg.figname, '-dpng');
-RemoveWhiteSpace([], 'file', cfg.figname);
-close all;
+% % % % % %% histogram - all (obs)
+% % % % % fig_h = figure('name',fig_cfg.fig_name,'visible','off');
+% % % % % 
+% % % % % % newcolors = {'#F00','#F80','#FF0','#0B0','#00F','#50F','#A0F'}; %rainbow
+% % % % % newcolors = {'#F00','#F80','#0B0','#00F','#50F','#A0F'}; %rainbow (except yellow)
+% % % % % 
+% % % % % colororder(newcolors)
+% % % % % 
+% % % % % for lyear=0:cfg.proj_year-1
+% % % % %     tmp.lyear_str=num2str(lyear, '%02i');
+% % % % %     hold on 
+% % % % %     plot(corr_ref_x,corr_histo.(['obs_hcst_int_area_l', tmp.lyear_str]), 'linewidth', -lyear+cfg.proj_year);
+% % % % %     tmp.mean_group(lyear+1)=sum(corr_ref_x.*corr_histo.(['obs_hcst_int_area_l', tmp.lyear_str])) / ...
+% % % % %         sum(corr_histo.(['obs_hcst_int_area_l', tmp.lyear_str]));
+% % % % % end
+% % % % % plot(corr_ref_x,corr_histo.obs_lens2_area_l01, 'k--', 'linewidth', 1);
+% % % % % tmp.mean_group_ext = sum(corr_ref_x.*corr_histo.obs_lens2_area_l01) / ...
+% % % % %         sum(corr_histo.obs_lens2_area_l01);
+% % % % % fig_cfg.colororder=colororder;
+% % % % % xline(0)
+% % % % % %avg
+% % % % % % xline(tmp.mean_group(1), 'color', fig_cfg.colororder(1,:), 'linewidth', 4);
+% % % % % % xline(tmp.mean_group(2), 'color', fig_cfg.colororder(2,:), 'linewidth', 3);
+% % % % % % xline(tmp.mean_group(3), 'color', fig_cfg.colororder(3,:), 'linewidth', 2);
+% % % % % % xline(tmp.mean_group(4), 'color', fig_cfg.colororder(4,:), 'linewidth', 1);
+% % % % % % xline(tmp.mean_group_ext, 'k--', 'linewidth', 1);
+% % % % % 
+% % % % % switch cfg.comp
+% % % % %     case 'ocn'
+% % % % %         ylim([0 10*10^11])
+% % % % %         tmp.yref=1.*10^11;
+% % % % %     case 'atm'
+% % % % %         ylim([0 14*10^13])
+% % % % %         tmp.yref = 1.*10^13;
+% % % % % end
+% % % % % line([tmp.mean_group(1), tmp.mean_group(1)], [0, tmp.yref], 'color', fig_cfg.colororder(1,:), 'linewidth', 5);
+% % % % % line([tmp.mean_group(2), tmp.mean_group(2)], [0, tmp.yref], 'color', fig_cfg.colororder(2,:), 'linewidth', 4);
+% % % % % line([tmp.mean_group(3), tmp.mean_group(3)], [0, tmp.yref], 'color', fig_cfg.colororder(3,:), 'linewidth', 3);
+% % % % % line([tmp.mean_group(4), tmp.mean_group(4)], [0, tmp.yref], 'color', fig_cfg.colororder(4,:), 'linewidth', 2);
+% % % % % line([tmp.mean_group(5), tmp.mean_group(5)], [0, tmp.yref], 'color', fig_cfg.colororder(5,:), 'linewidth', 1);
+% % % % % 
+% % % % % line([tmp.mean_group_ext, tmp.mean_group_ext], [0, tmp.yref], 'color', 'k', 'linewidth', 1, 'LineStyle','--');
+% % % % % 
+% % % % % hold off
+% % % % % % legend('INT-L0', 'INT-L1', 'INT-L2', 'INT-L3', 'INT-L4', 'EXT', 'Location', 'northwest')
+% % % % % legend('INT-L1', 'INT-L2', 'INT-L3', 'INT-L4', 'INT-L5', 'LENS2', 'Location', 'northwest')
+% % % % % 
+% % % % % grid minor
+% % % % % xlim([-1 1])
+% % % % % 
+% % % % % xlabel('R'); ylabel('Area (km^2)');
+% % % % % set(gca, 'fontsize', 20)
+% % % % % dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_histogram', filesep, 'obs_hcst_int'];
+% % % % % if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
+% % % % % cfg.figname=[dirs.figdir, filesep, 'plot_obs_hcst_all_', tmp.varname, '.tif'];
+% % % % % print(fig_h, cfg.figname, '-dpng');
+% % % % % RemoveWhiteSpace([], 'file', cfg.figname);
+% % % % % close all;
 
 
 
@@ -1544,6 +1568,10 @@ function obsname_simple = f_obs_fname_module(comp)
             obsname_simple='.pop.h.';
         case 'atm'
             obsname_simple='.cam.h0.';
+        case 'lnd'
+            obsname_simple='.clm2.h0.';
+        case 'ice'
+            obsname_simple='.cice.h.';
     end
 end
 

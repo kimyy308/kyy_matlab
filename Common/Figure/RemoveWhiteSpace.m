@@ -72,6 +72,31 @@ end
 if (boundingbox_vert(2) == 0)
 	boundingbox_vert(2) = xm;
 end
+
+%% kyy_modified to get enough edge area
+edge_val=10;
+if boundingbox_hori(1)-edge_val < 1
+    boundingbox_hori(1)= 1;
+else
+    boundingbox_hori(1)=boundingbox_hori(1)-edge_val;
+end
+if boundingbox_hori(2)+edge_val > size(u_in,2)
+    boundingbox_hori(2)=size(u_in,2);
+else
+    boundingbox_hori(2)=boundingbox_hori(2)+edge_val;
+end
+if boundingbox_vert(1)-edge_val < 1
+    boundingbox_vert(1)=1;
+else
+    boundingbox_vert(1)=boundingbox_vert(1)-edge_val;
+end
+if boundingbox_vert(2)+edge_val > size(u_in,1)
+    boundingbox_vert(2)=size(u_in,1);
+else
+    boundingbox_vert(2)=boundingbox_vert(2)+edge_val;
+end
+%%
+
 %
 u_out = u_in(boundingbox_vert(1) : boundingbox_vert(2), boundingbox_hori(1) : boundingbox_hori(2), :);
 %

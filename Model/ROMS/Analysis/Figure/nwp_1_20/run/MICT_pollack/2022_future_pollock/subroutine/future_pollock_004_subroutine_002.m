@@ -71,6 +71,50 @@ for varind2=1:length(RCM_info.vars)
         RCM_grid.mask_model = double(inpolygon(RCM_grid.cut_lon_rho,RCM_grid.cut_lat_rho,RCM_grid.refpolygon(:,1),RCM_grid.refpolygon(:,2)));
         RCM_grid.mask_model(RCM_grid.mask_model==0)=NaN;
         RCM_data.mean=RCM_data.mean.*RCM_grid.mask_model;
+        
+        %% READ OBS, RMSE, CORR
+        OBS_info.filename=['/Volumes/kyy_raid/Data/Observation/OISST/monthly_kimyy/', 'avhrr_only_monthly_v2_1995-2014_JanFeb.nc'];
+        OBS_grid.lon=ncread(OBS_info.filename, 'lon');
+        OBS_grid.lat=ncread(OBS_info.filename, 'lat');
+        OBS_data.raw=ncread(OBS_info.filename, 'temp');
+         [OBS_grid.lat_rho, OBS_grid.lon_rho] = meshgrid(OBS_grid.lat, OBS_grid.lon);
+
+        [OBS_grid.refpolygon, OBS_grid.domain, tmp.error_status] = Func_0007_get_polygon_data_from_regionname(tmp.regionname);
+
+        [OBS_grid.lon_min, OBS_grid.lon_max, OBS_grid.lat_min, OBS_grid.lat_max] = ...
+                                    findind_Y(1/20, OBS_grid.domain(1:4), OBS_grid.lon_rho, OBS_grid.lat_rho);
+        OBS_grid.cut_lon_rho = ...
+            OBS_grid.lon_rho(OBS_grid.lon_min(1):OBS_grid.lon_max(1), OBS_grid.lat_min(1):OBS_grid.lat_max(1));
+        OBS_grid.cut_lat_rho = ...
+            OBS_grid.lat_rho(OBS_grid.lon_min(1):OBS_grid.lon_max(1), OBS_grid.lat_min(1):OBS_grid.lat_max(1));
+        OBS_data.cut_raw=OBS_data.raw(OBS_grid.lon_min(1):OBS_grid.lon_max(1), OBS_grid.lat_min(1):OBS_grid.lat_max(1),:);
+        
+        OBS_grid.mask_model = double(inpolygon(OBS_grid.cut_lon_rho,OBS_grid.cut_lat_rho,OBS_grid.refpolygon(:,1),OBS_grid.refpolygon(:,2)));
+        OBS_grid.mask_model(OBS_grid.mask_model==0)=NaN;
+        OBS_data.mean=mean(OBS_data.cut_raw, 3).*OBS_grid.mask_model;
+
+        for i=1:size(OBS_data.cut_raw,3)
+            RCM_data.interp_all(:,:,i)=griddata(RCM_grid.cut_lon_rho, RCM_grid.cut_lat_rho, RCM_data.all(:,:,ceil(i/2),2-mod(i,2)), ...
+                OBS_grid.cut_lon_rho, OBS_grid.cut_lat_rho);
+            RCM_data.sqe(:,:,i)=(RCM_data.interp_all(:,:,i)-OBS_data.cut_raw(:,:,i)).^2;
+        end
+        RCM_data.rmse=sqrt(mean(RCM_data.sqe,3));
+        RCM_data.interp_mean=mean(RCM_data.interp_all,3);
+        
+        %% mean of RMSE
+        [tmp.m_value, tmp.error_status] = Func_0011_get_area_weighted_mean(RCM_data.rmse, OBS_grid.cut_lon_rho, OBS_grid.cut_lat_rho);
+
+        [tmp.indw, tmp.inde, tmp.inds, tmp.indn]=Func_0012_findind_Y(1/10,[127, 130, 37, 41],OBS_grid.cut_lon_rho,OBS_grid.cut_lat_rho); % southern EKB
+        EKB_lon=RCM_grid.lon_rho(tmp.indw:tmp.inde,tmp.inds:tmp.indn);
+        EKB_lat=RCM_grid.lat_rho(tmp.indw:tmp.inde,tmp.inds:tmp.indn);
+        EKB_data=RCM_data.rmse(tmp.indw:tmp.inde,tmp.inds:tmp.indn);
+        [EKB_mean, error_status] = Func_0011_get_area_weighted_mean(EKB_data, EKB_lon, EKB_lat);
+
+        %% pattern corr
+        tmp.mask=RCM_data.interp_mean.*OBS_data.mean;
+        tmp.a=RCM_data.interp_mean(isfinite(tmp.mask));
+        tmp.b=OBS_data.mean(isfinite(tmp.mask));
+        RCM_data.pattern_corr=corrcoef(tmp.a(:), tmp.b(:));
 
         m_proj(param.m_proj_name,'lon',[RCM_grid.domain(1) RCM_grid.domain(2)],'lat',[RCM_grid.domain(3) RCM_grid.domain(4)]);
         hold on;

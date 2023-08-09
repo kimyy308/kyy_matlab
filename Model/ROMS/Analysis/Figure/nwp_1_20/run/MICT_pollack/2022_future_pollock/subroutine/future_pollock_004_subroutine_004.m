@@ -124,6 +124,68 @@ if (exist(tmp.tifname , 'file') ~= 2 || fig_flag==2)
     RCM_data_u.mean(tmp.ref_vec_x_range,tmp.ref_vec_y_range)=param.m_quiver_ref_u_value;
     RCM_data_v.mean(tmp.ref_vec_x_range,tmp.ref_vec_y_range)=param.m_quiver_ref_v_value;     
     
+
+    %% READ OBS, RMSE, CORR
+    OBS_info.filename=['/Volumes/kyy_raid/Data/Observation/CMEMS/', 'AKP4cmems_gos_1995_2014_JanFeb.nc'];
+    OBS_grid.lon=ncread(OBS_info.filename, 'lon');
+    OBS_grid.lat=ncread(OBS_info.filename, 'lat');
+    OBS_data.raw_u=ncread(OBS_info.filename, 'cmems_u');
+    OBS_data.raw_v=ncread(OBS_info.filename, 'cmems_v');
+     [OBS_grid.lat_rho, OBS_grid.lon_rho] = meshgrid(OBS_grid.lat, OBS_grid.lon);
+
+    [OBS_grid.refpolygon, OBS_grid.domain, tmp.error_status] = Func_0007_get_polygon_data_from_regionname(tmp.regionname);
+
+    [OBS_grid.lon_min, OBS_grid.lon_max, OBS_grid.lat_min, OBS_grid.lat_max] = ...
+                                findind_Y(1/20, OBS_grid.domain(1:4), OBS_grid.lon_rho, OBS_grid.lat_rho);
+    OBS_grid.cut_lon_rho = ...
+        OBS_grid.lon_rho(OBS_grid.lon_min(1):OBS_grid.lon_max(1), OBS_grid.lat_min(1):OBS_grid.lat_max(1));
+    OBS_grid.cut_lat_rho = ...
+        OBS_grid.lat_rho(OBS_grid.lon_min(1):OBS_grid.lon_max(1), OBS_grid.lat_min(1):OBS_grid.lat_max(1));
+    OBS_data.cut_raw_u=OBS_data.raw_u(OBS_grid.lon_min(1):OBS_grid.lon_max(1), OBS_grid.lat_min(1):OBS_grid.lat_max(1),:);
+        OBS_data.cut_raw_v=OBS_data.raw_v(OBS_grid.lon_min(1):OBS_grid.lon_max(1), OBS_grid.lat_min(1):OBS_grid.lat_max(1),:);
+    
+    OBS_grid.mask_model = double(inpolygon(OBS_grid.cut_lon_rho,OBS_grid.cut_lat_rho,OBS_grid.refpolygon(:,1),OBS_grid.refpolygon(:,2)));
+    OBS_grid.mask_model(OBS_grid.mask_model==0)=NaN;
+    OBS_data.mean_u=mean(OBS_data.cut_raw_u, 3).*OBS_grid.mask_model;
+    OBS_data.mean_v=mean(OBS_data.cut_raw_v, 3).*OBS_grid.mask_model;
+
+    for i=1:size(OBS_data.cut_raw_u,3)
+        RCM_data_u.interp_all(:,:,i)=griddata(RCM_grid.cut_lon_rho, RCM_grid.cut_lat_rho, RCM_data_u.all(:,:,ceil(i/2),2-mod(i,2)), ...
+            OBS_grid.cut_lon_rho, OBS_grid.cut_lat_rho);
+        RCM_data_v.interp_all(:,:,i)=griddata(RCM_grid.cut_lon_rho, RCM_grid.cut_lat_rho, RCM_data_v.all(:,:,ceil(i/2),2-mod(i,2)), ...
+            OBS_grid.cut_lon_rho, OBS_grid.cut_lat_rho);
+        RCM_data_u.sqe(:,:,i)=(RCM_data_u.interp_all(:,:,i)-OBS_data.cut_raw_u(:,:,i)).^2;
+        RCM_data_v.sqe(:,:,i)=(RCM_data_v.interp_all(:,:,i)-OBS_data.cut_raw_v(:,:,i)).^2;
+    end
+    RCM_data_u.rmse=sqrt(mean(RCM_data_u.sqe,3));
+    RCM_data_v.rmse=sqrt(mean(RCM_data_v.sqe,3));
+    RCM_data_u.interp_mean=mean(RCM_data_u.interp_all,3);
+    RCM_data_v.interp_mean=mean(RCM_data_v.interp_all,3);
+    
+    %% mean of RMSE
+    [tmp.m_value_u, tmp.error_status] = Func_0011_get_area_weighted_mean(RCM_data_u.rmse, OBS_grid.cut_lon_rho, OBS_grid.cut_lat_rho);
+    [tmp.m_value_v, tmp.error_status] = Func_0011_get_area_weighted_mean(RCM_data_v.rmse, OBS_grid.cut_lon_rho, OBS_grid.cut_lat_rho);
+
+    [tmp.indw, tmp.inde, tmp.inds, tmp.indn]=Func_0012_findind_Y(1/10,[127, 130, 37, 41],OBS_grid.cut_lon_rho,OBS_grid.cut_lat_rho); % southern EKB
+    EKB_lon=RCM_grid.lon_rho(tmp.indw:tmp.inde,tmp.inds:tmp.indn);
+    EKB_lat=RCM_grid.lat_rho(tmp.indw:tmp.inde,tmp.inds:tmp.indn);
+    EKB_data_u=RCM_data_u.rmse(tmp.indw:tmp.inde,tmp.inds:tmp.indn);
+    [EKB_mean_u, error_status] = Func_0011_get_area_weighted_mean(EKB_data_u, EKB_lon, EKB_lat);
+    EKB_data_v=RCM_data_v.rmse(tmp.indw:tmp.inde,tmp.inds:tmp.indn);
+    [EKB_mean_v, error_status] = Func_0011_get_area_weighted_mean(EKB_data_v, EKB_lon, EKB_lat);
+
+    %% pattern corr
+    tmp.mask=RCM_data_u.interp_mean.*OBS_data.mean_u;
+    tmp.a=RCM_data_u.interp_mean(isfinite(tmp.mask));
+    tmp.b=OBS_data.mean_u(isfinite(tmp.mask));
+    RCM_data.pattern_corr_u=corrcoef(tmp.a(:), tmp.b(:));
+
+    tmp.mask=RCM_data_v.interp_mean.*OBS_data.mean_v;
+    tmp.a=RCM_data_v.interp_mean(isfinite(tmp.mask));
+    tmp.b=OBS_data.mean_v(isfinite(tmp.mask));
+    RCM_data.pattern_corr_v=corrcoef(tmp.a(:), tmp.b(:));
+
+
     
     m_proj(param.m_proj_name,'lon',[RCM_grid.domain(1) RCM_grid.domain(2)],'lat',[RCM_grid.domain(3) RCM_grid.domain(4)]);
     hold on;

@@ -1,8 +1,8 @@
 % % this script is for north western pacific region figure
 
 % % set colorbar parameter
-load C:\Users\user\Dropbox\source\matlab\Common\Figure\jet_mod  % % set colormap (jet_modified)
-run('C:\Users\user\Dropbox\source\matlab\Common\Figure\bwr_map')  % % set colormap (blue and white)
+% load C:\Users\user\Dropbox\source\matlab\Common\Figure\jet_mod  % % set colormap (jet_modified)
+% run('C:\Users\user\Dropbox\source\matlab\Common\Figure\bwr_map')  % % set colormap (blue and white)
 % for i = 1:3
 %     bwrmap2(1:9901,i)=interp1((1:100)',bwrmap(1:100,i),(1:0.01:100)');
 % end
