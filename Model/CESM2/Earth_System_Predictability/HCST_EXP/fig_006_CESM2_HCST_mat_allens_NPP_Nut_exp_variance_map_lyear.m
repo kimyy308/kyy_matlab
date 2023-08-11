@@ -78,1397 +78,1429 @@ phytoset={'diat', 'diaz', 'sp'};
 % phytoset={'sp'};
 
 %% mu_ref
-for pind=1:length(phytoset)
-%     clear data_mask_nut_dominant_ind data_mask_nut_dominant_val data_min_lim_phyto data_min_lim_ind_pytho ...
-%         data_NPP_rec data_NPP_rec_corr data_NPP_rec_Fe data_NPP_rec_Fe_corr data_NPP_rec_L data_NPP_rec_L_corr ...
-%         data_NPP_rec_N data_NPP_rec_N_corr data_NPP_rec_P data_NPP_rec_P_corr ...
-%         data_NPP_rec_SiO3 data_NPP_rec_SiO3_corr data_NPP_rec_T data_NPP_rec_T_corr ...
-%         data_NPP_rec_V data_NPP_rec_V_corr
-    tmp.phyto=phytoset{pind};
-    if pind==2
-        mu_ref(pind) = 2.5;
-    else
-        mu_ref(pind) = 5;
-    end
+% % % % % for pind=1:length(phytoset)
+% % % % % %     clear data_mask_nut_dominant_ind data_mask_nut_dominant_val data_min_lim_phyto data_min_lim_ind_pytho ...
+% % % % % %         data_NPP_rec data_NPP_rec_corr data_NPP_rec_Fe data_NPP_rec_Fe_corr data_NPP_rec_L data_NPP_rec_L_corr ...
+% % % % % %         data_NPP_rec_N data_NPP_rec_N_corr data_NPP_rec_P data_NPP_rec_P_corr ...
+% % % % % %         data_NPP_rec_SiO3 data_NPP_rec_SiO3_corr data_NPP_rec_T data_NPP_rec_T_corr ...
+% % % % % %         data_NPP_rec_V data_NPP_rec_V_corr
+% % % % %     tmp.phyto=phytoset{pind};
+% % % % %     if pind==2
+% % % % %         mu_ref(pind) = 2.5;
+% % % % %     else
+% % % % %         mu_ref(pind) = 5;
+% % % % %     end
+% % % % % 
+% % % % %     for lyear = 0:4
+% % % % %         tmp.lyear_str=num2str(lyear, '%02i');
+% % % % %         
+% % % % %         clear data_mask_nut_dominant data_min_lim_phyto data_NPP_rec data_NPP_rec_corr data_lim_set_phyto data_min_freq
+% % % % % 
+% % % % %         matname=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/ocn/photoC_TOT_zint_100m/',tmp.phyto, '_nut_NPP_l', tmp.lyear_str, '.mat'];
+% % % % %         if ~exist(matname)
+% % % % % %         if lyear<99
+% % % % %             disp(matname)
+% % % % %             tic;
+% % % % %             dirs.hcstmatroot=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', cfg.var];
+% % % % %             fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', cfg.var, ...
+% % % % %                         '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
+% % % % %                         '_l', tmp.lyear_str, 'y.mat'];
+% % % % %             load(fig_cfg.mat_name, 'data');
+% % % % %             data_NPP=data;
+% % % % %             
+% % % % %             tmp.varname='TEMP'; 
+% % % % %             dirs.hcstmatroot=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
+% % % % %             fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
+% % % % %                         '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
+% % % % %                         '_l', tmp.lyear_str, 'y.mat'];
+% % % % %             load(fig_cfg.mat_name, 'data');
+% % % % %             data_TEMP=data;
+% % % % % 
+% % % % %             %% photoC_phyto
+% % % % %             tmp.varname=['photoC_',tmp.phyto,'_zint_100m'];
+% % % % %             dirs.hcstmatroot=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
+% % % % %             fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
+% % % % %                         '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
+% % % % %                         '_l', tmp.lyear_str, 'y.mat'];
+% % % % %             load(fig_cfg.mat_name, 'data');
+% % % % %             data_NPP_phyto.(tmp.phyto)=data;
+% % % % %             
+% % % % %             %% biomass
+% % % % %             tmp.varname=[tmp.phyto,'C'];
+% % % % %             dirs.hcstmatroot=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
+% % % % %             fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
+% % % % %                         '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
+% % % % %                         '_l', tmp.lyear_str, 'y.mat'];
+% % % % %             load(fig_cfg.mat_name, 'data');
+% % % % %             data_C_phyto.(tmp.phyto)=data;
+% % % % %         
+% % % % %             %% Fe
+% % % % %             tmp.varname=[tmp.phyto,'_Fe_lim_Cweight_avg_100m'];
+% % % % %             dirs.hcstmatroot=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
+% % % % %             fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
+% % % % %                         '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
+% % % % %                         '_l', tmp.lyear_str, 'y.mat'];
+% % % % %             load(fig_cfg.mat_name, 'data');
+% % % % %             data_Fe_lim_phyto.(tmp.phyto)=data;
+% % % % %         
+% % % % %             %% N
+% % % % %             if strcmp(tmp.phyto, 'diaz')~=1
+% % % % %                 tmp.varname=[tmp.phyto,'_N_lim_Cweight_avg_100m'];
+% % % % %                 dirs.hcstmatroot=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
+% % % % %                 fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
+% % % % %                             '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
+% % % % %                             '_l', tmp.lyear_str, 'y.mat'];
+% % % % %                 load(fig_cfg.mat_name, 'data');
+% % % % %                 data_N_lim_phyto.(tmp.phyto)=data;
+% % % % %             end
+% % % % %         
+% % % % %             %% SiO3
+% % % % %             if strcmp(tmp.phyto, 'diat')==1
+% % % % %                 tmp.varname=[tmp.phyto,'_SiO3_lim_Cweight_avg_100m'];
+% % % % %                 dirs.hcstmatroot=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
+% % % % %                 fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
+% % % % %                             '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
+% % % % %                             '_l', tmp.lyear_str, 'y.mat'];
+% % % % %                 load(fig_cfg.mat_name, 'data');
+% % % % %                 data_SiO3_lim_phyto.(tmp.phyto)=data;
+% % % % %             end
+% % % % %             
+% % % % %             %% P
+% % % % %             tmp.varname=[tmp.phyto,'_P_lim_Cweight_avg_100m'];
+% % % % %             dirs.hcstmatroot=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
+% % % % %             fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
+% % % % %                         '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
+% % % % %                         '_l', tmp.lyear_str, 'y.mat'];
+% % % % %             load(fig_cfg.mat_name, 'data');
+% % % % %             data_P_lim_phyto.(tmp.phyto)=data;
+% % % % %         
+% % % % %             %% light 
+% % % % %             tmp.varname=[tmp.phyto,'_light_lim_Cweight_avg_100m'];
+% % % % %             dirs.hcstmatroot=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
+% % % % %             fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
+% % % % %                         '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
+% % % % %                         '_l', tmp.lyear_str, 'y.mat'];
+% % % % %             load(fig_cfg.mat_name, 'data');
+% % % % %             data_light_lim_phyto.(tmp.phyto)=data;
+% % % % %             
+% % % % %         
+% % % % %             %% initialization for minimum limitation set
+% % % % %             data_lim_set_phyto.(tmp.phyto).assm = ...
+% % % % %                 NaN(size(grid.tlong,1), size(grid.tlong,2), length(cfg.iyears), 4);
+% % % % %             data_lim_set_phyto.(tmp.phyto).(['lens2_l',tmp.lyear_str]) = ...
+% % % % %                 NaN(size(grid.tlong,1), size(grid.tlong,2), length(cfg.iyears), 4);
+% % % % %             data_lim_set_phyto.(tmp.phyto).(['model_l',tmp.lyear_str]) = ...
+% % % % %                 NaN(size(grid.tlong,1), size(grid.tlong,2), length(cfg.iyears), 4);
+% % % % %             
+% % % % %             %% Fe
+% % % % %             data_lim_set_phyto.(tmp.phyto).assm(:,:,:,1)=...
+% % % % %                 data_Fe_lim_phyto.(tmp.phyto).([tmp.phyto,'_Fe_lim_Cweight_avg_100m_assm']);
+% % % % %             data_lim_set_phyto.(tmp.phyto).(['lens2_l',tmp.lyear_str])(:,:,:,1)=...
+% % % % %                 data_Fe_lim_phyto.(tmp.phyto).([tmp.phyto,'_Fe_lim_Cweight_avg_100m_lens2_l', tmp.lyear_str]);
+% % % % %             data_lim_set_phyto.(tmp.phyto).(['model_l',tmp.lyear_str])(:,:,:,1)=...
+% % % % %                 data_Fe_lim_phyto.(tmp.phyto).([tmp.phyto,'_Fe_lim_Cweight_avg_100m_model_l', tmp.lyear_str]);
+% % % % %             
+% % % % %             %% N
+% % % % %             if strcmp(tmp.phyto, 'diaz')~=1
+% % % % %                 data_lim_set_phyto.(tmp.phyto).assm(:,:,:,2)=...
+% % % % %                     data_N_lim_phyto.(tmp.phyto).([tmp.phyto,'_N_lim_Cweight_avg_100m_assm']);
+% % % % %                 data_lim_set_phyto.(tmp.phyto).(['lens2_l',tmp.lyear_str])(:,:,:,2)=...
+% % % % %                     data_N_lim_phyto.(tmp.phyto).([tmp.phyto,'_N_lim_Cweight_avg_100m_lens2_l', tmp.lyear_str]);
+% % % % %                 data_lim_set_phyto.(tmp.phyto).(['model_l',tmp.lyear_str])(:,:,:,2)=...
+% % % % %                     data_N_lim_phyto.(tmp.phyto).([tmp.phyto,'_N_lim_Cweight_avg_100m_model_l', tmp.lyear_str]);
+% % % % %             else
+% % % % %                 data_lim_set_phyto.(tmp.phyto).assm(:,:,:,2) = NaN;
+% % % % %                 data_lim_set_phyto.(tmp.phyto).(['lens2_l',tmp.lyear_str])(:,:,:,2) = NaN;
+% % % % %                 data_lim_set_phyto.(tmp.phyto).(['model_l',tmp.lyear_str])(:,:,:,2) = NaN;
+% % % % %             end
+% % % % %             %% SiO3
+% % % % %             if strcmp(tmp.phyto, 'diat')==1
+% % % % %                 data_lim_set_phyto.(tmp.phyto).assm(:,:,:,3)=...
+% % % % %                     data_SiO3_lim_phyto.(tmp.phyto).([tmp.phyto,'_SiO3_lim_Cweight_avg_100m_assm']);
+% % % % %                 data_lim_set_phyto.(tmp.phyto).(['lens2_l',tmp.lyear_str])(:,:,:,3)=...
+% % % % %                     data_SiO3_lim_phyto.(tmp.phyto).([tmp.phyto,'_SiO3_lim_Cweight_avg_100m_lens2_l', tmp.lyear_str]);
+% % % % %                 data_lim_set_phyto.(tmp.phyto).(['model_l',tmp.lyear_str])(:,:,:,3)=...
+% % % % %                     data_SiO3_lim_phyto.(tmp.phyto).([tmp.phyto,'_SiO3_lim_Cweight_avg_100m_model_l', tmp.lyear_str]);
+% % % % %             else
+% % % % %                 data_lim_set_phyto.(tmp.phyto).assm(:,:,:,3) = NaN;
+% % % % %                 data_lim_set_phyto.(tmp.phyto).(['lens2_l',tmp.lyear_str])(:,:,:,3) = NaN;
+% % % % %                 data_lim_set_phyto.(tmp.phyto).(['model_l',tmp.lyear_str])(:,:,:,3) = NaN;
+% % % % %             end
+% % % % %             %% P
+% % % % %             data_lim_set_phyto.(tmp.phyto).assm(:,:,:,4)=...
+% % % % %                 data_P_lim_phyto.(tmp.phyto).([tmp.phyto,'_P_lim_Cweight_avg_100m_assm']);
+% % % % %             data_lim_set_phyto.(tmp.phyto).(['lens2_l',tmp.lyear_str])(:,:,:,4)=...
+% % % % %                 data_P_lim_phyto.(tmp.phyto).([tmp.phyto,'_P_lim_Cweight_avg_100m_lens2_l', tmp.lyear_str]);
+% % % % %             data_lim_set_phyto.(tmp.phyto).(['model_l',tmp.lyear_str])(:,:,:,4)=...
+% % % % %                 data_P_lim_phyto.(tmp.phyto).([tmp.phyto,'_P_lim_Cweight_avg_100m_model_l', tmp.lyear_str]);
+% % % % %     
+% % % % %             
+% % % % %     
+% % % % %             %% get V(minimum nutirient limitation)
+% % % % %             [data_min_lim_phyto.val.(tmp.phyto).assm, data_min_lim_phyto.ind.(tmp.phyto).assm]= ...
+% % % % %                 min(data_lim_set_phyto.(tmp.phyto).assm,[], 4);
+% % % % %             [data_min_lim_phyto.val.(tmp.phyto).(['lens2_l',tmp.lyear_str]), ...
+% % % % %                 data_min_lim_phyto.ind.(tmp.phyto).(['lens2_l',tmp.lyear_str])]= ...
+% % % % %                 min(data_lim_set_phyto.(tmp.phyto).(['lens2_l',tmp.lyear_str]),[], 4);
+% % % % %             [data_min_lim_phyto.val.(tmp.phyto).(['model_l',tmp.lyear_str]), ...
+% % % % %                 data_min_lim_phyto.ind.(tmp.phyto).(['model_l',tmp.lyear_str])]= ...
+% % % % %                 min(data_lim_set_phyto.(tmp.phyto).(['model_l',tmp.lyear_str]),[], 4);
+% % % % %             
+% % % % %     
+% % % % %             % % pcolor(lim_set_assm_ind(:,:,5)'); shading flat; colorbar; colormap(jet(4))
+% % % % %             % % pcolor(mean(lim_set_assm_ind,3)'.*grid.mask_ocn'); shading flat; colorbar; colormap(jet(4)); caxis([0.5 4.5]);
+% % % % %             % % pcolor(std(lim_set_assm_ind,[],3)'.*grid.mask_ocn'); shading flat; colorbar; colormap(jet(256));
+% % % % %             
+% % % % %             %% reconstructed NPP
+% % % % %             data_NPP_rec.ALL.(tmp.phyto).assm = ...
+% % % % %                 data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_assm']) .* ...
+% % % % %                 data_min_lim_phyto.val.(tmp.phyto).assm .* ...
+% % % % %                 1.7.^((data_TEMP.TEMP_assm-30.0)./10.0) .* ...
+% % % % %                 mu_ref(pind) .* ...
+% % % % %                 data_C_phyto.(tmp.phyto).([tmp.phyto,'C_assm']) ...
+% % % % %                 ./ 86400.0 .* 10000.0;
+% % % % %             data_NPP_rec.ALL.(tmp.phyto).(['lens2_l',tmp.lyear_str]) = ...
+% % % % %                 data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_lens2_l', tmp.lyear_str]) .* ...
+% % % % %                 data_min_lim_phyto.val.(tmp.phyto).(['lens2_l',tmp.lyear_str]) .* ...
+% % % % %                 1.7.^((data_TEMP.(['TEMP_','lens2_l',tmp.lyear_str])-30.0)./10.0) .* ...
+% % % % %                 mu_ref(pind) .* ...
+% % % % %                 data_C_phyto.(tmp.phyto).([tmp.phyto,'C_lens2_l', tmp.lyear_str]) ...
+% % % % %                 ./ 86400.0 .* 10000.0;
+% % % % %             data_NPP_rec.ALL.(tmp.phyto).(['model_l',tmp.lyear_str]) = ...
+% % % % %                 data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_model_l', tmp.lyear_str]) .* ...
+% % % % %                 data_min_lim_phyto.val.(tmp.phyto).(['model_l',tmp.lyear_str]) .* ...
+% % % % %                 1.7.^((data_TEMP.(['TEMP_','model_l',tmp.lyear_str])-30.0)./10.0) .* ...
+% % % % %                 mu_ref(pind) .* ...
+% % % % %                 data_C_phyto.(tmp.phyto).([tmp.phyto,'C_model_l', tmp.lyear_str]) ...
+% % % % %                 ./ 86400.0 .* 10000.0;
+% % % % %            
+% % % % %     
+% % % % %             %% reconstructed NPP: T driven
+% % % % %             data_NPP_rec.T.(tmp.phyto).assm = ...
+% % % % %                 mean(data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_assm']),3,'omitnan') .* ...
+% % % % %                 mean(data_min_lim_phyto.val.(tmp.phyto).assm,3,'omitnan') .* ...
+% % % % %                 1.7.^((data_TEMP.TEMP_assm-30.0)./10.0) .* ...
+% % % % %                 mu_ref(pind) .* ...
+% % % % %                 mean(data_C_phyto.(tmp.phyto).([tmp.phyto,'C_assm']),3,'omitnan') ...
+% % % % %                 ./ 86400.0 .* 10000.0;
+% % % % %             data_NPP_rec.T.(tmp.phyto).(['lens2_l',tmp.lyear_str]) = ...
+% % % % %                 mean(data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_lens2_l', tmp.lyear_str]),3,'omitnan') .* ...
+% % % % %                 mean(data_min_lim_phyto.val.(tmp.phyto).(['lens2_l',tmp.lyear_str]),3,'omitnan') .* ...
+% % % % %                 1.7.^((data_TEMP.(['TEMP_','lens2_l',tmp.lyear_str])-30.0)./10.0) .* ...
+% % % % %                 mu_ref(pind) .* ...
+% % % % %                 mean(data_C_phyto.(tmp.phyto).([tmp.phyto,'C_lens2_l', tmp.lyear_str]),3,'omitnan') ...
+% % % % %                 ./ 86400.0 .* 10000.0;
+% % % % %             data_NPP_rec.T.(tmp.phyto).(['model_l',tmp.lyear_str]) = ...
+% % % % %                 mean(data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_model_l', tmp.lyear_str]),3,'omitnan') .* ...
+% % % % %                 mean(data_min_lim_phyto.val.(tmp.phyto).(['model_l',tmp.lyear_str]),3,'omitnan') .* ...
+% % % % %                 1.7.^((data_TEMP.(['TEMP_','model_l',tmp.lyear_str])-30.0)./10.0) .* ...
+% % % % %                 mu_ref(pind) .* ...
+% % % % %                 mean(data_C_phyto.(tmp.phyto).([tmp.phyto,'C_model_l', tmp.lyear_str]),3,'omitnan') ...
+% % % % %                 ./ 86400.0 .* 10000.0;
+% % % % %             
+% % % % %     
+% % % % %             %% reconstructed NPP: L driven
+% % % % %             data_NPP_rec.L.(tmp.phyto).assm = ...
+% % % % %                 data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_assm']) .* ...
+% % % % %                 mean(data_min_lim_phyto.val.(tmp.phyto).assm,3,'omitnan') .* ...
+% % % % %                 mean(1.7.^((data_TEMP.TEMP_assm-30.0)./10.0),3,'omitnan') .* ...
+% % % % %                 mu_ref(pind) .* ...
+% % % % %                 mean(data_C_phyto.(tmp.phyto).([tmp.phyto,'C_assm']),3,'omitnan') ...
+% % % % %                 ./ 86400.0 .* 10000.0;
+% % % % %             data_NPP_rec.L.(tmp.phyto).(['lens2_l',tmp.lyear_str]) = ...
+% % % % %                 data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_lens2_l', tmp.lyear_str]) .* ...
+% % % % %                 mean(data_min_lim_phyto.val.(tmp.phyto).(['lens2_l',tmp.lyear_str]),3,'omitnan') .* ...
+% % % % %                 mean(1.7.^((data_TEMP.(['TEMP_','lens2_l',tmp.lyear_str])-30.0)./10.0),3, 'omitnan') .* ...
+% % % % %                 mu_ref(pind) .* ...
+% % % % %                 mean(data_C_phyto.(tmp.phyto).([tmp.phyto,'C_lens2_l', tmp.lyear_str]),3,'omitnan') ...
+% % % % %                 ./ 86400.0 .* 10000.0;
+% % % % %             data_NPP_rec.L.(tmp.phyto).(['model_l',tmp.lyear_str]) = ...
+% % % % %                 data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_model_l', tmp.lyear_str]) .* ...
+% % % % %                 mean(data_min_lim_phyto.val.(tmp.phyto).(['model_l',tmp.lyear_str]),3,'omitnan') .* ...
+% % % % %                 mean(1.7.^((data_TEMP.(['TEMP_','model_l',tmp.lyear_str])-30.0)./10.0),3,'omitnan') .* ...
+% % % % %                 mu_ref(pind) .* ...
+% % % % %                 mean(data_C_phyto.(tmp.phyto).([tmp.phyto,'C_model_l', tmp.lyear_str]),3,'omitnan') ...
+% % % % %                 ./ 86400.0 .* 10000.0;
+% % % % %             
+% % % % %             
+% % % % %             %% reconstructed NPP: V driven (nutrient limiting factor)
+% % % % %             data_NPP_rec.V.(tmp.phyto).assm = ...
+% % % % %                 mean(data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_assm']),3,'omitnan') .* ...
+% % % % %                 data_min_lim_phyto.val.(tmp.phyto).assm .* ...
+% % % % %                 mean(1.7.^((data_TEMP.TEMP_assm-30.0)./10.0),3,'omitnan') .* ...
+% % % % %                 mu_ref(pind) .* ...
+% % % % %                 mean(data_C_phyto.(tmp.phyto).([tmp.phyto,'C_assm']),3,'omitnan') ...
+% % % % %                 ./ 86400.0 .* 10000.0;
+% % % % %             data_NPP_rec.V.(tmp.phyto).(['lens2_l',tmp.lyear_str]) = ...
+% % % % %                 mean(data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_lens2_l', tmp.lyear_str]),3,'omitnan') .* ...
+% % % % %                 data_min_lim_phyto.val.(tmp.phyto).(['lens2_l',tmp.lyear_str]) .* ...
+% % % % %                 mean(1.7.^((data_TEMP.(['TEMP_','lens2_l',tmp.lyear_str])-30.0)./10.0),3,'omitnan') .* ...
+% % % % %                 mu_ref(pind) .* ...
+% % % % %                 mean(data_C_phyto.(tmp.phyto).([tmp.phyto,'C_lens2_l', tmp.lyear_str]),3,'omitnan') ...
+% % % % %                 ./ 86400.0 .* 10000.0;
+% % % % %             data_NPP_rec.V.(tmp.phyto).(['model_l',tmp.lyear_str]) = ...
+% % % % %                 mean(data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_model_l', tmp.lyear_str]),3,'omitnan') .* ...
+% % % % %                 data_min_lim_phyto.val.(tmp.phyto).(['model_l',tmp.lyear_str]) .* ...
+% % % % %                 mean(1.7.^((data_TEMP.(['TEMP_','model_l',tmp.lyear_str])-30.0)./10.0),3,'omitnan') .* ...
+% % % % %                 mu_ref(pind) .* ...
+% % % % %                 mean(data_C_phyto.(tmp.phyto).([tmp.phyto,'C_model_l', tmp.lyear_str]),3,'omitnan') ...
+% % % % %                 ./ 86400.0 .* 10000.0;
+% % % % %             
+% % % % %     
+% % % % %             %% reconstructed NPP: Fe driven (nutrient limiting factor)
+% % % % %             data_NPP_rec.Fe.(tmp.phyto).assm = ...
+% % % % %                 mean(data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_assm']),3,'omitnan') .* ...
+% % % % %                 data_lim_set_phyto.(tmp.phyto).assm(:,:,:,1) .* ...
+% % % % %                 mean(1.7.^((data_TEMP.TEMP_assm-30.0)./10.0),3,'omitnan') .* ...
+% % % % %                 mu_ref(pind) .* ...
+% % % % %                 mean(data_C_phyto.(tmp.phyto).([tmp.phyto,'C_assm']),3,'omitnan') ...
+% % % % %                 ./ 86400.0 .* 10000.0;
+% % % % %             data_NPP_rec.Fe.(tmp.phyto).(['lens2_l',tmp.lyear_str]) = ...
+% % % % %                 mean(data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_lens2_l', tmp.lyear_str]),3,'omitnan') .* ...
+% % % % %                 data_lim_set_phyto.(tmp.phyto).(['lens2_l',tmp.lyear_str])(:,:,:,1) .* ...
+% % % % %                 mean(1.7.^((data_TEMP.(['TEMP_','lens2_l',tmp.lyear_str])-30.0)./10.0),3,'omitnan') .* ...
+% % % % %                 mu_ref(pind) .* ...
+% % % % %                 mean(data_C_phyto.(tmp.phyto).([tmp.phyto,'C_lens2_l', tmp.lyear_str]),3,'omitnan') ...
+% % % % %                 ./ 86400.0 .* 10000.0;
+% % % % %             data_NPP_rec.Fe.(tmp.phyto).(['model_l',tmp.lyear_str]) = ...
+% % % % %                 mean(data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_model_l', tmp.lyear_str]),3,'omitnan') .* ...
+% % % % %                 data_lim_set_phyto.(tmp.phyto).(['model_l',tmp.lyear_str])(:,:,:,1) .* ...
+% % % % %                 mean(1.7.^((data_TEMP.(['TEMP_','model_l',tmp.lyear_str])-30.0)./10.0),3,'omitnan') .* ...
+% % % % %                 mu_ref(pind) .* ...
+% % % % %                 mean(data_C_phyto.(tmp.phyto).([tmp.phyto,'C_model_l', tmp.lyear_str]),3,'omitnan') ...
+% % % % %                 ./ 86400.0 .* 10000.0;
+% % % % %             
+% % % % %     
+% % % % %             %% reconstructed NPP: N driven (nutrient limiting factor)
+% % % % %             data_NPP_rec.N.(tmp.phyto).assm = ...
+% % % % %                 mean(data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_assm']),3,'omitnan') .* ...
+% % % % %                 data_lim_set_phyto.(tmp.phyto).assm(:,:,:,2) .* ...
+% % % % %                 mean(1.7.^((data_TEMP.TEMP_assm-30.0)./10.0),3,'omitnan') .* ...
+% % % % %                 mu_ref(pind) .* ...
+% % % % %                 mean(data_C_phyto.(tmp.phyto).([tmp.phyto,'C_assm']),3,'omitnan') ...
+% % % % %                 ./ 86400.0 .* 10000.0;
+% % % % %             data_NPP_rec.N.(tmp.phyto).(['lens2_l',tmp.lyear_str]) = ...
+% % % % %                 mean(data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_lens2_l', tmp.lyear_str]),3,'omitnan') .* ...
+% % % % %                 data_lim_set_phyto.(tmp.phyto).(['lens2_l',tmp.lyear_str])(:,:,:,2) .* ...
+% % % % %                 mean(1.7.^((data_TEMP.(['TEMP_','lens2_l',tmp.lyear_str])-30.0)./10.0),3,'omitnan') .* ...
+% % % % %                 mu_ref(pind) .* ...
+% % % % %                 mean(data_C_phyto.(tmp.phyto).([tmp.phyto,'C_lens2_l', tmp.lyear_str]),3,'omitnan') ...
+% % % % %                 ./ 86400.0 .* 10000.0;
+% % % % %             data_NPP_rec.N.(tmp.phyto).(['model_l',tmp.lyear_str]) = ...
+% % % % %                 mean(data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_model_l', tmp.lyear_str]),3,'omitnan') .* ...
+% % % % %                 data_lim_set_phyto.(tmp.phyto).(['model_l',tmp.lyear_str])(:,:,:,2) .* ...
+% % % % %                 mean(1.7.^((data_TEMP.(['TEMP_','model_l',tmp.lyear_str])-30.0)./10.0),3,'omitnan') .* ...
+% % % % %                 mu_ref(pind) .* ...
+% % % % %                 mean(data_C_phyto.(tmp.phyto).([tmp.phyto,'C_model_l', tmp.lyear_str]),3,'omitnan') ...
+% % % % %                 ./ 86400.0 .* 10000.0;
+% % % % %             
+% % % % %     
+% % % % %             %% reconstructed NPP: SiO3 driven (nutrient limiting factor)
+% % % % %             data_NPP_rec.SiO3.(tmp.phyto).assm = ...
+% % % % %                 mean(data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_assm']),3,'omitnan') .* ...
+% % % % %                 data_lim_set_phyto.(tmp.phyto).assm(:,:,:,3) .* ...
+% % % % %                 mean(1.7.^((data_TEMP.TEMP_assm-30.0)./10.0),3,'omitnan') .* ...
+% % % % %                 mu_ref(pind) .* ...
+% % % % %                 mean(data_C_phyto.(tmp.phyto).([tmp.phyto,'C_assm']),3,'omitnan') ...
+% % % % %                 ./ 86400.0 .* 10000.0;
+% % % % %             data_NPP_rec.SiO3.(tmp.phyto).(['lens2_l',tmp.lyear_str]) = ...
+% % % % %                 mean(data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_lens2_l', tmp.lyear_str]),3,'omitnan') .* ...
+% % % % %                 data_lim_set_phyto.(tmp.phyto).(['lens2_l',tmp.lyear_str])(:,:,:,3) .* ...
+% % % % %                 mean(1.7.^((data_TEMP.(['TEMP_','lens2_l',tmp.lyear_str])-30.0)./10.0),3,'omitnan') .* ...
+% % % % %                 mu_ref(pind) .* ...
+% % % % %                 mean(data_C_phyto.(tmp.phyto).([tmp.phyto,'C_lens2_l', tmp.lyear_str]),3,'omitnan') ...
+% % % % %                 ./ 86400.0 .* 10000.0;
+% % % % %             data_NPP_rec.SiO3.(tmp.phyto).(['model_l',tmp.lyear_str]) = ...
+% % % % %                 mean(data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_model_l', tmp.lyear_str]),3,'omitnan') .* ...
+% % % % %                 data_lim_set_phyto.(tmp.phyto).(['model_l',tmp.lyear_str])(:,:,:,3) .* ...
+% % % % %                 mean(1.7.^((data_TEMP.(['TEMP_','model_l',tmp.lyear_str])-30.0)./10.0),3,'omitnan') .* ...
+% % % % %                 mu_ref(pind) .* ...
+% % % % %                 mean(data_C_phyto.(tmp.phyto).([tmp.phyto,'C_model_l', tmp.lyear_str]),3,'omitnan') ...
+% % % % %                 ./ 86400.0 .* 10000.0;
+% % % % %             
+% % % % %     
+% % % % %             %% reconstructed NPP: P driven (nutrient limiting factor)
+% % % % %             data_NPP_rec.P.(tmp.phyto).assm = ...
+% % % % %                 mean(data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_assm']),3,'omitnan') .* ...
+% % % % %                 data_lim_set_phyto.(tmp.phyto).assm(:,:,:,4) .* ...
+% % % % %                 mean(1.7.^((data_TEMP.TEMP_assm-30.0)./10.0),3,'omitnan') .* ...
+% % % % %                 mu_ref(pind) .* ...
+% % % % %                 mean(data_C_phyto.(tmp.phyto).([tmp.phyto,'C_assm']),3,'omitnan') ...
+% % % % %                 ./ 86400.0 .* 10000.0;
+% % % % %             data_NPP_rec.P.(tmp.phyto).(['lens2_l',tmp.lyear_str]) = ...
+% % % % %                 mean(data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_lens2_l', tmp.lyear_str]),3,'omitnan') .* ...
+% % % % %                 data_lim_set_phyto.(tmp.phyto).(['lens2_l',tmp.lyear_str])(:,:,:,4) .* ...
+% % % % %                 mean(1.7.^((data_TEMP.(['TEMP_','lens2_l',tmp.lyear_str])-30.0)./10.0),3,'omitnan') .* ...
+% % % % %                 mu_ref(pind) .* ...
+% % % % %                 mean(data_C_phyto.(tmp.phyto).([tmp.phyto,'C_lens2_l', tmp.lyear_str]),3,'omitnan') ...
+% % % % %                 ./ 86400.0 .* 10000.0;
+% % % % %             data_NPP_rec.P.(tmp.phyto).(['model_l',tmp.lyear_str]) = ...
+% % % % %                 mean(data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_model_l', tmp.lyear_str]),3,'omitnan') .* ...
+% % % % %                 data_lim_set_phyto.(tmp.phyto).(['model_l',tmp.lyear_str])(:,:,:,4) .* ...
+% % % % %                 mean(1.7.^((data_TEMP.(['TEMP_','model_l',tmp.lyear_str])-30.0)./10.0),3,'omitnan') .* ...
+% % % % %                 mu_ref(pind) .* ...
+% % % % %                 mean(data_C_phyto.(tmp.phyto).([tmp.phyto,'C_model_l', tmp.lyear_str]),3,'omitnan') ...
+% % % % %                 ./ 86400.0 .* 10000.0;
+% % % % %             
+% % % % %     
+% % % % %             %% corr NPP_rec, NPP
+% % % % %     
+% % % % %             %% corr initialization
+% % % % %     
+% % % % %             strset={'assm', ['lens2_l',tmp.lyear_str], ['model_l',tmp.lyear_str], ...
+% % % % %                 ['PP_model_l',tmp.lyear_str], ['PP_hcst_int_l',tmp.lyear_str], ['PP_lens2_l',tmp.lyear_str]};
+% % % % %             for stri=1:length(strset)
+% % % % %                 tmpstr=strset{stri};
+% % % % %                 data_NPP_rec_corr.ALL.(tmp.phyto).(tmpstr)=NaN(size(grid.tlong));
+% % % % %                 data_NPP_rec_corr.T.(tmp.phyto).(tmpstr)=NaN(size(grid.tlong));
+% % % % %                 data_NPP_rec_corr.L.(tmp.phyto).(tmpstr)=NaN(size(grid.tlong));
+% % % % %                 data_NPP_rec_corr.V.(tmp.phyto).(tmpstr)=NaN(size(grid.tlong));
+% % % % %                 data_NPP_rec_corr.Fe.(tmp.phyto).(tmpstr)=NaN(size(grid.tlong));
+% % % % %                 data_NPP_rec_corr.N.(tmp.phyto).(tmpstr)=NaN(size(grid.tlong));
+% % % % %                 data_NPP_rec_corr.SiO3.(tmp.phyto).(tmpstr)=NaN(size(grid.tlong));
+% % % % %                 data_NPP_rec_corr.P.(tmp.phyto).(tmpstr)=NaN(size(grid.tlong));
+% % % % %             end
+% % % % %     
+% % % % %             for loni=1:size(grid.tlong,1)
+% % % % %                 for lati=1:size(grid.tlat,2)
+% % % % %                     if(isfinite(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,1)))
+% % % % %                         %% rec validation (raw <-> reconstructed)
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.ALL.(tmp.phyto).assm(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.ALL.(tmp.phyto).assm(loni,lati)=tmp_corr_r(1,2);
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_lens2_l', tmp.lyear_str])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.ALL.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.ALL.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_model_l', tmp.lyear_str])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.ALL.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.ALL.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
+% % % % %     
+% % % % %                         %% rec Potential Predictability (assm raw <-> model reconstructed)
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.ALL.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.ALL.(tmp.phyto).(['PP_model_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.ALL.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:) - ...
+% % % % %                             data_NPP_rec.ALL.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.ALL.(tmp.phyto).(['PP_hcst_int_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.ALL.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.ALL.(tmp.phyto).(['PP_lens2_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
+% % % % %     
+% % % % %                         %% rec_T validation (raw <-> reconstructed)
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.T.(tmp.phyto).assm(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.T.(tmp.phyto).assm(loni,lati)=tmp_corr_r(1,2);
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_lens2_l', tmp.lyear_str])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.T.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.T.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_model_l', tmp.lyear_str])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.T.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.T.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
+% % % % %                         %% rec_T PP
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.T.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.T.(tmp.phyto).(['PP_model_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.T.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:) - ...
+% % % % %                             data_NPP_rec.T.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.T.(tmp.phyto).(['PP_hcst_int_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.T.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.T.(tmp.phyto).(['PP_lens2_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
+% % % % %     
+% % % % %                         %% rec_L validation (raw <-> reconstructed)
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.L.(tmp.phyto).assm(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.L.(tmp.phyto).assm(loni,lati)=tmp_corr_r(1,2);
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_lens2_l', tmp.lyear_str])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.L.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.L.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_model_l', tmp.lyear_str])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.L.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.L.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
+% % % % %                         %% rec_L PP
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.L.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.L.(tmp.phyto).(['PP_model_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.L.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:) - ...
+% % % % %                             data_NPP_rec.L.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.L.(tmp.phyto).(['PP_hcst_int_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.L.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.L.(tmp.phyto).(['PP_lens2_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
+% % % % %     
+% % % % %                         %% rec_V validation (raw <-> reconstructed)
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.V.(tmp.phyto).assm(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.V.(tmp.phyto).assm(loni,lati)=tmp_corr_r(1,2);
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_lens2_l', tmp.lyear_str])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.V.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.V.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_model_l', tmp.lyear_str])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.V.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.V.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
+% % % % %                         %% rec_V PP
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.V.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.V.(tmp.phyto).(['PP_model_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.V.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:) - ...
+% % % % %                             data_NPP_rec.V.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.V.(tmp.phyto).(['PP_hcst_int_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.V.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.V.(tmp.phyto).(['PP_lens2_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
+% % % % %     
+% % % % %                         %% rec_Fe validation (raw <-> reconstructed)
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.Fe.(tmp.phyto).assm(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.Fe.(tmp.phyto).assm(loni,lati)=tmp_corr_r(1,2);
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_lens2_l', tmp.lyear_str])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.Fe.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.Fe.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_model_l', tmp.lyear_str])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.Fe.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.Fe.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
+% % % % %                         %% rec_Fe PP
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.Fe.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.Fe.(tmp.phyto).(['PP_model_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.Fe.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:) - ...
+% % % % %                             data_NPP_rec.Fe.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.Fe.(tmp.phyto).(['PP_hcst_int_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.Fe.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.Fe.(tmp.phyto).(['PP_lens2_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
+% % % % %     
+% % % % %                         %% rec_N validation (raw <-> reconstructed)
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.N.(tmp.phyto).assm(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.N.(tmp.phyto).assm(loni,lati)=tmp_corr_r(1,2);
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_lens2_l', tmp.lyear_str])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.N.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.N.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_model_l', tmp.lyear_str])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.N.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.N.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
+% % % % %                         %% rec_N PP
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.N.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.N.(tmp.phyto).(['PP_model_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.N.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:) - ...
+% % % % %                             data_NPP_rec.N.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.N.(tmp.phyto).(['PP_hcst_int_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.N.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.N.(tmp.phyto).(['PP_lens2_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
+% % % % %     
+% % % % %                         %% rec_SiO3 validation (raw <-> reconstructed)
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.SiO3.(tmp.phyto).assm(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.SiO3.(tmp.phyto).assm(loni,lati)=tmp_corr_r(1,2);
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_lens2_l', tmp.lyear_str])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.SiO3.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.SiO3.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_model_l', tmp.lyear_str])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.SiO3.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.SiO3.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
+% % % % %     
+% % % % %                         %% rec_SiO3 PP
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.SiO3.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.SiO3.(tmp.phyto).(['PP_model_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.SiO3.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:) - ...
+% % % % %                             data_NPP_rec.SiO3.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.SiO3.(tmp.phyto).(['PP_hcst_int_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.SiO3.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.SiO3.(tmp.phyto).(['PP_lens2_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
+% % % % %     
+% % % % %                         %% rec_P validation (raw <-> reconstructed)
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.P.(tmp.phyto).assm(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.P.(tmp.phyto).assm(loni,lati)=tmp_corr_r(1,2);
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_lens2_l', tmp.lyear_str])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.P.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.P.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_model_l', tmp.lyear_str])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.P.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.P.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
+% % % % %                         %% rec_P PP 
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.P.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.P.(tmp.phyto).(['PP_model_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.P.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:) - ...
+% % % % %                             data_NPP_rec.P.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.P.(tmp.phyto).(['PP_hcst_int_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.P.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.P.(tmp.phyto).(['PP_lens2_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
+% % % % %                     end
+% % % % %                 end
+% % % % %             end
+% % % % %     
+% % % % %             %% contribution of each nutrient in V
+% % % % %             data_mask_nut_dominant.ind.(tmp.phyto).assm=NaN(size(grid.tlong,1), size(grid.tlat,2), 4);
+% % % % %             data_mask_nut_dominant.ind.(tmp.phyto).(['lens2_l',tmp.lyear_str])=NaN(size(grid.tlong,1), size(grid.tlat,2), 4);
+% % % % %             data_mask_nut_dominant.ind.(tmp.phyto).(['model_l',tmp.lyear_str])=NaN(size(grid.tlong,1), size(grid.tlat,2), 4);
+% % % % %             data_mask_nut_dominant.val.(tmp.phyto).assm=NaN(size(grid.tlong,1), size(grid.tlat,2), 4);
+% % % % %             data_mask_nut_dominant.val.(tmp.phyto).(['lens2_l',tmp.lyear_str])=NaN(size(grid.tlong,1), size(grid.tlat,2), 4);
+% % % % %             data_mask_nut_dominant.val.(tmp.phyto).(['model_l',tmp.lyear_str])=NaN(size(grid.tlong,1), size(grid.tlat,2), 4);
+% % % % % 
+% % % % %     %         [data_min_lim_phyto.val.(tmp.phyto).assm, data_min_lim_phyto.ind.(tmp.phyto).assm]= ...
+% % % % %     %             min(data_lim_set_phyto.(tmp.phyto).assm,[], 4);
+% % % % %     %         [data_min_lim_phyto.val.(tmp.phyto).(['lens2_l',tmp.lyear_str]), ...
+% % % % %     %             data_min_lim_phyto.ind.(tmp.phyto).(['lens2_l',tmp.lyear_str])]= ...
+% % % % %     %             min(data_lim_set_phyto.(tmp.phyto).(['lens2_l',tmp.lyear_str]),[], 4);
+% % % % %     %         [data_min_lim_phyto.val.(tmp.phyto).(['model_l',tmp.lyear_str]), ...
+% % % % %     %             data_min_lim_phyto.ind.(tmp.phyto).(['model_l',tmp.lyear_str])]= ...
+% % % % %     %             min(data_lim_set_phyto.(tmp.phyto).(['model_l',tmp.lyear_str]),[], 4);
+% % % % %     
+% % % % %             for loni=1:size(grid.tlong,1)
+% % % % %                 for lati=1:size(grid.tlat,2)
+% % % % %                  %% Fe
+% % % % %                     data_min_freq.Fe_lim_phyto.(tmp.phyto).assm(loni,lati)= ...
+% % % % %                         length(find(data_min_lim_phyto.ind.(tmp.phyto).assm(loni,lati,:)==1))/length(cfg.iyears);
+% % % % %                     data_min_freq.Fe_lim_phyto.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati)= ...
+% % % % %                         length(find(data_min_lim_phyto.ind.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:)==1))/length(cfg.iyears);
+% % % % %                     data_min_freq.Fe_lim_phyto.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati)= ...
+% % % % %                         length(find(data_min_lim_phyto.ind.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:)==1))/length(cfg.iyears);
+% % % % %     
+% % % % %                 %% N
+% % % % %                     data_min_freq.N_lim_phyto.(tmp.phyto).assm(loni,lati)= ...
+% % % % %                         length(find(data_min_lim_phyto.ind.(tmp.phyto).assm(loni,lati,:)==2))/length(cfg.iyears);
+% % % % %                     data_min_freq.N_lim_phyto.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati)= ...
+% % % % %                         length(find(data_min_lim_phyto.ind.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:)==2))/length(cfg.iyears);
+% % % % %                     data_min_freq.N_lim_phyto.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati)= ...
+% % % % %                         length(find(data_min_lim_phyto.ind.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:)==2))/length(cfg.iyears);
+% % % % %     
+% % % % %                 %% SiO3
+% % % % %                     data_min_freq.SiO3_lim_phyto.(tmp.phyto).assm(loni,lati)= ...
+% % % % %                         length(find(data_min_lim_phyto.ind.(tmp.phyto).assm(loni,lati,:)==3))/length(cfg.iyears);
+% % % % %                     data_min_freq.SiO3_lim_phyto.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati)= ...
+% % % % %                         length(find(data_min_lim_phyto.ind.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:)==3))/length(cfg.iyears);
+% % % % %                     data_min_freq.SiO3_lim_phyto.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati)= ...
+% % % % %                         length(find(data_min_lim_phyto.ind.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:)==3))/length(cfg.iyears);
+% % % % %     
+% % % % %                 %% P
+% % % % %                     data_min_freq.P_lim_phyto.(tmp.phyto).assm(loni,lati)= ...
+% % % % %                         length(find(data_min_lim_phyto.ind.(tmp.phyto).assm(loni,lati,:)==4))/length(cfg.iyears);
+% % % % %                     data_min_freq.P_lim_phyto.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati)= ...
+% % % % %                         length(find(data_min_lim_phyto.ind.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:)==4))/length(cfg.iyears);
+% % % % %                     data_min_freq.P_lim_phyto.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati)= ...
+% % % % %                         length(find(data_min_lim_phyto.ind.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:)==4))/length(cfg.iyears);
+% % % % %                     
+% % % % %                 %% comparison
+% % % % %                     tmp.min_freq = [data_min_freq.Fe_lim_phyto.(tmp.phyto).assm(loni,lati);...
+% % % % %                         data_min_freq.N_lim_phyto.(tmp.phyto).assm(loni,lati); ...
+% % % % %                         data_min_freq.SiO3_lim_phyto.(tmp.phyto).assm(loni,lati); ...
+% % % % %                         data_min_freq.P_lim_phyto.(tmp.phyto).assm(loni,lati)];
+% % % % %                     [max_minfreq, maxind_minfreq]=max(tmp.min_freq);
+% % % % %                     data_mask_nut_dominant.val.(tmp.phyto).assm(loni,lati) = max_minfreq;
+% % % % %                     data_mask_nut_dominant.ind.(tmp.phyto).assm(loni,lati) = maxind_minfreq;
+% % % % % 
+% % % % %                     tmp.min_freq = [data_min_freq.Fe_lim_phyto.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati);...
+% % % % %                         data_min_freq.N_lim_phyto.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati); ...
+% % % % %                         data_min_freq.SiO3_lim_phyto.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati); ...
+% % % % %                         data_min_freq.P_lim_phyto.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati)];
+% % % % %                     [max_minfreq, maxind_minfreq]=max(tmp.min_freq);
+% % % % %                     data_mask_nut_dominant.val.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati) = max_minfreq;
+% % % % %                     data_mask_nut_dominant.ind.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati) = maxind_minfreq;
+% % % % %     
+% % % % %                     tmp.min_freq = [data_min_freq.Fe_lim_phyto.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati);...
+% % % % %                         data_min_freq.N_lim_phyto.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati); ...
+% % % % %                         data_min_freq.SiO3_lim_phyto.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati); ...
+% % % % %                         data_min_freq.P_lim_phyto.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati)];
+% % % % %                     [max_minfreq, maxind_minfreq]=max(tmp.min_freq);
+% % % % %                     data_mask_nut_dominant.val.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati) = max_minfreq;
+% % % % %                     data_mask_nut_dominant.ind.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati) = maxind_minfreq;
+% % % % %     
+% % % % %                 end
+% % % % %             end
+% % % % %             save(matname, 'data_mask_nut_dominant', 'data_min_lim_phyto', 'data_NPP_rec', 'data_NPP_rec_corr', 'data_lim_set_phyto', 'data_min_freq')
+% % % % %             toc;
+% % % % %         else
+% % % % %             load(matname)
+% % % % %         end
+% % % % %     
+% % % % %         cfg.vstrset={'assm', ['lens2_l',tmp.lyear_str], ['model_l',tmp.lyear_str]};
+% % % % %         for stri=1:length(cfg.vstrset)
+% % % % %             tmp.vstr=cfg.vstrset{stri};
+% % % % % 
+% % % % %             cfg.nuts={'Fe', 'N', 'SiO3', 'P'};
+% % % % %             for ni=1:length(cfg.nuts)
+% % % % %                 tmp.nut=cfg.nuts{ni};
+% % % % %         
+% % % % %         %% Each nutrient occupied rate of minimum map --------------------------------------
+% % % % %                 fig_cfg.name_rgn = 'Glob';
+% % % % %                 fig_cfg.map_proj = 'eqdcylin';  % robinson, eqdcylin
+% % % % %                 fig_cfg.x_lim = [-180 180];
+% % % % %                 fig_cfg.y_lim = [-80 89];
+% % % % %                 fig_cfg.fig_size = [0,0,6,3.5];
+% % % % %                 fig_cfg.ax_size = [0.3,0.7,5.4,2.7];
+% % % % %                 fig_cfg.cb_size = [5.15,0.8,0.15,2.3];
+% % % % %                 fig_cfg.title_pos = [0.5,0.93];
+% % % % %                 fig_cfg.p_lim =0.1;
+% % % % %                 fig_cfg.c_lim = [0 1];
+% % % % %                 [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('wr_10', tmp.dropboxpath);
+% % % % %             
+% % % % %                 tmp.X=grid.tlong([end, 1:end],:);
+% % % % %                 tmp.Y=grid.tlat([end, 1:end],:);
+% % % % %                 tmp.C=data_min_freq.([tmp.nut, '_lim_phyto']).(tmp.phyto).(tmp.vstr).*grid.mask_ocn;
+% % % % %                 tmp.C=tmp.C([end, 1:end],:); 
+% % % % %             
+% % % % %                 fig_cfg.fig_name='data_min_freq';
+% % % % %                 fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
+% % % % %                     'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
+% % % % %                 %% map setting
+% % % % %                 ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
+% % % % %                     'fontname','freeserif'); 
+% % % % %             
+% % % % %                 axis off; 
+% % % % %                 hold on;
+% % % % %                 setm(ax_m,'origin',[0,180],'MapLatLimit',fig_cfg.y_lim);
+% % % % %                 set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
+% % % % %                 text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
+% % % % %                 'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
+% % % % %                 'fontsize',14,'fontname','freeserif','interpreter','none')
+% % % % %             
+% % % % %                 %% caxis & colorbar
+% % % % %                 caxis(ax_m, fig_cfg.c_lim); 
+% % % % %                 colormap(fig_cfg.c_map);
+% % % % %                 cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
+% % % % %                 set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
+% % % % %                 title(cb,'R','fontsize',12);
+% % % % %             
+% % % % %                 %% draw on ax_m
+% % % % %                 h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
+% % % % %                 shading flat;
+% % % % %                 geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
+% % % % %             
+% % % % %             
+% % % % %             %% frame and label setting
+% % % % %                 setm(ax_m,'frame','on','FLineWidth',1);
+% % % % %             
+% % % % %                 label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
+% % % % %                 label_x=mlabel('MLabelParallel','south', 'MLineLocation',20, 'MLabelLocation',60, 'labelrotation','on');
+% % % % %                 mlabel; plabel;
+% % % % %                 label_y=plabel; label_x=mlabel;
+% % % % %                 for lxi=1:length(label_x)
+% % % % %                     tmp.tmppos=label_x(lxi,1).Position;
+% % % % %                     tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.55;
+% % % % %                     label_x(lxi,1).Position=tmp.tmppos;
+% % % % %                     label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
+% % % % %                 end
+% % % % %                 for lyi=1:length(label_y)
+% % % % %                     label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
+% % % % %                 end
+% % % % %             
+% % % % %                 %% save
+% % % % %                 dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, 'min_freq', filesep, tmp.nut, filesep, tmp.phyto];
+% % % % %                 if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
+% % % % %                 cfg.figname=[dirs.figdir, filesep, 'min_freq_map_', tmp.nut, '_', tmp.phyto, '_', tmp.vstr, '.tif'];
+% % % % %                 print(fig_h, cfg.figname, '-dpng');
+% % % % %                 disp(cfg.figname)
+% % % % %                 RemoveWhiteSpace([], 'file', cfg.figname);
+% % % % %                 close all;
+% % % % %     
+% % % % %     
+% % % % %             end
+% % % % % 
+% % % % % 
+% % % % %             cfg.limv={'ALL', 'T', 'L', 'V', 'Fe', 'N', 'SiO3', 'P'};
+% % % % %             for ni=1:length(cfg.limv)
+% % % % %                 tmp.limv=cfg.limv{ni};
+% % % % % 
+% % % % %          %% correlation between NPP <-> NPP_rec in same dataset map --------------------------------------
+% % % % %                 fig_cfg.c_lim = [-1 1];
+% % % % %                 [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('bwr_10', tmp.dropboxpath);
+% % % % %             
+% % % % %                 tmp.X=grid.tlong([end, 1:end],:);
+% % % % %                 tmp.Y=grid.tlat([end, 1:end],:);
+% % % % % 
+% % % % %                 %% data set
+% % % % %                 tmp.C=data_NPP_rec_corr.(tmp.limv).(tmp.phyto).(tmp.vstr) .* grid.mask_ocn;
+% % % % %                 switch tmp.limv
+% % % % %                     case {'Fe', 'N', 'SiO3', 'P'}
+% % % % %                     tmp.mask=data_min_freq.([tmp.limv, '_lim_phyto']).(tmp.phyto).(tmp.vstr).*grid.mask_ocn;
+% % % % %                     tmp.mask(tmp.mask<0.8)=NaN;
+% % % % %                     tmp.C=tmp.C.*tmp.mask;
+% % % % %                 end
+% % % % %                 tmp.C=tmp.C([end, 1:end],:); 
+% % % % %             
+% % % % %                 fig_cfg.fig_name='data_NPP_rec_corr_explained';
+% % % % %                 fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
+% % % % %                     'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
+% % % % %                 %% map setting
+% % % % %                 ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
+% % % % %                     'fontname','freeserif'); 
+% % % % %             
+% % % % %                 axis off; 
+% % % % %                 hold on;
+% % % % %                 setm(ax_m,'origin',[0,180],'MapLatLimit',fig_cfg.y_lim);
+% % % % %                 set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
+% % % % %                 text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
+% % % % %                 'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
+% % % % %                 'fontsize',14,'fontname','freeserif','interpreter','none')
+% % % % %             
+% % % % %                 %% caxis & colorbar
+% % % % %                 caxis(ax_m, fig_cfg.c_lim); 
+% % % % %                 colormap(fig_cfg.c_map);
+% % % % %                 cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
+% % % % %                 set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
+% % % % %                 title(cb,'R','fontsize',12);
+% % % % %             
+% % % % %                 %% draw on ax_m
+% % % % %                 h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
+% % % % %                 shading flat;
+% % % % %                 geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
+% % % % %             
+% % % % %             
+% % % % %                 %% frame and label setting
+% % % % %                 setm(ax_m,'frame','on','FLineWidth',1);
+% % % % %             
+% % % % %                 label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
+% % % % %                 label_x=mlabel('MLabelParallel','south', 'MLineLocation',20, 'MLabelLocation',60, 'labelrotation','on');
+% % % % %                 mlabel; plabel;
+% % % % %                 label_y=plabel; label_x=mlabel;
+% % % % %                 for lxi=1:length(label_x)
+% % % % %                     tmp.tmppos=label_x(lxi,1).Position;
+% % % % %                     tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.55;
+% % % % %                     label_x(lxi,1).Position=tmp.tmppos;
+% % % % %                     label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
+% % % % %                 end
+% % % % %                 for lyi=1:length(label_y)
+% % % % %                     label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
+% % % % %                 end
+% % % % %             
+% % % % %                 %% save
+% % % % %                 dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, 'corr_explained', filesep, tmp.limv, filesep, tmp.phyto];
+% % % % %                 if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
+% % % % %                 cfg.figname=[dirs.figdir, filesep, 'corr_exp_map_', tmp.limv, '_', tmp.phyto, '_', tmp.vstr, '.tif'];
+% % % % %                 print(fig_h, cfg.figname, '-dpng');
+% % % % %                 disp(cfg.figname)
+% % % % %                 RemoveWhiteSpace([], 'file', cfg.figname);
+% % % % %                 close all;
+% % % % % 
+% % % % %             end
+% % % % %         end
+% % % % %         
+% % % % %         cfg.vstrset={['lens2_l',tmp.lyear_str], ['model_l',tmp.lyear_str], ['hcst_int_l',tmp.lyear_str]};
+% % % % %         for stri=1:length(cfg.vstrset)
+% % % % %             tmp.vstr=cfg.vstrset{stri};
+% % % % % 
+% % % % %             cfg.limv={'ALL', 'T', 'L', 'V', 'Fe', 'N', 'SiO3', 'P'};
+% % % % %             for ni=1:length(cfg.limv)
+% % % % %                 tmp.limv=cfg.limv{ni};
+% % % % % 
+% % % % %         %% Potential Predictability of NPP, but by NPP_rec map --------------------------------------
+% % % % %                 fig_cfg.c_lim = [-1 1];
+% % % % %                 [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('bwr_10', tmp.dropboxpath);
+% % % % %             
+% % % % %                 tmp.X=grid.tlong([end, 1:end],:);
+% % % % %                 tmp.Y=grid.tlat([end, 1:end],:);
+% % % % % 
+% % % % %                 %% data set
+% % % % %                 tmp.C=data_NPP_rec_corr.(tmp.limv).(tmp.phyto).(['PP_', tmp.vstr]) .* grid.mask_ocn;
+% % % % %                 switch tmp.limv
+% % % % %                     case {'Fe', 'N', 'SiO3', 'P'}
+% % % % %                         if strcmp(tmp.vstr, ['hcst_int_l',tmp.lyear_str])==1
+% % % % %                             tmp.mask=data_min_freq.([tmp.limv, '_lim_phyto']).(tmp.phyto).(['model_l',tmp.lyear_str]).*grid.mask_ocn;
+% % % % %                         else
+% % % % %                             tmp.mask=data_min_freq.([tmp.limv, '_lim_phyto']).(tmp.phyto).(tmp.vstr).*grid.mask_ocn;
+% % % % %                         end
+% % % % %                         tmp.mask(tmp.mask<0.8)=NaN;
+% % % % %                         tmp.C=tmp.C.*tmp.mask;
+% % % % %                 end
+% % % % %                 tmp.C=tmp.C([end, 1:end],:); 
+% % % % %             
+% % % % %                 fig_cfg.fig_name='data_NPP_rec_PP';
+% % % % %                 fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
+% % % % %                     'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
+% % % % %                 %% map setting
+% % % % %                 ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
+% % % % %                     'fontname','freeserif'); 
+% % % % %             
+% % % % %                 axis off; 
+% % % % %                 hold on;
+% % % % %                 setm(ax_m,'origin',[0,180],'MapLatLimit',fig_cfg.y_lim);
+% % % % %                 set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
+% % % % %                 text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
+% % % % %                 'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
+% % % % %                 'fontsize',14,'fontname','freeserif','interpreter','none')
+% % % % %             
+% % % % %                 %% caxis & colorbar
+% % % % %                 caxis(ax_m, fig_cfg.c_lim); 
+% % % % %                 colormap(fig_cfg.c_map);
+% % % % %                 cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
+% % % % %                 set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
+% % % % %                 title(cb,'R','fontsize',12);
+% % % % %             
+% % % % %                 %% draw on ax_m
+% % % % %                 h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
+% % % % %                 shading flat;
+% % % % %                 geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
+% % % % %             
+% % % % %             
+% % % % %                 %% frame and label setting
+% % % % %                 setm(ax_m,'frame','on','FLineWidth',1);
+% % % % %             
+% % % % %                 label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
+% % % % %                 label_x=mlabel('MLabelParallel','south', 'MLineLocation',20, 'MLabelLocation',60, 'labelrotation','on');
+% % % % %                 mlabel; plabel;
+% % % % %                 label_y=plabel; label_x=mlabel;
+% % % % %                 for lxi=1:length(label_x)
+% % % % %                     tmp.tmppos=label_x(lxi,1).Position;
+% % % % %                     tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.55;
+% % % % %                     label_x(lxi,1).Position=tmp.tmppos;
+% % % % %                     label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
+% % % % %                 end
+% % % % %                 for lyi=1:length(label_y)
+% % % % %                     label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
+% % % % %                 end
+% % % % %             
+% % % % %                 %% save
+% % % % %                 dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, 'corr_PP', filesep, tmp.limv, filesep, tmp.phyto];
+% % % % %                 if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
+% % % % %                 cfg.figname=[dirs.figdir, filesep, 'corr_PP_map_', tmp.limv, '_', tmp.phyto, '_', tmp.vstr, '.tif'];
+% % % % %                 print(fig_h, cfg.figname, '-dpng');
+% % % % %                 disp(cfg.figname)
+% % % % %                 RemoveWhiteSpace([], 'file', cfg.figname);
+% % % % %                 close all;
+% % % % % 
+% % % % %     
+% % % % %             end
+% % % % %         end
+% % % % %     end
+% % % % % end
 
-    for lyear = 0:4
-        tmp.lyear_str=num2str(lyear, '%02i');
-        
-        clear data_mask_nut_dominant data_min_lim_phyto data_NPP_rec data_NPP_rec_corr data_lim_set_phyto data_min_freq
 
+
+% % % % % for lyear = 0:4
+% % % % %     tic
+% % % % %     tmp.lyear_str=num2str(lyear, '%02i');
+% % % % %     cfg.vstrset={'assm', ['lens2_l',tmp.lyear_str], ['model_l',tmp.lyear_str]};
+% % % % %     
+% % % % %     for pind=1:length(phytoset)
+% % % % %         tmp.phyto=phytoset{pind};
+% % % % %         matname=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/ocn/photoC_TOT_zint_100m/',tmp.phyto, '_nut_NPP_l', tmp.lyear_str, '.mat'];
+% % % % %         load(matname);
+% % % % %         data_all.TOT.(tmp.phyto)=data_NPP_rec;
+% % % % %         data_all_min_freq.TOT.(tmp.phyto)=data_min_freq;
+% % % % % % 
+% % % % % %         %% photoC_phyto
+% % % % % %         tmp.varname=['photoC_',tmp.phyto,'_zint_100m'];
+% % % % % %         dirs.hcstmatroot=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
+% % % % % %         fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
+% % % % % %                     '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
+% % % % % %                     '_l', tmp.lyear_str, 'y.mat'];
+% % % % % %         load(fig_cfg.mat_name, 'data');
+% % % % % %         data_all_NPP_phyto.(tmp.phyto)=data;
+% % % % %     end
+% % % % %     tmp.varname=['photoC_','TOT','_zint_100m'];
+% % % % %     dirs.hcstmatroot=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
+% % % % %     fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
+% % % % %                 '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
+% % % % %                 '_l', tmp.lyear_str, 'y.mat'];
+% % % % %     load(fig_cfg.mat_name, 'data');
+% % % % %     data_all_NPP_phyto.TOT=data;
+% % % % % 
+% % % % %     for stri=1:length(cfg.vstrset)
+% % % % %         tmp.vstr=cfg.vstrset{stri};
+% % % % %         cfg.limv={'ALL', 'T', 'L', 'V', 'Fe', 'N', 'SiO3', 'P'};
+% % % % %         for ni=1:length(cfg.limv)
+% % % % %             tmp.limv=cfg.limv{ni};
+% % % % %             switch tmp.limv
+% % % % %                 case {'Fe', 'N', 'SiO3', 'P'}
+% % % % %                     for pind=1:length(phytoset)
+% % % % %                         tmp.phyto=phytoset{pind};
+% % % % %                         tmp.mask=data_all_min_freq.TOT.(tmp.phyto).([tmp.limv, '_lim_phyto']).(tmp.phyto).(tmp.vstr).*grid.mask_ocn;
+% % % % %                         tmp.mask(tmp.mask<0.8)=NaN;
+% % % % %                         tmp.comb(:,:,:,pind)=data_all.TOT.(tmp.phyto).(tmp.limv).(tmp.phyto).(tmp.vstr).*tmp.mask;
+% % % % %                     end
+% % % % %                 otherwise
+% % % % %                     tmp.comb(:,:,:,1)=data_all.TOT.diat.(tmp.limv).diat.(tmp.vstr);
+% % % % %                     tmp.comb(:,:,:,2)=data_all.TOT.diaz.(tmp.limv).diaz.(tmp.vstr);
+% % % % %                     tmp.comb(:,:,:,3)=data_all.TOT.sp.(tmp.limv).sp.(tmp.vstr);
+% % % % %             end
+% % % % %             
+% % % % %             data_NPP_rec.(tmp.limv).TOT.(tmp.vstr)= sum(tmp.comb, 4, 'omitnan');
+% % % % % %             data_NPP_rec.(tmp.limv).TOT.(tmp.vstr) = ...
+% % % % % %                 data_all.TOT.diat.(tmp.limv).diat.(tmp.vstr)  ...
+% % % % % %                 + data_all.TOT.diaz.(tmp.limv).diaz.(tmp.vstr) ...
+% % % % % %                 + data_all.TOT.sp.(tmp.limv).sp.(tmp.vstr);
+% % % % % 
+% % % % %             data_NPP_rec_corr.(tmp.limv).TOT.(tmp.vstr)=NaN(size(grid.tlong));
+% % % % %             data_NPP_rec_corr.(tmp.limv).TOT.(['PP_', tmp.vstr])=NaN(size(grid.tlong));
+% % % % % 
+% % % % %             for loni=1:size(grid.tlong,1)
+% % % % %                 for lati=1:size(grid.tlat,2)
+% % % % %                     if(isfinite(data_all_NPP_phyto.TOT.photoC_TOT_zint_100m_assm(loni,lati,1)))
+% % % % %                         %% rec validation (raw <-> reconstructed)
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_all_NPP_phyto.TOT.(['photoC_TOT_zint_100m_',tmp.vstr])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.(tmp.limv).TOT.(tmp.vstr)(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.(tmp.limv).TOT.(tmp.vstr)(loni,lati)=tmp_corr_r(1,2);
+% % % % %     
+% % % % %                         %% rec Potential Predictability (assm raw <-> model reconstructed)
+% % % % %                         [tmp_corr_r,tmp_corr_p] = ...
+% % % % %                             corrcoef(data_all_NPP_phyto.TOT.(['photoC_TOT_zint_100m_assm'])(loni,lati,:), ...
+% % % % %                             data_NPP_rec.(tmp.limv).TOT.(tmp.vstr)(loni,lati,:), 'rows','complete');
+% % % % %                         data_NPP_rec_corr.(tmp.limv).TOT.(['PP_', tmp.vstr])(loni,lati)=tmp_corr_r(1,2);
+% % % % %                     end
+% % % % %                 end
+% % % % %             end
+% % % % % 
+% % % % %             
+% % % % %             %% correlation between NPP <-> NPP_rec in same dataset map --------------------------------------
+% % % % %                 fig_cfg.c_lim = [-1 1];
+% % % % %                 fig_cfg.name_rgn = 'Glob';
+% % % % %                 fig_cfg.map_proj = 'eqdcylin';  % robinson, eqdcylin
+% % % % %                 fig_cfg.x_lim = [-180 180];
+% % % % %                 fig_cfg.y_lim = [-80 89];
+% % % % %                 fig_cfg.fig_size = [0,0,6,3.5];
+% % % % %                 fig_cfg.ax_size = [0.3,0.7,5.4,2.7];
+% % % % %                 fig_cfg.cb_size = [5.15,0.8,0.15,2.3];
+% % % % %                 fig_cfg.title_pos = [0.5,0.93];
+% % % % %                 fig_cfg.p_lim =0.1;
+% % % % %                 [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('bwr_10', tmp.dropboxpath);
+% % % % %             
+% % % % %                 tmp.X=grid.tlong([end, 1:end],:);
+% % % % %                 tmp.Y=grid.tlat([end, 1:end],:);
+% % % % % 
+% % % % %                 %% data set
+% % % % %                 tmp.C=data_NPP_rec_corr.(tmp.limv).TOT.(tmp.vstr) .* grid.mask_ocn;
+% % % % % 
+% % % % %                 tmp.C=tmp.C([end, 1:end],:); 
+% % % % %             
+% % % % %                 fig_cfg.fig_name='data_NPP_rec_corr_explained';
+% % % % %                 fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
+% % % % %                     'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
+% % % % %                 %% map setting
+% % % % %                 ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
+% % % % %                     'fontname','freeserif'); 
+% % % % %             
+% % % % %                 axis off; 
+% % % % %                 hold on;
+% % % % %                 setm(ax_m,'origin',[0,180],'MapLatLimit',fig_cfg.y_lim);
+% % % % %                 set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
+% % % % %                 text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
+% % % % %                 'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
+% % % % %                 'fontsize',14,'fontname','freeserif','interpreter','none')
+% % % % %             
+% % % % %                 %% caxis & colorbar
+% % % % %                 caxis(ax_m, fig_cfg.c_lim); 
+% % % % %                 colormap(fig_cfg.c_map);
+% % % % %                 cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
+% % % % %                 set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
+% % % % %                 title(cb,'R','fontsize',12);
+% % % % %             
+% % % % %                 %% draw on ax_m
+% % % % %                 h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
+% % % % %                 shading flat;
+% % % % %                 geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
+% % % % %             
+% % % % %             
+% % % % %                 %% frame and label setting
+% % % % %                 setm(ax_m,'frame','on','FLineWidth',1);
+% % % % %             
+% % % % %                 label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
+% % % % %                 label_x=mlabel('MLabelParallel','south', 'MLineLocation',20, 'MLabelLocation',60, 'labelrotation','on');
+% % % % %                 mlabel; plabel;
+% % % % %                 label_y=plabel; label_x=mlabel;
+% % % % %                 for lxi=1:length(label_x)
+% % % % %                     tmp.tmppos=label_x(lxi,1).Position;
+% % % % %                     tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.55;
+% % % % %                     label_x(lxi,1).Position=tmp.tmppos;
+% % % % %                     label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
+% % % % %                 end
+% % % % %                 for lyi=1:length(label_y)
+% % % % %                     label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
+% % % % %                 end
+% % % % %             
+% % % % %                 %% save
+% % % % %                 dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, 'corr_explained', filesep, tmp.limv, filesep, 'TOT'];
+% % % % %                 if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
+% % % % %                 cfg.figname=[dirs.figdir, filesep, 'corr_exp_map_', tmp.limv, '_', 'TOT', '_', tmp.vstr, '.tif'];
+% % % % %                 print(fig_h, cfg.figname, '-dpng');
+% % % % %                 disp(cfg.figname)
+% % % % %                 RemoveWhiteSpace([], 'file', cfg.figname);
+% % % % %                 close all;
+% % % % % 
+% % % % % 
+% % % % %         %% Potential Predictability of NPP, but by NPP_rec map --------------------------------------
+% % % % %                 fig_cfg.c_lim = [-1 1];
+% % % % %                 [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('bwr_10', tmp.dropboxpath);
+% % % % %             
+% % % % %                 tmp.X=grid.tlong([end, 1:end],:);
+% % % % %                 tmp.Y=grid.tlat([end, 1:end],:);
+% % % % % 
+% % % % %                 %% data set
+% % % % %                 tmp.C=data_NPP_rec_corr.(tmp.limv).TOT.(['PP_', tmp.vstr]) .* grid.mask_ocn;
+% % % % % %                 switch tmp.limv
+% % % % % %                     case {'Fe', 'N', 'SiO3', 'P'}
+% % % % % %                         if strcmp(tmp.vstr, ['hcst_int_l',tmp.lyear_str])==1
+% % % % % %                             tmp.mask=data_min_freq.([tmp.limv, '_lim_phyto']).TOT.(['model_l',tmp.lyear_str]).*grid.mask_ocn;
+% % % % % %                         else
+% % % % % %                             tmp.mask=data_min_freq.([tmp.limv, '_lim_phyto']).TOT.(tmp.vstr).*grid.mask_ocn;
+% % % % % %                         end
+% % % % % %                         tmp.mask(tmp.mask<0.8)=NaN;
+% % % % % %                         tmp.C=tmp.C.*tmp.mask;
+% % % % % %                 end
+% % % % %                 tmp.C=tmp.C([end, 1:end],:); 
+% % % % %             
+% % % % %                 fig_cfg.fig_name='data_NPP_rec_PP';
+% % % % %                 fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
+% % % % %                     'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
+% % % % %                 %% map setting
+% % % % %                 ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
+% % % % %                     'fontname','freeserif'); 
+% % % % %             
+% % % % %                 axis off; 
+% % % % %                 hold on;
+% % % % %                 setm(ax_m,'origin',[0,180],'MapLatLimit',fig_cfg.y_lim);
+% % % % %                 set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
+% % % % %                 text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
+% % % % %                 'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
+% % % % %                 'fontsize',14,'fontname','freeserif','interpreter','none')
+% % % % %             
+% % % % %                 %% caxis & colorbar
+% % % % %                 caxis(ax_m, fig_cfg.c_lim); 
+% % % % %                 colormap(fig_cfg.c_map);
+% % % % %                 cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
+% % % % %                 set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
+% % % % %                 title(cb,'R','fontsize',12);
+% % % % %             
+% % % % %                 %% draw on ax_m
+% % % % %                 h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
+% % % % %                 shading flat;
+% % % % %                 geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
+% % % % %             
+% % % % %             
+% % % % %                 %% frame and label setting
+% % % % %                 setm(ax_m,'frame','on','FLineWidth',1);
+% % % % %             
+% % % % %                 label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
+% % % % %                 label_x=mlabel('MLabelParallel','south', 'MLineLocation',20, 'MLabelLocation',60, 'labelrotation','on');
+% % % % %                 mlabel; plabel;
+% % % % %                 label_y=plabel; label_x=mlabel;
+% % % % %                 for lxi=1:length(label_x)
+% % % % %                     tmp.tmppos=label_x(lxi,1).Position;
+% % % % %                     tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.55;
+% % % % %                     label_x(lxi,1).Position=tmp.tmppos;
+% % % % %                     label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
+% % % % %                 end
+% % % % %                 for lyi=1:length(label_y)
+% % % % %                     label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
+% % % % %                 end
+% % % % %             
+% % % % %                 %% save
+% % % % %                 dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, 'corr_PP', filesep, tmp.limv, filesep, 'TOT'];
+% % % % %                 if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
+% % % % %                 cfg.figname=[dirs.figdir, filesep, 'corr_PP_map_', tmp.limv, '_', 'TOT', '_', tmp.vstr, '.tif'];
+% % % % %                 print(fig_h, cfg.figname, '-dpng');
+% % % % %                 disp(cfg.figname)
+% % % % %                 RemoveWhiteSpace([], 'file', cfg.figname);
+% % % % %                 close all;
+% % % % % 
+% % % % % 
+% % % % %         end
+% % % % %     end
+% % % % %     toc;
+% % % % % end
+
+for lyear = [0,4]
+    tic
+    tmp.lyear_str=num2str(lyear, '%02i');
+    cfg.vstrset={'assm', ['lens2_l',tmp.lyear_str], ['model_l',tmp.lyear_str]};
+    
+    for pind=1:length(phytoset)
+        tmp.phyto=phytoset{pind};
         matname=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/ocn/photoC_TOT_zint_100m/',tmp.phyto, '_nut_NPP_l', tmp.lyear_str, '.mat'];
-        if ~exist(matname)
-%         if lyear<99
-            disp(matname)
-            tic;
-            dirs.hcstmatroot=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', cfg.var];
-            fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', cfg.var, ...
-                        '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
-                        '_l', tmp.lyear_str, 'y.mat'];
-            load(fig_cfg.mat_name, 'data');
-            data_NPP=data;
-            
-            tmp.varname='TEMP'; 
-            dirs.hcstmatroot=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
-            fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
-                        '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
-                        '_l', tmp.lyear_str, 'y.mat'];
-            load(fig_cfg.mat_name, 'data');
-            data_TEMP=data;
+        load(matname);
+        data_all.TOT.(tmp.phyto)=data_NPP_rec;
+        data_all_min_freq.TOT.(tmp.phyto)=data_min_freq;
+% 
+%         %% photoC_phyto
+%         tmp.varname=['photoC_',tmp.phyto,'_zint_100m'];
+%         dirs.hcstmatroot=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
+%         fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
+%                     '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
+%                     '_l', tmp.lyear_str, 'y.mat'];
+%         load(fig_cfg.mat_name, 'data');
+%         data_all_NPP_phyto.(tmp.phyto)=data;
+    end
+    tmp.varname=['photoC_','TOT','_zint_100m'];
+    dirs.hcstmatroot=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
+    fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
+                '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
+                '_l', tmp.lyear_str, 'y.mat'];
+    load(fig_cfg.mat_name, 'data');
+    data_all_NPP_phyto.TOT=data;
 
-            %% photoC_phyto
-            tmp.varname=['photoC_',tmp.phyto,'_zint_100m'];
-            dirs.hcstmatroot=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
-            fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
-                        '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
-                        '_l', tmp.lyear_str, 'y.mat'];
-            load(fig_cfg.mat_name, 'data');
-            data_NPP_phyto.(tmp.phyto)=data;
-            
-            %% biomass
-            tmp.varname=[tmp.phyto,'C'];
-            dirs.hcstmatroot=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
-            fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
-                        '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
-                        '_l', tmp.lyear_str, 'y.mat'];
-            load(fig_cfg.mat_name, 'data');
-            data_C_phyto.(tmp.phyto)=data;
-        
-            %% Fe
-            tmp.varname=[tmp.phyto,'_Fe_lim_Cweight_avg_100m'];
-            dirs.hcstmatroot=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
-            fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
-                        '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
-                        '_l', tmp.lyear_str, 'y.mat'];
-            load(fig_cfg.mat_name, 'data');
-            data_Fe_lim_phyto.(tmp.phyto)=data;
-        
-            %% N
-            if strcmp(tmp.phyto, 'diaz')~=1
-                tmp.varname=[tmp.phyto,'_N_lim_Cweight_avg_100m'];
-                dirs.hcstmatroot=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
-                fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
-                            '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
-                            '_l', tmp.lyear_str, 'y.mat'];
-                load(fig_cfg.mat_name, 'data');
-                data_N_lim_phyto.(tmp.phyto)=data;
-            end
-        
-            %% SiO3
-            if strcmp(tmp.phyto, 'diat')==1
-                tmp.varname=[tmp.phyto,'_SiO3_lim_Cweight_avg_100m'];
-                dirs.hcstmatroot=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
-                fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
-                            '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
-                            '_l', tmp.lyear_str, 'y.mat'];
-                load(fig_cfg.mat_name, 'data');
-                data_SiO3_lim_phyto.(tmp.phyto)=data;
+    for stri=1:length(cfg.vstrset)
+        tmp.vstr=cfg.vstrset{stri};
+        cfg.limv={'ALL', 'T', 'L', 'V', 'Fe', 'N', 'SiO3', 'P'};
+        for ni=1:length(cfg.limv)
+            tmp.limv=cfg.limv{ni};
+            switch tmp.limv
+                case {'Fe', 'N', 'SiO3', 'P'}
+                    for pind=1:length(phytoset)
+                        tmp.phyto=phytoset{pind};
+                        tmp.mask=data_all_min_freq.TOT.(tmp.phyto).([tmp.limv, '_lim_phyto']).(tmp.phyto).(tmp.vstr).*grid.mask_ocn;                            
+                        tmp.mask(tmp.mask<0.8)=NaN;
+                        tmp.comb(:,:,:,pind)=data_all.TOT.(tmp.phyto).(tmp.limv).(tmp.phyto).(tmp.vstr).*tmp.mask;
+                    end
+                otherwise
+                    tmp.comb(:,:,:,1)=data_all.TOT.diat.(tmp.limv).diat.(tmp.vstr);
+                    tmp.comb(:,:,:,2)=data_all.TOT.diaz.(tmp.limv).diaz.(tmp.vstr);
+                    tmp.comb(:,:,:,3)=data_all.TOT.sp.(tmp.limv).sp.(tmp.vstr);
             end
             
-            %% P
-            tmp.varname=[tmp.phyto,'_P_lim_Cweight_avg_100m'];
-            dirs.hcstmatroot=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
-            fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
-                        '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
-                        '_l', tmp.lyear_str, 'y.mat'];
-            load(fig_cfg.mat_name, 'data');
-            data_P_lim_phyto.(tmp.phyto)=data;
-        
-            %% light 
-            tmp.varname=[tmp.phyto,'_light_lim_Cweight_avg_100m'];
-            dirs.hcstmatroot=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
-            fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
-                        '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
-                        '_l', tmp.lyear_str, 'y.mat'];
-            load(fig_cfg.mat_name, 'data');
-            data_light_lim_phyto.(tmp.phyto)=data;
-            
-        
-            %% initialization for minimum limitation set
-            data_lim_set_phyto.(tmp.phyto).assm = ...
-                NaN(size(grid.tlong,1), size(grid.tlong,2), length(cfg.iyears), 4);
-            data_lim_set_phyto.(tmp.phyto).(['lens2_l',tmp.lyear_str]) = ...
-                NaN(size(grid.tlong,1), size(grid.tlong,2), length(cfg.iyears), 4);
-            data_lim_set_phyto.(tmp.phyto).(['model_l',tmp.lyear_str]) = ...
-                NaN(size(grid.tlong,1), size(grid.tlong,2), length(cfg.iyears), 4);
-            
-            %% Fe
-            data_lim_set_phyto.(tmp.phyto).assm(:,:,:,1)=...
-                data_Fe_lim_phyto.(tmp.phyto).([tmp.phyto,'_Fe_lim_Cweight_avg_100m_assm']);
-            data_lim_set_phyto.(tmp.phyto).(['lens2_l',tmp.lyear_str])(:,:,:,1)=...
-                data_Fe_lim_phyto.(tmp.phyto).([tmp.phyto,'_Fe_lim_Cweight_avg_100m_lens2_l', tmp.lyear_str]);
-            data_lim_set_phyto.(tmp.phyto).(['model_l',tmp.lyear_str])(:,:,:,1)=...
-                data_Fe_lim_phyto.(tmp.phyto).([tmp.phyto,'_Fe_lim_Cweight_avg_100m_model_l', tmp.lyear_str]);
-            
-            %% N
-            if strcmp(tmp.phyto, 'diaz')~=1
-                data_lim_set_phyto.(tmp.phyto).assm(:,:,:,2)=...
-                    data_N_lim_phyto.(tmp.phyto).([tmp.phyto,'_N_lim_Cweight_avg_100m_assm']);
-                data_lim_set_phyto.(tmp.phyto).(['lens2_l',tmp.lyear_str])(:,:,:,2)=...
-                    data_N_lim_phyto.(tmp.phyto).([tmp.phyto,'_N_lim_Cweight_avg_100m_lens2_l', tmp.lyear_str]);
-                data_lim_set_phyto.(tmp.phyto).(['model_l',tmp.lyear_str])(:,:,:,2)=...
-                    data_N_lim_phyto.(tmp.phyto).([tmp.phyto,'_N_lim_Cweight_avg_100m_model_l', tmp.lyear_str]);
-            else
-                data_lim_set_phyto.(tmp.phyto).assm(:,:,:,2) = NaN;
-                data_lim_set_phyto.(tmp.phyto).(['lens2_l',tmp.lyear_str])(:,:,:,2) = NaN;
-                data_lim_set_phyto.(tmp.phyto).(['model_l',tmp.lyear_str])(:,:,:,2) = NaN;
-            end
-            %% SiO3
-            if strcmp(tmp.phyto, 'diat')==1
-                data_lim_set_phyto.(tmp.phyto).assm(:,:,:,3)=...
-                    data_SiO3_lim_phyto.(tmp.phyto).([tmp.phyto,'_SiO3_lim_Cweight_avg_100m_assm']);
-                data_lim_set_phyto.(tmp.phyto).(['lens2_l',tmp.lyear_str])(:,:,:,3)=...
-                    data_SiO3_lim_phyto.(tmp.phyto).([tmp.phyto,'_SiO3_lim_Cweight_avg_100m_lens2_l', tmp.lyear_str]);
-                data_lim_set_phyto.(tmp.phyto).(['model_l',tmp.lyear_str])(:,:,:,3)=...
-                    data_SiO3_lim_phyto.(tmp.phyto).([tmp.phyto,'_SiO3_lim_Cweight_avg_100m_model_l', tmp.lyear_str]);
-            else
-                data_lim_set_phyto.(tmp.phyto).assm(:,:,:,3) = NaN;
-                data_lim_set_phyto.(tmp.phyto).(['lens2_l',tmp.lyear_str])(:,:,:,3) = NaN;
-                data_lim_set_phyto.(tmp.phyto).(['model_l',tmp.lyear_str])(:,:,:,3) = NaN;
-            end
-            %% P
-            data_lim_set_phyto.(tmp.phyto).assm(:,:,:,4)=...
-                data_P_lim_phyto.(tmp.phyto).([tmp.phyto,'_P_lim_Cweight_avg_100m_assm']);
-            data_lim_set_phyto.(tmp.phyto).(['lens2_l',tmp.lyear_str])(:,:,:,4)=...
-                data_P_lim_phyto.(tmp.phyto).([tmp.phyto,'_P_lim_Cweight_avg_100m_lens2_l', tmp.lyear_str]);
-            data_lim_set_phyto.(tmp.phyto).(['model_l',tmp.lyear_str])(:,:,:,4)=...
-                data_P_lim_phyto.(tmp.phyto).([tmp.phyto,'_P_lim_Cweight_avg_100m_model_l', tmp.lyear_str]);
-    
-            
-    
-            %% get V(minimum nutirient limitation)
-            [data_min_lim_phyto.val.(tmp.phyto).assm, data_min_lim_phyto.ind.(tmp.phyto).assm]= ...
-                min(data_lim_set_phyto.(tmp.phyto).assm,[], 4);
-            [data_min_lim_phyto.val.(tmp.phyto).(['lens2_l',tmp.lyear_str]), ...
-                data_min_lim_phyto.ind.(tmp.phyto).(['lens2_l',tmp.lyear_str])]= ...
-                min(data_lim_set_phyto.(tmp.phyto).(['lens2_l',tmp.lyear_str]),[], 4);
-            [data_min_lim_phyto.val.(tmp.phyto).(['model_l',tmp.lyear_str]), ...
-                data_min_lim_phyto.ind.(tmp.phyto).(['model_l',tmp.lyear_str])]= ...
-                min(data_lim_set_phyto.(tmp.phyto).(['model_l',tmp.lyear_str]),[], 4);
-            
-    
-            % % pcolor(lim_set_assm_ind(:,:,5)'); shading flat; colorbar; colormap(jet(4))
-            % % pcolor(mean(lim_set_assm_ind,3)'.*grid.mask_ocn'); shading flat; colorbar; colormap(jet(4)); caxis([0.5 4.5]);
-            % % pcolor(std(lim_set_assm_ind,[],3)'.*grid.mask_ocn'); shading flat; colorbar; colormap(jet(256));
-            
-            %% reconstructed NPP
-            data_NPP_rec.ALL.(tmp.phyto).assm = ...
-                data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_assm']) .* ...
-                data_min_lim_phyto.val.(tmp.phyto).assm .* ...
-                1.7.^((data_TEMP.TEMP_assm-30.0)./10.0) .* ...
-                mu_ref(pind) .* ...
-                data_C_phyto.(tmp.phyto).([tmp.phyto,'C_assm']) ...
-                ./ 86400.0 .* 10000.0;
-            data_NPP_rec.ALL.(tmp.phyto).(['lens2_l',tmp.lyear_str]) = ...
-                data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_lens2_l', tmp.lyear_str]) .* ...
-                data_min_lim_phyto.val.(tmp.phyto).(['lens2_l',tmp.lyear_str]) .* ...
-                1.7.^((data_TEMP.(['TEMP_','lens2_l',tmp.lyear_str])-30.0)./10.0) .* ...
-                mu_ref(pind) .* ...
-                data_C_phyto.(tmp.phyto).([tmp.phyto,'C_lens2_l', tmp.lyear_str]) ...
-                ./ 86400.0 .* 10000.0;
-            data_NPP_rec.ALL.(tmp.phyto).(['model_l',tmp.lyear_str]) = ...
-                data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_model_l', tmp.lyear_str]) .* ...
-                data_min_lim_phyto.val.(tmp.phyto).(['model_l',tmp.lyear_str]) .* ...
-                1.7.^((data_TEMP.(['TEMP_','model_l',tmp.lyear_str])-30.0)./10.0) .* ...
-                mu_ref(pind) .* ...
-                data_C_phyto.(tmp.phyto).([tmp.phyto,'C_model_l', tmp.lyear_str]) ...
-                ./ 86400.0 .* 10000.0;
-           
-    
-            %% reconstructed NPP: T driven
-            data_NPP_rec.T.(tmp.phyto).assm = ...
-                mean(data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_assm']),3,'omitnan') .* ...
-                mean(data_min_lim_phyto.val.(tmp.phyto).assm,3,'omitnan') .* ...
-                1.7.^((data_TEMP.TEMP_assm-30.0)./10.0) .* ...
-                mu_ref(pind) .* ...
-                mean(data_C_phyto.(tmp.phyto).([tmp.phyto,'C_assm']),3,'omitnan') ...
-                ./ 86400.0 .* 10000.0;
-            data_NPP_rec.T.(tmp.phyto).(['lens2_l',tmp.lyear_str]) = ...
-                mean(data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_lens2_l', tmp.lyear_str]),3,'omitnan') .* ...
-                mean(data_min_lim_phyto.val.(tmp.phyto).(['lens2_l',tmp.lyear_str]),3,'omitnan') .* ...
-                1.7.^((data_TEMP.(['TEMP_','lens2_l',tmp.lyear_str])-30.0)./10.0) .* ...
-                mu_ref(pind) .* ...
-                mean(data_C_phyto.(tmp.phyto).([tmp.phyto,'C_lens2_l', tmp.lyear_str]),3,'omitnan') ...
-                ./ 86400.0 .* 10000.0;
-            data_NPP_rec.T.(tmp.phyto).(['model_l',tmp.lyear_str]) = ...
-                mean(data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_model_l', tmp.lyear_str]),3,'omitnan') .* ...
-                mean(data_min_lim_phyto.val.(tmp.phyto).(['model_l',tmp.lyear_str]),3,'omitnan') .* ...
-                1.7.^((data_TEMP.(['TEMP_','model_l',tmp.lyear_str])-30.0)./10.0) .* ...
-                mu_ref(pind) .* ...
-                mean(data_C_phyto.(tmp.phyto).([tmp.phyto,'C_model_l', tmp.lyear_str]),3,'omitnan') ...
-                ./ 86400.0 .* 10000.0;
-            
-    
-            %% reconstructed NPP: L driven
-            data_NPP_rec.L.(tmp.phyto).assm = ...
-                data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_assm']) .* ...
-                mean(data_min_lim_phyto.val.(tmp.phyto).assm,3,'omitnan') .* ...
-                mean(1.7.^((data_TEMP.TEMP_assm-30.0)./10.0),3,'omitnan') .* ...
-                mu_ref(pind) .* ...
-                mean(data_C_phyto.(tmp.phyto).([tmp.phyto,'C_assm']),3,'omitnan') ...
-                ./ 86400.0 .* 10000.0;
-            data_NPP_rec.L.(tmp.phyto).(['lens2_l',tmp.lyear_str]) = ...
-                data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_lens2_l', tmp.lyear_str]) .* ...
-                mean(data_min_lim_phyto.val.(tmp.phyto).(['lens2_l',tmp.lyear_str]),3,'omitnan') .* ...
-                mean(1.7.^((data_TEMP.(['TEMP_','lens2_l',tmp.lyear_str])-30.0)./10.0),3, 'omitnan') .* ...
-                mu_ref(pind) .* ...
-                mean(data_C_phyto.(tmp.phyto).([tmp.phyto,'C_lens2_l', tmp.lyear_str]),3,'omitnan') ...
-                ./ 86400.0 .* 10000.0;
-            data_NPP_rec.L.(tmp.phyto).(['model_l',tmp.lyear_str]) = ...
-                data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_model_l', tmp.lyear_str]) .* ...
-                mean(data_min_lim_phyto.val.(tmp.phyto).(['model_l',tmp.lyear_str]),3,'omitnan') .* ...
-                mean(1.7.^((data_TEMP.(['TEMP_','model_l',tmp.lyear_str])-30.0)./10.0),3,'omitnan') .* ...
-                mu_ref(pind) .* ...
-                mean(data_C_phyto.(tmp.phyto).([tmp.phyto,'C_model_l', tmp.lyear_str]),3,'omitnan') ...
-                ./ 86400.0 .* 10000.0;
-            
-            
-            %% reconstructed NPP: V driven (nutrient limiting factor)
-            data_NPP_rec.V.(tmp.phyto).assm = ...
-                mean(data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_assm']),3,'omitnan') .* ...
-                data_min_lim_phyto.val.(tmp.phyto).assm .* ...
-                mean(1.7.^((data_TEMP.TEMP_assm-30.0)./10.0),3,'omitnan') .* ...
-                mu_ref(pind) .* ...
-                mean(data_C_phyto.(tmp.phyto).([tmp.phyto,'C_assm']),3,'omitnan') ...
-                ./ 86400.0 .* 10000.0;
-            data_NPP_rec.V.(tmp.phyto).(['lens2_l',tmp.lyear_str]) = ...
-                mean(data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_lens2_l', tmp.lyear_str]),3,'omitnan') .* ...
-                data_min_lim_phyto.val.(tmp.phyto).(['lens2_l',tmp.lyear_str]) .* ...
-                mean(1.7.^((data_TEMP.(['TEMP_','lens2_l',tmp.lyear_str])-30.0)./10.0),3,'omitnan') .* ...
-                mu_ref(pind) .* ...
-                mean(data_C_phyto.(tmp.phyto).([tmp.phyto,'C_lens2_l', tmp.lyear_str]),3,'omitnan') ...
-                ./ 86400.0 .* 10000.0;
-            data_NPP_rec.V.(tmp.phyto).(['model_l',tmp.lyear_str]) = ...
-                mean(data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_model_l', tmp.lyear_str]),3,'omitnan') .* ...
-                data_min_lim_phyto.val.(tmp.phyto).(['model_l',tmp.lyear_str]) .* ...
-                mean(1.7.^((data_TEMP.(['TEMP_','model_l',tmp.lyear_str])-30.0)./10.0),3,'omitnan') .* ...
-                mu_ref(pind) .* ...
-                mean(data_C_phyto.(tmp.phyto).([tmp.phyto,'C_model_l', tmp.lyear_str]),3,'omitnan') ...
-                ./ 86400.0 .* 10000.0;
-            
-    
-            %% reconstructed NPP: Fe driven (nutrient limiting factor)
-            data_NPP_rec.Fe.(tmp.phyto).assm = ...
-                mean(data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_assm']),3,'omitnan') .* ...
-                data_lim_set_phyto.(tmp.phyto).assm(:,:,:,1) .* ...
-                mean(1.7.^((data_TEMP.TEMP_assm-30.0)./10.0),3,'omitnan') .* ...
-                mu_ref(pind) .* ...
-                mean(data_C_phyto.(tmp.phyto).([tmp.phyto,'C_assm']),3,'omitnan') ...
-                ./ 86400.0 .* 10000.0;
-            data_NPP_rec.Fe.(tmp.phyto).(['lens2_l',tmp.lyear_str]) = ...
-                mean(data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_lens2_l', tmp.lyear_str]),3,'omitnan') .* ...
-                data_lim_set_phyto.(tmp.phyto).(['lens2_l',tmp.lyear_str])(:,:,:,1) .* ...
-                mean(1.7.^((data_TEMP.(['TEMP_','lens2_l',tmp.lyear_str])-30.0)./10.0),3,'omitnan') .* ...
-                mu_ref(pind) .* ...
-                mean(data_C_phyto.(tmp.phyto).([tmp.phyto,'C_lens2_l', tmp.lyear_str]),3,'omitnan') ...
-                ./ 86400.0 .* 10000.0;
-            data_NPP_rec.Fe.(tmp.phyto).(['model_l',tmp.lyear_str]) = ...
-                mean(data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_model_l', tmp.lyear_str]),3,'omitnan') .* ...
-                data_lim_set_phyto.(tmp.phyto).(['model_l',tmp.lyear_str])(:,:,:,1) .* ...
-                mean(1.7.^((data_TEMP.(['TEMP_','model_l',tmp.lyear_str])-30.0)./10.0),3,'omitnan') .* ...
-                mu_ref(pind) .* ...
-                mean(data_C_phyto.(tmp.phyto).([tmp.phyto,'C_model_l', tmp.lyear_str]),3,'omitnan') ...
-                ./ 86400.0 .* 10000.0;
-            
-    
-            %% reconstructed NPP: N driven (nutrient limiting factor)
-            data_NPP_rec.N.(tmp.phyto).assm = ...
-                mean(data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_assm']),3,'omitnan') .* ...
-                data_lim_set_phyto.(tmp.phyto).assm(:,:,:,2) .* ...
-                mean(1.7.^((data_TEMP.TEMP_assm-30.0)./10.0),3,'omitnan') .* ...
-                mu_ref(pind) .* ...
-                mean(data_C_phyto.(tmp.phyto).([tmp.phyto,'C_assm']),3,'omitnan') ...
-                ./ 86400.0 .* 10000.0;
-            data_NPP_rec.N.(tmp.phyto).(['lens2_l',tmp.lyear_str]) = ...
-                mean(data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_lens2_l', tmp.lyear_str]),3,'omitnan') .* ...
-                data_lim_set_phyto.(tmp.phyto).(['lens2_l',tmp.lyear_str])(:,:,:,2) .* ...
-                mean(1.7.^((data_TEMP.(['TEMP_','lens2_l',tmp.lyear_str])-30.0)./10.0),3,'omitnan') .* ...
-                mu_ref(pind) .* ...
-                mean(data_C_phyto.(tmp.phyto).([tmp.phyto,'C_lens2_l', tmp.lyear_str]),3,'omitnan') ...
-                ./ 86400.0 .* 10000.0;
-            data_NPP_rec.N.(tmp.phyto).(['model_l',tmp.lyear_str]) = ...
-                mean(data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_model_l', tmp.lyear_str]),3,'omitnan') .* ...
-                data_lim_set_phyto.(tmp.phyto).(['model_l',tmp.lyear_str])(:,:,:,2) .* ...
-                mean(1.7.^((data_TEMP.(['TEMP_','model_l',tmp.lyear_str])-30.0)./10.0),3,'omitnan') .* ...
-                mu_ref(pind) .* ...
-                mean(data_C_phyto.(tmp.phyto).([tmp.phyto,'C_model_l', tmp.lyear_str]),3,'omitnan') ...
-                ./ 86400.0 .* 10000.0;
-            
-    
-            %% reconstructed NPP: SiO3 driven (nutrient limiting factor)
-            data_NPP_rec.SiO3.(tmp.phyto).assm = ...
-                mean(data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_assm']),3,'omitnan') .* ...
-                data_lim_set_phyto.(tmp.phyto).assm(:,:,:,3) .* ...
-                mean(1.7.^((data_TEMP.TEMP_assm-30.0)./10.0),3,'omitnan') .* ...
-                mu_ref(pind) .* ...
-                mean(data_C_phyto.(tmp.phyto).([tmp.phyto,'C_assm']),3,'omitnan') ...
-                ./ 86400.0 .* 10000.0;
-            data_NPP_rec.SiO3.(tmp.phyto).(['lens2_l',tmp.lyear_str]) = ...
-                mean(data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_lens2_l', tmp.lyear_str]),3,'omitnan') .* ...
-                data_lim_set_phyto.(tmp.phyto).(['lens2_l',tmp.lyear_str])(:,:,:,3) .* ...
-                mean(1.7.^((data_TEMP.(['TEMP_','lens2_l',tmp.lyear_str])-30.0)./10.0),3,'omitnan') .* ...
-                mu_ref(pind) .* ...
-                mean(data_C_phyto.(tmp.phyto).([tmp.phyto,'C_lens2_l', tmp.lyear_str]),3,'omitnan') ...
-                ./ 86400.0 .* 10000.0;
-            data_NPP_rec.SiO3.(tmp.phyto).(['model_l',tmp.lyear_str]) = ...
-                mean(data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_model_l', tmp.lyear_str]),3,'omitnan') .* ...
-                data_lim_set_phyto.(tmp.phyto).(['model_l',tmp.lyear_str])(:,:,:,3) .* ...
-                mean(1.7.^((data_TEMP.(['TEMP_','model_l',tmp.lyear_str])-30.0)./10.0),3,'omitnan') .* ...
-                mu_ref(pind) .* ...
-                mean(data_C_phyto.(tmp.phyto).([tmp.phyto,'C_model_l', tmp.lyear_str]),3,'omitnan') ...
-                ./ 86400.0 .* 10000.0;
-            
-    
-            %% reconstructed NPP: P driven (nutrient limiting factor)
-            data_NPP_rec.P.(tmp.phyto).assm = ...
-                mean(data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_assm']),3,'omitnan') .* ...
-                data_lim_set_phyto.(tmp.phyto).assm(:,:,:,4) .* ...
-                mean(1.7.^((data_TEMP.TEMP_assm-30.0)./10.0),3,'omitnan') .* ...
-                mu_ref(pind) .* ...
-                mean(data_C_phyto.(tmp.phyto).([tmp.phyto,'C_assm']),3,'omitnan') ...
-                ./ 86400.0 .* 10000.0;
-            data_NPP_rec.P.(tmp.phyto).(['lens2_l',tmp.lyear_str]) = ...
-                mean(data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_lens2_l', tmp.lyear_str]),3,'omitnan') .* ...
-                data_lim_set_phyto.(tmp.phyto).(['lens2_l',tmp.lyear_str])(:,:,:,4) .* ...
-                mean(1.7.^((data_TEMP.(['TEMP_','lens2_l',tmp.lyear_str])-30.0)./10.0),3,'omitnan') .* ...
-                mu_ref(pind) .* ...
-                mean(data_C_phyto.(tmp.phyto).([tmp.phyto,'C_lens2_l', tmp.lyear_str]),3,'omitnan') ...
-                ./ 86400.0 .* 10000.0;
-            data_NPP_rec.P.(tmp.phyto).(['model_l',tmp.lyear_str]) = ...
-                mean(data_light_lim_phyto.(tmp.phyto).([tmp.phyto, '_light_lim_Cweight_avg_100m_model_l', tmp.lyear_str]),3,'omitnan') .* ...
-                data_lim_set_phyto.(tmp.phyto).(['model_l',tmp.lyear_str])(:,:,:,4) .* ...
-                mean(1.7.^((data_TEMP.(['TEMP_','model_l',tmp.lyear_str])-30.0)./10.0),3,'omitnan') .* ...
-                mu_ref(pind) .* ...
-                mean(data_C_phyto.(tmp.phyto).([tmp.phyto,'C_model_l', tmp.lyear_str]),3,'omitnan') ...
-                ./ 86400.0 .* 10000.0;
-            
-    
-            %% corr NPP_rec, NPP
-    
-            %% corr initialization
-    
-            strset={'assm', ['lens2_l',tmp.lyear_str], ['model_l',tmp.lyear_str], ...
-                ['PP_model_l',tmp.lyear_str], ['PP_hcst_int_l',tmp.lyear_str], ['PP_lens2_l',tmp.lyear_str]};
-            for stri=1:length(strset)
-                tmpstr=strset{stri};
-                data_NPP_rec_corr.ALL.(tmp.phyto).(tmpstr)=NaN(size(grid.tlong));
-                data_NPP_rec_corr.T.(tmp.phyto).(tmpstr)=NaN(size(grid.tlong));
-                data_NPP_rec_corr.L.(tmp.phyto).(tmpstr)=NaN(size(grid.tlong));
-                data_NPP_rec_corr.V.(tmp.phyto).(tmpstr)=NaN(size(grid.tlong));
-                data_NPP_rec_corr.Fe.(tmp.phyto).(tmpstr)=NaN(size(grid.tlong));
-                data_NPP_rec_corr.N.(tmp.phyto).(tmpstr)=NaN(size(grid.tlong));
-                data_NPP_rec_corr.SiO3.(tmp.phyto).(tmpstr)=NaN(size(grid.tlong));
-                data_NPP_rec_corr.P.(tmp.phyto).(tmpstr)=NaN(size(grid.tlong));
-            end
-    
+            data_all_NPP_rec.(tmp.limv).TOT.(tmp.vstr)= sum(tmp.comb, 4, 'omitnan');
+%             data_NPP_rec.(tmp.limv).TOT.(tmp.vstr) = ...
+%                 data_all.TOT.diat.(tmp.limv).diat.(tmp.vstr)  ...
+%                 + data_all.TOT.diaz.(tmp.limv).diaz.(tmp.vstr) ...
+%                 + data_all.TOT.sp.(tmp.limv).sp.(tmp.vstr);
+
+            data_all_NPP_rec_corr.(tmp.limv).TOT.(tmp.vstr)=NaN(size(grid.tlong));
+            data_all_NPP_rec_corr.(tmp.limv).TOT.(['PP_', tmp.vstr])=NaN(size(grid.tlong));
+
             for loni=1:size(grid.tlong,1)
                 for lati=1:size(grid.tlat,2)
-                    if(isfinite(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,1)))
+                    if(isfinite(data_all_NPP_phyto.TOT.photoC_TOT_zint_100m_assm(loni,lati,1)))
                         %% rec validation (raw <-> reconstructed)
                         [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
-                            data_NPP_rec.ALL.(tmp.phyto).assm(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.ALL.(tmp.phyto).assm(loni,lati)=tmp_corr_r(1,2);
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_lens2_l', tmp.lyear_str])(loni,lati,:), ...
-                            data_NPP_rec.ALL.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.ALL.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_model_l', tmp.lyear_str])(loni,lati,:), ...
-                            data_NPP_rec.ALL.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.ALL.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
-    
-                        %% rec Potential Predictability (assm raw <-> model reconstructed)
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
-                            data_NPP_rec.ALL.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.ALL.(tmp.phyto).(['PP_model_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
-                            data_NPP_rec.ALL.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:) - ...
-                            data_NPP_rec.ALL.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.ALL.(tmp.phyto).(['PP_hcst_int_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
-                            data_NPP_rec.ALL.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.ALL.(tmp.phyto).(['PP_lens2_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
-    
-                        %% rec_T validation (raw <-> reconstructed)
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
-                            data_NPP_rec.T.(tmp.phyto).assm(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.T.(tmp.phyto).assm(loni,lati)=tmp_corr_r(1,2);
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_lens2_l', tmp.lyear_str])(loni,lati,:), ...
-                            data_NPP_rec.T.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.T.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_model_l', tmp.lyear_str])(loni,lati,:), ...
-                            data_NPP_rec.T.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.T.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
-                        %% rec_T PP
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
-                            data_NPP_rec.T.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.T.(tmp.phyto).(['PP_model_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
-                            data_NPP_rec.T.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:) - ...
-                            data_NPP_rec.T.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.T.(tmp.phyto).(['PP_hcst_int_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
-                            data_NPP_rec.T.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.T.(tmp.phyto).(['PP_lens2_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
-    
-                        %% rec_L validation (raw <-> reconstructed)
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
-                            data_NPP_rec.L.(tmp.phyto).assm(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.L.(tmp.phyto).assm(loni,lati)=tmp_corr_r(1,2);
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_lens2_l', tmp.lyear_str])(loni,lati,:), ...
-                            data_NPP_rec.L.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.L.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_model_l', tmp.lyear_str])(loni,lati,:), ...
-                            data_NPP_rec.L.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.L.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
-                        %% rec_L PP
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
-                            data_NPP_rec.L.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.L.(tmp.phyto).(['PP_model_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
-                            data_NPP_rec.L.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:) - ...
-                            data_NPP_rec.L.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.L.(tmp.phyto).(['PP_hcst_int_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
-                            data_NPP_rec.L.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.L.(tmp.phyto).(['PP_lens2_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
-    
-                        %% rec_V validation (raw <-> reconstructed)
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
-                            data_NPP_rec.V.(tmp.phyto).assm(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.V.(tmp.phyto).assm(loni,lati)=tmp_corr_r(1,2);
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_lens2_l', tmp.lyear_str])(loni,lati,:), ...
-                            data_NPP_rec.V.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.V.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_model_l', tmp.lyear_str])(loni,lati,:), ...
-                            data_NPP_rec.V.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.V.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
-                        %% rec_V PP
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
-                            data_NPP_rec.V.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.V.(tmp.phyto).(['PP_model_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
-                            data_NPP_rec.V.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:) - ...
-                            data_NPP_rec.V.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.V.(tmp.phyto).(['PP_hcst_int_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
-                            data_NPP_rec.V.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.V.(tmp.phyto).(['PP_lens2_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
-    
-                        %% rec_Fe validation (raw <-> reconstructed)
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
-                            data_NPP_rec.Fe.(tmp.phyto).assm(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.Fe.(tmp.phyto).assm(loni,lati)=tmp_corr_r(1,2);
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_lens2_l', tmp.lyear_str])(loni,lati,:), ...
-                            data_NPP_rec.Fe.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.Fe.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_model_l', tmp.lyear_str])(loni,lati,:), ...
-                            data_NPP_rec.Fe.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.Fe.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
-                        %% rec_Fe PP
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
-                            data_NPP_rec.Fe.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.Fe.(tmp.phyto).(['PP_model_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
-                            data_NPP_rec.Fe.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:) - ...
-                            data_NPP_rec.Fe.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.Fe.(tmp.phyto).(['PP_hcst_int_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
-                            data_NPP_rec.Fe.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.Fe.(tmp.phyto).(['PP_lens2_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
-    
-                        %% rec_N validation (raw <-> reconstructed)
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
-                            data_NPP_rec.N.(tmp.phyto).assm(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.N.(tmp.phyto).assm(loni,lati)=tmp_corr_r(1,2);
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_lens2_l', tmp.lyear_str])(loni,lati,:), ...
-                            data_NPP_rec.N.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.N.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_model_l', tmp.lyear_str])(loni,lati,:), ...
-                            data_NPP_rec.N.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.N.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
-                        %% rec_N PP
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
-                            data_NPP_rec.N.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.N.(tmp.phyto).(['PP_model_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
-                            data_NPP_rec.N.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:) - ...
-                            data_NPP_rec.N.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.N.(tmp.phyto).(['PP_hcst_int_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
-                            data_NPP_rec.N.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.N.(tmp.phyto).(['PP_lens2_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
-    
-                        %% rec_SiO3 validation (raw <-> reconstructed)
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
-                            data_NPP_rec.SiO3.(tmp.phyto).assm(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.SiO3.(tmp.phyto).assm(loni,lati)=tmp_corr_r(1,2);
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_lens2_l', tmp.lyear_str])(loni,lati,:), ...
-                            data_NPP_rec.SiO3.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.SiO3.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_model_l', tmp.lyear_str])(loni,lati,:), ...
-                            data_NPP_rec.SiO3.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.SiO3.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
-    
-                        %% rec_SiO3 PP
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
-                            data_NPP_rec.SiO3.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.SiO3.(tmp.phyto).(['PP_model_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
-                            data_NPP_rec.SiO3.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:) - ...
-                            data_NPP_rec.SiO3.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.SiO3.(tmp.phyto).(['PP_hcst_int_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
-                            data_NPP_rec.SiO3.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.SiO3.(tmp.phyto).(['PP_lens2_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
-    
-                        %% rec_P validation (raw <-> reconstructed)
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
-                            data_NPP_rec.P.(tmp.phyto).assm(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.P.(tmp.phyto).assm(loni,lati)=tmp_corr_r(1,2);
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_lens2_l', tmp.lyear_str])(loni,lati,:), ...
-                            data_NPP_rec.P.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.P.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_model_l', tmp.lyear_str])(loni,lati,:), ...
-                            data_NPP_rec.P.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.P.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
-                        %% rec_P PP 
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
-                            data_NPP_rec.P.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.P.(tmp.phyto).(['PP_model_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
-                            data_NPP_rec.P.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:) - ...
-                            data_NPP_rec.P.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.P.(tmp.phyto).(['PP_hcst_int_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_NPP_phyto.(tmp.phyto).(['photoC_',tmp.phyto,'_zint_100m_assm'])(loni,lati,:), ...
-                            data_NPP_rec.P.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.P.(tmp.phyto).(['PP_lens2_l',tmp.lyear_str])(loni,lati)=tmp_corr_r(1,2);
-                    end
-                end
-            end
-    
-            %% contribution of each nutrient in V
-            data_mask_nut_dominant.ind.(tmp.phyto).assm=NaN(size(grid.tlong,1), size(grid.tlat,2), 4);
-            data_mask_nut_dominant.ind.(tmp.phyto).(['lens2_l',tmp.lyear_str])=NaN(size(grid.tlong,1), size(grid.tlat,2), 4);
-            data_mask_nut_dominant.ind.(tmp.phyto).(['model_l',tmp.lyear_str])=NaN(size(grid.tlong,1), size(grid.tlat,2), 4);
-            data_mask_nut_dominant.val.(tmp.phyto).assm=NaN(size(grid.tlong,1), size(grid.tlat,2), 4);
-            data_mask_nut_dominant.val.(tmp.phyto).(['lens2_l',tmp.lyear_str])=NaN(size(grid.tlong,1), size(grid.tlat,2), 4);
-            data_mask_nut_dominant.val.(tmp.phyto).(['model_l',tmp.lyear_str])=NaN(size(grid.tlong,1), size(grid.tlat,2), 4);
-
-    %         [data_min_lim_phyto.val.(tmp.phyto).assm, data_min_lim_phyto.ind.(tmp.phyto).assm]= ...
-    %             min(data_lim_set_phyto.(tmp.phyto).assm,[], 4);
-    %         [data_min_lim_phyto.val.(tmp.phyto).(['lens2_l',tmp.lyear_str]), ...
-    %             data_min_lim_phyto.ind.(tmp.phyto).(['lens2_l',tmp.lyear_str])]= ...
-    %             min(data_lim_set_phyto.(tmp.phyto).(['lens2_l',tmp.lyear_str]),[], 4);
-    %         [data_min_lim_phyto.val.(tmp.phyto).(['model_l',tmp.lyear_str]), ...
-    %             data_min_lim_phyto.ind.(tmp.phyto).(['model_l',tmp.lyear_str])]= ...
-    %             min(data_lim_set_phyto.(tmp.phyto).(['model_l',tmp.lyear_str]),[], 4);
-    
-            for loni=1:size(grid.tlong,1)
-                for lati=1:size(grid.tlat,2)
-                 %% Fe
-                    data_min_freq.Fe_lim_phyto.(tmp.phyto).assm(loni,lati)= ...
-                        length(find(data_min_lim_phyto.ind.(tmp.phyto).assm(loni,lati,:)==1))/length(cfg.iyears);
-                    data_min_freq.Fe_lim_phyto.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati)= ...
-                        length(find(data_min_lim_phyto.ind.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:)==1))/length(cfg.iyears);
-                    data_min_freq.Fe_lim_phyto.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati)= ...
-                        length(find(data_min_lim_phyto.ind.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:)==1))/length(cfg.iyears);
-    
-                %% N
-                    data_min_freq.N_lim_phyto.(tmp.phyto).assm(loni,lati)= ...
-                        length(find(data_min_lim_phyto.ind.(tmp.phyto).assm(loni,lati,:)==2))/length(cfg.iyears);
-                    data_min_freq.N_lim_phyto.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati)= ...
-                        length(find(data_min_lim_phyto.ind.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:)==2))/length(cfg.iyears);
-                    data_min_freq.N_lim_phyto.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati)= ...
-                        length(find(data_min_lim_phyto.ind.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:)==2))/length(cfg.iyears);
-    
-                %% SiO3
-                    data_min_freq.SiO3_lim_phyto.(tmp.phyto).assm(loni,lati)= ...
-                        length(find(data_min_lim_phyto.ind.(tmp.phyto).assm(loni,lati,:)==3))/length(cfg.iyears);
-                    data_min_freq.SiO3_lim_phyto.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati)= ...
-                        length(find(data_min_lim_phyto.ind.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:)==3))/length(cfg.iyears);
-                    data_min_freq.SiO3_lim_phyto.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati)= ...
-                        length(find(data_min_lim_phyto.ind.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:)==3))/length(cfg.iyears);
-    
-                %% P
-                    data_min_freq.P_lim_phyto.(tmp.phyto).assm(loni,lati)= ...
-                        length(find(data_min_lim_phyto.ind.(tmp.phyto).assm(loni,lati,:)==4))/length(cfg.iyears);
-                    data_min_freq.P_lim_phyto.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati)= ...
-                        length(find(data_min_lim_phyto.ind.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati,:)==4))/length(cfg.iyears);
-                    data_min_freq.P_lim_phyto.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati)= ...
-                        length(find(data_min_lim_phyto.ind.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati,:)==4))/length(cfg.iyears);
-                    
-                %% comparison
-                    tmp.min_freq = [data_min_freq.Fe_lim_phyto.(tmp.phyto).assm(loni,lati);...
-                        data_min_freq.N_lim_phyto.(tmp.phyto).assm(loni,lati); ...
-                        data_min_freq.SiO3_lim_phyto.(tmp.phyto).assm(loni,lati); ...
-                        data_min_freq.P_lim_phyto.(tmp.phyto).assm(loni,lati)];
-                    [max_minfreq, maxind_minfreq]=max(tmp.min_freq);
-                    data_mask_nut_dominant.val.(tmp.phyto).assm(loni,lati) = max_minfreq;
-                    data_mask_nut_dominant.ind.(tmp.phyto).assm(loni,lati) = maxind_minfreq;
-
-                    tmp.min_freq = [data_min_freq.Fe_lim_phyto.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati);...
-                        data_min_freq.N_lim_phyto.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati); ...
-                        data_min_freq.SiO3_lim_phyto.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati); ...
-                        data_min_freq.P_lim_phyto.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati)];
-                    [max_minfreq, maxind_minfreq]=max(tmp.min_freq);
-                    data_mask_nut_dominant.val.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati) = max_minfreq;
-                    data_mask_nut_dominant.ind.(tmp.phyto).(['lens2_l',tmp.lyear_str])(loni,lati) = maxind_minfreq;
-    
-                    tmp.min_freq = [data_min_freq.Fe_lim_phyto.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati);...
-                        data_min_freq.N_lim_phyto.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati); ...
-                        data_min_freq.SiO3_lim_phyto.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati); ...
-                        data_min_freq.P_lim_phyto.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati)];
-                    [max_minfreq, maxind_minfreq]=max(tmp.min_freq);
-                    data_mask_nut_dominant.val.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati) = max_minfreq;
-                    data_mask_nut_dominant.ind.(tmp.phyto).(['model_l',tmp.lyear_str])(loni,lati) = maxind_minfreq;
-    
-                end
-            end
-            save(matname, 'data_mask_nut_dominant', 'data_min_lim_phyto', 'data_NPP_rec', 'data_NPP_rec_corr', 'data_lim_set_phyto', 'data_min_freq')
-            toc;
-        else
-            load(matname)
-        end
-    
-        cfg.vstrset={'assm', ['lens2_l',tmp.lyear_str], ['model_l',tmp.lyear_str]};
-        for stri=1:length(cfg.vstrset)
-            tmp.vstr=cfg.vstrset{stri};
-
-            cfg.nuts={'Fe', 'N', 'SiO3', 'P'};
-            for ni=1:length(cfg.nuts)
-                tmp.nut=cfg.nuts{ni};
-        
-        %% Each nutrient occupied rate of minimum map --------------------------------------
-                fig_cfg.name_rgn = 'Glob';
-                fig_cfg.map_proj = 'eqdcylin';  % robinson, eqdcylin
-                fig_cfg.x_lim = [-180 180];
-                fig_cfg.y_lim = [-80 89];
-                fig_cfg.fig_size = [0,0,6,3.5];
-                fig_cfg.ax_size = [0.3,0.7,5.4,2.7];
-                fig_cfg.cb_size = [5.15,0.8,0.15,2.3];
-                fig_cfg.title_pos = [0.5,0.93];
-                fig_cfg.p_lim =0.1;
-                fig_cfg.c_lim = [0 1];
-                [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('wr_10', tmp.dropboxpath);
-            
-                tmp.X=grid.tlong([end, 1:end],:);
-                tmp.Y=grid.tlat([end, 1:end],:);
-                tmp.C=data_min_freq.([tmp.nut, '_lim_phyto']).(tmp.phyto).(tmp.vstr).*grid.mask_ocn;
-                tmp.C=tmp.C([end, 1:end],:); 
-            
-                fig_cfg.fig_name='data_min_freq';
-                fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
-                    'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
-                %% map setting
-                ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
-                    'fontname','freeserif'); 
-            
-                axis off; 
-                hold on;
-                setm(ax_m,'origin',[0,180],'MapLatLimit',fig_cfg.y_lim);
-                set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
-                text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
-                'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
-                'fontsize',14,'fontname','freeserif','interpreter','none')
-            
-                %% caxis & colorbar
-                caxis(ax_m, fig_cfg.c_lim); 
-                colormap(fig_cfg.c_map);
-                cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
-                set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
-                title(cb,'R','fontsize',12);
-            
-                %% draw on ax_m
-                h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
-                shading flat;
-                geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
-            
-            
-            %% frame and label setting
-                setm(ax_m,'frame','on','FLineWidth',1);
-            
-                label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
-                label_x=mlabel('MLabelParallel','south', 'MLineLocation',20, 'MLabelLocation',60, 'labelrotation','on');
-                mlabel; plabel;
-                label_y=plabel; label_x=mlabel;
-                for lxi=1:length(label_x)
-                    tmp.tmppos=label_x(lxi,1).Position;
-                    tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.55;
-                    label_x(lxi,1).Position=tmp.tmppos;
-                    label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
-                end
-                for lyi=1:length(label_y)
-                    label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
-                end
-            
-                %% save
-                dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, 'min_freq', filesep, tmp.nut, filesep, tmp.phyto];
-                if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-                cfg.figname=[dirs.figdir, filesep, 'min_freq_map_', tmp.nut, '_', tmp.phyto, '_', tmp.vstr, '.tif'];
-                print(fig_h, cfg.figname, '-dpng');
-                disp(cfg.figname)
-                RemoveWhiteSpace([], 'file', cfg.figname);
-                close all;
-    
-    
-            end
-
-
-            cfg.limv={'ALL', 'T', 'L', 'V', 'Fe', 'N', 'SiO3', 'P'};
-            for ni=1:length(cfg.limv)
-                tmp.limv=cfg.limv{ni};
-
-         %% correlation between NPP <-> NPP_rec in same dataset map --------------------------------------
-                fig_cfg.c_lim = [-1 1];
-                [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('bwr_10', tmp.dropboxpath);
-            
-                tmp.X=grid.tlong([end, 1:end],:);
-                tmp.Y=grid.tlat([end, 1:end],:);
-
-                %% data set
-                tmp.C=data_NPP_rec_corr.(tmp.limv).(tmp.phyto).(tmp.vstr) .* grid.mask_ocn;
-                switch tmp.limv
-                    case {'Fe', 'N', 'SiO3', 'P'}
-                    tmp.mask=data_min_freq.([tmp.limv, '_lim_phyto']).(tmp.phyto).(tmp.vstr).*grid.mask_ocn;
-                    tmp.mask(tmp.mask<0.8)=NaN;
-                    tmp.C=tmp.C.*tmp.mask;
-                end
-                tmp.C=tmp.C([end, 1:end],:); 
-            
-                fig_cfg.fig_name='data_NPP_rec_corr_explained';
-                fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
-                    'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
-                %% map setting
-                ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
-                    'fontname','freeserif'); 
-            
-                axis off; 
-                hold on;
-                setm(ax_m,'origin',[0,180],'MapLatLimit',fig_cfg.y_lim);
-                set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
-                text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
-                'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
-                'fontsize',14,'fontname','freeserif','interpreter','none')
-            
-                %% caxis & colorbar
-                caxis(ax_m, fig_cfg.c_lim); 
-                colormap(fig_cfg.c_map);
-                cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
-                set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
-                title(cb,'R','fontsize',12);
-            
-                %% draw on ax_m
-                h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
-                shading flat;
-                geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
-            
-            
-                %% frame and label setting
-                setm(ax_m,'frame','on','FLineWidth',1);
-            
-                label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
-                label_x=mlabel('MLabelParallel','south', 'MLineLocation',20, 'MLabelLocation',60, 'labelrotation','on');
-                mlabel; plabel;
-                label_y=plabel; label_x=mlabel;
-                for lxi=1:length(label_x)
-                    tmp.tmppos=label_x(lxi,1).Position;
-                    tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.55;
-                    label_x(lxi,1).Position=tmp.tmppos;
-                    label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
-                end
-                for lyi=1:length(label_y)
-                    label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
-                end
-            
-                %% save
-                dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, 'corr_explained', filesep, tmp.limv, filesep, tmp.phyto];
-                if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-                cfg.figname=[dirs.figdir, filesep, 'corr_exp_map_', tmp.limv, '_', tmp.phyto, '_', tmp.vstr, '.tif'];
-                print(fig_h, cfg.figname, '-dpng');
-                disp(cfg.figname)
-                RemoveWhiteSpace([], 'file', cfg.figname);
-                close all;
-
-            end
-        end
-        
-        cfg.vstrset={['lens2_l',tmp.lyear_str], ['model_l',tmp.lyear_str], ['hcst_int_l',tmp.lyear_str]};
-        for stri=1:length(cfg.vstrset)
-            tmp.vstr=cfg.vstrset{stri};
-
-            cfg.limv={'ALL', 'T', 'L', 'V', 'Fe', 'N', 'SiO3', 'P'};
-            for ni=1:length(cfg.limv)
-                tmp.limv=cfg.limv{ni};
-
-        %% Potential Predictability of NPP, but by NPP_rec map --------------------------------------
-                fig_cfg.c_lim = [-1 1];
-                [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('bwr_10', tmp.dropboxpath);
-            
-                tmp.X=grid.tlong([end, 1:end],:);
-                tmp.Y=grid.tlat([end, 1:end],:);
-
-                %% data set
-                tmp.C=data_NPP_rec_corr.(tmp.limv).(tmp.phyto).(['PP_', tmp.vstr]) .* grid.mask_ocn;
-                switch tmp.limv
-                    case {'Fe', 'N', 'SiO3', 'P'}
-                        if strcmp(tmp.vstr, ['hcst_int_l',tmp.lyear_str])==1
-                            tmp.mask=data_min_freq.([tmp.limv, '_lim_phyto']).(tmp.phyto).(['model_l',tmp.lyear_str]).*grid.mask_ocn;
+                            corrcoef(data_all_NPP_phyto.TOT.(['photoC_TOT_zint_100m_',tmp.vstr])(loni,lati,:), ...
+                            data_all_NPP_rec.(tmp.limv).TOT.(tmp.vstr)(loni,lati,:), 'rows','complete');
+                        data_all_NPP_rec_corr.(tmp.limv).TOT.(tmp.vstr)(loni,lati)=tmp_corr_r(1,2);
+                        data_all_NPP_rec_corr.(tmp.limv).TOT.(['p_', tmp.vstr])(loni,lati)=tmp_corr_p(1,2);
+                        if tmp_corr_p(1,2) <= 0.05
+                            data_all_NPP_rec_corr.(tmp.limv).TOT.(['sig_',tmp.vstr])(loni,lati)=tmp_corr_r(1,2);
                         else
-                            tmp.mask=data_min_freq.([tmp.limv, '_lim_phyto']).(tmp.phyto).(tmp.vstr).*grid.mask_ocn;
+                            data_all_NPP_rec_corr.(tmp.limv).TOT.(['sig_',tmp.vstr])(loni,lati)=NaN;
                         end
-                        tmp.mask(tmp.mask<0.8)=NaN;
-                        tmp.C=tmp.C.*tmp.mask;
-                end
-                tmp.C=tmp.C([end, 1:end],:); 
-            
-                fig_cfg.fig_name='data_NPP_rec_PP';
-                fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
-                    'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
-                %% map setting
-                ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
-                    'fontname','freeserif'); 
-            
-                axis off; 
-                hold on;
-                setm(ax_m,'origin',[0,180],'MapLatLimit',fig_cfg.y_lim);
-                set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
-                text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
-                'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
-                'fontsize',14,'fontname','freeserif','interpreter','none')
-            
-                %% caxis & colorbar
-                caxis(ax_m, fig_cfg.c_lim); 
-                colormap(fig_cfg.c_map);
-                cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
-                set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
-                title(cb,'R','fontsize',12);
-            
-                %% draw on ax_m
-                h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
-                shading flat;
-                geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
-            
-            
-                %% frame and label setting
-                setm(ax_m,'frame','on','FLineWidth',1);
-            
-                label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
-                label_x=mlabel('MLabelParallel','south', 'MLineLocation',20, 'MLabelLocation',60, 'labelrotation','on');
-                mlabel; plabel;
-                label_y=plabel; label_x=mlabel;
-                for lxi=1:length(label_x)
-                    tmp.tmppos=label_x(lxi,1).Position;
-                    tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.55;
-                    label_x(lxi,1).Position=tmp.tmppos;
-                    label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
-                end
-                for lyi=1:length(label_y)
-                    label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
-                end
-            
-                %% save
-                dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, 'corr_PP', filesep, tmp.limv, filesep, tmp.phyto];
-                if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-                cfg.figname=[dirs.figdir, filesep, 'corr_PP_map_', tmp.limv, '_', tmp.phyto, '_', tmp.vstr, '.tif'];
-                print(fig_h, cfg.figname, '-dpng');
-                disp(cfg.figname)
-                RemoveWhiteSpace([], 'file', cfg.figname);
-                close all;
 
-    
-            end
-        end
-    end
-end
-
-for lyear = 0:4
-    tic
-    tmp.lyear_str=num2str(lyear, '%02i');
-    cfg.vstrset={'assm', ['lens2_l',tmp.lyear_str], ['model_l',tmp.lyear_str]};
-    
-    for pind=1:length(phytoset)
-        tmp.phyto=phytoset{pind};
-        matname=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/ocn/photoC_TOT_zint_100m/',tmp.phyto, '_nut_NPP_l', tmp.lyear_str, '.mat'];
-        load(matname);
-        data_all.TOT.(tmp.phyto)=data_NPP_rec;
-        data_all_min_freq.TOT.(tmp.phyto)=data_min_freq;
-% 
-%         %% photoC_phyto
-%         tmp.varname=['photoC_',tmp.phyto,'_zint_100m'];
-%         dirs.hcstmatroot=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
-%         fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
-%                     '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
-%                     '_l', tmp.lyear_str, 'y.mat'];
-%         load(fig_cfg.mat_name, 'data');
-%         data_all_NPP_phyto.(tmp.phyto)=data;
-    end
-    tmp.varname=['photoC_','TOT','_zint_100m'];
-    dirs.hcstmatroot=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
-    fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
-                '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
-                '_l', tmp.lyear_str, 'y.mat'];
-    load(fig_cfg.mat_name, 'data');
-    data_all_NPP_phyto.TOT=data;
-
-    for stri=1:length(cfg.vstrset)
-        tmp.vstr=cfg.vstrset{stri};
-        cfg.limv={'ALL', 'T', 'L', 'V', 'Fe', 'N', 'SiO3', 'P'};
-        for ni=1:length(cfg.limv)
-            tmp.limv=cfg.limv{ni};
-            switch tmp.limv
-                case {'Fe', 'N', 'SiO3', 'P'}
-                    for pind=1:length(phytoset)
-                        tmp.phyto=phytoset{pind};
-                        tmp.mask=data_all_min_freq.TOT.(tmp.phyto).([tmp.limv, '_lim_phyto']).(tmp.phyto).(tmp.vstr).*grid.mask_ocn;
-                        tmp.mask(tmp.mask<0.8)=NaN;
-                        tmp.comb(:,:,:,pind)=data_all.TOT.(tmp.phyto).(tmp.limv).(tmp.phyto).(tmp.vstr).*tmp.mask;
-                    end
-                otherwise
-                    tmp.comb(:,:,:,1)=data_all.TOT.diat.(tmp.limv).diat.(tmp.vstr);
-                    tmp.comb(:,:,:,2)=data_all.TOT.diaz.(tmp.limv).diaz.(tmp.vstr);
-                    tmp.comb(:,:,:,3)=data_all.TOT.sp.(tmp.limv).sp.(tmp.vstr);
-            end
-            
-            data_NPP_rec.(tmp.limv).TOT.(tmp.vstr)= sum(tmp.comb, 4, 'omitnan');
-%             data_NPP_rec.(tmp.limv).TOT.(tmp.vstr) = ...
-%                 data_all.TOT.diat.(tmp.limv).diat.(tmp.vstr)  ...
-%                 + data_all.TOT.diaz.(tmp.limv).diaz.(tmp.vstr) ...
-%                 + data_all.TOT.sp.(tmp.limv).sp.(tmp.vstr);
-
-            data_NPP_rec_corr.(tmp.limv).TOT.(tmp.vstr)=NaN(size(grid.tlong));
-            data_NPP_rec_corr.(tmp.limv).TOT.(['PP_', tmp.vstr])=NaN(size(grid.tlong));
-
-            for loni=1:size(grid.tlong,1)
-                for lati=1:size(grid.tlat,2)
-                    if(isfinite(data_all_NPP_phyto.TOT.photoC_TOT_zint_100m_assm(loni,lati,1)))
-                        %% rec validation (raw <-> reconstructed)
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_all_NPP_phyto.TOT.(['photoC_TOT_zint_100m_',tmp.vstr])(loni,lati,:), ...
-                            data_NPP_rec.(tmp.limv).TOT.(tmp.vstr)(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.(tmp.limv).TOT.(tmp.vstr)(loni,lati)=tmp_corr_r(1,2);
-    
                         %% rec Potential Predictability (assm raw <-> model reconstructed)
                         [tmp_corr_r,tmp_corr_p] = ...
                             corrcoef(data_all_NPP_phyto.TOT.(['photoC_TOT_zint_100m_assm'])(loni,lati,:), ...
-                            data_NPP_rec.(tmp.limv).TOT.(tmp.vstr)(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.(tmp.limv).TOT.(['PP_', tmp.vstr])(loni,lati)=tmp_corr_r(1,2);
+                            data_all_NPP_rec.(tmp.limv).TOT.(tmp.vstr)(loni,lati,:), 'rows','complete');
+                        data_all_NPP_rec_corr.(tmp.limv).TOT.(['PP_', tmp.vstr])(loni,lati)=tmp_corr_r(1,2);                        
+                        data_all_NPP_rec_corr.(tmp.limv).TOT.(['PP_p_', tmp.vstr])(loni,lati)=tmp_corr_p(1,2);
+
+                        if tmp_corr_p(1,2) <= 0.05
+                            data_all_NPP_rec_corr.(tmp.limv).TOT.(['sig_PP_', tmp.vstr])(loni,lati)=tmp_corr_r(1,2);                        
+                        else
+                            data_all_NPP_rec_corr.(tmp.limv).TOT.(['sig_PP_', tmp.vstr])(loni,lati)=NaN;                        
+                        end
+                    else
+                        data_all_NPP_rec_corr.(tmp.limv).TOT.(tmp.vstr)(loni,lati)=NaN;
+                        data_all_NPP_rec_corr.(tmp.limv).TOT.(['p_', tmp.vstr])(loni,lati)=NaN;
+                        data_all_NPP_rec_corr.(tmp.limv).TOT.(['sig_',tmp.vstr])(loni,lati)=NaN;
+                        data_all_NPP_rec_corr.(tmp.limv).TOT.(['PP_', tmp.vstr])(loni,lati)=NaN;
+                        data_all_NPP_rec_corr.(tmp.limv).TOT.(['PP_p_', tmp.vstr])(loni,lati)=NaN;
+                        data_all_NPP_rec_corr.(tmp.limv).TOT.(['sig_PP_', tmp.vstr])(loni,lati)=NaN;                        
+
                     end
                 end
             end
 
             
-            %% correlation between NPP <-> NPP_rec in same dataset map --------------------------------------
-                fig_cfg.c_lim = [-1 1];
-                [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('bwr_10', tmp.dropboxpath);
-            
-                tmp.X=grid.tlong([end, 1:end],:);
-                tmp.Y=grid.tlat([end, 1:end],:);
-
-                %% data set
-                tmp.C=data_NPP_rec_corr.(tmp.limv).TOT.(tmp.vstr) .* grid.mask_ocn;
-
-                tmp.C=tmp.C([end, 1:end],:); 
-            
-                fig_cfg.fig_name='data_NPP_rec_corr_explained';
-                fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
-                    'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
-                %% map setting
-                ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
-                    'fontname','freeserif'); 
-            
-                axis off; 
-                hold on;
-                setm(ax_m,'origin',[0,180],'MapLatLimit',fig_cfg.y_lim);
-                set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
-                text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
-                'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
-                'fontsize',14,'fontname','freeserif','interpreter','none')
-            
-                %% caxis & colorbar
-                caxis(ax_m, fig_cfg.c_lim); 
-                colormap(fig_cfg.c_map);
-                cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
-                set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
-                title(cb,'R','fontsize',12);
-            
-                %% draw on ax_m
-                h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
-                shading flat;
-                geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
-            
-            
-                %% frame and label setting
-                setm(ax_m,'frame','on','FLineWidth',1);
-            
-                label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
-                label_x=mlabel('MLabelParallel','south', 'MLineLocation',20, 'MLabelLocation',60, 'labelrotation','on');
-                mlabel; plabel;
-                label_y=plabel; label_x=mlabel;
-                for lxi=1:length(label_x)
-                    tmp.tmppos=label_x(lxi,1).Position;
-                    tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.55;
-                    label_x(lxi,1).Position=tmp.tmppos;
-                    label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
-                end
-                for lyi=1:length(label_y)
-                    label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
-                end
-            
-                %% save
-                dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, 'corr_explained', filesep, tmp.limv, filesep, 'TOT'];
-                if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-                cfg.figname=[dirs.figdir, filesep, 'corr_exp_map_', tmp.limv, '_', 'TOT', '_', tmp.vstr, '.tif'];
-                print(fig_h, cfg.figname, '-dpng');
-                disp(cfg.figname)
-                RemoveWhiteSpace([], 'file', cfg.figname);
-                close all;
-
-
-        %% Potential Predictability of NPP, but by NPP_rec map --------------------------------------
-                fig_cfg.c_lim = [-1 1];
-                [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('bwr_10', tmp.dropboxpath);
-            
-                tmp.X=grid.tlong([end, 1:end],:);
-                tmp.Y=grid.tlat([end, 1:end],:);
-
-                %% data set
-                tmp.C=data_NPP_rec_corr.(tmp.limv).TOT.(['PP_', tmp.vstr]) .* grid.mask_ocn;
-%                 switch tmp.limv
-%                     case {'Fe', 'N', 'SiO3', 'P'}
-%                         if strcmp(tmp.vstr, ['hcst_int_l',tmp.lyear_str])==1
-%                             tmp.mask=data_min_freq.([tmp.limv, '_lim_phyto']).TOT.(['model_l',tmp.lyear_str]).*grid.mask_ocn;
-%                         else
-%                             tmp.mask=data_min_freq.([tmp.limv, '_lim_phyto']).TOT.(tmp.vstr).*grid.mask_ocn;
-%                         end
-%                         tmp.mask(tmp.mask<0.8)=NaN;
-%                         tmp.C=tmp.C.*tmp.mask;
-%                 end
-                tmp.C=tmp.C([end, 1:end],:); 
-            
-                fig_cfg.fig_name='data_NPP_rec_PP';
-                fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
-                    'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
-                %% map setting
-                ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
-                    'fontname','freeserif'); 
-            
-                axis off; 
-                hold on;
-                setm(ax_m,'origin',[0,180],'MapLatLimit',fig_cfg.y_lim);
-                set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
-                text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
-                'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
-                'fontsize',14,'fontname','freeserif','interpreter','none')
-            
-                %% caxis & colorbar
-                caxis(ax_m, fig_cfg.c_lim); 
-                colormap(fig_cfg.c_map);
-                cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
-                set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
-                title(cb,'R','fontsize',12);
-            
-                %% draw on ax_m
-                h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
-                shading flat;
-                geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
-            
-            
-                %% frame and label setting
-                setm(ax_m,'frame','on','FLineWidth',1);
-            
-                label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
-                label_x=mlabel('MLabelParallel','south', 'MLineLocation',20, 'MLabelLocation',60, 'labelrotation','on');
-                mlabel; plabel;
-                label_y=plabel; label_x=mlabel;
-                for lxi=1:length(label_x)
-                    tmp.tmppos=label_x(lxi,1).Position;
-                    tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.55;
-                    label_x(lxi,1).Position=tmp.tmppos;
-                    label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
-                end
-                for lyi=1:length(label_y)
-                    label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
-                end
-            
-                %% save
-                dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, 'corr_PP', filesep, tmp.limv, filesep, 'TOT'];
-                if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-                cfg.figname=[dirs.figdir, filesep, 'corr_PP_map_', tmp.limv, '_', 'TOT', '_', tmp.vstr, '.tif'];
-                print(fig_h, cfg.figname, '-dpng');
-                disp(cfg.figname)
-                RemoveWhiteSpace([], 'file', cfg.figname);
-                close all;
-
-
-        end
-    end
-    toc;
-end
-
-for lyear = 0:4
-    tic
-    tmp.lyear_str=num2str(lyear, '%02i');
-    cfg.vstrset={'assm', ['lens2_l',tmp.lyear_str], ['model_l',tmp.lyear_str]};
-    
-    for pind=1:length(phytoset)
-        tmp.phyto=phytoset{pind};
-        matname=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/ocn/photoC_TOT_zint_100m/',tmp.phyto, '_nut_NPP_l', tmp.lyear_str, '.mat'];
-        load(matname);
-        data_all.TOT.(tmp.phyto)=data_NPP_rec;
-        data_all_min_freq.TOT.(tmp.phyto)=data_min_freq;
-% 
-%         %% photoC_phyto
-%         tmp.varname=['photoC_',tmp.phyto,'_zint_100m'];
-%         dirs.hcstmatroot=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
-%         fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
-%                     '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
-%                     '_l', tmp.lyear_str, 'y.mat'];
-%         load(fig_cfg.mat_name, 'data');
-%         data_all_NPP_phyto.(tmp.phyto)=data;
-    end
-    tmp.varname=['photoC_','TOT','_zint_100m'];
-    dirs.hcstmatroot=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
-    fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
-                '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
-                '_l', tmp.lyear_str, 'y.mat'];
-    load(fig_cfg.mat_name, 'data');
-    data_all_NPP_phyto.TOT=data;
-
-    for stri=1:length(cfg.vstrset)
-        tmp.vstr=cfg.vstrset{stri};
-        cfg.limv={'ALL', 'T', 'L', 'V', 'Fe', 'N', 'SiO3', 'P'};
-        for ni=1:length(cfg.limv)
-            tmp.limv=cfg.limv{ni};
-            switch tmp.limv
-                case {'Fe', 'N', 'SiO3', 'P'}
-                    for pind=1:length(phytoset)
-                        tmp.phyto=phytoset{pind};
-                        tmp.mask=data_all_min_freq.TOT.(tmp.phyto).([tmp.limv, '_lim_phyto']).(tmp.phyto).(tmp.vstr).*grid.mask_ocn;
-                        tmp.mask(tmp.mask<0.8)=NaN;
-                        tmp.comb(:,:,:,pind)=data_all.TOT.(tmp.phyto).(tmp.limv).(tmp.phyto).(tmp.vstr).*tmp.mask;
-                    end
-                otherwise
-                    tmp.comb(:,:,:,1)=data_all.TOT.diat.(tmp.limv).diat.(tmp.vstr);
-                    tmp.comb(:,:,:,2)=data_all.TOT.diaz.(tmp.limv).diaz.(tmp.vstr);
-                    tmp.comb(:,:,:,3)=data_all.TOT.sp.(tmp.limv).sp.(tmp.vstr);
-            end
-            
-            data_NPP_rec.(tmp.limv).TOT.(tmp.vstr)= sum(tmp.comb, 4, 'omitnan');
-%             data_NPP_rec.(tmp.limv).TOT.(tmp.vstr) = ...
-%                 data_all.TOT.diat.(tmp.limv).diat.(tmp.vstr)  ...
-%                 + data_all.TOT.diaz.(tmp.limv).diaz.(tmp.vstr) ...
-%                 + data_all.TOT.sp.(tmp.limv).sp.(tmp.vstr);
-
-            data_NPP_rec_corr.(tmp.limv).TOT.(tmp.vstr)=NaN(size(grid.tlong));
-            data_NPP_rec_corr.(tmp.limv).TOT.(['PP_', tmp.vstr])=NaN(size(grid.tlong));
-
-            for loni=1:size(grid.tlong,1)
-                for lati=1:size(grid.tlat,2)
-                    if(isfinite(data_all_NPP_phyto.TOT.photoC_TOT_zint_100m_assm(loni,lati,1)))
-                        %% rec validation (raw <-> reconstructed)
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_all_NPP_phyto.TOT.(['photoC_TOT_zint_100m_',tmp.vstr])(loni,lati,:), ...
-                            data_NPP_rec.(tmp.limv).TOT.(tmp.vstr)(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.(tmp.limv).TOT.(tmp.vstr)(loni,lati)=tmp_corr_r(1,2);
-    
-                        %% rec Potential Predictability (assm raw <-> model reconstructed)
-                        [tmp_corr_r,tmp_corr_p] = ...
-                            corrcoef(data_all_NPP_phyto.TOT.(['photoC_TOT_zint_100m_assm'])(loni,lati,:), ...
-                            data_NPP_rec.(tmp.limv).TOT.(tmp.vstr)(loni,lati,:), 'rows','complete');
-                        data_NPP_rec_corr.(tmp.limv).TOT.(['PP_', tmp.vstr])(loni,lati)=tmp_corr_r(1,2);
-                    end
-                end
-            end
-
-            
-            %% correlation between NPP <-> NPP_rec in same dataset map --------------------------------------
-                fig_cfg.c_lim = [-1 1];
-                [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('bwr_10', tmp.dropboxpath);
-            
-                tmp.X=grid.tlong([end, 1:end],:);
-                tmp.Y=grid.tlat([end, 1:end],:);
-
-                %% data set
-                tmp.C=data_NPP_rec_corr.(tmp.limv).TOT.(tmp.vstr) .* grid.mask_ocn;
-
-                tmp.C=tmp.C([end, 1:end],:); 
-            
-                fig_cfg.fig_name='data_NPP_rec_corr_explained';
-                fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
-                    'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
-                %% map setting
-                ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
-                    'fontname','freeserif'); 
-            
-                axis off; 
-                hold on;
-                setm(ax_m,'origin',[0,180],'MapLatLimit',fig_cfg.y_lim);
-                set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
-                text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
-                'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
-                'fontsize',14,'fontname','freeserif','interpreter','none')
-            
-                %% caxis & colorbar
-                caxis(ax_m, fig_cfg.c_lim); 
-                colormap(fig_cfg.c_map);
-                cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
-                set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
-                title(cb,'R','fontsize',12);
-            
-                %% draw on ax_m
-                h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
-                shading flat;
-                geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
-            
-            
-                %% frame and label setting
-                setm(ax_m,'frame','on','FLineWidth',1);
-            
-                label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
-                label_x=mlabel('MLabelParallel','south', 'MLineLocation',20, 'MLabelLocation',60, 'labelrotation','on');
-                mlabel; plabel;
-                label_y=plabel; label_x=mlabel;
-                for lxi=1:length(label_x)
-                    tmp.tmppos=label_x(lxi,1).Position;
-                    tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.55;
-                    label_x(lxi,1).Position=tmp.tmppos;
-                    label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
-                end
-                for lyi=1:length(label_y)
-                    label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
-                end
-            
-                %% save
-                dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, 'corr_explained', filesep, tmp.limv, filesep, 'TOT'];
-                if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-                cfg.figname=[dirs.figdir, filesep, 'corr_exp_map_', tmp.limv, '_', 'TOT', '_', tmp.vstr, '.tif'];
-                print(fig_h, cfg.figname, '-dpng');
-                disp(cfg.figname)
-                RemoveWhiteSpace([], 'file', cfg.figname);
-                close all;
-
-
-        %% Potential Predictability of NPP, but by NPP_rec map --------------------------------------
-                fig_cfg.c_lim = [-1 1];
-                [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('bwr_10', tmp.dropboxpath);
-            
-                tmp.X=grid.tlong([end, 1:end],:);
-                tmp.Y=grid.tlat([end, 1:end],:);
-
-                %% data set
-                tmp.C=data_NPP_rec_corr.(tmp.limv).TOT.(['PP_', tmp.vstr]) .* grid.mask_ocn;
-%                 switch tmp.limv
-%                     case {'Fe', 'N', 'SiO3', 'P'}
-%                         if strcmp(tmp.vstr, ['hcst_int_l',tmp.lyear_str])==1
-%                             tmp.mask=data_min_freq.([tmp.limv, '_lim_phyto']).TOT.(['model_l',tmp.lyear_str]).*grid.mask_ocn;
-%                         else
-%                             tmp.mask=data_min_freq.([tmp.limv, '_lim_phyto']).TOT.(tmp.vstr).*grid.mask_ocn;
-%                         end
-%                         tmp.mask(tmp.mask<0.8)=NaN;
-%                         tmp.C=tmp.C.*tmp.mask;
-%                 end
-                tmp.C=tmp.C([end, 1:end],:); 
-            
-                fig_cfg.fig_name='data_NPP_rec_PP';
-                fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
-                    'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
-                %% map setting
-                ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
-                    'fontname','freeserif'); 
-            
-                axis off; 
-                hold on;
-                setm(ax_m,'origin',[0,180],'MapLatLimit',fig_cfg.y_lim);
-                set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
-                text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
-                'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
-                'fontsize',14,'fontname','freeserif','interpreter','none')
-            
-                %% caxis & colorbar
-                caxis(ax_m, fig_cfg.c_lim); 
-                colormap(fig_cfg.c_map);
-                cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
-                set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
-                title(cb,'R','fontsize',12);
-            
-                %% draw on ax_m
-                h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
-                shading flat;
-                geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
-            
-            
-                %% frame and label setting
-                setm(ax_m,'frame','on','FLineWidth',1);
-            
-                label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
-                label_x=mlabel('MLabelParallel','south', 'MLineLocation',20, 'MLabelLocation',60, 'labelrotation','on');
-                mlabel; plabel;
-                label_y=plabel; label_x=mlabel;
-                for lxi=1:length(label_x)
-                    tmp.tmppos=label_x(lxi,1).Position;
-                    tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.55;
-                    label_x(lxi,1).Position=tmp.tmppos;
-                    label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
-                end
-                for lyi=1:length(label_y)
-                    label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
-                end
-            
-                %% save
-                dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, 'corr_PP', filesep, tmp.limv, filesep, 'TOT'];
-                if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-                cfg.figname=[dirs.figdir, filesep, 'corr_PP_map_', tmp.limv, '_', 'TOT', '_', tmp.vstr, '.tif'];
-                print(fig_h, cfg.figname, '-dpng');
-                disp(cfg.figname)
-                RemoveWhiteSpace([], 'file', cfg.figname);
-                close all;
+% % % % %             %% correlation between NPP <-> NPP_rec in same dataset map --------------------------------------
+% % % % %                 fig_cfg.c_lim = [-1 1];
+% % % % %                 [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('bwr_10', tmp.dropboxpath);
+% % % % %             
+% % % % %                 tmp.X=grid.tlong([end, 1:end],:);
+% % % % %                 tmp.Y=grid.tlat([end, 1:end],:);
+% % % % % 
+% % % % %                 %% data set
+% % % % %                 tmp.C=data_NPP_rec_corr.(tmp.limv).TOT.(tmp.vstr) .* grid.mask_ocn;
+% % % % % 
+% % % % %                 tmp.C=tmp.C([end, 1:end],:); 
+% % % % %             
+% % % % %                 fig_cfg.fig_name='data_NPP_rec_corr_explained';
+% % % % %                 fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
+% % % % %                     'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
+% % % % %                 %% map setting
+% % % % %                 ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
+% % % % %                     'fontname','freeserif'); 
+% % % % %             
+% % % % %                 axis off; 
+% % % % %                 hold on;
+% % % % %                 setm(ax_m,'origin',[0,180],'MapLatLimit',fig_cfg.y_lim);
+% % % % %                 set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
+% % % % %                 text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
+% % % % %                 'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
+% % % % %                 'fontsize',14,'fontname','freeserif','interpreter','none')
+% % % % %             
+% % % % %                 %% caxis & colorbar
+% % % % %                 caxis(ax_m, fig_cfg.c_lim); 
+% % % % %                 colormap(fig_cfg.c_map);
+% % % % %                 cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
+% % % % %                 set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
+% % % % %                 title(cb,'R','fontsize',12);
+% % % % %             
+% % % % %                 %% draw on ax_m
+% % % % %                 h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
+% % % % %                 shading flat;
+% % % % %                 geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
+% % % % %             
+% % % % %             
+% % % % %                 %% frame and label setting
+% % % % %                 setm(ax_m,'frame','on','FLineWidth',1);
+% % % % %             
+% % % % %                 label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
+% % % % %                 label_x=mlabel('MLabelParallel','south', 'MLineLocation',20, 'MLabelLocation',60, 'labelrotation','on');
+% % % % %                 mlabel; plabel;
+% % % % %                 label_y=plabel; label_x=mlabel;
+% % % % %                 for lxi=1:length(label_x)
+% % % % %                     tmp.tmppos=label_x(lxi,1).Position;
+% % % % %                     tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.55;
+% % % % %                     label_x(lxi,1).Position=tmp.tmppos;
+% % % % %                     label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
+% % % % %                 end
+% % % % %                 for lyi=1:length(label_y)
+% % % % %                     label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
+% % % % %                 end
+% % % % %             
+% % % % %                 %% save
+% % % % %                 dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, 'corr_explained', filesep, tmp.limv, filesep, 'TOT'];
+% % % % %                 if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
+% % % % %                 cfg.figname=[dirs.figdir, filesep, 'corr_exp_map_', tmp.limv, '_', 'TOT', '_', tmp.vstr, '.tif'];
+% % % % %                 print(fig_h, cfg.figname, '-dpng');
+% % % % %                 disp(cfg.figname)
+% % % % %                 RemoveWhiteSpace([], 'file', cfg.figname);
+% % % % %                 close all;
+% % % % % 
+% % % % % 
+% % % % %         %% Potential Predictability of NPP, but by NPP_rec map --------------------------------------
+% % % % %                 fig_cfg.c_lim = [-1 1];
+% % % % %                 [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('bwr_10', tmp.dropboxpath);
+% % % % %             
+% % % % %                 tmp.X=grid.tlong([end, 1:end],:);
+% % % % %                 tmp.Y=grid.tlat([end, 1:end],:);
+% % % % % 
+% % % % %                 %% data set
+% % % % %                 tmp.C=data_NPP_rec_corr.(tmp.limv).TOT.(['PP_', tmp.vstr]) .* grid.mask_ocn;
+% % % % % %                 switch tmp.limv
+% % % % % %                     case {'Fe', 'N', 'SiO3', 'P'}
+% % % % % %                         if strcmp(tmp.vstr, ['hcst_int_l',tmp.lyear_str])==1
+% % % % % %                             tmp.mask=data_min_freq.([tmp.limv, '_lim_phyto']).TOT.(['model_l',tmp.lyear_str]).*grid.mask_ocn;
+% % % % % %                         else
+% % % % % %                             tmp.mask=data_min_freq.([tmp.limv, '_lim_phyto']).TOT.(tmp.vstr).*grid.mask_ocn;
+% % % % % %                         end
+% % % % % %                         tmp.mask(tmp.mask<0.8)=NaN;
+% % % % % %                         tmp.C=tmp.C.*tmp.mask;
+% % % % % %                 end
+% % % % %                 tmp.C=tmp.C([end, 1:end],:); 
+% % % % %             
+% % % % %                 fig_cfg.fig_name='data_NPP_rec_PP';
+% % % % %                 fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
+% % % % %                     'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
+% % % % %                 %% map setting
+% % % % %                 ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
+% % % % %                     'fontname','freeserif'); 
+% % % % %             
+% % % % %                 axis off; 
+% % % % %                 hold on;
+% % % % %                 setm(ax_m,'origin',[0,180],'MapLatLimit',fig_cfg.y_lim);
+% % % % %                 set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
+% % % % %                 text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
+% % % % %                 'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
+% % % % %                 'fontsize',14,'fontname','freeserif','interpreter','none')
+% % % % %             
+% % % % %                 %% caxis & colorbar
+% % % % %                 caxis(ax_m, fig_cfg.c_lim); 
+% % % % %                 colormap(fig_cfg.c_map);
+% % % % %                 cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
+% % % % %                 set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
+% % % % %                 title(cb,'R','fontsize',12);
+% % % % %             
+% % % % %                 %% draw on ax_m
+% % % % %                 h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
+% % % % %                 shading flat;
+% % % % %                 geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
+% % % % %             
+% % % % %             
+% % % % %                 %% frame and label setting
+% % % % %                 setm(ax_m,'frame','on','FLineWidth',1);
+% % % % %             
+% % % % %                 label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
+% % % % %                 label_x=mlabel('MLabelParallel','south', 'MLineLocation',20, 'MLabelLocation',60, 'labelrotation','on');
+% % % % %                 mlabel; plabel;
+% % % % %                 label_y=plabel; label_x=mlabel;
+% % % % %                 for lxi=1:length(label_x)
+% % % % %                     tmp.tmppos=label_x(lxi,1).Position;
+% % % % %                     tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.55;
+% % % % %                     label_x(lxi,1).Position=tmp.tmppos;
+% % % % %                     label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
+% % % % %                 end
+% % % % %                 for lyi=1:length(label_y)
+% % % % %                     label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
+% % % % %                 end
+% % % % %             
+% % % % %                 %% save
+% % % % %                 dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, 'corr_PP', filesep, tmp.limv, filesep, 'TOT'];
+% % % % %                 if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
+% % % % %                 cfg.figname=[dirs.figdir, filesep, 'corr_PP_map_', tmp.limv, '_', 'TOT', '_', tmp.vstr, '.tif'];
+% % % % %                 print(fig_h, cfg.figname, '-dpng');
+% % % % %                 disp(cfg.figname)
+% % % % %                 RemoveWhiteSpace([], 'file', cfg.figname);
+% % % % %                 close all;
 
 
         end

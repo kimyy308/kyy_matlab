@@ -8,10 +8,8 @@ tmp.hostname=tmp.hostname(1:end-1);
 switch tmp.hostname
     case 'Yong-Yubs-iMac-Pro.local'
         tmp.dropboxpath = '/Volumes/kyy_raid/kimyy/Dropbox';
-        tmp.kimyypath = '/Volumes/kyy_raid/kimyy';
     case 'Yong-Yubui-MacBookPro.local'
         tmp.dropboxpath = '/Users/kimyy/Dropbox';
-        tmp.kimyypath = '/Users/kimyy';
     case {'da1', 'da2', 'da3', 'da4'}
         tmp.dropboxpath = '/mnt/lustre/proj/kimyy/Dropbox';
 end
@@ -102,13 +100,11 @@ cfg.vars = {'TEMP', 'UVEL', 'VVEL', 'WVEL', 'SSH', 'PAR_avg', 'NO3', 'PO4', 'SiO
 %     'diaz_light_lim_surf', 'diaz_P_lim_surf', 'dustToSed', 'LWUP_F', 'O2_ZMIN_DEPTH', 'diat_N_lim_surf', ...
 %     'sp_Fe_lim_surf', 'sp_light_lim_surf', 'sp_N_lim_surf', 'sp_P_lim_surf'  };
 
-% cfg.vars = {'sumChl'};
-% cfg.vars = {'TEMPCLINE'};
-% cfg.vars = {'UVEL55', 'VVEL55'};
-% cfg.vars = {'TEMP'};
-cfg.vars = {'AODDUST'};
+cfg.vars = {'HBLT', 'sumChl', 'TEMP', 'NO3', 'PAR_avg', 'Fe'};
+cfg.vars = {'TEMP145'};
+cfg.vars = {'photoC_TOT_zint_100m'};
+cfg.vars = {'TS'};
 
-% cfg.vlayer=1; % surface, vertical slice
 cfg.vlayer=1:10; % 10layer. don't put more than 15
 cfg.vlayer_1st=min(cfg.vlayer);
 cfg.vlayer_cnt=max(cfg.vlayer)-cfg.vlayer_1st+1;
@@ -133,8 +129,8 @@ tic;
 % dirs.lens2root=['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/LENS2/archive_analysis/', cfg.comp, '/', cfg.var];
 % dirs.assmroot=['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/ASSM_EXP/archive_analysis/', cfg.comp, '/', cfg.var];
 
-dirs.hcstmatroot=[tmp.kimyypath, '/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', cfg.var];
-dirs.figroot=[tmp.kimyypath, '/Figure/CESM2/ESP/HCST_EXP/archive/', cfg.comp,'/', cfg.var];
+dirs.hcstmatroot=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', cfg.var];
+dirs.figroot=['/Users/kimyy/Figure/CESM2/ESP/HCST_EXP/archive/', cfg.comp,'/', cfg.var];
 
 
 
@@ -159,8 +155,8 @@ cfg.casename_m = ['ens_all'];
 % f09_g17.hcst.en4.2_ba-10p1_i2021.pop.h.once.nc
 
 % [tmp.error_status, tmp.value]=system(['ls ', dirs.datadir, '/*once*']);  % b.e21.BHISTsmbb.f09_g17.assm.oras4_ba-10p1.pop.h.once.nc
-tmp.gridname = [tmp.kimyypath, '/Model/CESM2/ESP/HCST_EXP/archive_transfer/', cfg.comp, '/grid.nc'];
-tmp.maskname = [tmp.kimyypath, '/Model/CESM2/ESP/HCST_EXP/archive_transfer/ocn/RECCAP2_region_masks_all_v20210412_POP2_grid.nc'];
+tmp.gridname = ['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/archive_transfer/', cfg.comp, '/grid.nc'];
+tmp.maskname = '/Users/kimyy/Model/CESM2/ESP/HCST_EXP/archive_transfer/ocn/RECCAP2_region_masks_all_v20210412_POP2_grid.nc';
 
 % grid.region_mask=ncread(tmp.gridname, 'REGION_MASK'); 
 % grid.ocean_mask=NaN(size(grid.region_mask));
@@ -207,8 +203,7 @@ sta_lonlat = {[345, 75], [300, 85], [260, 85], [220, 80], [180, 80], ...
                 [137,25], [137,30], [137, 34],[297, 24], [297, 30], ...
                  [297, 35], [300, 40], [60,-30], [90, 15], [140, 15], ...
                  [200, 20], [200,50], [250, 20], [160, -10], [180,-10],...
-                 [210,-25], [300, 25], [330, -10], [360, -10], [330, -30], ...
-                 [90, 10]};
+                 [210,-25], [300, 25], [330, -10], [360, -10], [330, -30]};
 
 % sta_lonlat = { [238,32], [160, 47], [137, 3], [137, 5], [137,10], ...
 %                 [137, 15], [137, 20], [137,25], [137,30], [137, 34], ...
@@ -217,7 +212,10 @@ sta_lonlat = {[345, 75], [300, 85], [260, 85], [220, 80], [180, 80], ...
 %                 [250, 20], [160, -10], [180,-10], [210,-25], [300, 25], ...
 %                 [330, -10], [360, -10], [330, -30]};
 % sta_lonlat = { [300, 40]};
-% sta_lonlat = { [90, 10]};
+% sta_lonlat = { [190, 0]};
+% sta_lonlat = { [200, -40]};
+sta_lonlat = { [260, -20]};
+sta_lonlat = { [80, 60]};
 
 % CalCOFI : 238, 32
 % K2 : 160, 47`
@@ -235,7 +233,6 @@ for lyear=0:cfg.proj_year-1
             '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
             '_l', tmp.lyear_str, 'y.mat'];
     load(fig_cfg.mat_name, 'data')
-    disp(fig_cfg.mat_name)
 
 
     for stai=1:length(sta_lonlat)
