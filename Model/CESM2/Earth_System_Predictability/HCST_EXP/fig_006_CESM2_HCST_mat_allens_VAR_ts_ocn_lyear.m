@@ -104,6 +104,11 @@ cfg.vars = {'HBLT', 'sumChl', 'TEMP', 'NO3', 'PAR_avg', 'Fe'};
 cfg.vars = {'TEMP145'};
 cfg.vars = {'photoC_TOT_zint_100m'};
 cfg.vars = {'TS'};
+cfg.vars = { 'GPP', 'NPP', 'TOTVEGC', 'TWS', 'COL_FIRE_CLOSS', 'COL_FIRE_NLOSS', 'FIRE', ...
+            'FPSN', 'SOILICE', 'SOILLIQ', 'TOTSOILICE', 'TOTSOILLIQ', ...
+            'RAIN', 'QSOIL', 'QSOIL_ICE', 'QRUNOFF', 'QOVER', 'QRGWL', ...
+            'QH2OSFC', 'NEP', 'DSTFLXT' };
+
 
 cfg.vlayer=1:10; % 10layer. don't put more than 15
 cfg.vlayer_1st=min(cfg.vlayer);

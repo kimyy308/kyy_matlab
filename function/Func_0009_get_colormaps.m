@@ -63,6 +63,23 @@ switch colormapname
         colormap = bwrmap(51:100,:);
     case('bwr_10')
         colormap = customcolormap_preset('red-white-blue_10');
+    case('bwr_10_botgray')
+        colormap2 = customcolormap_preset('red-white-blue_10');
+        for i=1:10
+            for j=1:10
+                colormap((i-1)*10+j,:)=colormap2(i,:);
+            end
+        end
+        colormap(1,:)=[0.6 0.6 0.6];
+    case('wr_10_topgray')
+        colormap2 = customcolormap_preset('red-white-blue_20');
+        colormap2=colormap2(11:20,:);
+        for i=1:10
+            for j=1:10
+                colormap((i-1)*10+j,:)=colormap2(i,:);
+            end
+        end
+        colormap(end,:)=[0.6 0.6 0.6];
     case('wr_10')
         colormap = customcolormap_preset('red-white-blue_20');
         colormap=colormap(11:20,:);

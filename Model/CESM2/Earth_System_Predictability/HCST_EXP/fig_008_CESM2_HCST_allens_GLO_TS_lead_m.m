@@ -62,6 +62,7 @@ for iyear=min(cfg.iyears):max(cfg.iyears)
     tmp.iyear_str=num2str(iyear, '%04i');
     cfg.casename_m=['ens_all'];
     cfg.casename=[cfg.casename_m, '_i', tmp.iyear_str];
+    cfg.casename_f=['ensmean_all', '_i', tmp.iyear_str];
     dirs.datadir= [dirs.hcstroot, filesep, cfg.casename_m, filesep, cfg.casename, tmp.fs, cfg.region];
 
     tmp.modelvar = [cfg.region, 'm_', tmp.varname, '_model_',  'i', tmp.iyear_str];
@@ -73,9 +74,14 @@ for iyear=min(cfg.iyears):max(cfg.iyears)
         tmp.fy_str=num2str(tmp.fy, '%04i');
         for mon=1:12
             tmp.mon_str=num2str(mon, '%02i');
-            cfg.datafilename=[dirs.datadir, filesep, ...
-                'M_', cfg.region, '_', tmp.varname, '_', cfg.gnm, '.hcst.', cfg.casename, '.cam.h0.', tmp.fy_str, '-', tmp.mon_str, '.nc'];
-            data.(tmp.modelvar)((fy-iyear)*12+mon)=ncread(cfg.datafilename, tmp.varname);
+            if iyear<1970
+                cfg.datafilename=[dirs.datadir, filesep, ...
+                'M_', cfg.region, '_', tmp.varname, '_', cfg.gnm, '.hcst.', cfg.casename_f, '.cam.h0.', tmp.fy_str, '-', tmp.mon_str, '.nc'];
+            else
+                cfg.datafilename=[dirs.datadir, filesep, ...
+                    'M_', cfg.region, '_', tmp.varname, '_', cfg.gnm, '.hcst.', cfg.casename, '.cam.h0.', tmp.fy_str, '-', tmp.mon_str, '.nc'];
+            end
+                        data.(tmp.modelvar)((fy-iyear)*12+mon)=ncread(cfg.datafilename, tmp.varname);
             data.time_tmp((fy-iyear)*12+mon)=ncread(cfg.datafilename, 'time');
             cfg.obsfnm = [dirs.obsroot, tmp.fs, cfg.region, tmp.fs, 'M_', cfg.region, '_', 'HadCRUT5_reg_cesm2.',tmp.fy_str,tmp.mon_str, '.nc'];
             if exist(cfg.obsfnm)==0

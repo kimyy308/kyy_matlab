@@ -15,6 +15,9 @@ tmp.fs=filesep;
 addpath(genpath([tmp.dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', tmp.fs, 'function']));
             [tmp.dropboxpath, tmp.error_status] = Func_0008_set_dropbox_path(computer);
 
+cfg.ly_s = 2;
+cfg.ly_e = 5;
+
 %% model configuration
 % cfg.var='TS'; %SST PRECT PSL TS SSH sumChl
 % cfg.vars = {'SSH', 'sumChl'};
@@ -45,9 +48,12 @@ cfg.vars = {'sp_P_lim_Cweight_avg_100m'};
 cfg.vars = { 'HBLT' };
 % cfg.vars = { 'diatC', 'Fe', 'spC', 'NO3', 'PO4', 'SiO3', 'TEMP', 'UVEL', 'VVEL', 'WVEL', 'PAR_avg', 'BSF', 'diazC' };
 cfg.vars={ 'SST', 'PRECT', 'TS',  ...
-    'GPP', 'NPP', 'TOTVEGC', 'TWS', 'PSL', 'SST', 'aice', 'sithick', ...
+    'GPP', 'NPP', 'TOTVEGC', 'TWS', 'PSL', 'SST'}; 
+    
+    cfg.vars = {'aice', 'sithick', ...
     'photoC_TOT_zint_100m', 'sumChl', ...
-    'diatC', 'Fe', 'spC', 'NO3', 'PO4', 'SiO3', 'TEMP', 'UVEL', 'VVEL', 'WVEL', 'PAR_avg', 'BSF', 'diazC', ...
+    'diatC', 'Fe', 'spC', 'NO3', 'PO4', 'SiO3', 'TEMP', 'UVEL', 'VVEL', 'WVEL', ...
+    'PAR_avg', 'BSF', 'diazC', 'zooC', 'PD', ...
     'SSH', 'HBLT', 'diatChl', 'spChl', 'diazChl', ...
     'diat_agg_zint_100m', 'diat_Fe_lim_Cweight_avg_100m', ...
     'diat_Fe_lim_surf', 'diat_light_lim_Cweight_avg_100m', 'diat_light_lim_surf', ...
@@ -63,21 +69,19 @@ cfg.vars={ 'SST', 'PRECT', 'TS',  ...
     'sp_agg_zint_100m', 'sp_Fe_lim_Cweight_avg_100m', 'sp_Fe_lim_surf', ...
     'sp_light_lim_Cweight_avg_100m', 'sp_light_lim_surf', 'sp_loss_zint_100m', ...
     'sp_N_lim_Cweight_avg_100m', 'sp_N_lim_surf', 'sp_P_lim_Cweight_avg_100m', ...
-    'sp_P_lim_surf', 'zoo_loss_zint_100m', 'IRON_FLUX', ...
-    'PSL', ...
-    'UVEL145', 'VVEL145', 'NO3145', 'PO4145', 'Fe145', 'TEMP145', ...
-    'TEMPCLINE', 'NO3CLINE'};
-cfg.vars = { 'RAIN', 'QSOIL', 'QSOIL_ICE', 'QRUNOFF', 'QOVER', 'QRGWL', 'QH2OSFC', 'NEP', 'DSTFLXT'} %TOTVEGC, FIRE
-%cfg.vars = { 'COL_FIRE_CLOSS', 'COL_FIRE_NLOSS', 'FIRE', 'FPSN', 'SOILICE', 'SOILLIQ', 'TOTSOILICE', 'TOTSOILLIQ', ...
-%             'RAIN', 'QSOIL', 'QSOIL_ICE', 'QRUNOFF', 'QOVER', 'QRGWL', 'QH2OSFC', 'NEP', 'DSTFLXT'} %TOTVEGC, FIRE
-cfg.vars = { 'TEMP', 'PD'} %TOTVEGC, FIRE
-cfg.vars = { 'TEMP145'} %TOTVEGC, FIRE
-cfg.vars = { 'PD145'} %TOTVEGC, FIRE
-cfg.vars = { 'zooC'} %TOTVEGC, FIRE
-
+    'sp_P_lim_surf', 'zoo_loss_zint_100m', 'IRON_FLUX',  'TEMPCLINE', 'NO3CLINE', ...
+    'UVEL145', 'VVEL145', 'NO3145', 'PO4145', 'Fe145', 'TEMP145'};
+% cfg.vars = { 'RAIN', 'QSOIL', 'QSOIL_ICE', 'QRUNOFF', 'QOVER', 'QRGWL', 'QH2OSFC', 'NEP', 'DSTFLXT'} %TOTVEGC, FIRE
+cfg.vars = { 'GPP', 'NPP', 'TOTVEGC', 'TWS', 'COL_FIRE_CLOSS', 'COL_FIRE_NLOSS', 'FIRE', ...
+            'FPSN', 'SOILICE', 'SOILLIQ', 'TOTSOILICE', 'TOTSOILLIQ', ...
+            'RAIN', 'QSOIL', 'QSOIL_ICE', 'QRUNOFF', 'QOVER', 'QRGWL', ...
+            'QH2OSFC', 'NEP', 'DSTFLXT'}; %TOTVEGC, FIRE
+% cfg.vars = { 'TEMP', 'PD'} %TOTVEGC, FIRE
+% cfg.vars = { 'TEMP145'} %TOTVEGC, FIRE
+% cfg.vars = { 'PD145'} %TOTVEGC, FIRE
 cfg.vars = {'SST', 'PRECT', 'TS', 'PSL', 'AEROD_v', 'FSDS', 'FSNS', ...
     'SFdst_a1', 'SFdst_a2', 'SFdst_a3', 'U10', 'SFCO2', 'CLDTOT'};
-
+% cfg.vars = { 'zooC'}; %TOTVEGC, FIRE
 
 % % % cfg.vars={'photoC_TOT_zint_100m',  'photoC_diat_zint_100m', 'photoC_diaz_zint_100m', 'photoC_sp_zint_100m', ...
 % % %      'diat_Fe_lim_Cweight_avg_100m', ...
@@ -107,12 +111,12 @@ cfg.vars = {'SST', 'PRECT', 'TS', 'PSL', 'AEROD_v', 'FSDS', 'FSNS', ...
 % % % cfg.vars = {'TS'};
 % % % cfg.vars = {'GPP', 'NPP', 'TOTVEGC', 'TWS', 'aice', 'sithick'};
 % % % cfg.vars = {'PRECT'};
-cfg.vars = {'TS', 'SST', 'RAIN', 'PSL'};
+
 
 % tmp.dimids= [1, 2, 4];
-cfg.vlayer=1; % surf, vertical slice 
+% cfg.vlayer=1; % surf, vertical slice 
 
-% cfg.vlayer=1:10; % 10layer. don't put more than 15
+cfg.vlayer=1:10; % 10layer. don't put more than 15
 
 cfg.vlayer_1st=min(cfg.vlayer);
 cfg.vlayer_cnt=max(cfg.vlayer)-cfg.vlayer_1st+1;
@@ -134,11 +138,13 @@ for vari=1:length(cfg.vars)
     % dirs.lens2root=['/mnt/lustre/proj/earth.system.predictability/LENS2/archive_analysis/', cfg.comp, '/', cfg.var];
     % dirs.assmroot=['/mnt/lustre/proj/earth.system.predictability/ASSM_EXP/archive_analysis/', cfg.comp, '/', cfg.var];
     
-    dirs.hcstroot=['/mnt/lustre/proj/earth.system.predictability/HCST_EXP/archive_yearly_transfer/', cfg.comp, '/', cfg.var];
-    dirs.obsroot=['/mnt/lustre/proj/kimyy/Observation/', cfg.obs_name, '/yearly_reg_', cfg.obs_fname_module(2:4)];
+    dirs.hcstroot=['/mnt/lustre/proj/earth.system.predictability/HCST_EXP/archive_transfer/', cfg.comp, '/', cfg.var];
+    dirs.obsroot=['/mnt/lustre/proj/kimyy/Observation/', cfg.obs_name, '/monthly_reg_', cfg.obs_fname_module(2:4)];
     dirs.matroot=['/mnt/lustre/proj/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp,'/', cfg.var];
-    dirs.lens2root=['/mnt/lustre/proj/earth.system.predictability/LENS2/archive_yearly_transfer/', cfg.comp, '/', cfg.var];
-    dirs.assmroot=['/mnt/lustre/proj/earth.system.predictability/ASSM_EXP/archive_yearly_transfer/', cfg.comp, '/', cfg.var];    
+    dirs.lens2root=['/mnt/lustre/proj/earth.system.predictability/LENS2/archive_transfer/', cfg.comp, '/', cfg.var];
+    dirs.assmroot=['/mnt/lustre/proj/earth.system.predictability/ASSM_EXP/archive_transfer/', cfg.comp, '/', cfg.var];
+    
+    
     
     cfg.iyears=cfg.obs_iyears;
     cfg.gnm='f09_g17';
@@ -182,7 +188,7 @@ for vari=1:length(cfg.vars)
         case {'atm', 'lnd'}
             grid.lon=ncread(tmp.gridname, 'lon');
             grid.lat=ncread(tmp.gridname, 'lat');
-            [grid.tlat, grid.tlong]=meshgrid(grid.lat, grid.lon);
+            [grid.tlat grid.tlong]=meshgrid(grid.lat, grid.lon);
     end
     
     grid.nlon=size(grid.tlong,1);
@@ -195,21 +201,22 @@ for vari=1:length(cfg.vars)
         
     %% read & plot data
     tmp.varname=cfg.var;
-     if length(tmp.varname)>=3
-         tmp.varn3=tmp.varname(end-2:end);
-         switch tmp.varn3
-             case '145'
-                 tmp.fvarname=tmp.varname(1:end-3);
-             otherwise
-                tmp.fvarname=cfg.var;
-         end
-     else
-         tmp.fvarname=cfg.var;
+    if length(tmp.varname)>=3
+     tmp.varn3=tmp.varname(end-2:end);
+     switch tmp.varn3
+         case '145'
+             tmp.fvarname=tmp.varname(1:end-3);
+         otherwise
+            tmp.fvarname=cfg.var;
      end
+    else
+        tmp.fvarname=cfg.var;
+    end
 
     clear tmp.ydata tmp.ydata_lens2 tmp.ydata_obs tmp.ydata_assm
 
-    for lyear=0:cfg.proj_year-1
+    for lyear_f=cfg.ly_s:cfg.ly_e
+        lyear=lyear_f-1;
         tmp.lyear_str=num2str(lyear, '%02i');
         cfg.casename_m=['all'];
     
@@ -223,23 +230,23 @@ for vari=1:length(cfg.vars)
         data.([tmp.varname, '_model', '_l', tmp.lyear_str])=NaN(grid.nlon, grid.nlat, cfg.len_t_y);
         data.([tmp.varname, '_lens2', '_l', tmp.lyear_str])=NaN(grid.nlon, grid.nlat, cfg.len_t_y);
         data.([tmp.varname, '_bias', '_l', tmp.lyear_str])=NaN(grid.nlon, grid.nlat, cfg.len_t_y);
-        data.([tmp.varname, '_obs'])=NaN(grid.nlon, grid.nlat, cfg.len_t_y);
-        data.([tmp.varname, '_assm'])=NaN(grid.nlon, grid.nlat, cfg.len_t_y);
+        data.([tmp.varname, '_obs', '_l', tmp.lyear_str])=NaN(grid.nlon, grid.nlat, cfg.len_t_y);
+        data.([tmp.varname, '_assm', '_l', tmp.lyear_str])=NaN(grid.nlon, grid.nlat, cfg.len_t_y);
         data.([tmp.varname, '_AR1', '_l', tmp.lyear_str])=NaN(grid.nlon, grid.nlat, cfg.len_t_y);  %% AR1 initialization
     
     %     data.([tmp.varname, '_assm'])=NaN(grid.nlon, grid.nlat, cfg.len_t_y);
         
-    %% read variables
+        %% read variables
         for iyear=min(cfg.iyears):max(cfg.iyears)
             tmp.iyear_str=num2str(iyear, '%04i');
             cfg.casename=['ensmean_', cfg.casename_m, '_i', tmp.iyear_str];
             tmp.fy=iyear+lyear;
             tmp.fy_str=num2str(tmp.fy, '%04i');
-    %% monthly filename
+            %% monthly filename
             for mon=1:12
                 tmp.mon_str=num2str(mon, '%02i');
     
-    %% HCST mean
+                %% HCST
                 cfg.mod_fnm=[dirs.datadir, tmp.fs, 'ens_all_i',tmp.iyear_str, tmp.fs, ...
                 tmp.varname, '_', cfg.gnm, '.hcst.', cfg.casename, cfg.obs_fname_module, tmp.fy_str, '-', tmp.mon_str, '.nc'];
                 try
@@ -254,12 +261,13 @@ for vari=1:length(cfg.vars)
                      system(['csh ', '/mnt/lustre/proj/kimyy/Scripts/Model/CESM2/HCST/', 'hcst_ens_fix_matlab.csh ', ...
                         tmp.varname, ' ', tmp.iyear_str, ' ', tmp.fy_str, ' ', tmp.mon_str, ' ', cfg.comp]);
                      ncid=netcdf.open(cfg.mod_fnm, 'NOWRITE');
+
                 end
                 tmpvarid=netcdf.inqVarID(ncid,tmp.fvarname);
                 [tmp.fvarname,tmp.xtype,tmp.dimids,tmp.natts]= netcdf.inqVar(ncid,tmpvarid);
                 if length(tmp.dimids)>3
                      tmp.dd=squeeze(netcdf.getVar(ncid,tmpvarid, [0 0 cfg.vlayer_1st-1 0], [grid.nlon grid.nlat cfg.vlayer_cnt 1]));
-    %                      tmp.dd=tmp.dd.*grid.mask_ocn;
+%                      tmp.dd=tmp.dd.*grid.mask_ocn;
                      tmp.dd(abs(tmp.dd)>1e30)=NaN;
                      ddd=mean(tmp.dd,3,'omitnan'); % depth mean
                      tmp.ydata(1:grid.nlon,1:grid.nlat,mon) = ddd; %depth averaged value
@@ -272,7 +280,7 @@ for vari=1:length(cfg.vars)
                 
                 tmp.ydd=tmp.ydata(1:grid.nlon,1:grid.nlat,mon);
                 tmp.stdydd=max(abs(tmp.ydd(isfinite(tmp.ydd))));
-    
+
                 if tmp.stdydd > 10e5 % if extracted files were crashed
                       system(['csh ', '/mnt/lustre/proj/kimyy/Scripts/Model/CESM2/HCST/', 'hcst_extract_fix_matlab_var.csh ', ...
                         tmp.varname, ' ', num2str(length(tmp.dimids)-1), ' ', tmp.iyear_str, ' ', tmp.fy_str, ' ', tmp.mon_str, ' ', cfg.comp]);
@@ -294,55 +302,9 @@ for vari=1:length(cfg.vars)
                     end
                     netcdf.close(ncid);
                 end
-    
+
     %             tmp.ydata(:,:,mon)=ncread(cfg.mod_fnm, tmp.varname);
                 
-
-    %% HCST ensstd (spread)
-                cfg.casename_std=['ensstd_', cfg.casename_m, '_i', tmp.iyear_str];
-
-                cfg.mod_fnm=[dirs.datadir, tmp.fs, 'ens_all_i',tmp.iyear_str, tmp.fs, ...
-                    tmp.varname, '_', cfg.gnm, '.hcst.', cfg.casename_std, cfg.obs_fname_module, tmp.fy_str, '-', tmp.mon_str, '.nc'];
-                tmpvarid=netcdf.inqVarID(ncid,tmp.fvarname);
-                [tmp.fvarname,tmp.xtype,tmp.dimids,tmp.natts]= netcdf.inqVar(ncid,tmpvarid);
-                if length(tmp.dimids)>3
-                     tmp.dd=squeeze(netcdf.getVar(ncid,tmpvarid, [0 0 cfg.vlayer_1st-1 0], [grid.nlon grid.nlat cfg.vlayer_cnt 1]));
-%                      tmp.dd=tmp.dd.*grid.mask_ocn;
-                     tmp.dd(abs(tmp.dd)>1e30)=NaN;
-                     ddd=mean(tmp.dd,3,'omitnan'); % depth mean
-                     tmp.ydata(1:grid.nlon,1:grid.nlat,mon) = ddd; %depth averaged value
-                else
-                    tmp.dd=netcdf.getVar(ncid,tmpvarid);
-                    tmp.dd(abs(tmp.dd)>1e30)=NaN;
-                    tmp.ydata(1:grid.nlon,1:grid.nlat,mon) = tmp.dd;
-                end
-                netcdf.close(ncid);
-                
-                tmp.ydd=tmp.ydata(1:grid.nlon,1:grid.nlat,mon);
-                tmp.stdydd=max(abs(tmp.ydd(isfinite(tmp.ydd))));
-
-                if tmp.stdydd > 10e5 % if extracted files were crashed
-                      system(['csh ', '/mnt/lustre/proj/kimyy/Scripts/Model/CESM2/HCST/', 'hcst_extract_fix_matlab_var.csh ', ...
-                        tmp.varname, ' ', num2str(length(tmp.dimids)-1), ' ', tmp.iyear_str, ' ', tmp.fy_str, ' ', tmp.mon_str, ' ', cfg.comp]);
-                     system(['csh ', '/mnt/lustre/proj/kimyy/Scripts/Model/CESM2/HCST/', 'hcst_ens_fix_matlab.csh ', ...
-                        tmp.varname, ' ', tmp.iyear_str, ' ', tmp.fy_str, ' ', tmp.mon_str, ' ', cfg.comp]);
-                     ncid=netcdf.open(cfg.mod_fnm, 'NOWRITE');
-                    tmpvarid=netcdf.inqVarID(ncid,tmp.fvarname);
-                    [tmp.fvarname,tmp.xtype,tmp.dimids,tmp.natts]= netcdf.inqVar(ncid,tmpvarid);
-                    if length(tmp.dimids)>3
-                         tmp.dd=squeeze(netcdf.getVar(ncid,tmpvarid, [0 0 cfg.vlayer_1st-1 0], [grid.nlon grid.nlat cfg.vlayer_cnt 1]));
-    %                      tmp.dd=tmp.dd.*grid.mask_ocn;
-                         tmp.dd(abs(tmp.dd)>1e30)=NaN;
-                         ddd=mean(tmp.dd,3,'omitnan'); % depth mean
-                         tmp.ydata(1:grid.nlon,1:grid.nlat,mon) = ddd; %depth averaged value
-                    else
-                        tmp.dd=  netcdf.getVar(ncid,tmpvarid);
-                        tmp.dd(abs(tmp.dd)>1e30)=NaN;
-                        tmp.ydata(1:grid.nlon,1:grid.nlat,mon) = tmp.dd;
-                    end
-                    netcdf.close(ncid);
-                end
-
                 %% LENS2
                 if tmp.fy <= cfg.max_iy
                     cfg.lens2_fnm=[dirs.lens2dir, tmp.fs, ...
@@ -468,9 +430,9 @@ for vari=1:length(cfg.vars)
                 data.([tmp.varname, '_assm_obs_masked', '_l', tmp.lyear_str])(1:grid.nlon,1:grid.nlat,iyear-min(cfg.iyears)+1)= tmp.ymean_assm_obs_masked;
                 data.([tmp.varname, '_lens2_obs_masked', '_l', tmp.lyear_str])(1:grid.nlon,1:grid.nlat,iyear-min(cfg.iyears)+1)= tmp.ymean_lens2_obs_masked;
             end
-            data.([tmp.varname, '_obs'])(1:grid.nlon,1:grid.nlat,iyear-min(cfg.iyears)+1)= tmp.ymean_obs;
+            data.([tmp.varname, '_obs', '_l', tmp.lyear_str])(1:grid.nlon,1:grid.nlat,iyear-min(cfg.iyears)+1)= tmp.ymean_obs;
             data.([tmp.varname, '_lens2', '_l', tmp.lyear_str])(1:grid.nlon,1:grid.nlat,iyear-min(cfg.iyears)+1)= tmp.ymean_lens2;
-            data.([tmp.varname, '_assm'])(1:grid.nlon,1:grid.nlat,iyear-min(cfg.iyears)+1)= tmp.ymean_assm;
+            data.([tmp.varname, '_assm', '_l', tmp.lyear_str])(1:grid.nlon,1:grid.nlat,iyear-min(cfg.iyears)+1)= tmp.ymean_assm;
     
     %         %% AR1 (assign)
     %         tmp.ymean_AR1= mean(tmp.ydata_AR1, 3);
@@ -478,211 +440,253 @@ for vari=1:length(cfg.vars)
     %         tmp.ymean= mean(ncread(cfg.datafilename, ['assm_', tmp.varname], [1, 1, 1], [inf, inf, 12]), 3);
     %         data.([tmp.varname, '_assm'])(:,:,iyear-min(cfg.iyears)+1)= tmp.ymean;
         end
-        
-        %% get correlation coefficient
-        for loni=1:grid.nlon
-            for lati=1:grid.nlat
-                 if (isnan(data.([tmp.varname, '_assm'])(loni,lati,1))~=1 & nansum(data.([tmp.varname, '_model_l', tmp.lyear_str])(loni,lati,:))~=0)
-
-    
-                 %% corr assm
-                     tmp.data_assm = data.([tmp.varname, '_assm'])(loni,lati,:);
-                     tmp.data = squeeze(data.([tmp.varname, '_model', '_l', tmp.lyear_str])(loni,lati,:));
-                     [tmp.corr, tmp.corr_p]=corrcoef(tmp.data(isfinite(tmp.data_assm)), tmp.data_assm(isfinite(tmp.data_assm)));
-                     tmp.data_det = Func_0028_detrend_linear_1d(squeeze(data.([tmp.varname, '_model', '_l', tmp.lyear_str])(loni,lati,:)), 'omitnan');                         
-                     tmp.data_assm_det = Func_0028_detrend_linear_1d(squeeze(data.([tmp.varname, '_assm'])(loni,lati,:)), 'omitnan');
-                     [tmp.corr_det, tmp.corr_det_p]=corrcoef(tmp.data_det(isfinite(tmp.data_assm_det)), tmp.data_assm_det(isfinite(tmp.data_assm_det)));
-
-                     data.([tmp.varname, '_corr_assm', '_l', tmp.lyear_str])(loni,lati)=tmp.corr(1,2);
-                     data.([tmp.varname, '_corr_assm_p', '_l', tmp.lyear_str])(loni,lati)=tmp.corr_p(1,2);
-                     data.([tmp.varname, '_corr_assm_det', '_l', tmp.lyear_str])(loni,lati)=tmp.corr_det(1,2);
-                     data.([tmp.varname, '_corr_assm_det_p', '_l', tmp.lyear_str])(loni,lati)=tmp.corr_det_p(1,2);
-
-                 %% hcst-lens2 ~ assm
-                     tmp.data_hcst_lens2 = squeeze(data.([tmp.varname, '_model', '_l', tmp.lyear_str])(loni,lati,:)) - ...
-                                    squeeze(data.([tmp.varname, '_lens2', '_l', tmp.lyear_str])(loni,lati,:));
-                     [tmp.corr_int, tmp.corr_int_p]=corrcoef(tmp.data_hcst_lens2(isfinite(tmp.data_assm)), tmp.data_assm(isfinite(tmp.data_assm)));
-    
-                     
-                     data.([tmp.varname, '_corr_assm_int', '_l', tmp.lyear_str])(loni,lati)=tmp.corr_int(1,2);
-                     data.([tmp.varname, '_corr_assm_int_p', '_l', tmp.lyear_str])(loni,lati)=tmp.corr_int_p(1,2);
-    
-                 %% corr lens2 ~ assm
-                     tmp.lens2 = squeeze(data.([tmp.varname, '_lens2', '_l', tmp.lyear_str])(loni,lati,:));
-                     [tmp.corr, tmp.corr_p]=corrcoef(tmp.lens2(isfinite(tmp.data_assm)), tmp.data_assm(isfinite(tmp.data_assm)));
-                     tmp.lens2_det = Func_0028_detrend_linear_1d(squeeze(data.([tmp.varname, '_lens2', '_l', tmp.lyear_str])(loni,lati,:)), 'omitnan');                         
-                     [tmp.corr_det, tmp.corr_det_p]=corrcoef(tmp.lens2_det(isfinite(tmp.data_assm_det)), tmp.data_assm_det(isfinite(tmp.data_assm_det)));
-
-                     data.([tmp.varname, '_corr_assm_lens2', '_l', tmp.lyear_str])(loni,lati)=tmp.corr(1,2);
-                     data.([tmp.varname, '_corr_assm_lens2_p', '_l', tmp.lyear_str])(loni,lati)=tmp.corr_p(1,2);
-                     data.([tmp.varname, '_corr_assm_lens2_det', '_l', tmp.lyear_str])(loni,lati)=tmp.corr_det(1,2);
-                     data.([tmp.varname, '_corr_assm_lens2_det_p', '_l', tmp.lyear_str])(loni,lati)=tmp.corr_det_p(1,2);
-    
-                
-                 %% corr obs ~ hcst
-                     if isfield(tmp, 'ydata_mod_obs_masked')
-                        tmp.data = squeeze(data.([tmp.varname, '_mod_obs_masked', '_l', tmp.lyear_str])(loni,lati,:));
-                     else
-                        tmp.data = squeeze(data.([tmp.varname, '_model', '_l', tmp.lyear_str])(loni,lati,:));
-                     end
-                     tmp.data_obs = squeeze(data.([tmp.varname, '_obs'])(loni,lati,:));
-                     [tmp.corr, tmp.corr_p]=corrcoef(tmp.data(isfinite(tmp.data_obs)), tmp.data_obs(isfinite(tmp.data_obs)));
-                     if isfield(tmp, 'ydata_mod_obs_masked')
-                        tmp.data_det = Func_0028_detrend_linear_1d(squeeze(data.([tmp.varname, '_mod_obs_masked', '_l', tmp.lyear_str])(loni,lati,:)), 'omitnan');                                              
-                     else
-                        tmp.data_det = Func_0028_detrend_linear_1d(squeeze(data.([tmp.varname, '_model', '_l', tmp.lyear_str])(loni,lati,:)), 'omitnan');                         
-                     end
-                     tmp.data_obs_det = Func_0028_detrend_linear_1d(data.([tmp.varname, '_obs'])(loni,lati,:));
-                     [tmp.corr_det, tmp.corr_det_p]=corrcoef(tmp.data_det(isfinite(tmp.data_obs_det)), tmp.data_obs_det(isfinite(tmp.data_obs_det)));
-    %                  [tmp.corr, tmp.corr_p]=corrcoef(squeeze(data.([tmp.varname, '_model', '_l', tmp.lyear_str])(loni,lati,1+lyear:end-cfg.proj_year+1)), ...
-    %                      squeeze(data.([tmp.varname, '_obs'])(loni,lati,1+lyear:end)));
-
-                     if sum(squeeze(isfinite(tmp.data_obs)))<10
-                        tmp.corr=NaN(2,2);
-                        tmp.corr_p=NaN(2,2);
-                        tmp.corr_det=NaN(2,2);
-                        tmp.corr_det_p=NaN(2,2);
-                     end
-
-                     data.([tmp.varname, '_corr_obs', '_l', tmp.lyear_str])(loni,lati)=tmp.corr(1,2);
-                     data.([tmp.varname, '_corr_obs_p', '_l', tmp.lyear_str])(loni,lati)=tmp.corr_p(1,2);
-                     data.([tmp.varname, '_corr_obs_det', '_l', tmp.lyear_str])(loni,lati)=tmp.corr_det(1,2);
-                     data.([tmp.varname, '_corr_obs_det_p', '_l', tmp.lyear_str])(loni,lati)=tmp.corr_det_p(1,2);
-    
-
-                 %% corr obs ~ assm
-                    if isfield(tmp, 'ydata_mod_obs_masked')
-                        tmp.data_assm = squeeze(data.([tmp.varname, '_assm_obs_masked', '_l', tmp.lyear_str])(loni,lati,:));
-                     else
-                        tmp.data_assm = squeeze(data.([tmp.varname, '_assm'])(loni,lati,:));
-                     end
-                     [tmp.corr, tmp.corr_p]=corrcoef(tmp.data_assm(isfinite(tmp.data_obs)), tmp.data_obs(isfinite(tmp.data_obs)));
-                     
-                     if sum(squeeze(isfinite(tmp.data_obs)))<10
-                         tmp.data_assm_det = NaN(size(tmp.data));
-                     else
-                         tmp.data_assm_det = Func_0028_detrend_linear_1d(tmp.data_assm(isfinite(tmp.data_obs)));
-                     end
-                     [tmp.corr_det, tmp.corr_det_p]=corrcoef(tmp.data_assm_det(isfinite(tmp.data_obs_det)), tmp.data_obs_det(isfinite(tmp.data_obs_det)));
-    %                  [tmp.corr, tmp.corr_p]=corrcoef(squeeze(data.([tmp.varname, '_model', '_', tmp.season])(loni,lati,1+lyear:end-cfg.proj_year+1)), ...
-    %                      squeeze(data.([tmp.varname, '_obs'])(loni,lati,1+lyear:end)));
-
-                     if sum(squeeze(isfinite(tmp.data_obs)))<10
-                        tmp.corr=NaN(2,2);
-                        tmp.corr_p=NaN(2,2);
-                        tmp.corr_det=NaN(2,2);
-                        tmp.corr_det_p=NaN(2,2);
-                     end
-
-                     data.([tmp.varname, '_corr_obs_assm', '_l', tmp.lyear_str])(loni,lati)=tmp.corr(1,2);
-                     data.([tmp.varname, '_corr_obs_assm_p', '_l', tmp.lyear_str])(loni,lati)=tmp.corr_p(1,2);
-                     data.([tmp.varname, '_corr_obs_assm_det', '_l', tmp.lyear_str])(loni,lati)=tmp.corr_det(1,2);
-                     data.([tmp.varname, '_corr_obs_assm_det_p', '_l', tmp.lyear_str])(loni,lati)=tmp.corr_det_p(1,2);
-
-                 %% corr obs ~ lens2
-                    if isfield(tmp, 'ydata_mod_obs_masked')
-                        tmp.data_lens2 = squeeze(data.([tmp.varname, '_lens2_obs_masked', '_l', tmp.lyear_str])(loni,lati,:));
-                     else
-                        tmp.data_lens2 = squeeze(data.([tmp.varname, '_lens2', '_l', tmp.lyear_str])(loni,lati,:));
-                     end
-                     [tmp.corr, tmp.corr_p]=corrcoef(tmp.data_lens2(isfinite(tmp.data_obs)), tmp.data_obs(isfinite(tmp.data_obs)));
-
-                     if sum(squeeze(isfinite(tmp.data_obs)))<10
-                        tmp.corr=NaN(2,2);
-                        tmp.corr_p=NaN(2,2);
-                     end
-
-                     data.([tmp.varname, '_corr_obs_lens2', '_l', tmp.lyear_str])(loni,lati)=tmp.corr(1,2);
-                     data.([tmp.varname, '_corr_obs_lens2_p', '_l', tmp.lyear_str])(loni,lati)=tmp.corr_p(1,2);
-
-
-                 %% corr obs ~ hcst-lens2
-                    tmp.data_hcst_lens2 = squeeze(tmp.data) - squeeze(tmp.data_lens2);
-                     [tmp.corr, tmp.corr_p]=corrcoef(tmp.data_hcst_lens2(isfinite(tmp.data_obs)), tmp.data_obs(isfinite(tmp.data_obs)));
-                     if sum(squeeze(isfinite(tmp.data_obs)))<10
-                        tmp.corr=NaN(2,2);
-                        tmp.corr_p=NaN(2,2);
-                     end
-                     data.([tmp.varname, '_corr_obs_int', '_l', tmp.lyear_str])(loni,lati)=tmp.corr(1,2);
-                     data.([tmp.varname, '_corr_obs_int_p', '_l', tmp.lyear_str])(loni,lati)=tmp.corr_p(1,2);
-
-
-    %                 %% AR1 (corr)
-    %                  tmp.data_AR1 = squeeze(data.([tmp.varname, '_AR1', '_l', tmp.lyear_str])(loni,lati,1+lyear:end-cfg.proj_year+1));
-    %                  [tmp.corr_AR1, tmp.corr_AR1_p]=corrcoef(tmp.data_AR1, tmp.data_obs);
-    %                  if (isnan(tmp.corr_AR1(1,2)))
-    %                     tmp.corr_AR1(1,2)=0;
-    %                  end
-    %                  data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str])(loni,lati)=tmp.corr_AR1(1,2);
-    %                  data.([tmp.varname, '_corr_AR1_p', '_l', tmp.lyear_str])(loni,lati)=tmp.corr_AR1_p(1,2);
-    %                  
-    %                  tmp.data_AR1_det = Func_0028_detrend_linear_1d(data.([tmp.varname, '_AR1', '_l', tmp.lyear_str])(loni,lati,1+lyear:end-cfg.proj_year+1));
-    %                  [tmp.corr_AR1_det, tmp.corr_AR1_det_p]=corrcoef(tmp.data_AR1_det, tmp.data_obs_det);
-    %                  if (isnan(tmp.corr_AR1_det(1,2)))
-    %                     tmp.corr_AR1_det(1,2)=0;
-    %                  end
-    %                  data.([tmp.varname, '_corr_AR1_det', '_l', tmp.lyear_str])(loni,lati)=tmp.corr_AR1_det(1,2);
-    %                  data.([tmp.varname, '_corr_AR1_det_p', '_l', tmp.lyear_str])(loni,lati)=tmp.corr_AR1_det_p(1,2);
-    
-                 else
-                     data.([tmp.varname, '_corr_obs', '_l', tmp.lyear_str])(loni,lati)=NaN;
-                     data.([tmp.varname, '_corr_obs_p', '_l', tmp.lyear_str])(loni,lati)=NaN;
-                     data.([tmp.varname, '_corr_obs_det', '_l', tmp.lyear_str])(loni,lati)=NaN;
-                     data.([tmp.varname, '_corr_obs_det_p', '_l', tmp.lyear_str])(loni,lati)=NaN;
-    %                  data.([tmp.varname, '_corr_assm', '_l', tmp.lyear_str])(loni,lati)=NaN;
-    %                  data.([tmp.varname, '_corr_assm_p', '_l', tmp.lyear_str])(loni,lati)=NaN;
-    
-    %                 %% AR1 (NaN)
-    %                  data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str])(loni,lati)=NaN;
-    %                  data.([tmp.varname, '_corr_AR1_p', '_l', tmp.lyear_str])(loni,lati)=NaN;
-    %                  data.([tmp.varname, '_corr_AR1_det', '_l', tmp.lyear_str])(loni,lati)=NaN;
-    %                  data.([tmp.varname, '_corr_AR1_det_p', '_l', tmp.lyear_str])(loni,lati)=NaN;
-    
-                    %% ASSM (NaN)
-                     data.([tmp.varname, '_corr_assm', '_l', tmp.lyear_str])(loni,lati)=NaN;
-                     data.([tmp.varname, '_corr_assm_p', '_l', tmp.lyear_str])(loni,lati)=NaN;
-                     data.([tmp.varname, '_corr_assm_det', '_l', tmp.lyear_str])(loni,lati)=NaN;
-                     data.([tmp.varname, '_corr_assm_det_p', '_l', tmp.lyear_str])(loni,lati)=NaN;
-                     data.([tmp.varname, '_corr_assm_int', '_l', tmp.lyear_str])(loni,lati)=NaN;
-                     data.([tmp.varname, '_corr_assm_int_p', '_l', tmp.lyear_str])(loni,lati)=NaN;
-    
-                    %% LENS2 (NaN)
-                     data.([tmp.varname, '_corr_assm_lens2', '_l', tmp.lyear_str])(loni,lati)=NaN;
-                     data.([tmp.varname, '_corr_assm_lens2_p', '_l', tmp.lyear_str])(loni,lati)=NaN;
-                     data.([tmp.varname, '_corr_assm_lens2_det', '_l', tmp.lyear_str])(loni,lati)=NaN;
-                     data.([tmp.varname, '_corr_assm_lens2_det_p', '_l', tmp.lyear_str])(loni,lati)=NaN;
-                     %% obs ~ ASSM (NaN)
-                     data.([tmp.varname, '_corr_obs_assm', '_l', tmp.lyear_str])(loni,lati)=NaN;
-                     data.([tmp.varname, '_corr_obs_assm_p', '_l', tmp.lyear_str])(loni,lati)=NaN;
-                     data.([tmp.varname, '_corr_obs_assm_det', '_l', tmp.lyear_str])(loni,lati)=NaN;
-                     data.([tmp.varname, '_corr_obs_assm_det_p', '_l', tmp.lyear_str])(loni,lati)=NaN;
-                     
-                     %% obs ~ LENS2 (NaN)
-                     data.([tmp.varname, '_corr_obs_lens2', '_l', tmp.lyear_str])(loni,lati)=NaN;
-                     data.([tmp.varname, '_corr_obs_lens2_p', '_l', tmp.lyear_str])(loni,lati)=NaN;
-
-                     %% obs ~ HCST-LENS2 (NaN)
-                     data.([tmp.varname, '_corr_obs_int', '_l', tmp.lyear_str])(loni,lati)=NaN;
-                     data.([tmp.varname, '_corr_obs_int_p', '_l', tmp.lyear_str])(loni,lati)=NaN;
-                 end
-            end
-        end
-        disp('abc')
-        if isfield(tmp,'ydata_mod_obs_masked')
-            tmp=rmfield(tmp, 'ydata_mod_obs_masked');
-        end
-
-
-        
-        if ~exist(dirs.matroot,'dir'), mkdir(dirs.matroot); end
-        fig_cfg.mat_name=[dirs.matroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
-            '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
-            '_l', tmp.lyear_str, 'y.mat'];
-        save(fig_cfg.mat_name, 'data')
-        clear data
-        fprintf('%7.1f sec\n', toc(lap_time) );
-
     end
+    
+    data_all.([tmp.varname, '_model'])=zeros(size(data.([tmp.varname, '_assm', '_l', tmp.lyear_str])));
+    data_all.([tmp.varname, '_obs'])=zeros(size(data.([tmp.varname, '_assm', '_l', tmp.lyear_str])));
+    data_all.([tmp.varname, '_assm'])=zeros(size(data.([tmp.varname, '_assm', '_l', tmp.lyear_str])));
+    data_all.([tmp.varname, '_lens2'])=zeros(size(data.([tmp.varname, '_assm', '_l', tmp.lyear_str])));
+    if isfield(tmp, 'ydata_mod_obs_masked')
+        data_all.([tmp.varname, '_mod_obs_masked'])=data_all.([tmp.varname, '_model']);
+        data_all.([tmp.varname, '_assm_obs_masked'])=data_all.([tmp.varname, '_model']);
+        data_all.([tmp.varname, '_lens2_obs_masked'])=data_all.([tmp.varname, '_model']); 
+    end
+
+     for lyear_f=cfg.ly_s:cfg.ly_e
+        lyear=lyear_f-1;
+        tmp.lyear_str=num2str(lyear, '%02i');
+        data_all.([tmp.varname, '_model'])=data_all.([tmp.varname, '_model'])+data.([tmp.varname, '_model', '_l', tmp.lyear_str]);
+        data_all.([tmp.varname, '_obs'])=data_all.([tmp.varname, '_obs'])+data.([tmp.varname, '_obs', '_l', tmp.lyear_str]);
+        data_all.([tmp.varname, '_assm'])=data_all.([tmp.varname, '_assm'])+data.([tmp.varname, '_assm', '_l', tmp.lyear_str]);
+        data_all.([tmp.varname, '_lens2'])=data_all.([tmp.varname, '_lens2'])+data.([tmp.varname, '_lens2', '_l', tmp.lyear_str]);
+        if isfield(tmp, 'ydata_mod_obs_masked')
+            data_all.([tmp.varname, '_mod_obs_masked'])=data_all.([tmp.varname, '_mod_obs_masked']) + ...
+                data.([tmp.varname, '_mod_obs_masked', '_l', tmp.lyear_str]);
+            data_all.([tmp.varname, '_assm_obs_masked'])=data_all.([tmp.varname, '_assm_obs_masked']) + ...
+                data.([tmp.varname, '_assm_obs_masked', '_l', tmp.lyear_str]);
+            data_all.([tmp.varname, '_lens2_obs_masked'])=data_all.([tmp.varname, '_lens2_obs_masked']) + ...
+                data.([tmp.varname, '_lens2_obs_masked', '_l', tmp.lyear_str]);
+        end
+     end
+    tmp.ly_size=length(cfg.ly_s:cfg.ly_e);
+    data_all.([tmp.varname, '_model'])=data_all.([tmp.varname, '_model'])/tmp.ly_size;
+    data_all.([tmp.varname, '_obs'])=data_all.([tmp.varname, '_obs'])/tmp.ly_size;
+    data_all.([tmp.varname, '_assm'])=data_all.([tmp.varname, '_assm'])/tmp.ly_size;
+    data_all.([tmp.varname, '_lens2'])=data_all.([tmp.varname, '_lens2'])/tmp.ly_size;
+
+    if isfield(tmp, 'ydata_mod_obs_masked')
+        data_all.([tmp.varname, '_mod_obs_masked']) = data_all.([tmp.varname, '_mod_obs_masked']) / tmp.ly_size;
+        data_all.([tmp.varname, '_assm_obs_masked']) = data_all.([tmp.varname, '_assm_obs_masked']) / tmp.ly_size;
+        data_all.([tmp.varname, '_lens2_obs_masked']) = data_all.([tmp.varname, '_lens2_obs_masked']) / tmp.ly_size;        
+    end
+
+    %% get correlation coefficient
+    for loni=1:grid.nlon
+        for lati=1:grid.nlat
+             if (isnan(data_all.([tmp.varname, '_assm'])(loni,lati,1))~=1 ...
+                     & nansum(data_all.([tmp.varname, '_model'])(loni,lati,:))~=0)
+
+             %% corr assm
+                 tmp.data_assm = data_all.([tmp.varname, '_assm'])(loni,lati,:);
+                 tmp.data = squeeze(data_all.([tmp.varname, '_model'])(loni,lati,:));
+                 [tmp.corr, tmp.corr_p]=corrcoef(tmp.data(isfinite(tmp.data_assm)), tmp.data_assm(isfinite(tmp.data_assm)));
+                 tmp.data_det = Func_0028_detrend_linear_1d(squeeze(data_all.([tmp.varname, '_model'])(loni,lati,:)), 'omitnan');                         
+                 tmp.data_assm_det = Func_0028_detrend_linear_1d(squeeze(data_all.([tmp.varname, '_assm'])(loni,lati,:)), 'omitnan');
+                 [tmp.corr_det, tmp.corr_det_p]=corrcoef(tmp.data_det(isfinite(tmp.data_assm_det)), tmp.data_assm_det(isfinite(tmp.data_assm_det)));
+
+                 data_all.([tmp.varname, '_corr_assm'])(loni,lati)=tmp.corr(1,2);
+                 data_all.([tmp.varname, '_corr_assm_p'])(loni,lati)=tmp.corr_p(1,2);
+                 data_all.([tmp.varname, '_corr_assm_det'])(loni,lati)=tmp.corr_det(1,2);
+                 data_all.([tmp.varname, '_corr_assm_det_p'])(loni,lati)=tmp.corr_det_p(1,2);
+
+             %% hcst-lens2 ~ assm
+                 tmp.data_hcst_lens2 = squeeze(data_all.([tmp.varname, '_model'])(loni,lati,:)) - ...
+                                squeeze(data_all.([tmp.varname, '_lens2'])(loni,lati,:));
+                 [tmp.corr_int, tmp.corr_int_p]=corrcoef(tmp.data_hcst_lens2(isfinite(tmp.data_assm)), tmp.data_assm(isfinite(tmp.data_assm)));
+
+                 
+                 data_all.([tmp.varname, '_corr_assm_int'])(loni,lati)=tmp.corr_int(1,2);
+                 data_all.([tmp.varname, '_corr_assm_int_p'])(loni,lati)=tmp.corr_int_p(1,2);
+
+             %% corr lens2 ~ assm
+                 tmp.lens2 = squeeze(data_all.([tmp.varname, '_lens2'])(loni,lati,:));
+                 [tmp.corr, tmp.corr_p]=corrcoef(tmp.lens2(isfinite(tmp.data_assm)), tmp.data_assm(isfinite(tmp.data_assm)));
+                 tmp.lens2_det = Func_0028_detrend_linear_1d(squeeze(data_all.([tmp.varname, '_lens2'])(loni,lati,:)), 'omitnan');                         
+                 [tmp.corr_det, tmp.corr_det_p]=corrcoef(tmp.lens2_det(isfinite(tmp.data_assm_det)), tmp.data_assm_det(isfinite(tmp.data_assm_det)));
+
+                 data_all.([tmp.varname, '_corr_assm_lens2'])(loni,lati)=tmp.corr(1,2);
+                 data_all.([tmp.varname, '_corr_assm_lens2_p'])(loni,lati)=tmp.corr_p(1,2);
+                 data_all.([tmp.varname, '_corr_assm_lens2_det'])(loni,lati)=tmp.corr_det(1,2);
+                 data_all.([tmp.varname, '_corr_assm_lens2_det_p'])(loni,lati)=tmp.corr_det_p(1,2);
+
+            
+             %% corr obs ~ hcst
+                 if isfield(tmp, 'ydata_mod_obs_masked')
+                    tmp.data = squeeze(data_all.([tmp.varname, '_mod_obs_masked'])(loni,lati,:));
+                 else
+                    tmp.data = squeeze(data_all.([tmp.varname, '_model'])(loni,lati,:));
+                 end
+                 tmp.data_obs = squeeze(data_all.([tmp.varname, '_obs'])(loni,lati,:));
+                 [tmp.corr, tmp.corr_p]=corrcoef(tmp.data(isfinite(tmp.data_obs)), tmp.data_obs(isfinite(tmp.data_obs)));
+                 if isfield(tmp, 'ydata_mod_obs_masked')
+                    tmp.data_det = Func_0028_detrend_linear_1d(squeeze(data_all.([tmp.varname, '_mod_obs_masked'])(loni,lati,:)), 'omitnan');                                              
+                 else
+                    tmp.data_det = Func_0028_detrend_linear_1d(squeeze(data_all.([tmp.varname, '_model'])(loni,lati,:)), 'omitnan');                         
+                 end
+                 tmp.data_obs_det = Func_0028_detrend_linear_1d(data_all.([tmp.varname, '_obs'])(loni,lati,:));
+                 [tmp.corr_det, tmp.corr_det_p]=corrcoef(tmp.data_det(isfinite(tmp.data_obs_det)), tmp.data_obs_det(isfinite(tmp.data_obs_det)));
+%                  [tmp.corr, tmp.corr_p]=corrcoef(squeeze(data_all.([tmp.varname, '_model'])(loni,lati,1+lyear:end-cfg.proj_year+1)), ...
+%                      squeeze(data_all.([tmp.varname, '_obs'])(loni,lati,1+lyear:end)));
+
+                 if sum(squeeze(isfinite(tmp.data_obs)))<10
+                    tmp.corr=NaN(2,2);
+                    tmp.corr_p=NaN(2,2);
+                    tmp.corr_det=NaN(2,2);
+                    tmp.corr_det_p=NaN(2,2);
+                 end
+
+                 data_all.([tmp.varname, '_corr_obs'])(loni,lati)=tmp.corr(1,2);
+                 data_all.([tmp.varname, '_corr_obs_p'])(loni,lati)=tmp.corr_p(1,2);
+                 data_all.([tmp.varname, '_corr_obs_det'])(loni,lati)=tmp.corr_det(1,2);
+                 data_all.([tmp.varname, '_corr_obs_det_p'])(loni,lati)=tmp.corr_det_p(1,2);
+
+
+             %% corr obs ~ assm
+                if isfield(tmp, 'ydata_mod_obs_masked')
+                    tmp.data_assm = squeeze(data_all.([tmp.varname, '_assm_obs_masked'])(loni,lati,:));
+                 else
+                    tmp.data_assm = squeeze(data_all.([tmp.varname, '_assm'])(loni,lati,:));
+                 end
+                 [tmp.corr, tmp.corr_p]=corrcoef(tmp.data_assm(isfinite(tmp.data_obs)), tmp.data_obs(isfinite(tmp.data_obs)));
+                 
+                 if sum(squeeze(isfinite(tmp.data_obs)))<10
+                     tmp.data_assm_det = NaN(size(tmp.data));
+                 else
+                     tmp.data_assm_det = Func_0028_detrend_linear_1d(tmp.data_assm(isfinite(tmp.data_obs)));
+                 end
+                 [tmp.corr_det, tmp.corr_det_p]=corrcoef(tmp.data_assm_det(isfinite(tmp.data_obs_det)), tmp.data_obs_det(isfinite(tmp.data_obs_det)));
+%                  [tmp.corr, tmp.corr_p]=corrcoef(squeeze(data_all.([tmp.varname, '_model', '_', tmp.season])(loni,lati,1+lyear:end-cfg.proj_year+1)), ...
+%                      squeeze(data_all.([tmp.varname, '_obs'])(loni,lati,1+lyear:end)));
+
+                 if sum(squeeze(isfinite(tmp.data_obs)))<10
+                    tmp.corr=NaN(2,2);
+                    tmp.corr_p=NaN(2,2);
+                    tmp.corr_det=NaN(2,2);
+                    tmp.corr_det_p=NaN(2,2);
+                 end
+
+                 data_all.([tmp.varname, '_corr_obs_assm'])(loni,lati)=tmp.corr(1,2);
+                 data_all.([tmp.varname, '_corr_obs_assm_p'])(loni,lati)=tmp.corr_p(1,2);
+                 data_all.([tmp.varname, '_corr_obs_assm_det'])(loni,lati)=tmp.corr_det(1,2);
+                 data_all.([tmp.varname, '_corr_obs_assm_det_p'])(loni,lati)=tmp.corr_det_p(1,2);
+
+             %% corr obs ~ lens2
+                if isfield(tmp, 'ydata_mod_obs_masked')
+                    tmp.data_lens2 = squeeze(data_all.([tmp.varname, '_lens2_obs_masked'])(loni,lati,:));
+                 else
+                    tmp.data_lens2 = squeeze(data_all.([tmp.varname, '_lens2'])(loni,lati,:));
+                 end
+                 [tmp.corr, tmp.corr_p]=corrcoef(tmp.data_lens2(isfinite(tmp.data_obs)), tmp.data_obs(isfinite(tmp.data_obs)));
+
+                 if sum(squeeze(isfinite(tmp.data_obs)))<10
+                    tmp.corr=NaN(2,2);
+                    tmp.corr_p=NaN(2,2);
+                 end
+
+                 data_all.([tmp.varname, '_corr_obs_lens2'])(loni,lati)=tmp.corr(1,2);
+                 data_all.([tmp.varname, '_corr_obs_lens2_p'])(loni,lati)=tmp.corr_p(1,2);
+
+
+             %% corr obs ~ hcst-lens2
+                tmp.data_hcst_lens2 = squeeze(tmp.data) - squeeze(tmp.data_lens2);
+                 [tmp.corr, tmp.corr_p]=corrcoef(tmp.data_hcst_lens2(isfinite(tmp.data_obs)), tmp.data_obs(isfinite(tmp.data_obs)));
+                 if sum(squeeze(isfinite(tmp.data_obs)))<10
+                    tmp.corr=NaN(2,2);
+                    tmp.corr_p=NaN(2,2);
+                 end
+                 data_all.([tmp.varname, '_corr_obs_int'])(loni,lati)=tmp.corr(1,2);
+                 data_all.([tmp.varname, '_corr_obs_int_p'])(loni,lati)=tmp.corr_p(1,2);
+
+
+%                 %% AR1 (corr)
+%                  tmp.data_AR1 = squeeze(data_all.([tmp.varname, '_AR1'])(loni,lati,1+lyear:end-cfg.proj_year+1));
+%                  [tmp.corr_AR1, tmp.corr_AR1_p]=corrcoef(tmp.data_AR1, tmp.data_obs);
+%                  if (isnan(tmp.corr_AR1(1,2)))
+%                     tmp.corr_AR1(1,2)=0;
+%                  end
+%                  data_all.([tmp.varname, '_corr_AR1'])(loni,lati)=tmp.corr_AR1(1,2);
+%                  data_all.([tmp.varname, '_corr_AR1_p'])(loni,lati)=tmp.corr_AR1_p(1,2);
+%                  
+%                  tmp.data_AR1_det = Func_0028_detrend_linear_1d(data_all.([tmp.varname, '_AR1'])(loni,lati,1+lyear:end-cfg.proj_year+1));
+%                  [tmp.corr_AR1_det, tmp.corr_AR1_det_p]=corrcoef(tmp.data_AR1_det, tmp.data_obs_det);
+%                  if (isnan(tmp.corr_AR1_det(1,2)))
+%                     tmp.corr_AR1_det(1,2)=0;
+%                  end
+%                  data_all.([tmp.varname, '_corr_AR1_det'])(loni,lati)=tmp.corr_AR1_det(1,2);
+%                  data_all.([tmp.varname, '_corr_AR1_det_p'])(loni,lati)=tmp.corr_AR1_det_p(1,2);
+
+             else
+                 data_all.([tmp.varname, '_corr_obs'])(loni,lati)=NaN;
+                 data_all.([tmp.varname, '_corr_obs_p'])(loni,lati)=NaN;
+                 data_all.([tmp.varname, '_corr_obs_det'])(loni,lati)=NaN;
+                 data_all.([tmp.varname, '_corr_obs_det_p'])(loni,lati)=NaN;
+%                  data_all.([tmp.varname, '_corr_assm'])(loni,lati)=NaN;
+%                  data_all.([tmp.varname, '_corr_assm_p'])(loni,lati)=NaN;
+
+%                 %% AR1 (NaN)
+%                  data_all.([tmp.varname, '_corr_AR1'])(loni,lati)=NaN;
+%                  data_all.([tmp.varname, '_corr_AR1_p'])(loni,lati)=NaN;
+%                  data_all.([tmp.varname, '_corr_AR1_det'])(loni,lati)=NaN;
+%                  data_all.([tmp.varname, '_corr_AR1_det_p'])(loni,lati)=NaN;
+
+                %% ASSM (NaN)
+                 data_all.([tmp.varname, '_corr_assm'])(loni,lati)=NaN;
+                 data_all.([tmp.varname, '_corr_assm_p'])(loni,lati)=NaN;
+                 data_all.([tmp.varname, '_corr_assm_det'])(loni,lati)=NaN;
+                 data_all.([tmp.varname, '_corr_assm_det_p'])(loni,lati)=NaN;
+                 data_all.([tmp.varname, '_corr_assm_int'])(loni,lati)=NaN;
+                 data_all.([tmp.varname, '_corr_assm_int_p'])(loni,lati)=NaN;
+
+                %% LENS2 (NaN)
+                 data_all.([tmp.varname, '_corr_assm_lens2'])(loni,lati)=NaN;
+                 data_all.([tmp.varname, '_corr_assm_lens2_p'])(loni,lati)=NaN;
+                 data_all.([tmp.varname, '_corr_assm_lens2_det'])(loni,lati)=NaN;
+                 data_all.([tmp.varname, '_corr_assm_lens2_det_p'])(loni,lati)=NaN;
+                 %% obs ~ ASSM (NaN)
+                 data_all.([tmp.varname, '_corr_obs_assm'])(loni,lati)=NaN;
+                 data_all.([tmp.varname, '_corr_obs_assm_p'])(loni,lati)=NaN;
+                 data_all.([tmp.varname, '_corr_obs_assm_det'])(loni,lati)=NaN;
+                 data_all.([tmp.varname, '_corr_obs_assm_det_p'])(loni,lati)=NaN;
+                 
+                 %% obs ~ LENS2 (NaN)
+                 data_all.([tmp.varname, '_corr_obs_lens2'])(loni,lati)=NaN;
+                 data_all.([tmp.varname, '_corr_obs_lens2_p'])(loni,lati)=NaN;
+
+                 %% obs ~ HCST-LENS2 (NaN)
+                 data_all.([tmp.varname, '_corr_obs_int'])(loni,lati)=NaN;
+                 data_all.([tmp.varname, '_corr_obs_int_p'])(loni,lati)=NaN;
+             end
+        end
+    end
+    disp('abc')
+    if isfield(tmp,'ydata_mod_obs_masked')
+        tmp=rmfield(tmp, 'ydata_mod_obs_masked');
+    end
+
+    tmp.lyear_str=[num2str(cfg.ly_s-1, '%02i'), '_', num2str(cfg.ly_e-1, '%02i')];
+    
+    if ~exist(dirs.matroot,'dir'), mkdir(dirs.matroot); end
+    fig_cfg.mat_name=[dirs.matroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
+        '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
+        '_l', tmp.lyear_str, 'y.mat'];
+    save(fig_cfg.mat_name, 'data_all')
+    clear data
+    clear data_all
+
+    fprintf('%7.1f sec\n', toc(lap_time) );
+
+
+
 
     
 
@@ -725,15 +729,12 @@ function obsname_simple = f_obs_name(varn)
             obsname_simple='ERSST';
         case 'PRECT'
             obsname_simple='GPCP';
-        case 'RAIN'
-            obsname_simple='GPCC';
         case 'PSL'
             obsname_simple='ERA5';
         case 'SSH'
             obsname_simple='CMEMS';
         case 'TS'
-%             obsname_simple='HadCRUT5';
-            obsname_simple='ERA5';
+            obsname_simple='HadCRUT5';
         case 'sumChl'
             obsname_simple='OC_CCI';
         otherwise
@@ -748,15 +749,12 @@ function obsname_simple = f_obs_name_mid(varn)
             obsname_simple='ersst_reg_cesm2.v5.';
         case 'PRECT'
             obsname_simple='GPCP_reg_cesm2.v5.';
-        case 'RAIN'
-            obsname_simple='GPCC_reg_cesm2.v5.';
         case 'PSL'
             obsname_simple='ERA5_msl_reg_cesm2.';
         case 'SSH'
             obsname_simple='CMEMS_reg_cesm2.';
         case 'TS'
-%             obsname_simple='HadCRUT5_reg_cesm2.';
-            obsname_simple='ERA5_t2m_reg_cesm2.';
+            obsname_simple='HadCRUT5_reg_cesm2.';
         case 'sumChl'
             obsname_simple='OC_CCI_reg_cesm2.';
         otherwise
@@ -770,15 +768,12 @@ function obsname_simple = f_obs_varname(varn)
             obsname_simple='sst';
         case 'PRECT'
             obsname_simple='precip';
-        case 'RAIN'
-            obsname_simple='precip'; 
         case 'PSL'
             obsname_simple='msl';
         case 'SSH'
             obsname_simple='sla';
         case 'TS'
-%             obsname_simple='tas_mean'; %HadCRUT5
-            obsname_simple='t2m';  %ERA5
+            obsname_simple='tas_mean';
         case 'sumChl'
             obsname_simple='chlor_a';
         otherwise
@@ -803,13 +798,11 @@ function obsname_simple = f_obs_iyears(varn)
     switch varn
         case 'PRECT'
             obsname_simple=1979:2020;
-        case 'RAIN'
-            obsname_simple=1960:2019;
         case 'SSH'
             obsname_simple=1993:2020;
         case 'sumChl'
             obsname_simple=1998:2020;
         otherwise
-            obsname_simple=1960:2020;
+            obsname_simple=1970:2020;
     end
 end

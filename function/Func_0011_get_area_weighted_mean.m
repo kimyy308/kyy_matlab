@@ -6,7 +6,7 @@ function [mean_data, error_status] = Func_0011_get_area_weighted_mean(data, lon,
 % get the polygon data from nwp_polygon_point.m corresponding to regionname
 %
 %  input:
-%  data                   data (2-D array, [lon, lat])
+%  data                   data (2-D array, [lon, lat]) or 3-D array
 %  lon                    lon (2-D array, [lon, lat])
 %  lat                    lat (2-D array, [lon, lat])
 %
@@ -49,17 +49,20 @@ else
     dA=xdist.*ydist;
     error_status=2;
 end
-    mask_rho=NaN(size(data));
-    mask_rho(isfinite(data))=1;
+
+mask_rho=NaN(size(data));
+mask_rho(isfinite(data))=1;
+if ismatrix(data)
     dA=dA.*mask_rho;
     dA_sum = sum(dA(:), 'omitnan');
-    if ismatrix(data)
-        mean_data=sum(data.*dA, 'all', 'omitnan')/dA_sum;
-    elseif ndims(data) ==3
-        mean_data=NaN(size(data,3),1);
-        for i=1:size(data,3)
-            mean_data(i)=sum(data(:,:,i).*dA, 'all', 'omitnan')/dA_sum;
-        end
+    mean_data=sum(data.*dA, 'all', 'omitnan')/dA_sum;
+elseif ndims(data) ==3
+    mean_data=NaN(size(data,3),1);
+    for i=1:size(data,3)
+        dA=dA.*mask_rho(:,:,i);
+        dA_sum = sum(dA(:), 'omitnan');
+        mean_data(i)=sum(data(:,:,i).*dA, 'all', 'omitnan')/dA_sum;
     end
 end
+   
 

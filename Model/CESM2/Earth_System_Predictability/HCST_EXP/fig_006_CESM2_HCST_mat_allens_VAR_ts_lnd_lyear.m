@@ -23,8 +23,14 @@ addpath(genpath([tmp.dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', tmp.fs, 'f
 
 cfg.vars = {'TWS', 'TOTVEGC', 'GPP', 'NPP'};
 % cfg.vars = {'FIRE', 'COL_FIRE_CLOSS'};
-cfg.vars = {'RAIN'};
+
 cfg.vars = {'DSTFLXT'};
+cfg.vars = { 'GPP', 'NPP', 'TOTVEGC', 'TWS', 'COL_FIRE_CLOSS', 'COL_FIRE_NLOSS', 'FIRE', ...
+            'FPSN', 'SOILICE', 'SOILLIQ', 'TOTSOILICE', 'TOTSOILLIQ', ...
+            'RAIN', 'QSOIL', 'QSOIL_ICE', 'QRUNOFF', 'QOVER', 'QRGWL', ...
+            'QH2OSFC', 'NEP', 'DSTFLXT' };
+cfg.vars = {'TWS', 'RAIN'};
+cfg.vars = {'TS'};
 
 % cfg.vlayer=1; % surface, vertical slice
 cfg.vlayer=1:10; % 10layer. don't put more than 15

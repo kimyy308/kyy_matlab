@@ -56,7 +56,8 @@ cfg.vars = {'WVEL'};
 cfg.vars = {'NPP', 'GPP', 'TWS', 'TOTVEGC'};
 cfg.vars = {'SST', 'PRECT', 'TS', 'PSL'};
 cfg.vars = {'sithick', 'aice'};
-
+cfg.vars = {'SST', 'PRECT', 'TS', 'PSL', 'AEROD_v', 'FSDS', 'FSNS', ...
+    'SFdst_a1', 'SFdst_a2', 'SFdst_a3', 'U10', 'SFCO2', 'CLDTOT'};
 % cfg.vars = {'SST'};
 
 cfg.vlayer=1:10; % 10layer. don't put more than 15

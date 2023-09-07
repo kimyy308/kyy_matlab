@@ -7,8 +7,8 @@ function prog = Func_0030_AR1_prog(init, C_lambda, tsteps, noise)
 %
 %  input:
 %  init         initial value
-%  C_lambda     linear coefficient -> dT/dt = -lambda * T (dt = 1
-%  tstep        prognostic steps
+%  C_lambda     linear coefficient -> dT/dt = -lambda * T (dt = 1)
+%  tstep        prognostic steps (lag)
 %  noise        standard variation of noise
 %
 %  output:

@@ -1,4 +1,4 @@
-function [data_det] = Func_0028_detrend_linear_1d(data, nanflag)
+function [data_det, tr] = Func_0028_detrend_linear_1d(data, nanflag)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % function [psd, psd_sig, freq] = Func_0027_get_PSD_siglev(data, sig_level, DOF)
@@ -11,10 +11,12 @@ function [data_det] = Func_0028_detrend_linear_1d(data, nanflag)
 %
 %  output:
 %  data_det     linearly detrended data (t)
+%  trend        trend (scalar)
 %
 %  e-mail:      kimyy308@pusan.ac.kr
 %
 %  Updated      30-Jan-2023 by Yong-Yub Kim
+%  Updated      30-Aug-2023 by Yong-Yub Kim
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% squeeze
@@ -38,6 +40,9 @@ else
     data_det=data;
     data_det(isfinite(data))=data_det_finite;
 end
+
+data_det=data_det';
+tr=p(1);
 
 end
 
