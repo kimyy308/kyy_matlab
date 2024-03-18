@@ -61,7 +61,7 @@ switch tmp.hostname
         addpath(genpath([dropboxpath '/source/matlab/Model/ROMS/Grid_kyy']));
         addpath(genpath([dropboxpath '/source/matlab/Model/ROMS/Roms_tools/Preprocessing_tools']));
 
-    case 'da1'
+    case {'da1', 'da2', 'da3', 'da4'}
         dropboxpath='/proj/kimyy/Dropbox';
         addpath(genpath([dropboxpath '/source/matlab/Common/m_map']));
         addpath(genpath([dropboxpath '/source/matlab/Common/Figure']));

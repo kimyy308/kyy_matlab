@@ -477,9 +477,12 @@ if testnameind==1
         ax{tmp.testnameind,2}=axes;
         pc{tmp.testnameind,2}=m_pcolor(RCM_grid.lon_rho',RCM_grid.lat_rho', tmp.mean_data','parent',ax{tmp.testnameind,2});
     %     colormap(ax{tmp.testnameind,2},jet);
-        colormap(ax{tmp.testnameind,2},cmaps.bw_10);
+%         colormap(ax{tmp.testnameind,2},cmaps.bw_10);
+        colormap(ax{tmp.testnameind,2},cmaps.bwr_10);
 
-        caxis([-100, 0]);
+%         caxis([-100, 0]);
+        caxis([-100, 100]);
+
         shading(gca,param.m_pcolor_shading_method);   
 
         m_grid('fontsize', param.m_grid_fontsize, 'tickdir', param.m_grid_tickdir_type, 'box', param.m_grid_box_type,  ...

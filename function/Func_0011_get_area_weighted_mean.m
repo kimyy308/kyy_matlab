@@ -49,7 +49,7 @@ else
     dA=xdist.*ydist;
     error_status=2;
 end
-
+dA_raw=dA;
 mask_rho=NaN(size(data));
 mask_rho(isfinite(data))=1;
 if ismatrix(data)
@@ -59,7 +59,7 @@ if ismatrix(data)
 elseif ndims(data) ==3
     mean_data=NaN(size(data,3),1);
     for i=1:size(data,3)
-        dA=dA.*mask_rho(:,:,i);
+        dA=dA_raw.*mask_rho(:,:,i);
         dA_sum = sum(dA(:), 'omitnan');
         mean_data(i)=sum(data(:,:,i).*dA, 'all', 'omitnan')/dA_sum;
     end

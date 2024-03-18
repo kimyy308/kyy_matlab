@@ -21,7 +21,7 @@ addpath(genpath([tmp.dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', tmp.fs, 'f
 
 
 cfg.ly_s=2;
-cfg.ly_e=5;
+cfg.ly_e=4;
 lyear=cfg.ly_e-1;
 
 %% model configuration
@@ -51,11 +51,14 @@ lyear=cfg.ly_e-1;
 %             'FPSN', 'SOILICE', 'SOILLIQ', 'TOTSOILICE', 'TOTSOILLIQ', ...
 %             'RAIN', 'QSOIL', 'QSOIL_ICE', 'QRUNOFF', 'QOVER', 'QRGWL', ...
 %             'QH2OSFC', 'NEP', 'DSTFLXT', 'SST', 'PRECT', 'TS', 'PSL', 
-            cfg.vars = { 'AEROD_v', 'FSDS', 'FSNS', ...
+    cfg.vars = { 'AEROD_v', 'FSDS', 'FSNS', ...
     'SFdst_a1', 'SFdst_a2', 'SFdst_a3', 'U10', 'SFCO2', 'CLDTOT'};
 
-cfg.vlayer=1:10; % 10layer. don't put more than 15
-% cfg.vlayer=1; % surface, vertical slice
+    cfg.vars={'TS', 'SST', 'PRECT'};
+    cfg.vars={'mul_VVEL_NO3', 'mul_WVEL_NO3', 'mul_UVEL_NO3'};
+
+% cfg.vlayer=1:10; % 10layer. don't put more than 15
+cfg.vlayer=1; % surface, vertical slice
 
 cfg.vlayer_1st=min(cfg.vlayer);
 cfg.vlayer_cnt=max(cfg.vlayer)-cfg.vlayer_1st+1;

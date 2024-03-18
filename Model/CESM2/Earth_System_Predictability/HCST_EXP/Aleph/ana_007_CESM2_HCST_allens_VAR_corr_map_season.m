@@ -51,8 +51,8 @@ cfg.vars={'diat_agg_zint_100m', 'diat_Fe_lim_Cweight_avg_100m', ...
     'sp_N_lim_Cweight_avg_100m', 'sp_N_lim_surf', 'sp_P_lim_Cweight_avg_100m', ...
     'sp_P_lim_surf', 'zoo_loss_zint_100m, photoC_TOT_zint_100m'};
 
-cfg.vars = {'sumChl'};
-cfg.vars = {'SST'};
+cfg.vars = {'sutmChl'};
+cfg.vars = {'TS'};
 
 % cfg.vlayer=1; % surf 
 cfg.vlayer=1:10; % 10layer. don't put more than 15
@@ -89,6 +89,7 @@ for vari=1:length(cfg.vars)
     cfg.gnm='f09_g17';
 %     cfg.proj_year=5;
     cfg.season = {'AMJ', 'JAS', 'OND', 'JFM'};
+    
     cfg.max_iy=max(cfg.iyears);
     cfg.min_iy=min(cfg.iyears);
     cfg.len_t_y = length(cfg.iyears);

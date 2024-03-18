@@ -35,7 +35,7 @@ for i_model = 1:length(files)
     if( length( lon_src ) == numel( lon_src ) )     % if lon_src is a 1-D array
         [lon_src, lat_src] = ndgrid( lon_src, lat_src );
     end
-    [n_lon_src, n_lat_src] = size( lon_src );노ㄴ물
+    [n_lon_src, n_lat_src] = size( lon_src );
     
     X = lon_src; Y = lat_src; C = var_src;
     % need to do something

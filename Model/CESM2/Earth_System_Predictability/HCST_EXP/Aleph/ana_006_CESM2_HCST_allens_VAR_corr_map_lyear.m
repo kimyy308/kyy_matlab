@@ -77,7 +77,7 @@ cfg.vars = { 'zooC'} %TOTVEGC, FIRE
 
 cfg.vars = {'SST', 'PRECT', 'TS', 'PSL', 'AEROD_v', 'FSDS', 'FSNS', ...
     'SFdst_a1', 'SFdst_a2', 'SFdst_a3', 'U10', 'SFCO2', 'CLDTOT'};
-
+cfg.vars = {'TWS', 'RAIN', 'TS'};
 
 % % % cfg.vars={'photoC_TOT_zint_100m',  'photoC_diat_zint_100m', 'photoC_diaz_zint_100m', 'photoC_sp_zint_100m', ...
 % % %      'diat_Fe_lim_Cweight_avg_100m', ...
@@ -107,12 +107,12 @@ cfg.vars = {'SST', 'PRECT', 'TS', 'PSL', 'AEROD_v', 'FSDS', 'FSNS', ...
 % % % cfg.vars = {'TS'};
 % % % cfg.vars = {'GPP', 'NPP', 'TOTVEGC', 'TWS', 'aice', 'sithick'};
 % % % cfg.vars = {'PRECT'};
-cfg.vars = {'TS', 'SST', 'RAIN', 'PSL'};
+
 
 % tmp.dimids= [1, 2, 4];
-cfg.vlayer=1; % surf, vertical slice 
+% cfg.vlayer=1; % surf, vertical slice 
 
-% cfg.vlayer=1:10; % 10layer. don't put more than 15
+cfg.vlayer=1:10; % 10layer. don't put more than 15
 
 cfg.vlayer_1st=min(cfg.vlayer);
 cfg.vlayer_cnt=max(cfg.vlayer)-cfg.vlayer_1st+1;
@@ -134,11 +134,13 @@ for vari=1:length(cfg.vars)
     % dirs.lens2root=['/mnt/lustre/proj/earth.system.predictability/LENS2/archive_analysis/', cfg.comp, '/', cfg.var];
     % dirs.assmroot=['/mnt/lustre/proj/earth.system.predictability/ASSM_EXP/archive_analysis/', cfg.comp, '/', cfg.var];
     
-    dirs.hcstroot=['/mnt/lustre/proj/earth.system.predictability/HCST_EXP/archive_yearly_transfer/', cfg.comp, '/', cfg.var];
-    dirs.obsroot=['/mnt/lustre/proj/kimyy/Observation/', cfg.obs_name, '/yearly_reg_', cfg.obs_fname_module(2:4)];
+    dirs.hcstroot=['/mnt/lustre/proj/earth.system.predictability/HCST_EXP/archive_transfer/', cfg.comp, '/', cfg.var];
+    dirs.obsroot=['/mnt/lustre/proj/kimyy/Observation/', cfg.obs_name, '/monthly_reg_', cfg.obs_fname_module(2:4)];
     dirs.matroot=['/mnt/lustre/proj/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp,'/', cfg.var];
-    dirs.lens2root=['/mnt/lustre/proj/earth.system.predictability/LENS2/archive_yearly_transfer/', cfg.comp, '/', cfg.var];
-    dirs.assmroot=['/mnt/lustre/proj/earth.system.predictability/ASSM_EXP/archive_yearly_transfer/', cfg.comp, '/', cfg.var];    
+    dirs.lens2root=['/mnt/lustre/proj/earth.system.predictability/LENS2/archive_transfer/', cfg.comp, '/', cfg.var];
+    dirs.assmroot=['/mnt/lustre/proj/earth.system.predictability/ASSM_EXP/archive_transfer/', cfg.comp, '/', cfg.var];
+    
+    
     
     cfg.iyears=cfg.obs_iyears;
     cfg.gnm='f09_g17';
@@ -182,7 +184,7 @@ for vari=1:length(cfg.vars)
         case {'atm', 'lnd'}
             grid.lon=ncread(tmp.gridname, 'lon');
             grid.lat=ncread(tmp.gridname, 'lat');
-            [grid.tlat, grid.tlong]=meshgrid(grid.lat, grid.lon);
+            [grid.tlat grid.tlong]=meshgrid(grid.lat, grid.lon);
     end
     
     grid.nlon=size(grid.tlong,1);
@@ -196,13 +198,13 @@ for vari=1:length(cfg.vars)
     %% read & plot data
     tmp.varname=cfg.var;
      if length(tmp.varname)>=3
-         tmp.varn3=tmp.varname(end-2:end);
-         switch tmp.varn3
-             case '145'
-                 tmp.fvarname=tmp.varname(1:end-3);
-             otherwise
-                tmp.fvarname=cfg.var;
-         end
+     tmp.varn3=tmp.varname(end-2:end);
+     switch tmp.varn3
+         case '145'
+             tmp.fvarname=tmp.varname(1:end-3);
+         otherwise
+            tmp.fvarname=cfg.var;
+     end
      else
          tmp.fvarname=cfg.var;
      end
@@ -229,17 +231,17 @@ for vari=1:length(cfg.vars)
     
     %     data.([tmp.varname, '_assm'])=NaN(grid.nlon, grid.nlat, cfg.len_t_y);
         
-    %% read variables
+        %% read variables
         for iyear=min(cfg.iyears):max(cfg.iyears)
             tmp.iyear_str=num2str(iyear, '%04i');
             cfg.casename=['ensmean_', cfg.casename_m, '_i', tmp.iyear_str];
             tmp.fy=iyear+lyear;
             tmp.fy_str=num2str(tmp.fy, '%04i');
-    %% monthly filename
+            %% monthly filename
             for mon=1:12
                 tmp.mon_str=num2str(mon, '%02i');
     
-    %% HCST mean
+                %% HCST
                 cfg.mod_fnm=[dirs.datadir, tmp.fs, 'ens_all_i',tmp.iyear_str, tmp.fs, ...
                 tmp.varname, '_', cfg.gnm, '.hcst.', cfg.casename, cfg.obs_fname_module, tmp.fy_str, '-', tmp.mon_str, '.nc'];
                 try
@@ -254,12 +256,13 @@ for vari=1:length(cfg.vars)
                      system(['csh ', '/mnt/lustre/proj/kimyy/Scripts/Model/CESM2/HCST/', 'hcst_ens_fix_matlab.csh ', ...
                         tmp.varname, ' ', tmp.iyear_str, ' ', tmp.fy_str, ' ', tmp.mon_str, ' ', cfg.comp]);
                      ncid=netcdf.open(cfg.mod_fnm, 'NOWRITE');
+
                 end
                 tmpvarid=netcdf.inqVarID(ncid,tmp.fvarname);
                 [tmp.fvarname,tmp.xtype,tmp.dimids,tmp.natts]= netcdf.inqVar(ncid,tmpvarid);
                 if length(tmp.dimids)>3
                      tmp.dd=squeeze(netcdf.getVar(ncid,tmpvarid, [0 0 cfg.vlayer_1st-1 0], [grid.nlon grid.nlat cfg.vlayer_cnt 1]));
-    %                      tmp.dd=tmp.dd.*grid.mask_ocn;
+%                      tmp.dd=tmp.dd.*grid.mask_ocn;
                      tmp.dd(abs(tmp.dd)>1e30)=NaN;
                      ddd=mean(tmp.dd,3,'omitnan'); % depth mean
                      tmp.ydata(1:grid.nlon,1:grid.nlat,mon) = ddd; %depth averaged value
@@ -272,7 +275,7 @@ for vari=1:length(cfg.vars)
                 
                 tmp.ydd=tmp.ydata(1:grid.nlon,1:grid.nlat,mon);
                 tmp.stdydd=max(abs(tmp.ydd(isfinite(tmp.ydd))));
-    
+
                 if tmp.stdydd > 10e5 % if extracted files were crashed
                       system(['csh ', '/mnt/lustre/proj/kimyy/Scripts/Model/CESM2/HCST/', 'hcst_extract_fix_matlab_var.csh ', ...
                         tmp.varname, ' ', num2str(length(tmp.dimids)-1), ' ', tmp.iyear_str, ' ', tmp.fy_str, ' ', tmp.mon_str, ' ', cfg.comp]);
@@ -294,55 +297,9 @@ for vari=1:length(cfg.vars)
                     end
                     netcdf.close(ncid);
                 end
-    
+
     %             tmp.ydata(:,:,mon)=ncread(cfg.mod_fnm, tmp.varname);
                 
-
-    %% HCST ensstd (spread)
-                cfg.casename_std=['ensstd_', cfg.casename_m, '_i', tmp.iyear_str];
-
-                cfg.mod_fnm=[dirs.datadir, tmp.fs, 'ens_all_i',tmp.iyear_str, tmp.fs, ...
-                    tmp.varname, '_', cfg.gnm, '.hcst.', cfg.casename_std, cfg.obs_fname_module, tmp.fy_str, '-', tmp.mon_str, '.nc'];
-                tmpvarid=netcdf.inqVarID(ncid,tmp.fvarname);
-                [tmp.fvarname,tmp.xtype,tmp.dimids,tmp.natts]= netcdf.inqVar(ncid,tmpvarid);
-                if length(tmp.dimids)>3
-                     tmp.dd=squeeze(netcdf.getVar(ncid,tmpvarid, [0 0 cfg.vlayer_1st-1 0], [grid.nlon grid.nlat cfg.vlayer_cnt 1]));
-%                      tmp.dd=tmp.dd.*grid.mask_ocn;
-                     tmp.dd(abs(tmp.dd)>1e30)=NaN;
-                     ddd=mean(tmp.dd,3,'omitnan'); % depth mean
-                     tmp.ydata(1:grid.nlon,1:grid.nlat,mon) = ddd; %depth averaged value
-                else
-                    tmp.dd=netcdf.getVar(ncid,tmpvarid);
-                    tmp.dd(abs(tmp.dd)>1e30)=NaN;
-                    tmp.ydata(1:grid.nlon,1:grid.nlat,mon) = tmp.dd;
-                end
-                netcdf.close(ncid);
-                
-                tmp.ydd=tmp.ydata(1:grid.nlon,1:grid.nlat,mon);
-                tmp.stdydd=max(abs(tmp.ydd(isfinite(tmp.ydd))));
-
-                if tmp.stdydd > 10e5 % if extracted files were crashed
-                      system(['csh ', '/mnt/lustre/proj/kimyy/Scripts/Model/CESM2/HCST/', 'hcst_extract_fix_matlab_var.csh ', ...
-                        tmp.varname, ' ', num2str(length(tmp.dimids)-1), ' ', tmp.iyear_str, ' ', tmp.fy_str, ' ', tmp.mon_str, ' ', cfg.comp]);
-                     system(['csh ', '/mnt/lustre/proj/kimyy/Scripts/Model/CESM2/HCST/', 'hcst_ens_fix_matlab.csh ', ...
-                        tmp.varname, ' ', tmp.iyear_str, ' ', tmp.fy_str, ' ', tmp.mon_str, ' ', cfg.comp]);
-                     ncid=netcdf.open(cfg.mod_fnm, 'NOWRITE');
-                    tmpvarid=netcdf.inqVarID(ncid,tmp.fvarname);
-                    [tmp.fvarname,tmp.xtype,tmp.dimids,tmp.natts]= netcdf.inqVar(ncid,tmpvarid);
-                    if length(tmp.dimids)>3
-                         tmp.dd=squeeze(netcdf.getVar(ncid,tmpvarid, [0 0 cfg.vlayer_1st-1 0], [grid.nlon grid.nlat cfg.vlayer_cnt 1]));
-    %                      tmp.dd=tmp.dd.*grid.mask_ocn;
-                         tmp.dd(abs(tmp.dd)>1e30)=NaN;
-                         ddd=mean(tmp.dd,3,'omitnan'); % depth mean
-                         tmp.ydata(1:grid.nlon,1:grid.nlat,mon) = ddd; %depth averaged value
-                    else
-                        tmp.dd=  netcdf.getVar(ncid,tmpvarid);
-                        tmp.dd(abs(tmp.dd)>1e30)=NaN;
-                        tmp.ydata(1:grid.nlon,1:grid.nlat,mon) = tmp.dd;
-                    end
-                    netcdf.close(ncid);
-                end
-
                 %% LENS2
                 if tmp.fy <= cfg.max_iy
                     cfg.lens2_fnm=[dirs.lens2dir, tmp.fs, ...
@@ -725,15 +682,12 @@ function obsname_simple = f_obs_name(varn)
             obsname_simple='ERSST';
         case 'PRECT'
             obsname_simple='GPCP';
-        case 'RAIN'
-            obsname_simple='GPCC';
         case 'PSL'
             obsname_simple='ERA5';
         case 'SSH'
             obsname_simple='CMEMS';
         case 'TS'
-%             obsname_simple='HadCRUT5';
-            obsname_simple='ERA5';
+            obsname_simple='HadCRUT5';
         case 'sumChl'
             obsname_simple='OC_CCI';
         otherwise
@@ -748,15 +702,12 @@ function obsname_simple = f_obs_name_mid(varn)
             obsname_simple='ersst_reg_cesm2.v5.';
         case 'PRECT'
             obsname_simple='GPCP_reg_cesm2.v5.';
-        case 'RAIN'
-            obsname_simple='GPCC_reg_cesm2.v5.';
         case 'PSL'
             obsname_simple='ERA5_msl_reg_cesm2.';
         case 'SSH'
             obsname_simple='CMEMS_reg_cesm2.';
         case 'TS'
-%             obsname_simple='HadCRUT5_reg_cesm2.';
-            obsname_simple='ERA5_t2m_reg_cesm2.';
+            obsname_simple='HadCRUT5_reg_cesm2.';
         case 'sumChl'
             obsname_simple='OC_CCI_reg_cesm2.';
         otherwise
@@ -770,15 +721,12 @@ function obsname_simple = f_obs_varname(varn)
             obsname_simple='sst';
         case 'PRECT'
             obsname_simple='precip';
-        case 'RAIN'
-            obsname_simple='precip'; 
         case 'PSL'
             obsname_simple='msl';
         case 'SSH'
             obsname_simple='sla';
         case 'TS'
-%             obsname_simple='tas_mean'; %HadCRUT5
-            obsname_simple='t2m';  %ERA5
+            obsname_simple='tas_mean';
         case 'sumChl'
             obsname_simple='chlor_a';
         otherwise
@@ -803,13 +751,11 @@ function obsname_simple = f_obs_iyears(varn)
     switch varn
         case 'PRECT'
             obsname_simple=1979:2020;
-        case 'RAIN'
-            obsname_simple=1960:2019;
         case 'SSH'
             obsname_simple=1993:2020;
         case 'sumChl'
             obsname_simple=1998:2020;
         otherwise
-            obsname_simple=1960:2020;
+            obsname_simple=1970:2020;
     end
 end

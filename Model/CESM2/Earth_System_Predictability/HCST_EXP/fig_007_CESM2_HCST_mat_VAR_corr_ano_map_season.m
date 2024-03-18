@@ -1,4 +1,4 @@
-% %  Created 12-Apr-2023 by Yong-Yub Kim
+% %  Created 22-Sep-2023 by Yong-Yub Kim
 clc; clear all; close all;
 warning off;
 
@@ -21,104 +21,14 @@ addpath(genpath([tmp.dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', tmp.fs, 'f
 
 %% model configuration
 % cfg.var='TS'; %SST PRECT PSL TS SSH sumChl
-% cfg.vars = {'SSH', 'sumChl'};
-cfg.vars = {'SST', 'PRECT', 'PSL', 'TS'};
-% cfg.vars = {'SSH'};
-% cfg.vars = {'SST', 'PRECT', 'PSL', 'TS', 'sumChl', 'photoC_TOT_zint'};
-% cfg.vars = { 'sumChl', 'photoC_TOT_zint',  'SSH'};
-% cfg.vars = {'diatChl', 'diazChl', 'spChl'};
+cfg.vars = {'TS', 'SST', 'PRECT', 'PSL'};
+% cfg.vars = {'TS'};
+% cfg.vlayer=1:10; % 10layer. don't put more than 15
+cfg.vlayer=1; % surface, vertical slice
 
-% cfg.vars={'diatChl', 'diazChl', 'spChl', 'diatC', 'diazC', 'spC', 'SSH', 'BSF', 'HBLT', ...
-%     'PAR_avg', 'NO3', 'PO4', 'SiO3', 'Fe', 'TEMP', 'UVEL', 'VVEL', 'WVEL', ...
-%     'diat_agg_zint_100m', 'diat_Fe_lim_Cweight_avg_100m', ...
-%     'diat_Fe_lim_surf', 'diat_light_lim_Cweight_avg_100m', 'diat_light_lim_surf', ...
-%     'diat_loss_zint_100m', 'diat_N_lim_Cweight_avg_100m', 'diat_N_lim_surf', ...
-%     'diat_P_lim_Cweight_avg_100m', 'diat_P_lim_surf', 'diat_SiO3_lim_Cweight_avg_100m', ...
-%     'diat_SiO3_lim_surf', 'diaz_agg_zint_100m', 'diaz_Fe_lim_Cweight_avg_100m', ...
-%     'diaz_Fe_lim_surf', 'diaz_light_lim_Cweight_avg_100m', 'diaz_light_lim_surf', ...
-%     'diaz_loss_zint_100m', 'diaz_P_lim_Cweight_avg_100m', 'diaz_P_lim_surf', 'dustToSed', ...
-%     'graze_diat_zint_100m', 'graze_diat_zoo_zint_100m', 'graze_diaz_zint_100m', ...
-%     'graze_diaz_zoo_zint_100m', 'graze_sp_zint_100m', 'graze_sp_zoo_zint_100m', ...
-%     'LWUP_F', 'O2_ZMIN_DEPTH', 'photoC_diat_zint_100m', 'photoC_diaz_zint_100m', ...
-%     'photoC_sp_zint_100m', ...
-%     'sp_agg_zint_100m', 'sp_Fe_lim_Cweight_avg_100m', 'sp_Fe_lim_surf', ...
-%     'sp_light_lim_Cweight_avg_100m', 'sp_light_lim_surf', 'sp_loss_zint_100m', ...
-%     'sp_N_lim_Cweight_avg_100m', 'sp_N_lim_surf', 'sp_P_lim_Cweight_avg_100m', ...
-%     'sp_P_lim_surf', 'zoo_loss_zint_100m', 'photoC_TOT_zint_100m', 'sumChl'};
-% cfg.vars={'graze_diaz_zint_100m', 'zoo_loss_zint_100m', 'photoC_TOT_zint_100m'};
-% cfg.vars={'sp_P_lim_surf'};
-% cfg.vars = {'SST', 'PRECT', 'PSL', 'TS'};
-% cfg.vars = {'PAR_avg', 'NO3', 'PO4', 'SiO3', 'Fe'};
-% cfg.vars = {'NO3'};
-% cfg.vars = {'diatC', 'diazC', 'spC'};
-% cfg.vars = {'SSH', 'BSF'};
-% cfg.vars = {'photoC_diat_zint_100m', 'photoC_diaz_zint_100m', 'photoC_sp_zint_100m', 'photoC_TOT_zint_100m'};
-% % 'graze_diaz_zoo_zint_100m', 
-% cfg.vars = {'PAR_avg', 'NO3', 'PO4', 'SiO3', 'Fe', ...
-%     'diatChl', 'diazChl', 'spChl', 'diatC', 'diazC', 'spC', 'SSH', 'BSF', ...
-%     'TEMP', 'UVEL', 'VVEL', 'WVEL', 'HBLT'};
-% cfg.vars = {'SSH'};
-% cfg.vars = {'photoC_sp_zint_100m'};
-% cfg.vars = {'diazC'};
-% cfg.vars = {'TEMP', 'UVEL', 'VVEL', 'WVEL'};
-% cfg.vars = {'diat_N_lim_Cweight_avg_100m'};
-% cfg.vars={'photoC_TOT_zint_100m'};
+cfg.vars = {'TS', 'SST', 'PRECT', 'PSL'};
+cfg.vars={'TLAI','SOILWATER_10CM', 'COL_FIRE_CLOSS', 'FAREA_BURNED'};
 
-% cfg.vars = {'HBLT'};
-% cfg.vars={'photoC_TOT_zint_100m',  'photoC_diat_zint_100m', 'photoC_diaz_zint_100m', 'photoC_sp_zint_100m', ...
-%      'diat_Fe_lim_Cweight_avg_100m', ...
-%     'diat_light_lim_Cweight_avg_100m',  ...
-%      'diat_N_lim_Cweight_avg_100m',  ...
-%     'diat_P_lim_Cweight_avg_100m',  'diat_SiO3_lim_Cweight_avg_100m', ...
-%     'sp_Fe_lim_Cweight_avg_100m',  ...
-%     'sp_light_lim_Cweight_avg_100m',   ...
-%     'sp_N_lim_Cweight_avg_100m', 'sp_P_lim_Cweight_avg_100m', ...
-%      'diaz_Fe_lim_Cweight_avg_100m', ...
-%      'diaz_light_lim_Cweight_avg_100m',  'diaz_P_lim_Cweight_avg_100m', ...
-%     'zoo_loss_zint_100m', ...
-%     'diaz_agg_zint_100m', 'diat_loss_zint_100m', 'diat_agg_zint_100m', 'diaz_loss_zint_100m',  ...
-%     'sp_agg_zint_100m', 'sp_loss_zint_100m', ...
-%     'graze_diat_zint_100m', 'graze_diat_zoo_zint_100m', 'graze_diaz_zint_100m', ...
-%     'graze_diaz_zoo_zint_100m', 'graze_sp_zint_100m', 'graze_sp_zoo_zint_100m', ...
-%     'diat_Fe_lim_surf', 'diat_light_lim_surf', 'diat_P_lim_surf', 'diat_SiO3_lim_surf', 'diaz_Fe_lim_surf', ...
-%     'diaz_light_lim_surf', 'diaz_P_lim_surf', 'dustToSed', 'LWUP_F', 'O2_ZMIN_DEPTH', 'diat_N_lim_surf', ...
-%     'sp_Fe_lim_surf', 'sp_light_lim_surf', 'sp_N_lim_surf', 'sp_P_lim_surf'  };
-
-% cfg.vars = {'TEMPCLINE'};
-% cfg.vars = {'UVEL55', 'VVEL55'};
-% cfg.vars = {'IRON_FLUX', 'TEMP145', 'UVEL145', 'VVEL145', 'NO3145', 'PO4145', 'Fe145'};
-
-% cfg.vars = {'sumChl'};
-
-cfg.vars = {'NPP', 'GPP', 'TOTVEGC', 'TWS', 'aice', 'sithick'};
-cfg.vars = {'AODDUST'};
-cfg.vars = {'TS'};
-cfg.vars = {'PRECT'};
-% cfg.vars = {'SST'};
-cfg.vars = {'GPP'};
-cfg.vars = {'TWS'};
-cfg.vars = {'photoC_TOT_zint_100m'};
-cfg.vars = {'SST', 'PRECT', 'TS', 'PSL'};
-cfg.vars = {'FIRE'};
-cfg.vars = {'TEMP145'};
-cfg.vars = {'photoC_TOT_zint_100m'};
-cfg.vars = {'DSTFLXT'};
-cfg.vars = { 'GPP', 'NPP', 'TOTVEGC', 'TWS', 'COL_FIRE_CLOSS', 'COL_FIRE_NLOSS', 'FIRE', ...
-            'FPSN', 'SOILICE', 'SOILLIQ', 'TOTSOILICE', 'TOTSOILLIQ', ...
-            'RAIN', 'QSOIL', 'QSOIL_ICE', 'QRUNOFF', 'QOVER', 'QRGWL', ...
-            'QH2OSFC', 'NEP', 'DSTFLXT' };
-cfg.vars = {'TWS'};
-% cfg.vars = {'TS', 'PRECT', 'PSL', 'SST'};
-% cfg.vars = {'NPP', 'GPP', 'RAIN', 'TWS'};
-% cfg.vars = {'FIRE', 'TOTVEGC'};
-cfg.vars = {'TS'};
-cfg.vars={'mul_VVEL_NO3', 'mul_WVEL_NO3', 'mul_UVEL_NO3'};
-cfg.vars={'WVEL', 'VVEL', 'UVEL'};
-cfg.vars={'SST'};
-cfg.vars={'TEMP'};
-
-cfg.vlayer=1:10; % 10layer. don't put more than 15
-% cfg.vlayer=1; % surface, vertical slice
 
 cfg.vlayer_1st=min(cfg.vlayer);
 cfg.vlayer_cnt=max(cfg.vlayer)-cfg.vlayer_1st+1;
@@ -144,13 +54,15 @@ tic;
 % dirs.assmroot=['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/ASSM_EXP/archive_analysis/', cfg.comp, '/', cfg.var];
 
 dirs.hcstmatroot=[tmp.kimyypath, '/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', cfg.var];
-dirs.figroot=[tmp.kimyypath,'/Figure/CESM2/ESP/HCST_EXP/archive/', cfg.comp,'/', cfg.var];
+vstr=['v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i')];
+dirs.figroot=[tmp.kimyypath, '/Figure/CESM2/ESP/HCST_EXP/archive_anomaly/', cfg.comp,'/', cfg.var, filesep, vstr];
 
-
+mkdir(dirs.figroot)
 
 cfg.iyears=cfg.obs_iyears;
 cfg.gnm='f09_g17';
 cfg.proj_year=5;
+cfg.season = {'JFM1', 'AMJ1', 'JAS1', 'OND1'};
 
 cfg.len_t_y = length(cfg.iyears);
 cfg.casename_m = ['ens_all'];
@@ -210,7 +122,7 @@ fig_flags(1:100)=0;
 % fig_flags(31)=1; %OBS ensmean
 % fig_flags(38:43)=1; %OBS ensmean bias
 % fig_flags(35:37)=1;
-% fig_flags(1:100)=1;
+fig_flags(1:100)=1;
 % fig_flags(48)=1; %model drift
 % fig_flags(24)=1; %assm obs nRMSE
 % fig_flags(24:26)=1; %assm obs RMSE
@@ -219,98 +131,83 @@ fig_flags(1:100)=0;
 % fig_flags(49)=1; %model drift ratio
 % fig_flags(50:51)=1; %obs-AR1 coef, noise
 % fig_flags(31:34)=1;
+% fig_flags(53:57)=1;
+% fig_flags(6)=1;
+% fig_flags(52)=1;
 
 %% no observation
 % fig_flags(1)=1;
 % fig_flags(11:16)=1;
 % fig_flags(18:20)=1;
 % fig_flags(27:30)=1;
-% fig_flags(32:34)=1; % ensmean
-% % % % fig_flags(35:37)=1; % spread
+% fig_flags(32:37)=1;
 % fig_flags(39)=1;
-% fig_flags(44:45)=1;
+% fig_flags(44:47)=1;
+% fig_flags(48:49)=1;
 % fig_flags(13)=1;
-% % % % fig_flags(52)=1;
+% fig_flags(52)=1;
+% fig_flags(58:59)=1;
 
 S = shaperead('landareas.shp');
 
 %% read & plot data
 tmp.varname=cfg.var;
 
+%% read all data for RMSE colorbar
+fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
+            '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
+            '_JFM1', '.mat'];
+load(fig_cfg.mat_name, 'data', 'data2')
+data2_JFM1=data2;
+fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
+            '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
+            '_AMJ1', '.mat'];
+load(fig_cfg.mat_name, 'data', 'data2')
+data2_AMJ1=data2;
+fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
+            '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
+            '_JAS1', '.mat'];
+load(fig_cfg.mat_name, 'data', 'data2')
+data2_JAS1=data2;
+fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
+            '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
+            '_OND1', '.mat'];
+load(fig_cfg.mat_name, 'data', 'data2')
+data2_OND1=data2;
+% % % fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
+% % %             '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
+% % %             '_l04', 'y.mat'];
+% % % load(fig_cfg.mat_name, 'data', 'data2')
+% % % data2_l4=data2;
+
 clear tmp.ydata tmp.ydata_lens2 tmp.ydata_obs tmp.ydata_assm
-for lyear=0:cfg.proj_year-1
-    tmp.lyear_str=num2str(lyear, '%02i');
+% for lyear=0:cfg.proj_year-1
+%     tmp.lyear_str=num2str(lyear, '%02i');
+%     fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
+%             '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
+%             '_', tmp.season, 'y.mat'];
+%     load(fig_cfg.mat_name, 'data', 'data2')
+%     pcolor(data2.([tmp.varname,'_corr_assm_int_', tmp.season])'); shading flat; colorbar;
+for lss=1:length(cfg.season)
+    tmp.season=cfg.season{lss};
+    tmp.mons = f_season_mons(tmp.season);
     fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
             '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
-            '_l', tmp.lyear_str, 'y.mat'];
-    load(fig_cfg.mat_name, 'data', 'data2')
-%     pcolor(data.([tmp.varname,'_corr_assm_int_l',tmp.lyear_str])'); shading flat; colorbar;
+            '_', tmp.season, '.mat'];
+    load(fig_cfg.mat_name, 'data', 'data2');
 
-
-
-% svd_mask=data.SST_corr_assm_lens2_l00;
-% pcolor(svd_mask'); shading flat; colorbar; caxis([0.5 1])
-
-% tic;
-% [mcamaps_l3d, pcs_l, mcamaps_r3d, pcs_r, lambdas, scf] = mca(data.TS_lens2_l00, data.TS_assm, 3);
-% toc;
-% % [mcamaps_l3d, pcs_l, mcamaps_r3d, pcs_r, lambdas, scf] = mca(aa, bb, 3);
-% 
-% figure(1)
-% pcolor(mcamaps_l3d(:,:,1)'); shading flat; colorbar; 
-% 
-% figure(2)
-% pcolor(mcamaps_r3d(:,:,1)'); shading flat; colorbar;
-% 
-% figure(3)
-% plot(pcs_l(1,:))
-% 
-% figure(2)
-% plot(pcs_r(1,:))
-% 
-% figure(3)
-% plot(mcamaps_l3d(65,110,1).*pcs_l(1,:))
-% 
-% a=reshape(data.SST_assm, [288*192, 61]);
-% tmask=isfinite(a(:,1));
-% aa=a(tmask,:);
-% b=reshape(data.SST_lens2_l00, [288*192, 61]);
-% % b=reshape(data.SST_assm, [288*192, 61]);
-% % b(:,61)=b(:,60);
-% bb=b(tmask,:);
-% [lv1, lv2, xx, pct1, pct2]=gsvd(aa,bb, 'econ');
-% plot(diag(pct1));
-% hold on
-% plot(diag(pct2));
-% hold off
-% 
-% figure(1)
-% lva=a;
-% lva(tmask,:)=lv1;
-% lv11=lva(:,2);
-% lv11=reshape(lv11, [288,192]);
-% pcolor(lv11'); shading flat; colorbar; caxis([-0.01 0.01])
-% 
-% sqrt(diag(pct1'*pct1)./diag(pct2'*pct2))
-% 
-% diag(pct1)./diag(pct2)
-% plot(squeeze(data.SST_assm(100,90,:)))
-% figure(3)
-% plot(xx(:,2))
-% 
-% figure(2)
-% lvb=b;
-% lvb(tmask,:)=lv2;
-% lv22=lvb(:,2);
-% lv22=reshape(lv22, [288,192]);
-% pcolor(lv22'); shading flat; colorbar; caxis([-0.01 0.01])
-% 
-% plot(xx(:,1))
-% 
-% bc=lva*pct1(1,1)*xx';
-% bcc=reshape(bc, [288 192 61]);
-
-
+%% clim time range
+    switch cfg.obs_name
+       case 'GPCC'
+           cfg.clim_ys=1961;
+           cfg.clim_ye=2019;
+       otherwise
+           cfg.clim_ys=1961;
+           cfg.clim_ye=2020;
+    end
+   lyear=0;
+   cfg.clim_tlen = (cfg.clim_ys-1959)-lyear:(cfg.clim_ye-2020)+cfg.len_t_y-lyear;
+   cfg.clim_tlen2=length(cfg.clim_tlen);
 
 
 %% AR1_assm corr map --------------------------------------
@@ -332,17 +229,17 @@ for fake=1:1
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data.([tmp.varname, '_corr_assm_AR1', '_l', tmp.lyear_str]);
+    data2.([tmp.varname, '_corr_assm_AR1_ano', '_', tmp.season])(data2.([tmp.varname, '_corr_assm_AR1_ano', '_', tmp.season])==0)=NaN;
+    tmp.C=data2.([tmp.varname, '_corr_assm_AR1_ano', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
-%         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
+%         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
 %         tmp.C_H=tmp.C_H([end, 1:end],:);
 %         tmp.C_2=tmp.C;
 %         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
 
-
     [tmp.mean_corr, tmp.err] = ...
-        Func_0011_get_area_weighted_mean(data.([tmp.varname, '_corr_assm_AR1', '_l', tmp.lyear_str]), grid.tlong, grid.tlat);
-    fig_cfg.fig_name=['l',tmp.lyear_str, ', corr_assm_AR1_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
+        Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_corr_assm_AR1_ano', '_', tmp.season]), grid.tlong, grid.tlat);
+    fig_cfg.fig_name=[tmp.season, ', corr_assm_AR1_ano_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
     fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
         'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
     %% map setting
@@ -390,9 +287,9 @@ for fake=1:1
     end
 
     %% save
-    dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, 'corr_AR1', filesep, 'assm'];
+    dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_corr_AR1', filesep, 'assm'];
     if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'corr_assm_AR1_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
+    cfg.figname=[dirs.figdir, filesep, 'corr_assm_AR1_ano_map_', tmp.varname, '_', tmp.season, 'y.tif'];
     print(fig_h, cfg.figname, '-dpng');
     RemoveWhiteSpace([], 'file', cfg.figname);
     close all; 
@@ -418,17 +315,18 @@ for fake=1:1
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data.([tmp.varname, '_corr_obs_AR1', '_l', tmp.lyear_str]);
+    data2.([tmp.varname, '_corr_obs_AR1', '_', tmp.season])(data2.([tmp.varname, '_corr_obs_AR1', '_', tmp.season])==0)=NaN;
+    tmp.C=data2.([tmp.varname, '_corr_obs_AR1', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
-%         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
+%         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
 %         tmp.C_H=tmp.C_H([end, 1:end],:);
 %         tmp.C_2=tmp.C;
 %         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
 
 
     [tmp.mean_corr, tmp.err] = ...
-        Func_0011_get_area_weighted_mean(data.([tmp.varname, '_corr_obs_AR1', '_l', tmp.lyear_str]), grid.tlong, grid.tlat);
-    fig_cfg.fig_name=['l',tmp.lyear_str, ', corr_obs_AR1_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
+        Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_corr_obs_AR1', '_', tmp.season]), grid.tlong, grid.tlat);
+    fig_cfg.fig_name=[tmp.season, ', corr_obs_AR1_ano_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
     fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
         'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
     %% map setting
@@ -476,9 +374,9 @@ for fake=1:1
     end
 
     %% save
-    dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, 'corr_AR1', filesep, 'obs'];
+    dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_corr_AR1', filesep, 'obs'];
     if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'corr_obs_AR1_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
+    cfg.figname=[dirs.figdir, filesep, 'corr_obs_AR1_ano_map_', tmp.varname, '_', tmp.season, 'y.tif'];
     print(fig_h, cfg.figname, '-dpng');
     RemoveWhiteSpace([], 'file', cfg.figname);
     close all; 
@@ -504,17 +402,17 @@ for fake=1:1
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data.([tmp.varname, '_corr_obs', '_l', tmp.lyear_str]);
+    tmp.C=data2.([tmp.varname, '_corr_obs_ano', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
-%         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
+%         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
 %         tmp.C_H=tmp.C_H([end, 1:end],:);
 %         tmp.C_2=tmp.C;
 %         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
 
 
     [tmp.mean_corr, tmp.err] = ...
-        Func_0011_get_area_weighted_mean(data.([tmp.varname, '_corr_obs', '_l', tmp.lyear_str]), grid.tlong, grid.tlat);
-    fig_cfg.fig_name=['l',tmp.lyear_str, ', corr_obs_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
+        Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_corr_obs_ano', '_', tmp.season]), grid.tlong, grid.tlat);
+    fig_cfg.fig_name=[tmp.season, ', corr_obs_ano_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
     fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
         'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
     %% map setting
@@ -573,7 +471,7 @@ for fake=1:1
     %% save
     dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_corr_obs_map', filesep, 'model'];
     if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'corr_obs_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
+    cfg.figname=[dirs.figdir, filesep, 'corr_obs_ano_map_', tmp.varname, '_', tmp.season, 'y.tif'];
     print(fig_h, cfg.figname, '-dpng');
     RemoveWhiteSpace([], 'file', cfg.figname);
     close all; 
@@ -599,17 +497,17 @@ for fake=1:1
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data.([tmp.varname, '_corr_obs_assm', '_l', tmp.lyear_str]);
+    tmp.C=data2.([tmp.varname, '_corr_obs_assm_ano', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
-%         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
+%         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
 %         tmp.C_H=tmp.C_H([end, 1:end],:);
 %         tmp.C_2=tmp.C;
 %         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
 
 
     [tmp.mean_corr, tmp.err] = ...
-        Func_0011_get_area_weighted_mean(data.([tmp.varname, '_corr_obs_assm', '_l', tmp.lyear_str]), grid.tlong, grid.tlat);
-    fig_cfg.fig_name=['l',tmp.lyear_str, ', corr_obs_assm_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
+        Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_corr_obs_assm_ano', '_', tmp.season]), grid.tlong, grid.tlat);
+    fig_cfg.fig_name=[tmp.season, ', corr_obs_assm_ano_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
     fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
         'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
     %% map setting
@@ -668,7 +566,7 @@ for fake=1:1
     %% save
     dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_corr_obs_map', filesep, 'assm'];
     if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'corr_obs_assm_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
+    cfg.figname=[dirs.figdir, filesep, 'corr_obs_assm_ano_map_', tmp.varname, '_', tmp.season, 'y.tif'];
     print(fig_h, cfg.figname, '-dpng');
     RemoveWhiteSpace([], 'file', cfg.figname);
     close all; 
@@ -694,17 +592,17 @@ for fake=1:1
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data.([tmp.varname, '_corr_obs_lens2', '_l', tmp.lyear_str]);
+    tmp.C=data2.([tmp.varname, '_corr_obs_lens2_ano', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
-%         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
+%         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
 %         tmp.C_H=tmp.C_H([end, 1:end],:);
 %         tmp.C_2=tmp.C;
 %         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
 
 
     [tmp.mean_corr, tmp.err] = ...
-        Func_0011_get_area_weighted_mean(data.([tmp.varname, '_corr_obs_lens2', '_l', tmp.lyear_str]), grid.tlong, grid.tlat);
-    fig_cfg.fig_name=['l',tmp.lyear_str, ', corr_obs_lens2_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
+        Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_corr_obs_lens2_ano', '_', tmp.season]), grid.tlong, grid.tlat);
+    fig_cfg.fig_name=[tmp.season, ', corr_obs_lens2_ano_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
     fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
         'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
     %% map setting
@@ -763,14 +661,14 @@ for fake=1:1
     %% save
     dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_corr_obs_map', filesep, 'lens2'];
     if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'corr_obs_lens2_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
+    cfg.figname=[dirs.figdir, filesep, 'corr_obs_lens2_ano_map_', tmp.varname, '_', tmp.season, 'y.tif'];
     print(fig_h, cfg.figname, '-dpng');
     RemoveWhiteSpace([], 'file', cfg.figname);
     close all; 
 end
 end
 
-%% obs & hcst-lens2 corr map --------------------------------------
+%% obs & hcst-lens2, obs-hcst2 & hcst-lens2 corr map --------------------------------------
 if fig_flags(6)==1
 for fake=1:1
     fig_cfg.name_rgn = 'Glob';
@@ -789,17 +687,17 @@ for fake=1:1
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data.([tmp.varname, '_corr_obs_int', '_l', tmp.lyear_str]);
+    tmp.C=data2.([tmp.varname, '_corr_obs_int_ano', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
-%         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
+%         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
 %         tmp.C_H=tmp.C_H([end, 1:end],:);
 %         tmp.C_2=tmp.C;
 %         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
 
 
     [tmp.mean_corr, tmp.err] = ...
-        Func_0011_get_area_weighted_mean(data.([tmp.varname, '_corr_obs_int', '_l', tmp.lyear_str]), grid.tlong, grid.tlat);
-    fig_cfg.fig_name=['l',tmp.lyear_str, ', corr_obs_int_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
+        Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_corr_obs_int_ano', '_', tmp.season]), grid.tlong, grid.tlat);
+    fig_cfg.fig_name=[tmp.season, ', corr_obs_int_ano_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
     fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
         'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
     %% map setting
@@ -856,9 +754,100 @@ for fake=1:1
     end
 
     %% save
-    dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_corr_obs_map', filesep, 'model'];
+    dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_corr_obs_int_map', filesep, 'model'];
     if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'corr_obs_int_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
+    cfg.figname=[dirs.figdir, filesep, 'corr_obs_int_ano_map_', tmp.varname, '_', tmp.season, 'y.tif'];
+    print(fig_h, cfg.figname, '-dpng');
+    RemoveWhiteSpace([], 'file', cfg.figname);
+    close all;
+
+%% 2
+    fig_cfg.name_rgn = 'Glob';
+    fig_cfg.map_proj = 'eqdcylin';  % robinson, eqdcylin
+%     fig_cfg.map_proj = 'robinson';  % robinson, eqdcylin
+
+    fig_cfg.x_lim = [-180 180];
+    fig_cfg.y_lim = [-80 89];
+    fig_cfg.fig_size = [0,0,6,3.5];
+    fig_cfg.ax_size = [0.3,0.7,5.4,2.7];
+    fig_cfg.cb_size = [5.15,0.8,0.15,2.3];
+    fig_cfg.title_pos = [0.5,0.93];
+    fig_cfg.p_lim =0.1;
+    fig_cfg.c_lim = [-1 1];
+    [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('bwr_10', tmp.dropboxpath);
+
+    tmp.X=grid.tlong([end, 1:end],:);
+    tmp.Y=grid.tlat([end, 1:end],:);
+    tmp.C=data2.([tmp.varname, '_corr_obs_int2_ano', '_', tmp.season]);
+    tmp.C=tmp.C([end, 1:end],:);
+%         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
+%         tmp.C_H=tmp.C_H([end, 1:end],:);
+%         tmp.C_2=tmp.C;
+%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+
+
+    [tmp.mean_corr, tmp.err] = ...
+        Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_corr_obs_int2_ano', '_', tmp.season]), grid.tlong, grid.tlat);
+    fig_cfg.fig_name=[tmp.season, ', corr_obs_int_ano_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
+    fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
+        'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
+    %% map setting
+    ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
+        'fontname','freeserif'); 
+
+    axis off; 
+    hold on;
+    setm(ax_m,'origin',[0,200],'MapLatLimit',fig_cfg.y_lim);  % lat origin(middle point), lon origin (middle point)
+    set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
+    text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
+    'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
+    'fontsize',14,'fontname','freeserif','interpreter','none')
+
+    %% caxis & colorbar
+    caxis(ax_m, fig_cfg.c_lim); 
+    colormap(fig_cfg.c_map);
+    cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
+    set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
+    title(cb,'R','fontsize',12);
+
+    %% draw on ax_m
+    h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
+    shading flat;
+    geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
+
+%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1) %for Chls, it uses all available data
+%             %% <AR1 area -> hatch
+%             pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2, 'parent', ax_m);
+%             set(pp2,'linestyle','none','Tag','HatchingRegion');
+%             hp = findobj(pp2,'Tag','HatchingRegion');
+%             hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
+%         end
+
+
+%% frame and label setting
+    setm(ax_m,'frame','on','FLineWidth',1);
+
+    label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
+    label_x=mlabel('MLabelParallel','south', 'MLineLocation',20, 'MLabelLocation',60, 'labelrotation','on');
+    mlabel; plabel;
+    label_y=plabel; label_x=mlabel;
+    for lxi=1:length(label_x)
+        tmp.tmppos=label_x(lxi,1).Position;
+        tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.55; % y position correction
+        label_x(lxi,1).Position=tmp.tmppos;
+        label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
+    end
+    for lyi=1:length(label_y)
+        label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
+        tmp.tmppos=label_y(lyi,1).Position;
+        tmp.tmppos(1)=-fig_cfg.ax_size(3)+2.6; % x position correction
+        label_y(lyi,1).Position=tmp.tmppos;
+    end
+
+    %% save
+    dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_corr_obs_int2_map', filesep, 'model'];
+    if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
+    cfg.figname=[dirs.figdir, filesep, 'corr_obs_int2_ano_map_', tmp.varname, '_', tmp.season, 'y.tif'];
     print(fig_h, cfg.figname, '-dpng');
     RemoveWhiteSpace([], 'file', cfg.figname);
     close all;
@@ -884,17 +873,17 @@ for fake=1:1
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data.([tmp.varname, '_corr_obs_det', '_l', tmp.lyear_str]);
+    tmp.C=data2.([tmp.varname, '_corr_obs_det_ano', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
-%         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
+%         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
 %         tmp.C_H=tmp.C_H([end, 1:end],:);
 %         tmp.C_2=tmp.C;
 %         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
 
 
     [tmp.mean_corr, tmp.err] = ...
-        Func_0011_get_area_weighted_mean(data.([tmp.varname, '_corr_obs_det', '_l', tmp.lyear_str]), grid.tlong, grid.tlat);
-    fig_cfg.fig_name=['l',tmp.lyear_str, ', corr_obs_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
+        Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_corr_obs_det_ano', '_', tmp.season]), grid.tlong, grid.tlat);
+    fig_cfg.fig_name=[tmp.season, ', corr_obs_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
     fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
         'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
     %% map setting
@@ -953,7 +942,7 @@ for fake=1:1
     %% save
     dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_corr_obs_det_map', filesep, 'model'];
     if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'corr_obs_det_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
+    cfg.figname=[dirs.figdir, filesep, 'corr_obs_det_ano_map_', tmp.varname, '_', tmp.season, 'y.tif'];
     print(fig_h, cfg.figname, '-dpng');
     RemoveWhiteSpace([], 'file', cfg.figname);
     close all; 
@@ -979,17 +968,17 @@ for fake=1:1
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data.([tmp.varname, '_corr_obs_assm_det', '_l', tmp.lyear_str]);
+    tmp.C=data2.([tmp.varname, '_corr_obs_assm_det_ano', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
-%         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
+%         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
 %         tmp.C_H=tmp.C_H([end, 1:end],:);
 %         tmp.C_2=tmp.C;
 %         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
 
 
     [tmp.mean_corr, tmp.err] = ...
-        Func_0011_get_area_weighted_mean(data.([tmp.varname, '_corr_obs_assm_det', '_l', tmp.lyear_str]), grid.tlong, grid.tlat);
-    fig_cfg.fig_name=['l',tmp.lyear_str, ', corr_obs_assm_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
+        Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_corr_obs_assm_det_ano', '_', tmp.season]), grid.tlong, grid.tlat);
+    fig_cfg.fig_name=[tmp.season, ', corr_obs_assm_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
     fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
         'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
     %% map setting
@@ -1048,7 +1037,7 @@ for fake=1:1
     %% save
     dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_corr_obs_det_map', filesep, 'assm'];
     if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'corr_obs_assm_det_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
+    cfg.figname=[dirs.figdir, filesep, 'corr_obs_assm_det_ano_map_', tmp.varname, '_', tmp.season, 'y.tif'];
     print(fig_h, cfg.figname, '-dpng');
     RemoveWhiteSpace([], 'file', cfg.figname);
     close all; 
@@ -1074,17 +1063,17 @@ for fake=1:1
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data.([tmp.varname, '_corr_obs_lens2_det', '_l', tmp.lyear_str]);
+    tmp.C=data2.([tmp.varname, '_corr_obs_lens2_det_ano', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
-%         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
+%         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
 %         tmp.C_H=tmp.C_H([end, 1:end],:);
 %         tmp.C_2=tmp.C;
 %         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
 
 
     [tmp.mean_corr, tmp.err] = ...
-        Func_0011_get_area_weighted_mean(data.([tmp.varname, '_corr_obs_lens2_det', '_l', tmp.lyear_str]), grid.tlong, grid.tlat);
-    fig_cfg.fig_name=['l',tmp.lyear_str, ', corr_obs_lens2_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
+        Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_corr_obs_lens2_det_ano', '_', tmp.season]), grid.tlong, grid.tlat);
+    fig_cfg.fig_name=[tmp.season, ', corr_obs_lens2_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
     fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
         'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
     %% map setting
@@ -1143,7 +1132,7 @@ for fake=1:1
     %% save
     dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_corr_obs_det_map', filesep, 'lens2'];
     if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'corr_obs_lens2_det_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
+    cfg.figname=[dirs.figdir, filesep, 'corr_obs_lens2_det_ano_map_', tmp.varname, '_', tmp.season, 'y.tif'];
     print(fig_h, cfg.figname, '-dpng');
     RemoveWhiteSpace([], 'file', cfg.figname);
     close all; 
@@ -1169,10 +1158,10 @@ for fake=1:1
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data.([tmp.varname, '_corr_obs', '_l', tmp.lyear_str]);
+    tmp.C=data2.([tmp.varname, '_corr_obs_ano', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
 
-    tmp.C_H=data.([tmp.varname, '_corr_obs_AR1', '_l', tmp.lyear_str]);
+    tmp.C_H=data2.([tmp.varname, '_corr_obs_AR1', '_', tmp.season]);
     tmp.C_H=tmp.C_H([end, 1:end],:);
 
     tmp.C(tmp.C<tmp.C_H)=-1;
@@ -1182,8 +1171,8 @@ for fake=1:1
 
 
     [tmp.mean_corr, tmp.err] = ...
-        Func_0011_get_area_weighted_mean(data.([tmp.varname, '_corr_obs', '_l', tmp.lyear_str]), grid.tlong, grid.tlat);
-    fig_cfg.fig_name=['l',tmp.lyear_str, ', corr_obs_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
+        Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_corr_obs_ano', '_', tmp.season]), grid.tlong, grid.tlat);
+    fig_cfg.fig_name=[tmp.season, ', corr_obs_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
     fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
         'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
     %% map setting
@@ -1243,7 +1232,7 @@ for fake=1:1
     %% save
     dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_corr_obs_map', filesep, 'model'];
     if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'corr_obs_overAR1_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
+    cfg.figname=[dirs.figdir, filesep, 'corr_obs_ano_overAR1_map_', tmp.varname, '_', tmp.season, 'y.tif'];
     print(fig_h, cfg.figname, '-dpng');
     RemoveWhiteSpace([], 'file', cfg.figname);
     close all;
@@ -1270,17 +1259,17 @@ for fake=1:1
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data.([tmp.varname, '_corr_assm', '_l', tmp.lyear_str]);
+    tmp.C=data2.([tmp.varname, '_corr_assm_ano', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
-%         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
+%         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
 %         tmp.C_H=tmp.C_H([end, 1:end],:);
 %         tmp.C_2=tmp.C;
 %         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
 
 
     [tmp.mean_corr, tmp.err] = ...
-        Func_0011_get_area_weighted_mean(data.([tmp.varname, '_corr_assm', '_l', tmp.lyear_str]), grid.tlong, grid.tlat);
-    fig_cfg.fig_name=['l',tmp.lyear_str, ', corr_assm_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
+        Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_corr_assm_ano', '_', tmp.season]), grid.tlong, grid.tlat);
+    fig_cfg.fig_name=[tmp.season, ', corr_assm_ano_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
     fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
         'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
     %% map setting
@@ -1339,7 +1328,7 @@ for fake=1:1
     %% save
     dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_corr_assm_map', filesep, 'model'];
     if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'corr_assm_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
+    cfg.figname=[dirs.figdir, filesep, 'corr_assm_ano_map_', tmp.varname, '_', tmp.season, 'y.tif'];
     print(fig_h, cfg.figname, '-dpng');
     RemoveWhiteSpace([], 'file', cfg.figname);
     close all;
@@ -1365,13 +1354,13 @@ for fake=1:1
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data.([tmp.varname, '_corr_assm_det', '_l', tmp.lyear_str]);
+    tmp.C=data2.([tmp.varname, '_corr_assm_det_ano', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
 
 
     [tmp.mean_corr, tmp.err] = ...
-        Func_0011_get_area_weighted_mean(data.([tmp.varname, '_corr_assm_det', '_l', tmp.lyear_str]), grid.tlong, grid.tlat);
-    fig_cfg.fig_name=['l',tmp.lyear_str, ', corr_assm_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
+        Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_corr_assm_det_ano', '_', tmp.season]), grid.tlong, grid.tlat);
+    fig_cfg.fig_name=[tmp.season, ', corr_assm_det_ano, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
     fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
         'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
     %% map setting
@@ -1422,7 +1411,7 @@ for fake=1:1
     %% save
     dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_corr_assm_det_map', filesep, 'model'];
     if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'corr_assm_det_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
+    cfg.figname=[dirs.figdir, filesep, 'corr_assm_det_ano_map_', tmp.varname, '_', tmp.season, 'y.tif'];
     print(fig_h, cfg.figname, '-dpng');
     RemoveWhiteSpace([], 'file', cfg.figname);
     close all;
@@ -1447,17 +1436,17 @@ for fake=1:1
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data.([tmp.varname, '_corr_assm_int', '_l', tmp.lyear_str]);
+    tmp.C=data2.([tmp.varname, '_corr_assm_int_ano', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
-%         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
+%         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
 %         tmp.C_H=tmp.C_H([end, 1:end],:);
 %         tmp.C_2=tmp.C;
 %         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
 
 
     [tmp.mean_corr, tmp.err] = ...
-        Func_0011_get_area_weighted_mean(data.([tmp.varname, '_corr_assm_int', '_l', tmp.lyear_str]), grid.tlong, grid.tlat);
-    fig_cfg.fig_name=['l',tmp.lyear_str, ', corr_assm _, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
+        Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_corr_assm_int_ano', '_', tmp.season]), grid.tlong, grid.tlat);
+    fig_cfg.fig_name=[tmp.season, ', corr_assm_int_ano_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
     fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
         'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
     %% map setting
@@ -1516,7 +1505,7 @@ for fake=1:1
     %% save
     dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_corr_assm_int_map', filesep, 'model'];
     if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'corr_assm_int_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
+    cfg.figname=[dirs.figdir, filesep, 'corr_assm_int_ano_map_', tmp.varname, '_', tmp.season, 'y.tif'];
 
     print(fig_h, cfg.figname, '-dpng');
     RemoveWhiteSpace([], 'file', cfg.figname);
@@ -1538,17 +1527,17 @@ for fake=1:1
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data.([tmp.varname, '_corr_assm_int2', '_l', tmp.lyear_str]);
+    tmp.C=data2.([tmp.varname, '_corr_assm_int2_ano', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
-%         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
+%         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
 %         tmp.C_H=tmp.C_H([end, 1:end],:);
 %         tmp.C_2=tmp.C;
 %         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
 
 
     [tmp.mean_corr, tmp.err] = ...
-        Func_0011_get_area_weighted_mean(data.([tmp.varname, '_corr_assm_int2', '_l', tmp.lyear_str]), grid.tlong, grid.tlat);
-    fig_cfg.fig_name=['l',tmp.lyear_str, ', corr_assm _, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
+        Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_corr_assm_int2_ano', '_', tmp.season]), grid.tlong, grid.tlat);
+    fig_cfg.fig_name=[tmp.season, ', corr_assm_int2_ano_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
     fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
         'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
     %% map setting
@@ -1607,7 +1596,7 @@ for fake=1:1
     %% save
     dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_corr_assm_int2_map', filesep, 'model'];
     if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'corr_assm_int2_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
+    cfg.figname=[dirs.figdir, filesep, 'corr_assm_int2_ano_map_', tmp.varname, '_', tmp.season, 'y.tif'];
 
     print(fig_h, cfg.figname, '-dpng');
     RemoveWhiteSpace([], 'file', cfg.figname);
@@ -1633,17 +1622,17 @@ for fake=1:1
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data.([tmp.varname, '_corr_assm_lens2', '_l', tmp.lyear_str]);
+    tmp.C=data2.([tmp.varname, '_corr_assm_lens2_ano', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
-%         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
+%         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
 %         tmp.C_H=tmp.C_H([end, 1:end],:);
 %         tmp.C_2=tmp.C;
 %         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
 
 
     [tmp.mean_corr, tmp.err] = ...
-        Func_0011_get_area_weighted_mean(data.([tmp.varname, '_corr_assm_lens2', '_l', tmp.lyear_str]), grid.tlong, grid.tlat);
-    fig_cfg.fig_name=['l',tmp.lyear_str, ', corr_assm_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
+        Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_corr_assm_lens2_ano', '_', tmp.season]), grid.tlong, grid.tlat);
+    fig_cfg.fig_name=[tmp.season, ', corr_assm_lens2_ano_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
     fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
         'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
     %% map setting
@@ -1702,7 +1691,7 @@ for fake=1:1
     %% save
     dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_corr_assm_ext_map', filesep, 'model'];
     if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'corr_assm_ext_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
+    cfg.figname=[dirs.figdir, filesep, 'corr_assm_ext_ano_map_', tmp.varname, '_', tmp.season, 'y.tif'];
     print(fig_h, cfg.figname, '-dpng');
     RemoveWhiteSpace([], 'file', cfg.figname);
     close all;
@@ -1727,12 +1716,12 @@ for fake=1:1
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data.([tmp.varname, '_corr_assm_lens2_det', '_l', tmp.lyear_str]);
+    tmp.C=data2.([tmp.varname, '_corr_assm_lens2_det_ano', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
 
     [tmp.mean_corr, tmp.err] = ...
-        Func_0011_get_area_weighted_mean(data.([tmp.varname, '_corr_assm_lens2_det', '_l', tmp.lyear_str]), grid.tlong, grid.tlat);
-    fig_cfg.fig_name=['l',tmp.lyear_str, ', corr_assm_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
+        Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_corr_assm_lens2_det_ano', '_', tmp.season]), grid.tlong, grid.tlat);
+    fig_cfg.fig_name=[tmp.season, ', corr_assm_lens2_det_ano_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
     fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
         'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
     %% map setting
@@ -1784,7 +1773,7 @@ for fake=1:1
     %% save
     dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_corr_assm_ext_det_map', filesep, 'model'];
     if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'corr_assm_ext_det_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
+    cfg.figname=[dirs.figdir, filesep, 'corr_assm_ext_det_ano_map_', tmp.varname, '_', tmp.season, 'y.tif'];
     print(fig_h, cfg.figname, '-dpng');
     RemoveWhiteSpace([], 'file', cfg.figname);
     close all;
@@ -1810,10 +1799,10 @@ for fake=1:1
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data.([tmp.varname, '_corr_assm', '_l', tmp.lyear_str]);
+    tmp.C=data2.([tmp.varname, '_corr_assm_ano', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
 
-    tmp.C_H=data.([tmp.varname, '_corr_assm_AR1', '_l', tmp.lyear_str]);
+    tmp.C_H=data2.([tmp.varname, '_corr_assm_AR1_ano', '_', tmp.season]);
     tmp.C_H=tmp.C_H([end, 1:end],:);
 
     tmp.C(tmp.C<tmp.C_H)=-1;
@@ -1823,8 +1812,8 @@ for fake=1:1
 
 
     [tmp.mean_corr, tmp.err] = ...
-        Func_0011_get_area_weighted_mean(data.([tmp.varname, '_corr_assm', '_l', tmp.lyear_str]), grid.tlong, grid.tlat);
-    fig_cfg.fig_name=['l',tmp.lyear_str, ', corr_assm_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
+        Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_corr_assm_ano', '_', tmp.season]), grid.tlong, grid.tlat);
+    fig_cfg.fig_name=[tmp.season, ', corr_assm_ano_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
     fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
         'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
     %% map setting
@@ -1885,23 +1874,21 @@ for fake=1:1
     %% save
     dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_corr_assm_map', filesep, 'model'];
     if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'corr_assm_overAR1_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
+    cfg.figname=[dirs.figdir, filesep, 'corr_assm_ano_overAR1_map_', tmp.varname, '_', tmp.season, 'y.tif'];
     print(fig_h, cfg.figname, '-dpng');
     RemoveWhiteSpace([], 'file', cfg.figname);
     close all;
 end
 end
 
-
-
 %% obs trend map --------------------------------------
 if fig_flags(17)==1
 for fake=1:1
-    data.([tmp.varname, '_obs_trend', '_l', tmp.lyear_str])(data.([tmp.varname, '_obs_trend', '_l', tmp.lyear_str])==0)=NaN;
-    tmp.trend_all= [ data.([tmp.varname, '_obs_trend', '_l', tmp.lyear_str]), ...
-                 data.([tmp.varname, '_assm_trend', '_l', tmp.lyear_str]), ...
-                 data.([tmp.varname, '_model_trend', '_l', tmp.lyear_str]), ...
-                 data.([tmp.varname, '_lens2_trend', '_l', tmp.lyear_str])];
+    data2.([tmp.varname, '_obs_trend2', '_', tmp.season])(data2.([tmp.varname, '_obs_trend2', '_', tmp.season])==0)=NaN;
+    tmp.trend_all= [ data2.([tmp.varname, '_obs_trend2', '_', tmp.season]), ...
+                 data2.([tmp.varname, '_assm_trend2', '_', tmp.season]), ...
+                 data2.([tmp.varname, '_model_trend2', '_', tmp.season]), ...
+                 data2.([tmp.varname, '_lens2_trend2', '_', tmp.season])];
     tmp.trend_prc99 =prctile(tmp.trend_all(:), 99);
     tmp.trend_prc01 =prctile(tmp.trend_all(:), 1);
     tmp.trend_max=max([abs(tmp.trend_prc99) abs(tmp.trend_prc01)]);
@@ -1922,17 +1909,17 @@ for fake=1:1
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data.([tmp.varname, '_obs_trend', '_l', tmp.lyear_str]);
+    tmp.C=data2.([tmp.varname, '_obs_trend2', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
-%         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
+%         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
 %         tmp.C_H=tmp.C_H([end, 1:end],:);
 %         tmp.C_2=tmp.C;
 %         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
 
 
     [tmp.mean_corr, tmp.err] = ...
-        Func_0011_get_area_weighted_mean(data.([tmp.varname, '_obs_trend', '_l', tmp.lyear_str]), grid.tlong, grid.tlat);
-    fig_cfg.fig_name=['l',tmp.lyear_str, ', trend_obs_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
+        Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_obs_trend2', '_', tmp.season]), grid.tlong, grid.tlat);
+    fig_cfg.fig_name=[tmp.season, ', trend_obs_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
     fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
         'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
     %% map setting
@@ -1991,7 +1978,7 @@ for fake=1:1
     %% save
     dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_trend_map', filesep, 'obs'];
     if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'trend_obs_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
+    cfg.figname=[dirs.figdir, filesep, 'trend_obs_ano_map_', tmp.varname, '_', tmp.season, 'y.tif'];
     print(fig_h, cfg.figname, '-dpng');
     RemoveWhiteSpace([], 'file', cfg.figname);
     close all; 
@@ -2001,11 +1988,11 @@ end
 %% assm trend map --------------------------------------
 if fig_flags(18)==1
 for fake=1:1
-    data.([tmp.varname, '_obs_trend', '_l', tmp.lyear_str])(data.([tmp.varname, '_obs_trend', '_l', tmp.lyear_str])==0)=NaN;
-    tmp.trend_all= [ data.([tmp.varname, '_obs_trend', '_l', tmp.lyear_str]), ...
-                 data.([tmp.varname, '_assm_trend', '_l', tmp.lyear_str]), ...
-                 data.([tmp.varname, '_model_trend', '_l', tmp.lyear_str]), ...
-                 data.([tmp.varname, '_lens2_trend', '_l', tmp.lyear_str])];
+    data2.([tmp.varname, '_obs_trend2', '_', tmp.season])(data2.([tmp.varname, '_obs_trend2', '_', tmp.season])==0)=NaN;
+    tmp.trend_all= [ data2.([tmp.varname, '_obs_trend2', '_', tmp.season]), ...
+                 data2.([tmp.varname, '_assm_trend2', '_', tmp.season]), ...
+                 data2.([tmp.varname, '_model_trend2', '_', tmp.season]), ...
+                 data2.([tmp.varname, '_lens2_trend2', '_', tmp.season])];
     tmp.trend_prc99 =prctile(tmp.trend_all(:), 99);
     tmp.trend_prc01 =prctile(tmp.trend_all(:), 1);
     tmp.trend_max=max([abs(tmp.trend_prc99) abs(tmp.trend_prc01)]);
@@ -2027,17 +2014,17 @@ for fake=1:1
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data.([tmp.varname, '_assm_trend', '_l', tmp.lyear_str]);
+    tmp.C=data2.([tmp.varname, '_assm_trend2', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
-%         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
+%         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
 %         tmp.C_H=tmp.C_H([end, 1:end],:);
 %         tmp.C_2=tmp.C;
 %         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
 
 
     [tmp.mean_corr, tmp.err] = ...
-        Func_0011_get_area_weighted_mean(data.([tmp.varname, '_assm_trend', '_l', tmp.lyear_str]), grid.tlong, grid.tlat);
-    fig_cfg.fig_name=['l',tmp.lyear_str, ', trend_assm_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
+        Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_assm_trend2', '_', tmp.season]), grid.tlong, grid.tlat);
+    fig_cfg.fig_name=[tmp.season, ', trend_assm_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
     fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
         'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
     %% map setting
@@ -2096,7 +2083,7 @@ for fake=1:1
     %% save
     dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_trend_map', filesep, 'assm'];
     if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'trend_assm_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
+    cfg.figname=[dirs.figdir, filesep, 'trend_assm_ano_map_', tmp.varname, '_', tmp.season, 'y.tif'];
     print(fig_h, cfg.figname, '-dpng');
     RemoveWhiteSpace([], 'file', cfg.figname);
     close all; 
@@ -2123,17 +2110,17 @@ for fake=1:1
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data.([tmp.varname, '_lens2_trend', '_l', tmp.lyear_str]);
+    tmp.C=data2.([tmp.varname, '_lens2_trend2', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
-%         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
+%         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
 %         tmp.C_H=tmp.C_H([end, 1:end],:);
 %         tmp.C_2=tmp.C;
 %         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
 
 
     [tmp.mean_corr, tmp.err] = ...
-        Func_0011_get_area_weighted_mean(data.([tmp.varname, '_lens2_trend', '_l', tmp.lyear_str]), grid.tlong, grid.tlat);
-    fig_cfg.fig_name=['l',tmp.lyear_str, ', trend_lens2_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
+        Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_lens2_trend2', '_', tmp.season]), grid.tlong, grid.tlat);
+    fig_cfg.fig_name=[tmp.season, ', trend_lens2_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
     fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
         'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
     %% map setting
@@ -2192,7 +2179,7 @@ for fake=1:1
     %% save
     dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_trend_map', filesep, 'lens2'];
     if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'trend_lens2_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
+    cfg.figname=[dirs.figdir, filesep, 'trend_lens2_ano_map_', tmp.varname, '_', tmp.season, 'y.tif'];
     print(fig_h, cfg.figname, '-dpng');
     RemoveWhiteSpace([], 'file', cfg.figname);
     close all; 
@@ -2219,17 +2206,17 @@ for fake=1:1
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data.([tmp.varname, '_model_trend', '_l', tmp.lyear_str]);
+    tmp.C=data2.([tmp.varname, '_model_trend2', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
-%         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
+%         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
 %         tmp.C_H=tmp.C_H([end, 1:end],:);
 %         tmp.C_2=tmp.C;
 %         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
 
 
     [tmp.mean_corr, tmp.err] = ...
-        Func_0011_get_area_weighted_mean(data.([tmp.varname, '_model_trend', '_l', tmp.lyear_str]), grid.tlong, grid.tlat);
-    fig_cfg.fig_name=['l',tmp.lyear_str, ', trend_model_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
+        Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_model_trend2', '_', tmp.season]), grid.tlong, grid.tlat);
+    fig_cfg.fig_name=[tmp.season, ', trend_model_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
     fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
         'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
     %% map setting
@@ -2288,7 +2275,7 @@ for fake=1:1
     %% save
     dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_trend_map', filesep, 'hcst'];
     if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'trend_hcst_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
+    cfg.figname=[dirs.figdir, filesep, 'trend_hcst_ano_map_', tmp.varname, '_', tmp.season, 'y.tif'];
     print(fig_h, cfg.figname, '-dpng');
     RemoveWhiteSpace([], 'file', cfg.figname);
     close all; 
@@ -2298,9 +2285,18 @@ end
 %% obs & assm rmse map --------------------------------------
 if fig_flags(21)==1
 for fake=1:1
-    tmp.rmse_obs_all= [ data.([tmp.varname, '_assm_rmse_obs', '_l', tmp.lyear_str]), ...
-                 data.([tmp.varname, '_model_rmse_obs', '_l', tmp.lyear_str]), ...
-                 data.([tmp.varname, '_lens2_rmse_obs', '_l', tmp.lyear_str])];
+    tmp.rmse_obs_all= [ data2_JFM1.([tmp.varname, '_assm_rmse2_obs', '_JFM1']), ...
+                 data2_JFM1.([tmp.varname, '_model_rmse2_obs', '_JFM1']), ...
+                 data2_JFM1.([tmp.varname, '_lens2_rmse2_obs', '_JFM1']), ...
+                 data2_AMJ1.([tmp.varname, '_assm_rmse2_obs', '_AMJ1']), ...
+                 data2_AMJ1.([tmp.varname, '_model_rmse2_obs', '_AMJ1']), ...
+                 data2_AMJ1.([tmp.varname, '_lens2_rmse2_obs', '_AMJ1']), ...
+                 data2_JAS1.([tmp.varname, '_assm_rmse2_obs', '_JAS1']), ...
+                 data2_JAS1.([tmp.varname, '_model_rmse2_obs', '_JAS1']), ...
+                 data2_JAS1.([tmp.varname, '_lens2_rmse2_obs', '_JAS1']), ...
+                 data2_OND1.([tmp.varname, '_assm_rmse2_obs', '_OND1']), ...
+                 data2_OND1.([tmp.varname, '_model_rmse2_obs', '_OND1']), ...
+                 data2_OND1.([tmp.varname, '_lens2_rmse2_obs', '_OND1'])];
     tmp.rmse_obs_prc99 =prctile(tmp.rmse_obs_all(:), 99);
     tmp.rmse_obs_prc01 =prctile(tmp.rmse_obs_all(:), 1);
 
@@ -2317,20 +2313,21 @@ for fake=1:1
     fig_cfg.p_lim =0.1;
     fig_cfg.c_lim = [-1 1];
     [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('wr_10', tmp.dropboxpath);
+    fig_cfg.c_map = flip(fig_cfg.c_map);
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data.([tmp.varname, '_assm_rmse_obs', '_l', tmp.lyear_str]);
+    tmp.C=data2.([tmp.varname, '_assm_rmse2_obs', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
-%         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
+%         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
 %         tmp.C_H=tmp.C_H([end, 1:end],:);
 %         tmp.C_2=tmp.C;
 %         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
 
 
     [tmp.mean_corr, tmp.err] = ...
-        Func_0011_get_area_weighted_mean(data.([tmp.varname, '_assm_rmse_obs', '_l', tmp.lyear_str]), grid.tlong, grid.tlat);
-    fig_cfg.fig_name=['l', tmp.lyear_str, ', assm_rmse_obs_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
+        Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_assm_rmse2_obs', '_', tmp.season]), grid.tlong, grid.tlat);
+    fig_cfg.fig_name=[tmp.season, ', assm_rmse2_obs_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
     fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
         'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
     %% map setting
@@ -2389,7 +2386,7 @@ for fake=1:1
     %% save
     dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_rmse_obs_map', filesep, 'assm'];
     if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'assm_rmse_obs_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
+    cfg.figname=[dirs.figdir, filesep, 'assm_rmse_obs_ano_map_', tmp.varname, '_', tmp.season, 'y.tif'];
     print(fig_h, cfg.figname, '-dpng');
     RemoveWhiteSpace([], 'file', cfg.figname);
     close all; 
@@ -2413,20 +2410,21 @@ for fake=1:1
     fig_cfg.p_lim =0.1;
     fig_cfg.c_lim = [-1 1];
     [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('wr_10', tmp.dropboxpath);
+    fig_cfg.c_map = flip(fig_cfg.c_map);
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data.([tmp.varname, '_lens2_rmse_obs', '_l', tmp.lyear_str]);
+    tmp.C=data2.([tmp.varname, '_lens2_rmse2_obs', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
-%         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
+%         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
 %         tmp.C_H=tmp.C_H([end, 1:end],:);
 %         tmp.C_2=tmp.C;
 %         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
 
 
     [tmp.mean_corr, tmp.err] = ...
-        Func_0011_get_area_weighted_mean(data.([tmp.varname, '_lens2_rmse_obs', '_l', tmp.lyear_str]), grid.tlong, grid.tlat);
-    fig_cfg.fig_name=['l', tmp.lyear_str, ', lens2_rmse_obs_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
+        Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_lens2_rmse2_obs', '_', tmp.season]), grid.tlong, grid.tlat);
+    fig_cfg.fig_name=[tmp.season, ', lens2_rmse2_obs_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
     fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
         'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
     %% map setting
@@ -2485,7 +2483,7 @@ for fake=1:1
     %% save
     dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_rmse_obs_map', filesep, 'lens2'];
     if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'lens2_rmse_obs_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
+    cfg.figname=[dirs.figdir, filesep, 'lens2_rmse_obs_ano_map_', tmp.varname, '_', tmp.season, 'y.tif'];
     print(fig_h, cfg.figname, '-dpng');
     RemoveWhiteSpace([], 'file', cfg.figname);
     close all; 
@@ -2509,20 +2507,21 @@ for fake=1:1
     fig_cfg.p_lim =0.1;
     fig_cfg.c_lim = [-1 1];
     [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('wr_10', tmp.dropboxpath);
+    fig_cfg.c_map = flip(fig_cfg.c_map);
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data.([tmp.varname, '_model_rmse_obs', '_l', tmp.lyear_str]);
+    tmp.C=data2.([tmp.varname, '_model_rmse2_obs', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
-%         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
+%         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
 %         tmp.C_H=tmp.C_H([end, 1:end],:);
 %         tmp.C_2=tmp.C;
 %         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
 
 
     [tmp.mean_corr, tmp.err] = ...
-        Func_0011_get_area_weighted_mean(data.([tmp.varname, '_model_rmse_obs', '_l', tmp.lyear_str]), grid.tlong, grid.tlat);
-    fig_cfg.fig_name=['l',tmp.lyear_str, ', model_rmse_obs_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
+        Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_model_rmse2_obs', '_', tmp.season]), grid.tlong, grid.tlat);
+    fig_cfg.fig_name=[tmp.season, ', model_rmse2_obs_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
     fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
         'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
     %% map setting
@@ -2581,7 +2580,7 @@ for fake=1:1
     %% save
     dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_rmse_obs_map', filesep, 'model'];
     if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'model_rmse_obs_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
+    cfg.figname=[dirs.figdir, filesep, 'model_rmse_obs_ano_map_', tmp.varname, '_', tmp.season, 'y.tif'];
     print(fig_h, cfg.figname, '-dpng');
     RemoveWhiteSpace([], 'file', cfg.figname);
     close all; 
@@ -2591,9 +2590,22 @@ end
 %% obs & assm nrmse map --------------------------------------
 if fig_flags(24)==1
 for fake=1:1
-    tmp.nrmse_obs_all= [ data.([tmp.varname, '_assm_nrmse_obs', '_l', tmp.lyear_str]), ...
-                 data.([tmp.varname, '_model_nrmse_obs', '_l', tmp.lyear_str]), ...
-                 data.([tmp.varname, '_lens2_nrmse_obs', '_l', tmp.lyear_str])];
+
+    tmp.nrmse_obs_all= [ data2_JFM1.([tmp.varname, '_assm_nrmse2_obs', '_JFM1']), ...
+                 data2_JFM1.([tmp.varname, '_model_nrmse2_obs', '_JFM1']), ...
+                 data2_JFM1.([tmp.varname, '_lens2_nrmse2_obs', '_JFM1']), ...
+                 data2_AMJ1.([tmp.varname, '_assm_nrmse2_obs', '_AMJ1']), ...
+                 data2_AMJ1.([tmp.varname, '_model_nrmse2_obs', '_AMJ1']), ...
+                 data2_AMJ1.([tmp.varname, '_lens2_nrmse2_obs', '_AMJ1']), ...
+                 data2_JAS1.([tmp.varname, '_assm_nrmse2_obs', '_JAS1']), ...
+                 data2_JAS1.([tmp.varname, '_model_nrmse2_obs', '_JAS1']), ...
+                 data2_JAS1.([tmp.varname, '_lens2_nrmse2_obs', '_JAS1']), ...
+                 data2_OND1.([tmp.varname, '_assm_nrmse2_obs', '_OND1']), ...
+                 data2_OND1.([tmp.varname, '_model_nrmse2_obs', '_OND1']), ...
+                 data2_OND1.([tmp.varname, '_lens2_nrmse2_obs', '_OND1'])];
+
+
+
     tmp.nrmse_obs_all(isinf(tmp.nrmse_obs_all))=NaN;
     tmp.nrmse_obs_prc90 =prctile(tmp.nrmse_obs_all(:), 90);
     tmp.nrmse_obs_prc01 =prctile(tmp.nrmse_obs_all(:), 1);
@@ -2611,21 +2623,22 @@ for fake=1:1
     fig_cfg.p_lim =0.1;
     fig_cfg.c_lim = [-1 1];
     [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('wr_10', tmp.dropboxpath);
+    fig_cfg.c_map = flip(fig_cfg.c_map);
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data.([tmp.varname, '_assm_nrmse_obs', '_l', tmp.lyear_str]);
+    tmp.C=data2.([tmp.varname, '_assm_nrmse2_obs', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
     tmp.C(isinf(tmp.C))=NaN;
-%         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
+%         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
 %         tmp.C_H=tmp.C_H([end, 1:end],:);
 %         tmp.C_2=tmp.C;
 %         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
 
 
     [tmp.mean_corr, tmp.err] = ...
-        Func_0011_get_area_weighted_mean(data.([tmp.varname, '_assm_nrmse_obs', '_l', tmp.lyear_str]), grid.tlong, grid.tlat);
-    fig_cfg.fig_name=['l', tmp.lyear_str, ', assm_nrmse_obs_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
+        Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_assm_nrmse2_obs', '_', tmp.season]), grid.tlong, grid.tlat);
+    fig_cfg.fig_name=[tmp.season, ', assm_nrmse2_obs_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
     fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
         'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
     %% map setting
@@ -2684,7 +2697,7 @@ for fake=1:1
     %% save
     dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_nrmse_obs_map', filesep, 'assm'];
     if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'assm_nrmse_obs_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
+    cfg.figname=[dirs.figdir, filesep, 'assm_nrmse_obs_ano_map_', tmp.varname, '_', tmp.season, 'y.tif'];
     print(fig_h, cfg.figname, '-dpng');
     RemoveWhiteSpace([], 'file', cfg.figname);
     close all; 
@@ -2708,21 +2721,21 @@ for fake=1:1
     fig_cfg.p_lim =0.1;
     fig_cfg.c_lim = [-1 1];
     [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('wr_10', tmp.dropboxpath);
-
+    fig_cfg.c_map = flip(fig_cfg.c_map);
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data.([tmp.varname, '_lens2_nrmse_obs', '_l', tmp.lyear_str]);
+    tmp.C=data2.([tmp.varname, '_lens2_nrmse2_obs', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
     tmp.C(isinf(tmp.C))=NaN;
-%         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
+%         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
 %         tmp.C_H=tmp.C_H([end, 1:end],:);
 %         tmp.C_2=tmp.C;
 %         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
 
 
     [tmp.mean_corr, tmp.err] = ...
-        Func_0011_get_area_weighted_mean(data.([tmp.varname, '_lens2_nrmse_obs', '_l', tmp.lyear_str]), grid.tlong, grid.tlat);
-    fig_cfg.fig_name=['l', tmp.lyear_str, ', lens2_rmse_obs_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
+        Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_lens2_nrmse2_obs', '_', tmp.season]), grid.tlong, grid.tlat);
+    fig_cfg.fig_name=[tmp.season, ', lens2_rmse2_obs_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
     fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
         'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
     %% map setting
@@ -2781,7 +2794,7 @@ for fake=1:1
     %% save
     dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_nrmse_obs_map', filesep, 'lens2'];
     if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'lens2_nrmse_obs_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
+    cfg.figname=[dirs.figdir, filesep, 'lens2_nrmse_obs_ano_map_', tmp.varname, '_', tmp.season, 'y.tif'];
     print(fig_h, cfg.figname, '-dpng');
     RemoveWhiteSpace([], 'file', cfg.figname);
     close all; 
@@ -2805,21 +2818,22 @@ for fake=1:1
     fig_cfg.p_lim =0.1;
     fig_cfg.c_lim = [-1 1];
     [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('wr_10', tmp.dropboxpath);
+    fig_cfg.c_map = flip(fig_cfg.c_map);
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data.([tmp.varname, '_model_nrmse_obs', '_l', tmp.lyear_str]);
+    tmp.C=data2.([tmp.varname, '_model_nrmse2_obs', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
     tmp.C(isinf(tmp.C))=NaN;
-%         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
+%         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
 %         tmp.C_H=tmp.C_H([end, 1:end],:);
 %         tmp.C_2=tmp.C;
 %         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
 
 
     [tmp.mean_corr, tmp.err] = ...
-        Func_0011_get_area_weighted_mean(data.([tmp.varname, '_model_nrmse_obs', '_l', tmp.lyear_str]), grid.tlong, grid.tlat);
-    fig_cfg.fig_name=['l',tmp.lyear_str, ', model_nrmse_obs_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
+        Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_model_nrmse2_obs', '_', tmp.season]), grid.tlong, grid.tlat);
+    fig_cfg.fig_name=[tmp.season, ', model_nrmse2_obs_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
     fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
         'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
     %% map setting
@@ -2878,7 +2892,7 @@ for fake=1:1
     %% save
     dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_nrmse_obs_map', filesep, 'model'];
     if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'model_nrmse_obs_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
+    cfg.figname=[dirs.figdir, filesep, 'model_nrmse_obs_ano_map_', tmp.varname, '_', tmp.season, 'y.tif'];
     print(fig_h, cfg.figname, '-dpng');
     RemoveWhiteSpace([], 'file', cfg.figname);
     close all; 
@@ -2888,8 +2902,14 @@ end
 %% assm & lens2 rmse map --------------------------------------
 if fig_flags(27)==1
 for fake=1:1
-    tmp.rmse_all= [ data.([tmp.varname, '_model_rmse', '_l', tmp.lyear_str]), ...
-                 data.([tmp.varname, '_lens2_rmse', '_l', tmp.lyear_str])];
+    tmp.rmse_all= [ data2_JFM1.([tmp.varname, '_model_rmse2', '_JFM1']), ...
+                 data2_JFM1.([tmp.varname, '_lens2_rmse2', '_JFM1']), ...
+                 data2_AMJ1.([tmp.varname, '_model_rmse2', '_AMJ1']), ...
+                 data2_AMJ1.([tmp.varname, '_lens2_rmse2', '_AMJ1']), ...
+                 data2_JAS1.([tmp.varname, '_model_rmse2', '_JAS1']), ...
+                 data2_JAS1.([tmp.varname, '_lens2_rmse2', '_JAS1']), ...
+                 data2_OND1.([tmp.varname, '_model_rmse2', '_OND1']), ...
+                 data2_OND1.([tmp.varname, '_lens2_rmse2', '_OND1'])];
     tmp.rmse_prc99 =prctile(tmp.rmse_all(:), 99);
     tmp.rmse_prc01 =prctile(tmp.rmse_all(:), 1);
 
@@ -2906,20 +2926,21 @@ for fake=1:1
     fig_cfg.p_lim =0.1;
     fig_cfg.c_lim = [-1 1];
     [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('wr_10', tmp.dropboxpath);
+    fig_cfg.c_map = flip(fig_cfg.c_map);
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data.([tmp.varname, '_lens2_rmse', '_l', tmp.lyear_str]);
+    tmp.C=data2.([tmp.varname, '_lens2_rmse2', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
-%         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
+%         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
 %         tmp.C_H=tmp.C_H([end, 1:end],:);
 %         tmp.C_2=tmp.C;
 %         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
 
 
     [tmp.mean_corr, tmp.err] = ...
-        Func_0011_get_area_weighted_mean(data.([tmp.varname, '_lens2_rmse', '_l', tmp.lyear_str]), grid.tlong, grid.tlat);
-    fig_cfg.fig_name=['l', tmp.lyear_str, ', lens2_rmse_assm_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
+        Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_lens2_rmse2', '_', tmp.season]), grid.tlong, grid.tlat);
+    fig_cfg.fig_name=[tmp.season, ', lens2_rmse2_assm_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
     fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
         'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
     %% map setting
@@ -2978,7 +2999,7 @@ for fake=1:1
     %% save
     dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_rmse_assm_map', filesep, 'lens2'];
     if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'lens2_rmse_assm_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
+    cfg.figname=[dirs.figdir, filesep, 'lens2_rmse_assm_ano_map_', tmp.varname, '_', tmp.season, 'y.tif'];
     print(fig_h, cfg.figname, '-dpng');
     RemoveWhiteSpace([], 'file', cfg.figname);
     close all; 
@@ -3002,20 +3023,21 @@ for fake=1:1
     fig_cfg.p_lim =0.1;
     fig_cfg.c_lim = [-1 1];
     [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('wr_10', tmp.dropboxpath);
+    fig_cfg.c_map = flip(fig_cfg.c_map);
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data.([tmp.varname, '_model_rmse', '_l', tmp.lyear_str]);
+    tmp.C=data2.([tmp.varname, '_model_rmse2', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
-%         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
+%         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
 %         tmp.C_H=tmp.C_H([end, 1:end],:);
 %         tmp.C_2=tmp.C;
 %         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
 
 
     [tmp.mean_corr, tmp.err] = ...
-        Func_0011_get_area_weighted_mean(data.([tmp.varname, '_model_rmse', '_l', tmp.lyear_str]), grid.tlong, grid.tlat);
-    fig_cfg.fig_name=['l', tmp.lyear_str, ', hcst_rmse_assm_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
+        Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_model_rmse2', '_', tmp.season]), grid.tlong, grid.tlat);
+    fig_cfg.fig_name=[tmp.season, ', hcst_rmse2_assm_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
     fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
         'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
     %% map setting
@@ -3074,7 +3096,7 @@ for fake=1:1
     %% save
     dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_rmse_assm_map', filesep, 'model'];
     if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'model_rmse_assm_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
+    cfg.figname=[dirs.figdir, filesep, 'model_rmse2_assm_map_', tmp.varname, '_', tmp.season, 'y.tif'];
     print(fig_h, cfg.figname, '-dpng');
     RemoveWhiteSpace([], 'file', cfg.figname);
     close all; 
@@ -3084,8 +3106,14 @@ end
 %% assm & lens2 nrmse map --------------------------------------
 if fig_flags(29)==1
 for fake=1:1
-    tmp.nrmse_all= [ data.([tmp.varname, '_model_nrmse', '_l', tmp.lyear_str]), ...
-                 data.([tmp.varname, '_lens2_nrmse', '_l', tmp.lyear_str])];
+    tmp.nrmse_all= [ data2_JFM1.([tmp.varname, '_model_nrmse2', '_JFM1']), ...
+                 data2_JFM1.([tmp.varname, '_lens2_nrmse2', '_JFM1']), ...
+                 data2_AMJ1.([tmp.varname, '_model_nrmse2', '_AMJ1']), ...
+                 data2_AMJ1.([tmp.varname, '_lens2_nrmse2', '_AMJ1']), ...
+                 data2_JAS1.([tmp.varname, '_model_nrmse2', '_JAS1']), ...
+                 data2_JAS1.([tmp.varname, '_lens2_nrmse2', '_JAS1']), ...
+                 data2_OND1.([tmp.varname, '_model_nrmse2', '_OND1']), ...
+                 data2_OND1.([tmp.varname, '_lens2_nrmse2', '_OND1'])];
     tmp.nrmse_prc99 =prctile(tmp.nrmse_all(:), 99);
     tmp.nrmse_prc01 =prctile(tmp.nrmse_all(:), 1);
 
@@ -3102,20 +3130,21 @@ for fake=1:1
     fig_cfg.p_lim =0.1;
     fig_cfg.c_lim = [-1 1];
     [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('wr_10', tmp.dropboxpath);
+    fig_cfg.c_map = flip(fig_cfg.c_map);
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data.([tmp.varname, '_lens2_nrmse', '_l', tmp.lyear_str]);
+    tmp.C=data2.([tmp.varname, '_lens2_nrmse2', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
-%         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
+%         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
 %         tmp.C_H=tmp.C_H([end, 1:end],:);
 %         tmp.C_2=tmp.C;
 %         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
 
 
     [tmp.mean_corr, tmp.err] = ...
-        Func_0011_get_area_weighted_mean(data.([tmp.varname, '_lens2_nrmse', '_l', tmp.lyear_str]), grid.tlong, grid.tlat);
-    fig_cfg.fig_name=['l', tmp.lyear_str, ', lens2_nrmse_assm_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
+        Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_lens2_nrmse2', '_', tmp.season]), grid.tlong, grid.tlat);
+    fig_cfg.fig_name=[tmp.season, ', lens2_nrmse_assm_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
     fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
         'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
     %% map setting
@@ -3174,7 +3203,7 @@ for fake=1:1
     %% save
     dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_nrmse_assm_map', filesep, 'lens2'];
     if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'lens2_nrmse_assm_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
+    cfg.figname=[dirs.figdir, filesep, 'lens2_nrmse2_assm_map_', tmp.varname, '_', tmp.season, 'y.tif'];
     print(fig_h, cfg.figname, '-dpng');
     RemoveWhiteSpace([], 'file', cfg.figname);
     close all; 
@@ -3198,20 +3227,21 @@ for fake=1:1
     fig_cfg.p_lim =0.1;
     fig_cfg.c_lim = [-1 1];
     [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('wr_10', tmp.dropboxpath);
+    fig_cfg.c_map = flip(fig_cfg.c_map);
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data.([tmp.varname, '_model_nrmse', '_l', tmp.lyear_str]);
+    tmp.C=data2.([tmp.varname, '_model_nrmse2', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
-%         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
+%         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
 %         tmp.C_H=tmp.C_H([end, 1:end],:);
 %         tmp.C_2=tmp.C;
 %         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
 
 
     [tmp.mean_corr, tmp.err] = ...
-        Func_0011_get_area_weighted_mean(data.([tmp.varname, '_model_nrmse', '_l', tmp.lyear_str]), grid.tlong, grid.tlat);
-    fig_cfg.fig_name=['l', tmp.lyear_str, ', model_nrmse_assm_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
+        Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_model_nrmse2', '_', tmp.season]), grid.tlong, grid.tlat);
+    fig_cfg.fig_name=[tmp.season, ', model_nrmse2_assm_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
     fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
         'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
     %% map setting
@@ -3270,674 +3300,10 @@ for fake=1:1
     %% save
     dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_nrmse_assm_map', filesep, 'model'];
     if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'model_nrmse_assm_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
+    cfg.figname=[dirs.figdir, filesep, 'model_nrmse2_assm_map_', tmp.varname, '_', tmp.season, 'y.tif'];
     print(fig_h, cfg.figname, '-dpng');
     RemoveWhiteSpace([], 'file', cfg.figname);
     close all; 
-end
-end
-
-%% obs ensemble mean map --------------------------------------
-if fig_flags(31)==1
-for fake=1:1
-
-    data.obs_mean=mean(data.([tmp.varname,'_obs']),3, 'omitnan');
-    data.assm_mean=mean(data.([tmp.varname,'_assm']),3, 'omitnan');
-    data.model_mean=mean(data.([tmp.varname,'_model_l', tmp.lyear_str]),3, 'omitnan');
-    data.lens2_mean=mean(data.([tmp.varname,'_lens2_l', tmp.lyear_str]),3, 'omitnan');
-    
-%     if strcmp(tmp.varname, 'SST')
-%         data.assm_mean(data.assm_mean==0)=NaN;
-%         data.assm_mean=data.assm_mean-273.15;
-%         data.model_mean(data.model_mean==0)=NaN;
-%         data.model_mean=data.model_mean-273.15;
-%         data.lens2_mean(data.lens2_mean==0)=NaN;
-%         data.lens2_mean=data.lens2_mean-273.15;
-%     end
-
-    tmp.ensmean_all= [ data.obs_mean, data.assm_mean, ...
-                 data.model_mean, data.lens2_mean];
-    tmp.prc99 =prctile(tmp.ensmean_all(:), 99);
-    tmp.prc01 =prctile(tmp.ensmean_all(:), 1);
-    
-    fig_cfg.name_rgn = 'Glob';
-    fig_cfg.map_proj = 'eqdcylin';  % robinson, eqdcylin
-%     fig_cfg.map_proj = 'robinson';  % robinson, eqdcylin
-
-    fig_cfg.x_lim = [-180 180];
-    fig_cfg.y_lim = [-80 89];
-    fig_cfg.fig_size = [0,0,6,3.5];
-    fig_cfg.ax_size = [0.3,0.7,5.4,2.7];
-    fig_cfg.cb_size = [5.15,0.8,0.15,2.3];
-    fig_cfg.title_pos = [0.5,0.93];
-    fig_cfg.p_lim =0.1;
-    fig_cfg.c_lim = [-1 1];
-    [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('bwr_10', tmp.dropboxpath);
-
-    tmp.X=grid.tlong([end, 1:end],:);
-    tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data.obs_mean;
-    tmp.C=tmp.C([end, 1:end],:);
-%         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
-
-
-    fig_cfg.fig_name=['l',tmp.lyear_str, ', ensmean_, ', tmp. varname];
-    fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
-        'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
-    %% map setting
-    ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
-        'fontname','freeserif'); 
-
-    axis off; 
-    hold on;
-    setm(ax_m,'origin',[0,200],'MapLatLimit',fig_cfg.y_lim);  % lat origin(middle point), lon origin (middle point)
-    set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
-    text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
-    'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
-    'fontsize',14,'fontname','freeserif','interpreter','none')
-
-    %% caxis & colorbar
-    caxis(ax_m, [tmp.prc01 tmp.prc99]); 
-%     colormap(fig_cfg.c_map);
-    colormap(flip(autumn(10)));
-    cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
-    set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
-    title(cb,data.units,'fontsize',12);
-
-    %% draw on ax_m
-    h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
-    shading flat;
-    geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
-
-
-%% frame and label setting
-    setm(ax_m,'frame','on','FLineWidth',1);
-
-    label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
-    label_x=mlabel('MLabelParallel','south', 'MLineLocation',20, 'MLabelLocation',60, 'labelrotation','on');
-    mlabel; plabel;
-    label_y=plabel; label_x=mlabel;
-    for lxi=1:length(label_x)
-        tmp.tmppos=label_x(lxi,1).Position;
-        tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.55; % y position correction
-        label_x(lxi,1).Position=tmp.tmppos;
-        label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
-    end
-    for lyi=1:length(label_y)
-        label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
-        tmp.tmppos=label_y(lyi,1).Position;
-        tmp.tmppos(1)=-fig_cfg.ax_size(3)+2.6; % x position correction
-        label_y(lyi,1).Position=tmp.tmppos;
-    end
-
-    %% save
-    dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_ensmean_map', filesep, 'obs'];
-    if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'ensmean_obs_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
-    print(fig_h, cfg.figname, '-dpng');
-    RemoveWhiteSpace([], 'file', cfg.figname);
-    close all;
-end
-end
-
-%% assm ensemble mean map --------------------------------------
-if fig_flags(32)==1
-for fake=1:1
-    data.obs_mean=mean(data.([tmp.varname,'_obs']),3, 'omitnan');
-    data.assm_mean=mean(data.([tmp.varname,'_assm']),3, 'omitnan');
-    data.model_mean=mean(data.([tmp.varname,'_model_l', tmp.lyear_str]),3, 'omitnan');
-    data.lens2_mean=mean(data.([tmp.varname,'_lens2_l', tmp.lyear_str]),3, 'omitnan');
-
-    tmp.ensmean_all= [ data.obs_mean, data.assm_mean, ...
-                 data.model_mean, data.lens2_mean];
-    tmp.prc99 =prctile(tmp.ensmean_all(:), 99);
-    tmp.prc01 =prctile(tmp.ensmean_all(:), 1);
-    %for velocity
-    tmp.prc99=max([abs(tmp.prc99) abs(tmp.prc01)]);
-    tmp.prc01 =-tmp.prc99;
-
-    fig_cfg.name_rgn = 'Glob';
-    fig_cfg.map_proj = 'eqdcylin';  % robinson, eqdcylin
-%     fig_cfg.map_proj = 'robinson';  % robinson, eqdcylin
-
-    fig_cfg.x_lim = [-180 180];
-    fig_cfg.y_lim = [-80 89];
-    fig_cfg.fig_size = [0,0,6,3.5];
-    fig_cfg.ax_size = [0.3,0.7,5.4,2.7];
-    fig_cfg.cb_size = [5.15,0.8,0.15,2.3];
-    fig_cfg.title_pos = [0.5,0.93];
-    fig_cfg.p_lim =0.1;
-    fig_cfg.c_lim = [-1 1];
-    [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('bwr_10', tmp.dropboxpath);
-
-    tmp.X=grid.tlong([end, 1:end],:);
-    tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data.assm_mean;
-    tmp.C=tmp.C([end, 1:end],:);
-%         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
-
-
-    fig_cfg.fig_name=['l',tmp.lyear_str, ', ensmean_, ', tmp. varname];
-    fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
-        'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
-    %% map setting
-    ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
-        'fontname','freeserif'); 
-
-    axis off; 
-    hold on;
-    setm(ax_m,'origin',[0,200],'MapLatLimit',fig_cfg.y_lim);  % lat origin(middle point), lon origin (middle point)
-    set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
-    text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
-    'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
-    'fontsize',14,'fontname','freeserif','interpreter','none')
-
-    %% caxis & colorbar
-    caxis(ax_m, [tmp.prc01 tmp.prc99]); 
-    colormap(fig_cfg.c_map);
-%     colormap(flip(autumn(10)));
-    cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
-    set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
-    title(cb,data.units,'fontsize',12);
-
-    %% draw on ax_m
-    h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
-    shading flat;
-    geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
-
-
-%% frame and label setting
-    setm(ax_m,'frame','on','FLineWidth',1);
-
-    label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
-    label_x=mlabel('MLabelParallel','south', 'MLineLocation',20, 'MLabelLocation',60, 'labelrotation','on');
-    mlabel; plabel;
-    label_y=plabel; label_x=mlabel;
-    for lxi=1:length(label_x)
-        tmp.tmppos=label_x(lxi,1).Position;
-        tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.55; % y position correction
-        label_x(lxi,1).Position=tmp.tmppos;
-        label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
-    end
-    for lyi=1:length(label_y)
-        label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
-        tmp.tmppos=label_y(lyi,1).Position;
-        tmp.tmppos(1)=-fig_cfg.ax_size(3)+2.6; % x position correction
-        label_y(lyi,1).Position=tmp.tmppos;
-    end
-
-    %% save
-    dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_ensmean_map', filesep, 'assm'];
-    if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'ensmean_assm_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
-    print(fig_h, cfg.figname, '-dpng');
-    RemoveWhiteSpace([], 'file', cfg.figname);
-    close all;
-end
-end
-
-%% model ensemble mean map --------------------------------------
-if fig_flags(33)==1
-for fake=1:1
-
-    data.model_mean=mean(data.([tmp.varname,'_model_l', tmp.lyear_str]),3, 'omitnan');
-%     if strcmp(tmp.varname, 'SST')
-%         data.model_mean(data.model_mean==0)=NaN;
-%         data.model_mean=data.model_mean-273.15;
-%     end
-    fig_cfg.name_rgn = 'Glob';
-    fig_cfg.map_proj = 'eqdcylin';  % robinson, eqdcylin
-%     fig_cfg.map_proj = 'robinson';  % robinson, eqdcylin
-
-    fig_cfg.x_lim = [-180 180];
-    fig_cfg.y_lim = [-80 89];
-    fig_cfg.fig_size = [0,0,6,3.5];
-    fig_cfg.ax_size = [0.3,0.7,5.4,2.7];
-    fig_cfg.cb_size = [5.15,0.8,0.15,2.3];
-    fig_cfg.title_pos = [0.5,0.93];
-    fig_cfg.p_lim =0.1;
-    fig_cfg.c_lim = [-1 1];
-    [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('bwr_10', tmp.dropboxpath);
-
-    tmp.X=grid.tlong([end, 1:end],:);
-    tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data.model_mean;
-    tmp.C=tmp.C([end, 1:end],:);
-%         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
-
-
-    fig_cfg.fig_name=['l',tmp.lyear_str, ', ensmean_, ', tmp. varname];
-    fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
-        'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
-    %% map setting
-    ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
-        'fontname','freeserif'); 
-
-    axis off; 
-    hold on;
-    setm(ax_m,'origin',[0,200],'MapLatLimit',fig_cfg.y_lim);  % lat origin(middle point), lon origin (middle point)
-    set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
-    text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
-    'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
-    'fontsize',14,'fontname','freeserif','interpreter','none')
-
-%% caxis & colorbar
-    caxis(ax_m, [tmp.prc01 tmp.prc99]); 
-    colormap(fig_cfg.c_map);
-%     colormap(flip(autumn(10)));
-    cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
-    set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
-    title(cb,data.units,'fontsize',12);
-
-    %% draw on ax_m
-    h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
-    shading flat;
-    geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
-
-
-%% frame and label setting
-    setm(ax_m,'frame','on','FLineWidth',1);
-
-    label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
-    label_x=mlabel('MLabelParallel','south', 'MLineLocation',20, 'MLabelLocation',60, 'labelrotation','on');
-    mlabel; plabel;
-    label_y=plabel; label_x=mlabel;
-    for lxi=1:length(label_x)
-        tmp.tmppos=label_x(lxi,1).Position;
-        tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.55; % y position correction
-        label_x(lxi,1).Position=tmp.tmppos;
-        label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
-    end
-    for lyi=1:length(label_y)
-        label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
-        tmp.tmppos=label_y(lyi,1).Position;
-        tmp.tmppos(1)=-fig_cfg.ax_size(3)+2.6; % x position correction
-        label_y(lyi,1).Position=tmp.tmppos;
-    end
-
-    %% save
-    dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_ensmean_map', filesep, 'hcst'];
-    if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'ensmean_hcst_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
-    print(fig_h, cfg.figname, '-dpng');
-    RemoveWhiteSpace([], 'file', cfg.figname);
-    close all;
-end
-end
-
-%% lens2 ensemble mean map --------------------------------------
-if fig_flags(34)==1
-for fake=1:1
-
-    data.lens2_mean=mean(data.([tmp.varname,'_lens2_l', tmp.lyear_str]),3, 'omitnan');
-    if strcmp(tmp.varname, 'SST')
-        data.model_mean(data.lens2_mean==0)=NaN;
-        data.model_mean=data.lens2_mean-273.15;
-    end
-    fig_cfg.name_rgn = 'Glob';
-    fig_cfg.map_proj = 'eqdcylin';  % robinson, eqdcylin
-%     fig_cfg.map_proj = 'robinson';  % robinson, eqdcylin
-
-    fig_cfg.x_lim = [-180 180];
-    fig_cfg.y_lim = [-80 89];
-    fig_cfg.fig_size = [0,0,6,3.5];
-    fig_cfg.ax_size = [0.3,0.7,5.4,2.7];
-    fig_cfg.cb_size = [5.15,0.8,0.15,2.3];
-    fig_cfg.title_pos = [0.5,0.93];
-    fig_cfg.p_lim =0.1;
-    fig_cfg.c_lim = [-1 1];
-    [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('bwr_10', tmp.dropboxpath);
-
-    tmp.X=grid.tlong([end, 1:end],:);
-    tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data.lens2_mean;
-    tmp.C=tmp.C([end, 1:end],:);
-%         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
-
-
-    fig_cfg.fig_name=['l',tmp.lyear_str, ', ensmean_, ', tmp. varname];
-    fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
-        'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
-    %% map setting
-    ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
-        'fontname','freeserif'); 
-
-    axis off; 
-    hold on;
-    setm(ax_m,'origin',[0,200],'MapLatLimit',fig_cfg.y_lim);  % lat origin(middle point), lon origin (middle point)
-    set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
-    text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
-    'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
-    'fontsize',14,'fontname','freeserif','interpreter','none')
-
-    %% caxis & colorbar
-    caxis(ax_m, [tmp.prc01 tmp.prc99]); 
-    colormap(fig_cfg.c_map);
-%     colormap(flip(autumn(10)));
-    cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
-    set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
-    title(cb,data.units,'fontsize',12);
-
-    %% draw on ax_m
-    h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
-    shading flat;
-    geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
-
-
-%% frame and label setting
-    setm(ax_m,'frame','on','FLineWidth',1);
-
-    label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
-    label_x=mlabel('MLabelParallel','south', 'MLineLocation',20, 'MLabelLocation',60, 'labelrotation','on');
-    mlabel; plabel;
-    label_y=plabel; label_x=mlabel;
-    for lxi=1:length(label_x)
-        tmp.tmppos=label_x(lxi,1).Position;
-        tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.55; % y position correction
-        label_x(lxi,1).Position=tmp.tmppos;
-        label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
-    end
-    for lyi=1:length(label_y)
-        label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
-        tmp.tmppos=label_y(lyi,1).Position;
-        tmp.tmppos(1)=-fig_cfg.ax_size(3)+2.6; % x position correction
-        label_y(lyi,1).Position=tmp.tmppos;
-    end
-
-    %% save
-    dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_ensmean_map', filesep, 'lens2'];
-    if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'ensmean_lens2_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
-    print(fig_h, cfg.figname, '-dpng');
-    RemoveWhiteSpace([], 'file', cfg.figname);
-    close all;
-end
-end
-
-%% assm ensemble spread(timmean) map --------------------------------------
-if fig_flags(35)==1
-for fake=1:1
-    
-    data.assm_stde=mean(data.([tmp.varname,'_assm_stde']),3, 'omitnan');    
-    data.model_stde=mean(data.([tmp.varname,'_model_stde_l', tmp.lyear_str]),3, 'omitnan');
-    data.lens2_stde=mean(data.([tmp.varname,'_lens2_stde_l', tmp.lyear_str]),3, 'omitnan');
-    
-
-    tmp.stde_all= [  data.assm_stde, ...
-                 data.model_stde, data.lens2_stde];
-
-    tmp.stde_prc95 =prctile(tmp.stde_all(:), 95);
-    tmp.stde_prc05 =prctile(tmp.stde_all(:), 5);
-    
-    fig_cfg.name_rgn = 'Glob';
-    fig_cfg.map_proj = 'eqdcylin';  % robinson, eqdcylin
-%     fig_cfg.map_proj = 'robinson';  % robinson, eqdcylin
-
-    fig_cfg.x_lim = [-180 180];
-    fig_cfg.y_lim = [-80 89];
-    fig_cfg.fig_size = [0,0,6,3.5];
-    fig_cfg.ax_size = [0.3,0.7,5.4,2.7];
-    fig_cfg.cb_size = [5.15,0.8,0.15,2.3];
-    fig_cfg.title_pos = [0.5,0.93];
-    fig_cfg.p_lim =0.1;
-    fig_cfg.c_lim = [-1 1];
-    [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('bwr_10', tmp.dropboxpath);
-
-    tmp.X=grid.tlong([end, 1:end],:);
-    tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data.assm_stde;
-    tmp.C=tmp.C([end, 1:end],:);
-%         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
-
-
-    fig_cfg.fig_name=['l',tmp.lyear_str, ', ensstde_, ', tmp. varname];
-    fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
-        'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
-    %% map setting
-    ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
-        'fontname','freeserif'); 
-
-    axis off; 
-    hold on;
-    setm(ax_m,'origin',[0,200],'MapLatLimit',fig_cfg.y_lim);  % lat origin(middle point), lon origin (middle point)
-    set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
-    text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
-    'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
-    'fontsize',14,'fontname','freeserif','interpreter','none')
-
-    %% caxis & colorbar
-    caxis(ax_m, [tmp.stde_prc05 tmp.stde_prc95]); 
-%     colormap(fig_cfg.c_map);
-    colormap(flip(autumn(10)));
-    cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
-    set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
-    title(cb, data.units,'fontsize',12);
-
-    %% draw on ax_m
-    h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
-    shading flat;
-    geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
-
-
-%% frame and label setting
-    setm(ax_m,'frame','on','FLineWidth',1);
-
-    label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
-    label_x=mlabel('MLabelParallel','south', 'MLineLocation',20, 'MLabelLocation',60, 'labelrotation','on');
-    mlabel; plabel;
-    label_y=plabel; label_x=mlabel;
-    for lxi=1:length(label_x)
-        tmp.tmppos=label_x(lxi,1).Position;
-        tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.55; % y position correction
-        label_x(lxi,1).Position=tmp.tmppos;
-        label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
-    end
-    for lyi=1:length(label_y)
-        label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
-        tmp.tmppos=label_y(lyi,1).Position;
-        tmp.tmppos(1)=-fig_cfg.ax_size(3)+2.6; % x position correction
-        label_y(lyi,1).Position=tmp.tmppos;
-    end
-
-    %% save
-    dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_ensstde_map', filesep, 'assm'];
-    if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'ensstde_assm_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
-    print(fig_h, cfg.figname, '-dpng');
-    RemoveWhiteSpace([], 'file', cfg.figname);
-    close all;
-end
-end
-
-%% lens2 ensemble spread(timmean) map --------------------------------------
-if fig_flags(36)==1
-for fake=1:1
-
-    data.lens2_mean=mean(data.([tmp.varname,'_lens2_stde_l', tmp.lyear_str]),3, 'omitnan');
-
-    fig_cfg.name_rgn = 'Glob';
-    fig_cfg.map_proj = 'eqdcylin';  % robinson, eqdcylin
-%     fig_cfg.map_proj = 'robinson';  % robinson, eqdcylin
-
-    fig_cfg.x_lim = [-180 180];
-    fig_cfg.y_lim = [-80 89];
-    fig_cfg.fig_size = [0,0,6,3.5];
-    fig_cfg.ax_size = [0.3,0.7,5.4,2.7];
-    fig_cfg.cb_size = [5.15,0.8,0.15,2.3];
-    fig_cfg.title_pos = [0.5,0.93];
-    fig_cfg.p_lim =0.1;
-    fig_cfg.c_lim = [-1 1];
-    [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('bwr_10', tmp.dropboxpath);
-
-    tmp.X=grid.tlong([end, 1:end],:);
-    tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data.lens2_mean;
-    tmp.C=tmp.C([end, 1:end],:);
-%         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
-
-    fig_cfg.fig_name=['l',tmp.lyear_str, ', ensstde_, ', tmp. varname];
-    fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
-        'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
-    %% map setting
-    ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
-        'fontname','freeserif'); 
-
-    axis off; 
-    hold on;
-    setm(ax_m,'origin',[0,200],'MapLatLimit',fig_cfg.y_lim);  % lat origin(middle point), lon origin (middle point)
-    set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
-    text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
-    'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
-    'fontsize',14,'fontname','freeserif','interpreter','none')
-
-    %% caxis & colorbar
-    caxis(ax_m, [tmp.stde_prc05 tmp.stde_prc95]); 
-%     colormap(fig_cfg.c_map);
-    colormap(flip(autumn(10)));
-    cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
-    set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
-    title(cb,data.units,'fontsize',12);
-
-    %% draw on ax_m
-    h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
-    shading flat;
-    geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
-
-
-%% frame and label setting
-    setm(ax_m,'frame','on','FLineWidth',1);
-
-    label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
-    label_x=mlabel('MLabelParallel','south', 'MLineLocation',20, 'MLabelLocation',60, 'labelrotation','on');
-    mlabel; plabel;
-    label_y=plabel; label_x=mlabel;
-    for lxi=1:length(label_x)
-        tmp.tmppos=label_x(lxi,1).Position;
-        tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.55; % y position correction
-        label_x(lxi,1).Position=tmp.tmppos;
-        label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
-    end
-    for lyi=1:length(label_y)
-        label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
-        tmp.tmppos=label_y(lyi,1).Position;
-        tmp.tmppos(1)=-fig_cfg.ax_size(3)+2.6; % x position correction
-        label_y(lyi,1).Position=tmp.tmppos;
-    end
-
-    %% save
-    dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_ensstde_map', filesep, 'lens2'];
-    if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'ensstde_lens2_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
-    print(fig_h, cfg.figname, '-dpng');
-    RemoveWhiteSpace([], 'file', cfg.figname);
-    close all;
-end
-end
-
-%% model ensemble spread(timmean) map --------------------------------------
-if fig_flags(37)==1
-for fake=1:1
-
-    data.model_mean=mean(data.([tmp.varname,'_model_stde_l', tmp.lyear_str]),3, 'omitnan');
-
-    fig_cfg.name_rgn = 'Glob';
-    fig_cfg.map_proj = 'eqdcylin';  % robinson, eqdcylin
-%     fig_cfg.map_proj = 'robinson';  % robinson, eqdcylin
-
-    fig_cfg.x_lim = [-180 180];
-    fig_cfg.y_lim = [-80 89];
-    fig_cfg.fig_size = [0,0,6,3.5];
-    fig_cfg.ax_size = [0.3,0.7,5.4,2.7];
-    fig_cfg.cb_size = [5.15,0.8,0.15,2.3];
-    fig_cfg.title_pos = [0.5,0.93];
-    fig_cfg.p_lim =0.1;
-    fig_cfg.c_lim = [-1 1];
-    [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('bwr_10', tmp.dropboxpath);
-
-    tmp.X=grid.tlong([end, 1:end],:);
-    tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data.model_mean;
-    tmp.C=tmp.C([end, 1:end],:);
-%         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
-
-
-    fig_cfg.fig_name=['l',tmp.lyear_str, ', ensstde_, ', tmp. varname];
-    fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
-        'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
-    %% map setting
-    ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
-        'fontname','freeserif'); 
-
-    axis off; 
-    hold on;
-    setm(ax_m,'origin',[0,200],'MapLatLimit',fig_cfg.y_lim);  % lat origin(middle point), lon origin (middle point)
-    set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
-    text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
-    'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
-    'fontsize',14,'fontname','freeserif','interpreter','none')
-
-    %% caxis & colorbar
-    caxis(ax_m, [tmp.stde_prc05 tmp.stde_prc95]); 
-%     colormap(fig_cfg.c_map);
-    colormap(flip(autumn(10)));
-    cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
-    set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
-    title(cb,data.units,'fontsize',12);
-
-    %% draw on ax_m
-    h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
-    shading flat;
-    geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
-
-
-%% frame and label setting
-    setm(ax_m,'frame','on','FLineWidth',1);
-
-    label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
-    label_x=mlabel('MLabelParallel','south', 'MLineLocation',20, 'MLabelLocation',60, 'labelrotation','on');
-    mlabel; plabel;
-    label_y=plabel; label_x=mlabel;
-    for lxi=1:length(label_x)
-        tmp.tmppos=label_x(lxi,1).Position;
-        tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.55; % y position correction
-        label_x(lxi,1).Position=tmp.tmppos;
-        label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
-    end
-    for lyi=1:length(label_y)
-        label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
-        tmp.tmppos=label_y(lyi,1).Position;
-        tmp.tmppos(1)=-fig_cfg.ax_size(3)+2.6; % x position correction
-        label_y(lyi,1).Position=tmp.tmppos;
-    end
-
-    %% save
-    dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_ensstde_map', filesep, 'hcst'];
-    if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'ensstde_hcst_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
-    print(fig_h, cfg.figname, '-dpng');
-    RemoveWhiteSpace([], 'file', cfg.figname);
-    close all;
 end
 end
 
@@ -3945,11 +3311,11 @@ end
 if fig_flags(38)==1
 for fake=1:1
 
-    data.obs_stdt=mean(data.([tmp.varname,'_obs_stdt']),3, 'omitnan');    
-    data.assm_stdt=mean(data.([tmp.varname,'_assm_stdt']),3, 'omitnan');    
+    data2.obs_stdt=mean(data2.([tmp.varname,'_obs_ano_det2_stdt']),3, 'omitnan');    
+    data2.assm_stdt=mean(data2.([tmp.varname,'_assm_ano_det2_stdt']),3, 'omitnan');
 
-    tmp.stdt_all= [  data.assm_stdt, ...
-                 data.obs_stdt];
+    tmp.stdt_all= [  data2.assm_stdt, ...
+                 data2.obs_stdt];
     
     tmp.stdt_prc99 =prctile(tmp.stdt_all(:), 99);
     tmp.stdt_prc01 =prctile(tmp.stdt_all(:), 1);
@@ -3970,15 +3336,15 @@ for fake=1:1
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data.obs_stdt;
+    tmp.C=data2.obs_stdt;
     tmp.C=tmp.C([end, 1:end],:);
-%         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
+%         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_', tmp.season]);
 %         tmp.C_H=tmp.C_H([end, 1:end],:);
 %         tmp.C_2=tmp.C;
 %         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
 
 
-    fig_cfg.fig_name=['l',tmp.lyear_str, ', ensstdt_, ', tmp. varname];
+    fig_cfg.fig_name=[tmp.season, ', ensstdt_, ', tmp. varname];
     fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
         'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
     %% map setting
@@ -4030,7 +3396,7 @@ for fake=1:1
     %% save
     dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_ensstdt_map', filesep, 'obs'];
     if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'ensstdt_obs_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
+    cfg.figname=[dirs.figdir, filesep, 'ensstdt_obs_ano_det2_map_', tmp.varname, '_', tmp.season, 'y.tif'];
     print(fig_h, cfg.figname, '-dpng');
     RemoveWhiteSpace([], 'file', cfg.figname);
     close all;
@@ -4040,11 +3406,11 @@ end
 %% temporal std of assm
 if fig_flags(39)==1
 for fake=1:1
-    data.obs_stdt=mean(data.([tmp.varname,'_obs_stdt']),3, 'omitnan');    
-    data.assm_stdt=mean(data.([tmp.varname,'_assm_stdt']),3, 'omitnan');    
+    data2.obs_stdt=mean(data2.([tmp.varname,'_obs_ano_det2_stdt']),3, 'omitnan');    
+    data2.assm_stdt=mean(data2.([tmp.varname,'_assm_ano_det2_stdt']),3, 'omitnan');
 
-    tmp.stdt_all= [  data.assm_stdt, ...
-                 data.obs_stdt];
+    tmp.stdt_all= [  data2.assm_stdt, ...
+                 data2.obs_stdt];
     
     tmp.stdt_prc99 =prctile(tmp.stdt_all(:), 99);
     tmp.stdt_prc01 =prctile(tmp.stdt_all(:), 1);
@@ -4065,15 +3431,15 @@ for fake=1:1
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data.([tmp.varname, '_assm_stdt']);
+    tmp.C=data2.([tmp.varname,'_assm_ano_det2_stdt']);
     tmp.C=tmp.C([end, 1:end],:);
-%         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
+%         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_', tmp.season]);
 %         tmp.C_H=tmp.C_H([end, 1:end],:);
 %         tmp.C_2=tmp.C;
 %         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
 
 
-    fig_cfg.fig_name=['l',tmp.lyear_str, ', ensstdt_, ', tmp. varname];
+    fig_cfg.fig_name=[tmp.season, ', ensstdt_, ', tmp. varname];
     fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
         'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
     %% map setting
@@ -4125,7 +3491,7 @@ for fake=1:1
     %% save
     dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_ensstdt_map', filesep, 'assm'];
     if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'ensstdt_assm_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
+    cfg.figname=[dirs.figdir, filesep, 'ensstdt_assm_ano_det2_map_', tmp.varname, '_', tmp.season, 'y.tif'];
     print(fig_h, cfg.figname, '-dpng');
     RemoveWhiteSpace([], 'file', cfg.figname);
     close all;
@@ -4152,15 +3518,17 @@ for fake=1:1
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data.([tmp.varname, '_assm_stdt']) - data.([tmp.varname, '_obs_stdt']);
+
+    tmp.C=data2.([tmp.varname,'_assm_ano_det2_stdt']) ...
+        - data2.([tmp.varname,'_obs_ano_det2_stdt']);
     tmp.C=tmp.C([end, 1:end],:);
-%         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
+%         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
 %         tmp.C_H=tmp.C_H([end, 1:end],:);
 %         tmp.C_2=tmp.C;
 %         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
 
 
-    fig_cfg.fig_name=['l',tmp.lyear_str, ', diff_ensstdt_, ', tmp.varname];
+    fig_cfg.fig_name=[tmp.season, ', diff_ensstdt_, ', tmp.varname];
     fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
         'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
     %% map setting
@@ -4212,510 +3580,16 @@ for fake=1:1
     %% save
     dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_ensstdt_map', filesep, 'assm'];
     if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'ensstdt_err_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
+    cfg.figname=[dirs.figdir, filesep, 'ensstdt_ano_det2_err_map_', tmp.varname, '_', tmp.season, 'y.tif'];
     print(fig_h, cfg.figname, '-dpng');
     RemoveWhiteSpace([], 'file', cfg.figname);
     close all;
 end
 end
 
-%% obs <-> assm ensemble mean bias map
-if fig_flags(41)==1
-for fake=1:1
-    data.obs_mean=mean(data.([tmp.varname,'_obs']),3, 'omitnan');
-    data.assm_mean=mean(data.([tmp.varname,'_assm']),3, 'omitnan');
-    data.lens2_mean=mean(data.([tmp.varname,'_lens2_l', tmp.lyear_str]),3, 'omitnan');
-    data.model_mean=mean(data.([tmp.varname,'_model_l', tmp.lyear_str]),3, 'omitnan');
-    if strcmp(tmp.varname, 'SST')
-        data.assm_mean(data.assm_mean==0)=NaN;
-        data.obs_mean(data.obs_mean==0)=NaN;
-        data.lens2_mean(data.lens2_mean==0)=NaN;
-        data.model_mean(data.model_mean==0)=NaN;
-    end
-    
-    data.assm_mbias_obs=data.assm_mean-data.obs_mean;
-    data.lens2_mbias_obs=data.lens2_mean-data.obs_mean;
-    data.model_mbias_obs=data.model_mean-data.obs_mean;
 
-    data.lens2_mbias_assm=data.lens2_mean-data.assm_mean;
-    data.model_mbias_assm=data.model_mean-data.assm_mean;
 
-    tmp.mbias_obs_all= [ data.assm_mbias_obs, ...
-                 data.lens2_mbias_obs, ...
-                 data.model_mbias_obs];
 
-    tmp.mbias_obs_prc99 =prctile(tmp.mbias_obs_all(:), 99);
-    tmp.mbias_obs_prc01 =prctile(tmp.mbias_obs_all(:), 1);
-    tmp.mbias_obs_max=max([abs(tmp.mbias_obs_prc99) abs(tmp.mbias_obs_prc01)]);
-
-    tmp.mbias_assm_all = [data.lens2_mbias_assm, ...
-                 data.model_mbias_assm];
-    tmp.mbias_assm_prc99 =prctile(tmp.mbias_assm_all(:), 99);
-    tmp.mbias_assm_prc01 =prctile(tmp.mbias_assm_all(:), 1);
-    tmp.mbias_assm_max=max([abs(tmp.mbias_assm_prc99) abs(tmp.mbias_assm_prc01)]);
-
-    
-    fig_cfg.name_rgn = 'Glob';
-    fig_cfg.map_proj = 'eqdcylin';  % robinson, eqdcylin
-%     fig_cfg.map_proj = 'robinson';  % robinson, eqdcylin
-
-    fig_cfg.x_lim = [-180 180];
-    fig_cfg.y_lim = [-80 89];
-    fig_cfg.fig_size = [0,0,6,3.5];
-    fig_cfg.ax_size = [0.3,0.7,5.4,2.7];
-    fig_cfg.cb_size = [5.15,0.8,0.15,2.3];
-    fig_cfg.title_pos = [0.5,0.93];
-    fig_cfg.p_lim =0.1;
-    fig_cfg.c_lim = [-1 1];
-    [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('bwr_10', tmp.dropboxpath);
-
-    tmp.X=grid.tlong([end, 1:end],:);
-    tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data.assm_mbias_obs;
-    tmp.C=tmp.C([end, 1:end],:);
-%         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
-
-
-    fig_cfg.fig_name=['l',tmp.lyear_str, ', assm_mbias_obs_, ', tmp. varname];
-    fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
-        'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
-    %% map setting
-    ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
-        'fontname','freeserif'); 
-
-    axis off; 
-    hold on;
-    setm(ax_m,'origin',[0,200],'MapLatLimit',fig_cfg.y_lim);  % lat origin(middle point), lon origin (middle point)
-    set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
-    text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
-    'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
-    'fontsize',14,'fontname','freeserif','interpreter','none')
-
-    %% caxis & colorbar
-    caxis(ax_m, [-tmp.mbias_obs_max tmp.mbias_obs_max]); 
-    colormap(fig_cfg.c_map);
-%     colormap(flip(autumn(10)));
-    cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
-    set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
-    title(cb,data.units,'fontsize',12);
-
-    %% draw on ax_m
-    h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
-    shading flat;
-    geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
-
-
-%% frame and label setting
-    setm(ax_m,'frame','on','FLineWidth',1);
-
-    label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
-    label_x=mlabel('MLabelParallel','south', 'MLineLocation',20, 'MLabelLocation',60, 'labelrotation','on');
-    mlabel; plabel;
-    label_y=plabel; label_x=mlabel;
-    for lxi=1:length(label_x)
-        tmp.tmppos=label_x(lxi,1).Position;
-        tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.55; % y position correction
-        label_x(lxi,1).Position=tmp.tmppos;
-        label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
-    end
-    for lyi=1:length(label_y)
-        label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
-        tmp.tmppos=label_y(lyi,1).Position;
-        tmp.tmppos(1)=-fig_cfg.ax_size(3)+2.6; % x position correction
-        label_y(lyi,1).Position=tmp.tmppos;
-    end
-
-    %% save
-    dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_mbias_obs_map', filesep, 'assm'];
-    if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'assm_mbias_obs_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
-    print(fig_h, cfg.figname, '-dpng');
-    RemoveWhiteSpace([], 'file', cfg.figname);
-    close all;
-end
-end
-
-%% obs <-> lens2 ensemble mean bias map
-if fig_flags(42)==1
-for fake=1:1
-    
-    fig_cfg.name_rgn = 'Glob';
-    fig_cfg.map_proj = 'eqdcylin';  % robinson, eqdcylin
-%     fig_cfg.map_proj = 'robinson';  % robinson, eqdcylin
-
-    fig_cfg.x_lim = [-180 180];
-    fig_cfg.y_lim = [-80 89];
-    fig_cfg.fig_size = [0,0,6,3.5];
-    fig_cfg.ax_size = [0.3,0.7,5.4,2.7];
-    fig_cfg.cb_size = [5.15,0.8,0.15,2.3];
-    fig_cfg.title_pos = [0.5,0.93];
-    fig_cfg.p_lim =0.1;
-    fig_cfg.c_lim = [-1 1];
-    [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('bwr_10', tmp.dropboxpath);
-
-    tmp.X=grid.tlong([end, 1:end],:);
-    tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data.lens2_mbias_obs;
-    tmp.C=tmp.C([end, 1:end],:);
-%         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
-
-
-    fig_cfg.fig_name=['l',tmp.lyear_str, ', lens2_mbias_obs_, ', tmp. varname];
-    fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
-        'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
-    %% map setting
-    ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
-        'fontname','freeserif'); 
-
-    axis off; 
-    hold on;
-    setm(ax_m,'origin',[0,200],'MapLatLimit',fig_cfg.y_lim);  % lat origin(middle point), lon origin (middle point)
-    set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
-    text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
-    'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
-    'fontsize',14,'fontname','freeserif','interpreter','none')
-
-    %% caxis & colorbar
-    caxis(ax_m, [-tmp.mbias_obs_max tmp.mbias_obs_max]); 
-    colormap(fig_cfg.c_map);
-%     colormap(flip(autumn(10)));
-    cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
-    set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
-    title(cb,data.units,'fontsize',12);
-
-    %% draw on ax_m
-    h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
-    shading flat;
-    geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
-
-
-%% frame and label setting
-    setm(ax_m,'frame','on','FLineWidth',1);
-
-    label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
-    label_x=mlabel('MLabelParallel','south', 'MLineLocation',20, 'MLabelLocation',60, 'labelrotation','on');
-    mlabel; plabel;
-    label_y=plabel; label_x=mlabel;
-    for lxi=1:length(label_x)
-        tmp.tmppos=label_x(lxi,1).Position;
-        tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.55; % y position correction
-        label_x(lxi,1).Position=tmp.tmppos;
-        label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
-    end
-    for lyi=1:length(label_y)
-        label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
-        tmp.tmppos=label_y(lyi,1).Position;
-        tmp.tmppos(1)=-fig_cfg.ax_size(3)+2.6; % x position correction
-        label_y(lyi,1).Position=tmp.tmppos;
-    end
-
-    %% save
-    dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_mbias_obs_map', filesep, 'lens2'];
-    if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'lens2_mbias_obs_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
-    print(fig_h, cfg.figname, '-dpng');
-    RemoveWhiteSpace([], 'file', cfg.figname);
-    close all;
-end
-end
-
-%% obs <-> model ensemble mean bias map
-if fig_flags(43)==1
-for fake=1:1
-    
-    fig_cfg.name_rgn = 'Glob';
-    fig_cfg.map_proj = 'eqdcylin';  % robinson, eqdcylin
-%     fig_cfg.map_proj = 'robinson';  % robinson, eqdcylin
-
-    fig_cfg.x_lim = [-180 180];
-    fig_cfg.y_lim = [-80 89];
-    fig_cfg.fig_size = [0,0,6,3.5];
-    fig_cfg.ax_size = [0.3,0.7,5.4,2.7];
-    fig_cfg.cb_size = [5.15,0.8,0.15,2.3];
-    fig_cfg.title_pos = [0.5,0.93];
-    fig_cfg.p_lim =0.1;
-    fig_cfg.c_lim = [-1 1];
-    [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('bwr_10', tmp.dropboxpath);
-
-    tmp.X=grid.tlong([end, 1:end],:);
-    tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data.model_mbias_obs;
-    tmp.C=tmp.C([end, 1:end],:);
-%         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
-
-
-    fig_cfg.fig_name=['l',tmp.lyear_str, ', model_mbias_obs_, ', tmp. varname];
-    fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
-        'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
-    %% map setting
-    ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
-        'fontname','freeserif'); 
-
-    axis off; 
-    hold on;
-    setm(ax_m,'origin',[0,200],'MapLatLimit',fig_cfg.y_lim);  % lat origin(middle point), lon origin (middle point)
-    set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
-    text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
-    'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
-    'fontsize',14,'fontname','freeserif','interpreter','none')
-
-    %% caxis & colorbar
-    caxis(ax_m, [-tmp.mbias_obs_max tmp.mbias_obs_max]); 
-    colormap(fig_cfg.c_map);
-%     colormap(flip(autumn(10)));
-    cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
-    set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
-    title(cb,data.units,'fontsize',12);
-
-    %% draw on ax_m
-    h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
-    shading flat;
-    geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
-
-
-%% frame and label setting
-    setm(ax_m,'frame','on','FLineWidth',1);
-
-    label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
-    label_x=mlabel('MLabelParallel','south', 'MLineLocation',20, 'MLabelLocation',60, 'labelrotation','on');
-    mlabel; plabel;
-    label_y=plabel; label_x=mlabel;
-    for lxi=1:length(label_x)
-        tmp.tmppos=label_x(lxi,1).Position;
-        tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.55; % y position correction
-        label_x(lxi,1).Position=tmp.tmppos;
-        label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
-    end
-    for lyi=1:length(label_y)
-        label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
-        tmp.tmppos=label_y(lyi,1).Position;
-        tmp.tmppos(1)=-fig_cfg.ax_size(3)+2.6; % x position correction
-        label_y(lyi,1).Position=tmp.tmppos;
-    end
-
-    %% save
-    dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_mbias_obs_map', filesep, 'model'];
-    if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'model_mbias_obs_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
-    print(fig_h, cfg.figname, '-dpng');
-    RemoveWhiteSpace([], 'file', cfg.figname);
-    close all;
-end
-end
-
-%% assm <-> model ensemble mean bias map
-if fig_flags(44)==1
-for fake=1:1
-    data.obs_mean=mean(data.([tmp.varname,'_obs']),3, 'omitnan');
-    data.assm_mean=mean(data.([tmp.varname,'_assm']),3, 'omitnan');
-    data.lens2_mean=mean(data.([tmp.varname,'_lens2_l', tmp.lyear_str]),3, 'omitnan');
-    data.model_mean=mean(data.([tmp.varname,'_model_l', tmp.lyear_str]),3, 'omitnan');
-    if strcmp(tmp.varname, 'SST')
-        data.assm_mean(data.assm_mean==0)=NaN;
-        data.obs_mean(data.obs_mean==0)=NaN;
-        data.lens2_mean(data.lens2_mean==0)=NaN;
-        data.model_mean(data.model_mean==0)=NaN;
-    end
-    
-    data.assm_mbias_obs=data.assm_mean-data.obs_mean;
-    data.lens2_mbias_obs=data.lens2_mean-data.obs_mean;
-    data.model_mbias_obs=data.model_mean-data.obs_mean;
-
-    data.lens2_mbias_assm=data.lens2_mean-data.assm_mean;
-    data.model_mbias_assm=data.model_mean-data.assm_mean;
-
-    tmp.mbias_obs_all= [ data.assm_mbias_obs, ...
-                 data.lens2_mbias_obs, ...
-                 data.model_mbias_obs];
-
-    tmp.mbias_obs_prc99 =prctile(tmp.mbias_obs_all(:), 99);
-    tmp.mbias_obs_prc01 =prctile(tmp.mbias_obs_all(:), 1);
-    tmp.mbias_obs_max=max([abs(tmp.mbias_obs_prc99) abs(tmp.mbias_obs_prc01)]);
-
-    tmp.mbias_assm_all = [data.lens2_mbias_assm, ...
-                 data.model_mbias_assm];
-    tmp.mbias_assm_prc99 =prctile(tmp.mbias_assm_all(:), 99);
-    tmp.mbias_assm_prc01 =prctile(tmp.mbias_assm_all(:), 1);
-    tmp.mbias_assm_max=max([abs(tmp.mbias_assm_prc99) abs(tmp.mbias_assm_prc01)]);
-
-    fig_cfg.name_rgn = 'Glob';
-    fig_cfg.map_proj = 'eqdcylin';  % robinson, eqdcylin
-%     fig_cfg.map_proj = 'robinson';  % robinson, eqdcylin
-
-    fig_cfg.x_lim = [-180 180];
-    fig_cfg.y_lim = [-80 89];
-    fig_cfg.fig_size = [0,0,6,3.5];
-    fig_cfg.ax_size = [0.3,0.7,5.4,2.7];
-    fig_cfg.cb_size = [5.15,0.8,0.15,2.3];
-    fig_cfg.title_pos = [0.5,0.93];
-    fig_cfg.p_lim =0.1;
-    fig_cfg.c_lim = [-1 1];
-    [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('bwr_10', tmp.dropboxpath);
-
-    tmp.X=grid.tlong([end, 1:end],:);
-    tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data.model_mbias_assm;
-    tmp.C=tmp.C([end, 1:end],:);
-%         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
-
-
-    fig_cfg.fig_name=['l',tmp.lyear_str, ', model_mbias_assm_, ', tmp. varname];
-    fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
-        'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
-    %% map setting
-    ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
-        'fontname','freeserif'); 
-
-    axis off; 
-    hold on;
-    setm(ax_m,'origin',[0,200],'MapLatLimit',fig_cfg.y_lim);  % lat origin(middle point), lon origin (middle point)
-    set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
-    text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
-    'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
-    'fontsize',14,'fontname','freeserif','interpreter','none')
-
-    %% caxis & colorbar
-    caxis(ax_m, [-tmp.mbias_assm_max tmp.mbias_assm_max]); 
-    colormap(fig_cfg.c_map);
-%     colormap(flip(autumn(10)));
-    cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
-    set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
-    title(cb,data.units,'fontsize',12);
-
-    %% draw on ax_m
-    h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
-    shading flat;
-    geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
-
-
-%% frame and label setting
-    setm(ax_m,'frame','on','FLineWidth',1);
-
-    label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
-    label_x=mlabel('MLabelParallel','south', 'MLineLocation',20, 'MLabelLocation',60, 'labelrotation','on');
-    mlabel; plabel;
-    label_y=plabel; label_x=mlabel;
-    for lxi=1:length(label_x)
-        tmp.tmppos=label_x(lxi,1).Position;
-        tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.55; % y position correction
-        label_x(lxi,1).Position=tmp.tmppos;
-        label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
-    end
-    for lyi=1:length(label_y)
-        label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
-        tmp.tmppos=label_y(lyi,1).Position;
-        tmp.tmppos(1)=-fig_cfg.ax_size(3)+2.6; % x position correction
-        label_y(lyi,1).Position=tmp.tmppos;
-    end
-
-    %% save
-    dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_mbias_assm_map', filesep, 'model'];
-    if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'model_mbias_assm_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
-    print(fig_h, cfg.figname, '-dpng');
-    RemoveWhiteSpace([], 'file', cfg.figname);
-    close all;
-end
-end
-
-%% assm <-> lens2 ensemble mean bias map
-if fig_flags(45)==1
-for fake=1:1
-    
-    fig_cfg.name_rgn = 'Glob';
-    fig_cfg.map_proj = 'eqdcylin';  % robinson, eqdcylin
-%     fig_cfg.map_proj = 'robinson';  % robinson, eqdcylin
-
-    fig_cfg.x_lim = [-180 180];
-    fig_cfg.y_lim = [-80 89];
-    fig_cfg.fig_size = [0,0,6,3.5];
-    fig_cfg.ax_size = [0.3,0.7,5.4,2.7];
-    fig_cfg.cb_size = [5.15,0.8,0.15,2.3];
-    fig_cfg.title_pos = [0.5,0.93];
-    fig_cfg.p_lim =0.1;
-    fig_cfg.c_lim = [-1 1];
-    [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('bwr_10', tmp.dropboxpath);
-
-    tmp.X=grid.tlong([end, 1:end],:);
-    tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data.lens2_mbias_assm;
-    tmp.C=tmp.C([end, 1:end],:);
-%         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
-
-
-    fig_cfg.fig_name=['l',tmp.lyear_str, ', lens2_mbias_assm_, ', tmp. varname];
-    fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
-        'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
-    %% map setting
-    ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
-        'fontname','freeserif'); 
-
-    axis off; 
-    hold on;
-    setm(ax_m,'origin',[0,200],'MapLatLimit',fig_cfg.y_lim);  % lat origin(middle point), lon origin (middle point)
-    set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
-    text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
-    'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
-    'fontsize',14,'fontname','freeserif','interpreter','none')
-
-    %% caxis & colorbar
-    caxis(ax_m, [-tmp.mbias_assm_max tmp.mbias_assm_max]); 
-    colormap(fig_cfg.c_map);
-%     colormap(flip(autumn(10)));
-    cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
-    set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
-    title(cb,data.units,'fontsize',12);
-
-    %% draw on ax_m
-    h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
-    shading flat;
-    geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
-
-
-%% frame and label setting
-    setm(ax_m,'frame','on','FLineWidth',1);
-
-    label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
-    label_x=mlabel('MLabelParallel','south', 'MLineLocation',20, 'MLabelLocation',60, 'labelrotation','on');
-    mlabel; plabel;
-    label_y=plabel; label_x=mlabel;
-    for lxi=1:length(label_x)
-        tmp.tmppos=label_x(lxi,1).Position;
-        tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.55; % y position correction
-        label_x(lxi,1).Position=tmp.tmppos;
-        label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
-    end
-    for lyi=1:length(label_y)
-        label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
-        tmp.tmppos=label_y(lyi,1).Position;
-        tmp.tmppos(1)=-fig_cfg.ax_size(3)+2.6; % x position correction
-        label_y(lyi,1).Position=tmp.tmppos;
-    end
-
-    %% save
-    dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_mbias_assm_map', filesep, 'lens2'];
-    if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'lens2_mbias_assm_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
-    print(fig_h, cfg.figname, '-dpng');
-    RemoveWhiteSpace([], 'file', cfg.figname);
-    close all;
-end
-end
 
 %% AR1 coefficient based on assm
 if fig_flags(46)==1
@@ -4737,15 +3611,15 @@ for fake=1:1
     
         tmp.X=grid.tlong([end, 1:end],:);
         tmp.Y=grid.tlat([end, 1:end],:);
-        tmp.C=-data.([tmp.varname, '_assm_AR1_coef']);
+        tmp.C=-data2.([tmp.varname, '_assm_AR1_coef']);
         tmp.C=tmp.C([end, 1:end],:);
-    %         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
+    %         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
     %         tmp.C_H=tmp.C_H([end, 1:end],:);
     %         tmp.C_2=tmp.C;
     %         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
     
     
-        fig_cfg.fig_name=['l',tmp.lyear_str, ', AR1_coef_, ', tmp. varname];
+        fig_cfg.fig_name=[tmp.season, ', AR1_coef_, ', tmp. varname];
         fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
             'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
         %% map setting
@@ -4795,7 +3669,7 @@ for fake=1:1
         %% save
         dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_AR1_param', filesep, 'assm'];
         if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-        cfg.figname=[dirs.figdir, filesep, 'AR1_coef_assm_map_', tmp.varname, '.tif'];
+        cfg.figname=[dirs.figdir, filesep, 'AR1_coef_assm_map_', tmp.varname, '_', tmp.season, '.tif'];
         print(fig_h, cfg.figname, '-dpng');
         RemoveWhiteSpace([], 'file', cfg.figname);
         close all;
@@ -4823,15 +3697,15 @@ for fake=1:1
     
         tmp.X=grid.tlong([end, 1:end],:);
         tmp.Y=grid.tlat([end, 1:end],:);
-        tmp.C=data.([tmp.varname, '_assm_AR1_noise']);
+        tmp.C=data2.([tmp.varname, '_assm_AR1_noise']);
         tmp.C=tmp.C([end, 1:end],:);
-    %         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
+    %         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
     %         tmp.C_H=tmp.C_H([end, 1:end],:);
     %         tmp.C_2=tmp.C;
     %         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
     
     
-        fig_cfg.fig_name=['l',tmp.lyear_str, ', AR1_noise_, ', tmp. varname];
+        fig_cfg.fig_name=[tmp.season, ', AR1_noise_, ', tmp. varname];
         fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
             'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
         %% map setting
@@ -4881,7 +3755,7 @@ for fake=1:1
         %% save
         dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_AR1_param', filesep, 'assm'];
         if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-        cfg.figname=[dirs.figdir, filesep, 'AR1_noise_assm_map_', tmp.varname, '.tif'];
+        cfg.figname=[dirs.figdir, filesep, 'AR1_noise_assm_map_', tmp.varname, '_', tmp.season, '.tif'];
         print(fig_h, cfg.figname, '-dpng');
         RemoveWhiteSpace([], 'file', cfg.figname);
         close all;
@@ -4909,15 +3783,15 @@ for fake=1:1
     
         tmp.X=grid.tlong([end, 1:end],:);
         tmp.Y=grid.tlat([end, 1:end],:);
-        tmp.C=-data.([tmp.varname, '_obs_AR1_coef']);
+        tmp.C=-data2.([tmp.varname, '_obs_AR1_coef']);
         tmp.C=tmp.C([end, 1:end],:);
-    %         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
+    %         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
     %         tmp.C_H=tmp.C_H([end, 1:end],:);
     %         tmp.C_2=tmp.C;
     %         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
     
     
-        fig_cfg.fig_name=['l',tmp.lyear_str, ', obs_AR1_coef_, ', tmp. varname];
+        fig_cfg.fig_name=[tmp.season, ', obs_AR1_coef_, ', tmp. varname];
         fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
             'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
         %% map setting
@@ -4967,7 +3841,7 @@ for fake=1:1
         %% save
         dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_AR1_param', filesep, 'obs'];
         if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-        cfg.figname=[dirs.figdir, filesep, 'AR1_coef_obs_map_', tmp.varname, '.tif'];
+        cfg.figname=[dirs.figdir, filesep, 'AR1_coef_obs_map_', tmp.varname, '_', tmp.season, '.tif'];
         print(fig_h, cfg.figname, '-dpng');
         RemoveWhiteSpace([], 'file', cfg.figname);
         close all;
@@ -4995,15 +3869,15 @@ for fake=1:1
     
         tmp.X=grid.tlong([end, 1:end],:);
         tmp.Y=grid.tlat([end, 1:end],:);
-        tmp.C=data.([tmp.varname, '_obs_AR1_noise']);
+        tmp.C=data2.([tmp.varname, '_obs_AR1_noise']);
         tmp.C=tmp.C([end, 1:end],:);
-    %         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
+    %         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
     %         tmp.C_H=tmp.C_H([end, 1:end],:);
     %         tmp.C_2=tmp.C;
     %         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
     
     
-        fig_cfg.fig_name=['l',tmp.lyear_str, ', AR1_noise_, ', tmp. varname];
+        fig_cfg.fig_name=[tmp.season, ', AR1_noise_, ', tmp. varname];
         fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
             'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
         %% map setting
@@ -5053,13 +3927,14 @@ for fake=1:1
         %% save
         dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_AR1_param', filesep, 'obs'];
         if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-        cfg.figname=[dirs.figdir, filesep, 'AR1_noise_obs_map_', tmp.varname, '.tif'];
+        cfg.figname=[dirs.figdir, filesep, 'AR1_noise_obs_map_', tmp.varname, '_', tmp.season, '.tif'];
         print(fig_h, cfg.figname, '-dpng');
         RemoveWhiteSpace([], 'file', cfg.figname);
         close all;
     end
 end
 end
+
 
  %% model-svd_1st(model-lens2) & assm corr map --------------------------------------
 if fig_flags(52)==1
@@ -5078,17 +3953,17 @@ if fig_flags(52)==1
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data2.([tmp.varname, '_corr_assm_int_svd', '_l', tmp.lyear_str]);
+    tmp.C=data2.([tmp.varname, '_corr_assm_int_svd', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
-%         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
+%         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
 %         tmp.C_H=tmp.C_H([end, 1:end],:);
 %         tmp.C_2=tmp.C;
 %         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
 
 
     [tmp.mean_corr, tmp.err] = ...
-        Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_corr_assm_int_svd', '_l', tmp.lyear_str]), grid.tlong, grid.tlat);
-    fig_cfg.fig_name=['l',tmp.lyear_str, ', corr_assm _, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
+        Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_corr_assm_int_svd', '_', tmp.season]), grid.tlong, grid.tlat);
+    fig_cfg.fig_name=[tmp.season, ', corr_assm_int_svd_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
     fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
         'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
     %% map setting
@@ -5147,7 +4022,7 @@ if fig_flags(52)==1
     %% save
     dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_corr_assm_int_map', filesep, 'model'];
     if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'corr_assm_int_svd_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
+    cfg.figname=[dirs.figdir, filesep, 'corr_assm_int_svd_map_', tmp.varname, '_', tmp.season, 'y.tif'];
 
     print(fig_h, cfg.figname, '-dpng');
     RemoveWhiteSpace([], 'file', cfg.figname);
@@ -5168,17 +4043,17 @@ if fig_flags(52)==1
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.C=data2.([tmp.varname, '_corr_assm_int2_svd', '_l', tmp.lyear_str]);
+    tmp.C=data2.([tmp.varname, '_corr_assm_int2_svd', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
-%         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_l', tmp.lyear_str]);
+%         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
 %         tmp.C_H=tmp.C_H([end, 1:end],:);
 %         tmp.C_2=tmp.C;
 %         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
 
 
     [tmp.mean_corr, tmp.err] = ...
-        Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_corr_assm_int2_svd', '_l', tmp.lyear_str]), grid.tlong, grid.tlat);
-    fig_cfg.fig_name=['l',tmp.lyear_str, ', corr_assm _, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
+        Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_corr_assm_int2_svd', '_', tmp.season]), grid.tlong, grid.tlat);
+    fig_cfg.fig_name=[tmp.season, ', corr_assm_int2_svd_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
     fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
         'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
     %% map setting
@@ -5237,12 +4112,1129 @@ if fig_flags(52)==1
     %% save
     dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_corr_assm_int2_map', filesep, 'model'];
     if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'corr_assm_int2_svd_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
+    cfg.figname=[dirs.figdir, filesep, 'corr_assm_int2_svd_map_', tmp.varname, '_', tmp.season, 'y.tif'];
 
     print(fig_h, cfg.figname, '-dpng');
     RemoveWhiteSpace([], 'file', cfg.figname);
     close all;
 end
+
+ %% model-svd_1st(model-lens2) & obs corr map --------------------------------------
+if fig_flags(52)==1
+
+    fig_cfg.name_rgn = 'Glob';
+    fig_cfg.map_proj = 'eqdcylin';  % robinson, eqdcylin
+    fig_cfg.x_lim = [-180 180];
+    fig_cfg.y_lim = [-80 89];
+    fig_cfg.fig_size = [0,0,6,3.5];
+    fig_cfg.ax_size = [0.3,0.7,5.4,2.7];
+    fig_cfg.cb_size = [5.15,0.8,0.15,2.3];
+    fig_cfg.title_pos = [0.5,0.93];
+    fig_cfg.p_lim =0.1;
+    fig_cfg.c_lim = [-1 1];
+    [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('bwr_10', tmp.dropboxpath);
+
+    tmp.X=grid.tlong([end, 1:end],:);
+    tmp.Y=grid.tlat([end, 1:end],:);
+    tmp.C=data2.([tmp.varname, '_corr_obs_int_svd', '_', tmp.season]);
+    tmp.C=tmp.C([end, 1:end],:);
+%         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
+%         tmp.C_H=tmp.C_H([end, 1:end],:);
+%         tmp.C_2=tmp.C;
+%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+
+
+    [tmp.mean_corr, tmp.err] = ...
+        Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_corr_obs_int_svd', '_', tmp.season]), grid.tlong, grid.tlat);
+    fig_cfg.fig_name=[tmp.season, ', corr_assm_int_svd_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
+    fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
+        'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
+    %% map setting
+    ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
+        'fontname','freeserif'); 
+
+    axis off; 
+    hold on;
+    setm(ax_m,'origin',[0,200],'MapLatLimit',fig_cfg.y_lim);
+    set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
+    text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
+    'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
+    'fontsize',14,'fontname','freeserif','interpreter','none')
+
+    %% caxis & colorbar
+    caxis(ax_m, fig_cfg.c_lim); 
+    colormap(fig_cfg.c_map);
+    cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
+    set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
+    title(cb,'R','fontsize',12);
+
+    %% draw on ax_m
+    h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
+    shading flat;
+    geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
+
+%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1) %for Chls, it uses all available data
+%             %% <AR1 area -> hatch
+%             pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2, 'parent', ax_m);
+%             set(pp2,'linestyle','none','Tag','HatchingRegion');
+%             hp = findobj(pp2,'Tag','HatchingRegion');
+%             hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
+%         end
+
+
+    %% frame and label setting
+    setm(ax_m,'frame','on','FLineWidth',1);
+
+    label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
+    label_x=mlabel('MLabelParallel','south', 'MLineLocation',20, 'MLabelLocation',60, 'labelrotation','on');
+    mlabel; plabel;
+    label_y=plabel; label_x=mlabel;
+    for lxi=1:length(label_x)
+        tmp.tmppos=label_x(lxi,1).Position;
+        tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.55;
+        label_x(lxi,1).Position=tmp.tmppos;
+        label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
+    end
+    for lyi=1:length(label_y)
+        label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
+        tmp.tmppos=label_y(lyi,1).Position;
+        tmp.tmppos(1)=-fig_cfg.ax_size(3)+2.6; % x position correction
+        label_y(lyi,1).Position=tmp.tmppos;
+    end
+
+    %% save
+    dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_corr_obs_int_map', filesep, 'model'];
+    if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
+    cfg.figname=[dirs.figdir, filesep, 'corr_obs_int_svd_map_', tmp.varname, '_', tmp.season, 'y.tif'];
+
+    print(fig_h, cfg.figname, '-dpng');
+    RemoveWhiteSpace([], 'file', cfg.figname);
+    close all;
+
+%% 2
+    fig_cfg.name_rgn = 'Glob';
+    fig_cfg.map_proj = 'eqdcylin';  % robinson, eqdcylin
+    fig_cfg.x_lim = [-180 180];
+    fig_cfg.y_lim = [-80 89];
+    fig_cfg.fig_size = [0,0,6,3.5];
+    fig_cfg.ax_size = [0.3,0.7,5.4,2.7];
+    fig_cfg.cb_size = [5.15,0.8,0.15,2.3];
+    fig_cfg.title_pos = [0.5,0.93];
+    fig_cfg.p_lim =0.1;
+    fig_cfg.c_lim = [-1 1];
+    [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('bwr_10', tmp.dropboxpath);
+
+    tmp.X=grid.tlong([end, 1:end],:);
+    tmp.Y=grid.tlat([end, 1:end],:);
+    tmp.C=data2.([tmp.varname, '_corr_obs_int2_svd', '_', tmp.season]);
+    tmp.C=tmp.C([end, 1:end],:);
+%         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
+%         tmp.C_H=tmp.C_H([end, 1:end],:);
+%         tmp.C_2=tmp.C;
+%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+
+
+    [tmp.mean_corr, tmp.err] = ...
+        Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_corr_obs_int2_svd', '_', tmp.season]), grid.tlong, grid.tlat);
+    fig_cfg.fig_name=[tmp.season, ', corr_assm_int2_svd_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
+    fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
+        'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
+    %% map setting
+    ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
+        'fontname','freeserif'); 
+
+    axis off; 
+    hold on;
+    setm(ax_m,'origin',[0,200],'MapLatLimit',fig_cfg.y_lim);
+    set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
+    text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
+    'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
+    'fontsize',14,'fontname','freeserif','interpreter','none')
+
+    %% caxis & colorbar
+    caxis(ax_m, fig_cfg.c_lim); 
+    colormap(fig_cfg.c_map);
+    cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
+    set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
+    title(cb,'R','fontsize',12);
+
+    %% draw on ax_m
+    h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
+    shading flat;
+    geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
+
+%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1) %for Chls, it uses all available data
+%             %% <AR1 area -> hatch
+%             pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2, 'parent', ax_m);
+%             set(pp2,'linestyle','none','Tag','HatchingRegion');
+%             hp = findobj(pp2,'Tag','HatchingRegion');
+%             hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
+%         end
+
+
+    %% frame and label setting
+    setm(ax_m,'frame','on','FLineWidth',1);
+
+    label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
+    label_x=mlabel('MLabelParallel','south', 'MLineLocation',20, 'MLabelLocation',60, 'labelrotation','on');
+    mlabel; plabel;
+    label_y=plabel; label_x=mlabel;
+    for lxi=1:length(label_x)
+        tmp.tmppos=label_x(lxi,1).Position;
+        tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.55;
+        label_x(lxi,1).Position=tmp.tmppos;
+        label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
+    end
+    for lyi=1:length(label_y)
+        label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
+        tmp.tmppos=label_y(lyi,1).Position;
+        tmp.tmppos(1)=-fig_cfg.ax_size(3)+2.6; % x position correction
+        label_y(lyi,1).Position=tmp.tmppos;
+    end
+
+    %% save
+    dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_corr_obs_int2_map', filesep, 'model'];
+    if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
+    cfg.figname=[dirs.figdir, filesep, 'corr_obs_int2_svd_map_', tmp.varname, '_', tmp.season, 'y.tif'];
+
+    print(fig_h, cfg.figname, '-dpng');
+    RemoveWhiteSpace([], 'file', cfg.figname);
+    close all;
+end
+
+%% MSSS (assm base) map --------------------------------------
+if fig_flags(53)==1
+for fake=1:1
+    
+    data2.([tmp.varname, '_MSSS_assm_ano', '_', tmp.season]) = ...
+        1 -  data2.([tmp.varname, '_model_rmse2', '_', tmp.season]).^2 ...
+             ./ data2.([tmp.varname, '_lens2_rmse2', '_', tmp.season]).^2;
+    data2.([tmp.varname, '_MSSS_obs_ano', '_', tmp.season]) = ...
+        1 -  data2.([tmp.varname, '_model_rmse2_obs', '_', tmp.season]).^2 ...
+             ./ data2.([tmp.varname, '_lens2_rmse2_obs', '_', tmp.season]).^2;
+
+    fig_cfg.name_rgn = 'Glob';
+    fig_cfg.map_proj = 'eqdcylin';  % robinson, eqdcylin
+%     fig_cfg.map_proj = 'robinson';  % robinson, eqdcylin
+
+    fig_cfg.x_lim = [-180 180];
+    fig_cfg.y_lim = [-80 89];
+    fig_cfg.fig_size = [0,0,6,3.5];
+    fig_cfg.ax_size = [0.3,0.7,5.4,2.7];
+    fig_cfg.cb_size = [5.15,0.8,0.15,2.3];
+    fig_cfg.title_pos = [0.5,0.93];
+    fig_cfg.p_lim =0.1;
+    fig_cfg.c_lim = [-1 1];
+    [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('bwr_10', tmp.dropboxpath);
+
+    tmp.X=grid.tlong([end, 1:end],:);
+    tmp.Y=grid.tlat([end, 1:end],:);
+    tmp.C=data2.([tmp.varname, '_MSSS_assm_ano', '_', tmp.season]);
+    tmp.C=tmp.C([end, 1:end],:);
+
+%         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
+%         tmp.C_H=tmp.C_H([end, 1:end],:);
+%         tmp.C_2=tmp.C;
+%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+
+
+    [tmp.mean_corr, tmp.err] = ...
+        Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_MSSS_assm_ano', '_', tmp.season]), grid.tlong, grid.tlat);
+    fig_cfg.fig_name=[tmp.season, ', _MSSS_assm_ano_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
+    fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
+        'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
+    %% map setting
+    ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
+        'fontname','freeserif'); 
+
+    axis off; 
+    hold on;
+    setm(ax_m,'origin',[0,200],'MapLatLimit',fig_cfg.y_lim);  % lat origin(middle point), lon origin (middle point)
+    set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
+    text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
+    'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
+    'fontsize',14,'fontname','freeserif','interpreter','none')
+
+    %% caxis & colorbar
+    caxis(ax_m, [-1 1]); 
+    colormap(fig_cfg.c_map);
+    cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
+    set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
+    title(cb,' ','fontsize',12);
+
+    %% draw on ax_m
+    h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
+    shading flat;
+    geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
+
+%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1) %for Chls, it uses all available data
+%             %% <AR1 area -> hatch
+%             pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2, 'parent', ax_m);
+%             set(pp2,'linestyle','none','Tag','HatchingRegion');
+%             hp = findobj(pp2,'Tag','HatchingRegion');
+%             hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
+%         end
+
+
+%% frame and label setting
+    setm(ax_m,'frame','on','FLineWidth',1);
+
+    label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
+    label_x=mlabel('MLabelParallel','south', 'MLineLocation',20, 'MLabelLocation',60, 'labelrotation','on');
+    mlabel; plabel;
+    label_y=plabel; label_x=mlabel;
+    for lxi=1:length(label_x)
+        tmp.tmppos=label_x(lxi,1).Position;
+        tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.55; % y position correction
+        label_x(lxi,1).Position=tmp.tmppos;
+        label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
+    end
+    for lyi=1:length(label_y)
+        label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
+        tmp.tmppos=label_y(lyi,1).Position;
+        tmp.tmppos(1)=-fig_cfg.ax_size(3)+2.6; % x position correction
+        label_y(lyi,1).Position=tmp.tmppos;
+    end
+
+    %% save
+    dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_MSSS_map'];
+    if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
+    cfg.figname=[dirs.figdir, filesep, 'MSSS_assm_base_map_', tmp.varname, '_', tmp.season, 'y.tif'];
+    print(fig_h, cfg.figname, '-dpng');
+    RemoveWhiteSpace([], 'file', cfg.figname);
+    close all; 
+end
+end
+
+%% MSSS (obs base) map --------------------------------------
+if fig_flags(54)==1
+for fake=1:1
+    fig_cfg.name_rgn = 'Glob';
+    fig_cfg.map_proj = 'eqdcylin';  % robinson, eqdcylin
+%     fig_cfg.map_proj = 'robinson';  % robinson, eqdcylin
+
+    fig_cfg.x_lim = [-180 180];
+    fig_cfg.y_lim = [-80 89];
+    fig_cfg.fig_size = [0,0,6,3.5];
+    fig_cfg.ax_size = [0.3,0.7,5.4,2.7];
+    fig_cfg.cb_size = [5.15,0.8,0.15,2.3];
+    fig_cfg.title_pos = [0.5,0.93];
+    fig_cfg.p_lim =0.1;
+    fig_cfg.c_lim = [-1 1];
+    [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('bwr_10', tmp.dropboxpath);
+
+    tmp.X=grid.tlong([end, 1:end],:);
+    tmp.Y=grid.tlat([end, 1:end],:);
+    tmp.C=data2.([tmp.varname, '_MSSS_obs_ano', '_', tmp.season]);
+    tmp.C=tmp.C([end, 1:end],:);
+
+%         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
+%         tmp.C_H=tmp.C_H([end, 1:end],:);
+%         tmp.C_2=tmp.C;
+%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+
+
+    [tmp.mean_corr, tmp.err] = ...
+        Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_MSSS_obs_ano', '_', tmp.season]), grid.tlong, grid.tlat);
+    fig_cfg.fig_name=[tmp.season, ', _MSSS_obs_ano_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
+    fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
+        'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
+    %% map setting
+    ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
+        'fontname','freeserif'); 
+
+    axis off; 
+    hold on;
+    setm(ax_m,'origin',[0,200],'MapLatLimit',fig_cfg.y_lim);  % lat origin(middle point), lon origin (middle point)
+    set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
+    text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
+    'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
+    'fontsize',14,'fontname','freeserif','interpreter','none')
+
+    %% caxis & colorbar
+    caxis(ax_m, [-1 1]); 
+    colormap(fig_cfg.c_map);
+    cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
+    set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
+    title(cb,' ','fontsize',12);
+
+    %% draw on ax_m
+    h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
+    shading flat;
+    geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
+
+%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1) %for Chls, it uses all available data
+%             %% <AR1 area -> hatch
+%             pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2, 'parent', ax_m);
+%             set(pp2,'linestyle','none','Tag','HatchingRegion');
+%             hp = findobj(pp2,'Tag','HatchingRegion');
+%             hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
+%         end
+
+
+%% frame and label setting
+    setm(ax_m,'frame','on','FLineWidth',1);
+
+    label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
+    label_x=mlabel('MLabelParallel','south', 'MLineLocation',20, 'MLabelLocation',60, 'labelrotation','on');
+    mlabel; plabel;
+    label_y=plabel; label_x=mlabel;
+    for lxi=1:length(label_x)
+        tmp.tmppos=label_x(lxi,1).Position;
+        tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.55; % y position correction
+        label_x(lxi,1).Position=tmp.tmppos;
+        label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
+    end
+    for lyi=1:length(label_y)
+        label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
+        tmp.tmppos=label_y(lyi,1).Position;
+        tmp.tmppos(1)=-fig_cfg.ax_size(3)+2.6; % x position correction
+        label_y(lyi,1).Position=tmp.tmppos;
+    end
+
+    %% save
+    dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_MSSS_map'];
+    if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
+    cfg.figname=[dirs.figdir, filesep, 'MSSS_obs_base_map_', tmp.varname, '_', tmp.season, 'y.tif'];
+    print(fig_h, cfg.figname, '-dpng');
+    RemoveWhiteSpace([], 'file', cfg.figname);
+    close all; 
+end
+end
+
+
+%% SVD - lens2-model plot
+if fig_flags(55)==1
+    tmp.mode_want=3;
+%% PCT (left) plot
+    for SVD_mode=1:tmp.mode_want
+        fig_cfg.fig_name=[tmp.season, ', SVD_lens2-model_left_pct_, ', tmp. varname];
+        fig_h = figure('name',fig_cfg.fig_name,'visible','off');
+    %     hold on
+        plot(cfg.iyears(cfg.clim_tlen)+lyear,data2.([tmp.varname,'_svd_lens2_model_pcs_left_', tmp.season])(SVD_mode,:), 'k-', 'linewidth', 2);
+    %         plot(cfg.iyears(1:end-4)+4,EOF.pc(:,EOF_mode));
+        grid minor
+        xlabel('year'); ylabel(['PCT-mode', num2str(SVD_mode), ', SCF:', num2str(round(data2.([tmp.varname,'_svd_lens2_model_scf_', tmp.season])(SVD_mode).*100,1)),'%']);
+        set(gca, 'fontsize', 20)
+        dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_SVD', filesep, 'lens2_hcst'];
+        if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
+        cfg.figname=[dirs.figdir, filesep, 'lens2-model_left_PCT_', tmp.season,'_mode',num2str(SVD_mode),'_', tmp.varname, '.tif'];
+        print(fig_h, cfg.figname, '-dpng');
+        RemoveWhiteSpace([], 'file', cfg.figname);
+        close all;
+    end
+    % hold off
+
+%% LV (left) plot
+    for SVD_mode=1:tmp.mode_want
+        tmp.X=grid.tlong([end, 1:end],:);
+        tmp.Y=grid.tlat([end, 1:end],:);
+        tmp.C=squeeze(data2.([tmp.varname,'_svd_lens2_model_lvmap_left_', tmp.season])(:,:,SVD_mode));
+        tmp.C=tmp.C([end, 1:end],:);
+        [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('bwr_10', tmp.dropboxpath);
+        
+        tmp.prc95 =prctile(tmp.C(isfinite(tmp.C)), 95);
+        tmp.prc05 =prctile(tmp.C(isfinite(tmp.C)), 5);
+
+        fig_cfg.fig_name=[tmp.season, ', SVD_LV_, ', tmp. varname];
+        fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
+            'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
+        %% map setting
+        ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
+            'fontname','freeserif'); 
+    
+        axis off; 
+        hold on;
+        setm(ax_m,'origin',[0,200],'MapLatLimit',fig_cfg.y_lim);  % lat origin(middle point), lon origin (middle point)
+        set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
+        text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
+        'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
+        'fontsize',14,'fontname','freeserif','interpreter','none')
+    
+        %% caxis & colorbar
+        tmp.maxval=max(abs([tmp.prc05 tmp.prc95]));
+        caxis(ax_m, [-tmp.maxval tmp.maxval]); 
+        colormap(fig_cfg.c_map);
+        cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
+        set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
+    
+        %% draw on ax_m
+        h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
+        shading flat;
+        geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
+    
+    
+    %% frame and label setting
+        setm(ax_m,'frame','on','FLineWidth',1);
+    
+        label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
+        label_x=mlabel('MLabelParallel','south', 'MLineLocation',20, 'MLabelLocation',60, 'labelrotation','on');
+        mlabel; plabel;
+        label_y=plabel; label_x=mlabel;
+        for lxi=1:length(label_x)
+            tmp.tmppos=label_x(lxi,1).Position;
+            tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.55; % y position correction
+            label_x(lxi,1).Position=tmp.tmppos;
+            label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
+        end
+        for lyi=1:length(label_y)
+            label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
+            tmp.tmppos=label_y(lyi,1).Position;
+            tmp.tmppos(1)=-fig_cfg.ax_size(3)+2.6; % x position correction
+            label_y(lyi,1).Position=tmp.tmppos;
+        end
+    
+        %% save
+        dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_SVD', filesep, 'lens2_hcst'];
+        if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
+        cfg.figname=[dirs.figdir, filesep, 'lens2-model_left_LV_', tmp.season, '_mode',num2str(SVD_mode),'_', tmp.varname, '.tif'];
+        print(fig_h, cfg.figname, '-dpng');
+        RemoveWhiteSpace([], 'file', cfg.figname);
+        close all;
+    end
+
+
+%% PCT (right) plot
+    for SVD_mode=1:tmp.mode_want
+        fig_cfg.fig_name=[tmp.season, ', SVD_lens2-model_right_pct_, ', tmp. varname];
+        fig_h = figure('name',fig_cfg.fig_name,'visible','off');
+    %     hold on
+        plot(cfg.iyears(cfg.clim_tlen)+lyear,data2.([tmp.varname,'_svd_lens2_model_pcs_right_', tmp.season])(SVD_mode,:), 'k-', 'linewidth', 2);
+    %         plot(cfg.iyears(1:end-4)+4,EOF.pc(:,SVD_mode));
+        grid minor
+        xlabel('year'); ylabel(['PCT-mode', num2str(SVD_mode), ', SCF:', num2str(round(data2.([tmp.varname,'_svd_lens2_model_scf_', tmp.season])(SVD_mode).*100,1)),'%']);
+        set(gca, 'fontsize', 20)
+        dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_SVD', filesep, 'lens2_hcst'];
+        if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
+        cfg.figname=[dirs.figdir, filesep, 'lens2-model_right_PCT_', tmp.season,'_mode',num2str(SVD_mode),'_', tmp.varname, '.tif'];
+        print(fig_h, cfg.figname, '-dpng');
+        RemoveWhiteSpace([], 'file', cfg.figname);
+        close all;
+    end
+    % hold off
+
+%% LV (right) plot
+    for SVD_mode=1:tmp.mode_want
+        tmp.X=grid.tlong([end, 1:end],:);
+        tmp.Y=grid.tlat([end, 1:end],:);
+        tmp.C=squeeze(data2.([tmp.varname,'_svd_lens2_model_lvmap_right_', tmp.season])(:,:,SVD_mode));
+        tmp.C=tmp.C([end, 1:end],:);
+        [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('bwr_10', tmp.dropboxpath);
+        
+        tmp.prc95 =prctile(tmp.C(isfinite(tmp.C)), 95);
+        tmp.prc05 =prctile(tmp.C(isfinite(tmp.C)), 5);
+
+        fig_cfg.fig_name=[tmp.season, ', SVD_LV_, ', tmp. varname];
+        fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
+            'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
+        %% map setting
+        ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
+            'fontname','freeserif'); 
+    
+        axis off; 
+        hold on;
+        setm(ax_m,'origin',[0,200],'MapLatLimit',fig_cfg.y_lim);  % lat origin(middle point), lon origin (middle point)
+        set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
+        text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
+        'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
+        'fontsize',14,'fontname','freeserif','interpreter','none')
+    
+        %% caxis & colorbar
+        tmp.maxval=max(abs([tmp.prc05 tmp.prc95]));
+        caxis(ax_m, [-tmp.maxval tmp.maxval]); 
+        colormap(fig_cfg.c_map);
+        cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
+        set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
+    
+        %% draw on ax_m
+        h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
+        shading flat;
+        geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
+    
+    
+    %% frame and label setting
+        setm(ax_m,'frame','on','FLineWidth',1);
+    
+        label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
+        label_x=mlabel('MLabelParallel','south', 'MLineLocation',20, 'MLabelLocation',60, 'labelrotation','on');
+        mlabel; plabel;
+        label_y=plabel; label_x=mlabel;
+        for lxi=1:length(label_x)
+            tmp.tmppos=label_x(lxi,1).Position;
+            tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.55; % y position correction
+            label_x(lxi,1).Position=tmp.tmppos;
+            label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
+        end
+        for lyi=1:length(label_y)
+            label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
+            tmp.tmppos=label_y(lyi,1).Position;
+            tmp.tmppos(1)=-fig_cfg.ax_size(3)+2.6; % x position correction
+            label_y(lyi,1).Position=tmp.tmppos;
+        end
+    
+        %% save
+        dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_SVD', filesep, 'lens2_hcst'];
+        if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
+        cfg.figname=[dirs.figdir, filesep, 'lens2-model_right_LV_', tmp.season, '_mode',num2str(SVD_mode),'_', tmp.varname, '.tif'];
+        print(fig_h, cfg.figname, '-dpng');
+        RemoveWhiteSpace([], 'file', cfg.figname);
+        close all;
+    end
+
+end
+
+%% SVD - lens2-assm plot
+if fig_flags(56)==1
+    tmp.mode_want=3;
+%% PCT (left) plot
+    for SVD_mode=1:tmp.mode_want
+        fig_cfg.fig_name=[tmp.season, ', SVD_lens2-assm_left_pct_, ', tmp. varname];
+        fig_h = figure('name',fig_cfg.fig_name,'visible','off');
+    %     hold on
+        plot(cfg.iyears(cfg.clim_tlen)+lyear,data2.([tmp.varname,'_svd_lens2_assm_pcs_left_', tmp.season])(SVD_mode,:), 'k-', 'linewidth', 2);
+    %         plot(cfg.iyears(1:end-4)+4,EOF.pc(:,SVD_mode));
+        grid minor
+        xlabel('year'); ylabel(['PCT-mode', num2str(SVD_mode), ', SCF:', num2str(round(data2.([tmp.varname,'_svd_lens2_assm_scf_', tmp.season])(SVD_mode).*100,1)),'%']);
+        set(gca, 'fontsize', 20)
+        dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_SVD', filesep, 'lens2_assm'];
+        if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
+        cfg.figname=[dirs.figdir, filesep, 'lens2-assm_left_PCT_', tmp.season,'_mode',num2str(SVD_mode),'_', tmp.varname, '.tif'];
+        print(fig_h, cfg.figname, '-dpng');
+        RemoveWhiteSpace([], 'file', cfg.figname);
+        close all;
+    end
+    % hold off
+
+%% LV (left) plot
+    for SVD_mode=1:tmp.mode_want
+        tmp.X=grid.tlong([end, 1:end],:);
+        tmp.Y=grid.tlat([end, 1:end],:);
+        tmp.C=squeeze(data2.([tmp.varname,'_svd_lens2_assm_lvmap_left_', tmp.season])(:,:,SVD_mode));
+        tmp.C=tmp.C([end, 1:end],:);
+        [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('bwr_10', tmp.dropboxpath);
+        
+        tmp.prc95 =prctile(tmp.C(isfinite(tmp.C)), 95);
+        tmp.prc05 =prctile(tmp.C(isfinite(tmp.C)), 5);
+
+        fig_cfg.fig_name=[tmp.season, ', SVD_LV_, ', tmp. varname];
+        fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
+            'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
+        %% map setting
+        ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
+            'fontname','freeserif'); 
+    
+        axis off; 
+        hold on;
+        setm(ax_m,'origin',[0,200],'MapLatLimit',fig_cfg.y_lim);  % lat origin(middle point), lon origin (middle point)
+        set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
+        text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
+        'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
+        'fontsize',14,'fontname','freeserif','interpreter','none')
+    
+        %% caxis & colorbar
+        tmp.maxval=max(abs([tmp.prc05 tmp.prc95]));
+        caxis(ax_m, [-tmp.maxval tmp.maxval]); 
+        colormap(fig_cfg.c_map);
+        cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
+        set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
+    
+        %% draw on ax_m
+        h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
+        shading flat;
+        geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
+    
+    
+    %% frame and label setting
+        setm(ax_m,'frame','on','FLineWidth',1);
+    
+        label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
+        label_x=mlabel('MLabelParallel','south', 'MLineLocation',20, 'MLabelLocation',60, 'labelrotation','on');
+        mlabel; plabel;
+        label_y=plabel; label_x=mlabel;
+        for lxi=1:length(label_x)
+            tmp.tmppos=label_x(lxi,1).Position;
+            tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.55; % y position correction
+            label_x(lxi,1).Position=tmp.tmppos;
+            label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
+        end
+        for lyi=1:length(label_y)
+            label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
+            tmp.tmppos=label_y(lyi,1).Position;
+            tmp.tmppos(1)=-fig_cfg.ax_size(3)+2.6; % x position correction
+            label_y(lyi,1).Position=tmp.tmppos;
+        end
+    
+        %% save
+        dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_SVD', filesep, 'lens2_assm'];
+        if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
+        cfg.figname=[dirs.figdir, filesep, 'lens2-assm_left_LV_', tmp.season, '_mode',num2str(SVD_mode),'_', tmp.varname, '.tif'];
+        print(fig_h, cfg.figname, '-dpng');
+        RemoveWhiteSpace([], 'file', cfg.figname);
+        close all;
+    end
+
+
+%% PCT (right) plot
+    for SVD_mode=1:tmp.mode_want
+        fig_cfg.fig_name=[tmp.season, ', SVD_lens2-assm_right_pct_, ', tmp. varname];
+        fig_h = figure('name',fig_cfg.fig_name,'visible','off');
+    %     hold on
+        plot(cfg.iyears(cfg.clim_tlen)+lyear,data2.([tmp.varname,'_svd_lens2_assm_pcs_right_', tmp.season])(SVD_mode,:), 'k-', 'linewidth', 2);
+    %         plot(cfg.iyears(1:end-4)+4,EOF.pc(:,SVD_mode));
+        grid minor
+        xlabel('year'); ylabel(['PCT-mode', num2str(SVD_mode), ', SCF:', num2str(round(data2.([tmp.varname,'_svd_lens2_assm_scf_', tmp.season])(SVD_mode).*100,1)),'%']);
+        set(gca, 'fontsize', 20)
+        dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_SVD', filesep, 'lens2_assm'];
+        if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
+        cfg.figname=[dirs.figdir, filesep, 'lens2-assm_right_PCT_', tmp.season,'_mode',num2str(SVD_mode),'_', tmp.varname, '.tif'];
+        print(fig_h, cfg.figname, '-dpng');
+        RemoveWhiteSpace([], 'file', cfg.figname);
+        close all;
+    end
+    % hold off
+
+%% LV (right) plot
+    for SVD_mode=1:tmp.mode_want
+        tmp.X=grid.tlong([end, 1:end],:);
+        tmp.Y=grid.tlat([end, 1:end],:);
+        tmp.C=squeeze(data2.([tmp.varname,'_svd_lens2_assm_lvmap_right_', tmp.season])(:,:,SVD_mode));
+        tmp.C=tmp.C([end, 1:end],:);
+        [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('bwr_10', tmp.dropboxpath);
+        
+        tmp.prc95 =prctile(tmp.C(isfinite(tmp.C)), 95);
+        tmp.prc05 =prctile(tmp.C(isfinite(tmp.C)), 5);
+
+        fig_cfg.fig_name=[tmp.season, ', SVD_LV_, ', tmp. varname];
+        fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
+            'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
+        %% map setting
+        ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
+            'fontname','freeserif'); 
+    
+        axis off; 
+        hold on;
+        setm(ax_m,'origin',[0,200],'MapLatLimit',fig_cfg.y_lim);  % lat origin(middle point), lon origin (middle point)
+        set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
+        text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
+        'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
+        'fontsize',14,'fontname','freeserif','interpreter','none')
+    
+        %% caxis & colorbar
+        tmp.maxval=max(abs([tmp.prc05 tmp.prc95]));
+        caxis(ax_m, [-tmp.maxval tmp.maxval]); 
+        colormap(fig_cfg.c_map);
+        cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
+        set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
+    
+        %% draw on ax_m
+        h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
+        shading flat;
+        geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
+    
+    
+    %% frame and label setting
+        setm(ax_m,'frame','on','FLineWidth',1);
+    
+        label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
+        label_x=mlabel('MLabelParallel','south', 'MLineLocation',20, 'MLabelLocation',60, 'labelrotation','on');
+        mlabel; plabel;
+        label_y=plabel; label_x=mlabel;
+        for lxi=1:length(label_x)
+            tmp.tmppos=label_x(lxi,1).Position;
+            tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.55; % y position correction
+            label_x(lxi,1).Position=tmp.tmppos;
+            label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
+        end
+        for lyi=1:length(label_y)
+            label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
+            tmp.tmppos=label_y(lyi,1).Position;
+            tmp.tmppos(1)=-fig_cfg.ax_size(3)+2.6; % x position correction
+            label_y(lyi,1).Position=tmp.tmppos;
+        end
+    
+        %% save
+        dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_SVD', filesep, 'lens2_assm'];
+        if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
+        cfg.figname=[dirs.figdir, filesep, 'lens2-assm_right_LV_', tmp.season, '_mode',num2str(SVD_mode),'_', tmp.varname, '.tif'];
+        print(fig_h, cfg.figname, '-dpng');
+        RemoveWhiteSpace([], 'file', cfg.figname);
+        close all;
+    end
+
+end
+
+%% SVD - lens2-obs plot
+if fig_flags(57)==1
+    tmp.mode_want=3;
+%% PCT (left) plot
+    for SVD_mode=1:tmp.mode_want
+        fig_cfg.fig_name=[tmp.season, ', SVD_lens2-obs_left_pct_, ', tmp. varname];
+        fig_h = figure('name',fig_cfg.fig_name,'visible','off');
+    %     hold on
+        plot(cfg.iyears(cfg.clim_tlen)+lyear,data2.([tmp.varname,'_svd_lens2_obs_pcs_left_', tmp.season])(SVD_mode,:), 'k-', 'linewidth', 2);
+    %         plot(cfg.iyears(1:end-4)+4,EOF.pc(:,SVD_mode));
+        grid minor
+        xlabel('year'); ylabel(['PCT-mode', num2str(SVD_mode), ', SCF:', num2str(round(data2.([tmp.varname,'_svd_lens2_obs_scf_', tmp.season])(SVD_mode).*100,1)),'%']);
+        set(gca, 'fontsize', 20)
+        dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_SVD', filesep, 'lens2_obs'];
+        if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
+        cfg.figname=[dirs.figdir, filesep, 'lens2-obs_left_PCT_', tmp.season,'_mode',num2str(SVD_mode),'_', tmp.varname, '.tif'];
+        print(fig_h, cfg.figname, '-dpng');
+        RemoveWhiteSpace([], 'file', cfg.figname);
+        close all;
+    end
+    % hold off
+
+%% LV (left) plot
+    for SVD_mode=1:tmp.mode_want
+        tmp.X=grid.tlong([end, 1:end],:);
+        tmp.Y=grid.tlat([end, 1:end],:);
+        tmp.C=squeeze(data2.([tmp.varname,'_svd_lens2_obs_lvmap_left_', tmp.season])(:,:,SVD_mode));
+        tmp.C=tmp.C([end, 1:end],:);
+        [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('bwr_10', tmp.dropboxpath);
+        
+        tmp.prc95 =prctile(tmp.C(isfinite(tmp.C)), 95);
+        tmp.prc05 =prctile(tmp.C(isfinite(tmp.C)), 5);
+
+        fig_cfg.fig_name=[tmp.season, ', SVD_LV_, ', tmp. varname];
+        fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
+            'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
+        %% map setting
+        ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
+            'fontname','freeserif'); 
+    
+        axis off; 
+        hold on;
+        setm(ax_m,'origin',[0,200],'MapLatLimit',fig_cfg.y_lim);  % lat origin(middle point), lon origin (middle point)
+        set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
+        text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
+        'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
+        'fontsize',14,'fontname','freeserif','interpreter','none')
+    
+        %% caxis & colorbar
+        tmp.maxval=max(abs([tmp.prc05 tmp.prc95]));
+        caxis(ax_m, [-tmp.maxval tmp.maxval]); 
+        colormap(fig_cfg.c_map);
+        cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
+        set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
+    
+        %% draw on ax_m
+        h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
+        shading flat;
+        geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
+    
+    
+    %% frame and label setting
+        setm(ax_m,'frame','on','FLineWidth',1);
+    
+        label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
+        label_x=mlabel('MLabelParallel','south', 'MLineLocation',20, 'MLabelLocation',60, 'labelrotation','on');
+        mlabel; plabel;
+        label_y=plabel; label_x=mlabel;
+        for lxi=1:length(label_x)
+            tmp.tmppos=label_x(lxi,1).Position;
+            tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.55; % y position correction
+            label_x(lxi,1).Position=tmp.tmppos;
+            label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
+        end
+        for lyi=1:length(label_y)
+            label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
+            tmp.tmppos=label_y(lyi,1).Position;
+            tmp.tmppos(1)=-fig_cfg.ax_size(3)+2.6; % x position correction
+            label_y(lyi,1).Position=tmp.tmppos;
+        end
+    
+        %% save
+        dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_SVD', filesep, 'lens2_obs'];
+        if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
+        cfg.figname=[dirs.figdir, filesep, 'lens2-obs_left_LV_', tmp.season, '_mode',num2str(SVD_mode),'_', tmp.varname, '.tif'];
+        print(fig_h, cfg.figname, '-dpng');
+        RemoveWhiteSpace([], 'file', cfg.figname);
+        close all;
+    end
+
+
+%% PCT (right) plot
+    for SVD_mode=1:tmp.mode_want
+        fig_cfg.fig_name=[tmp.season, ', SVD_lens2-obs_right_pct_, ', tmp. varname];
+        fig_h = figure('name',fig_cfg.fig_name,'visible','off');
+    %     hold on
+        plot(cfg.iyears(cfg.clim_tlen)+lyear,data2.([tmp.varname,'_svd_lens2_obs_pcs_right_', tmp.season])(SVD_mode,:), 'k-', 'linewidth', 2);
+    %         plot(cfg.iyears(1:end-4)+4,EOF.pc(:,SVD_mode));
+        grid minor
+        xlabel('year'); ylabel(['PCT-mode', num2str(SVD_mode), ', SCF:', num2str(round(data2.([tmp.varname,'_svd_lens2_obs_scf_', tmp.season])(SVD_mode).*100,1)),'%']);
+        set(gca, 'fontsize', 20)
+        dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_SVD', filesep, 'lens2_obs'];
+        if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
+        cfg.figname=[dirs.figdir, filesep, 'lens2-obs_right_PCT_', tmp.season,'_mode',num2str(SVD_mode),'_', tmp.varname, '.tif'];
+        print(fig_h, cfg.figname, '-dpng');
+        RemoveWhiteSpace([], 'file', cfg.figname);
+        close all;
+    end
+    % hold off
+
+%% LV (right) plot
+    for SVD_mode=1:tmp.mode_want
+        tmp.X=grid.tlong([end, 1:end],:);
+        tmp.Y=grid.tlat([end, 1:end],:);
+        tmp.C=squeeze(data2.([tmp.varname,'_svd_lens2_obs_lvmap_right_', tmp.season])(:,:,SVD_mode));
+        tmp.C=tmp.C([end, 1:end],:);
+        [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('bwr_10', tmp.dropboxpath);
+        
+        tmp.prc95 =prctile(tmp.C(isfinite(tmp.C)), 95);
+        tmp.prc05 =prctile(tmp.C(isfinite(tmp.C)), 5);
+
+        fig_cfg.fig_name=[tmp.season, ', SVD_LV_, ', tmp. varname];
+        fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
+            'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
+        %% map setting
+        ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
+            'fontname','freeserif'); 
+    
+        axis off; 
+        hold on;
+        setm(ax_m,'origin',[0,200],'MapLatLimit',fig_cfg.y_lim);  % lat origin(middle point), lon origin (middle point)
+        set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
+        text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
+        'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
+        'fontsize',14,'fontname','freeserif','interpreter','none')
+    
+        %% caxis & colorbar
+        tmp.maxval=max(abs([tmp.prc05 tmp.prc95]));
+        caxis(ax_m, [-tmp.maxval tmp.maxval]); 
+        colormap(fig_cfg.c_map);
+        cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
+        set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
+    
+        %% draw on ax_m
+        h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
+        shading flat;
+        geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
+    
+    
+    %% frame and label setting
+        setm(ax_m,'frame','on','FLineWidth',1);
+    
+        label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
+        label_x=mlabel('MLabelParallel','south', 'MLineLocation',20, 'MLabelLocation',60, 'labelrotation','on');
+        mlabel; plabel;
+        label_y=plabel; label_x=mlabel;
+        for lxi=1:length(label_x)
+            tmp.tmppos=label_x(lxi,1).Position;
+            tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.55; % y position correction
+            label_x(lxi,1).Position=tmp.tmppos;
+            label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
+        end
+        for lyi=1:length(label_y)
+            label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
+            tmp.tmppos=label_y(lyi,1).Position;
+            tmp.tmppos(1)=-fig_cfg.ax_size(3)+2.6; % x position correction
+            label_y(lyi,1).Position=tmp.tmppos;
+        end
+    
+        %% save
+        dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_SVD', filesep, 'lens2_obs'];
+        if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
+        cfg.figname=[dirs.figdir, filesep, 'lens2-obs_right_LV_', tmp.season, '_mode',num2str(SVD_mode),'_', tmp.varname, '.tif'];
+        print(fig_h, cfg.figname, '-dpng');
+        RemoveWhiteSpace([], 'file', cfg.figname);
+        close all;
+    end
+
+end
+
+%% obs & model - obs & lens2 corr map --------------------------------------
+if fig_flags(58)==1
+for fake=1:1
+    fig_cfg.name_rgn = 'Glob';
+    fig_cfg.map_proj = 'eqdcylin';  % robinson, eqdcylin
+%     fig_cfg.map_proj = 'robinson';  % robinson, eqdcylin
+
+    fig_cfg.x_lim = [-180 180];
+    fig_cfg.y_lim = [-80 89];
+    fig_cfg.fig_size = [0,0,6,3.5];
+    fig_cfg.ax_size = [0.3,0.7,5.4,2.7];
+    fig_cfg.cb_size = [5.15,0.8,0.15,2.3];
+    fig_cfg.title_pos = [0.5,0.93];
+    fig_cfg.p_lim =0.1;
+    fig_cfg.c_lim = [-1 1];
+    [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('bwr_10', tmp.dropboxpath);
+
+    tmp.X=grid.tlong([end, 1:end],:);
+    tmp.Y=grid.tlat([end, 1:end],:);
+    tmp.C=data2.([tmp.varname, '_corr_obs_ano', '_', tmp.season]) - data2.([tmp.varname, '_corr_obs_lens2_ano', '_', tmp.season]);
+    tmp.C=tmp.C([end, 1:end],:);
+%         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
+%         tmp.C_H=tmp.C_H([end, 1:end],:);
+%         tmp.C_2=tmp.C;
+%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+
+
+    [tmp.mean_corr, tmp.err] = ...
+        Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_corr_obs_ano', '_', tmp.season]) ...
+        -data2.([tmp.varname, '_corr_obs_lens2_ano', '_', tmp.season]), grid.tlong, grid.tlat);
+    fig_cfg.fig_name=[tmp.season, ', corr_obs_Rdiff_ano_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
+    fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
+        'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
+    %% map setting
+    ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
+        'fontname','freeserif'); 
+
+    axis off; 
+    hold on;
+    setm(ax_m,'origin',[0,200],'MapLatLimit',fig_cfg.y_lim);  % lat origin(middle point), lon origin (middle point)
+    set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
+    text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
+    'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
+    'fontsize',14,'fontname','freeserif','interpreter','none')
+
+    %% caxis & colorbar
+    caxis(ax_m, fig_cfg.c_lim); 
+    colormap(fig_cfg.c_map);
+    cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
+    set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
+    title(cb,'R','fontsize',12);
+
+    %% draw on ax_m
+    h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
+    shading flat;
+    geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
+
+%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1) %for Chls, it uses all available data
+%             %% <AR1 area -> hatch
+%             pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2, 'parent', ax_m);
+%             set(pp2,'linestyle','none','Tag','HatchingRegion');
+%             hp = findobj(pp2,'Tag','HatchingRegion');
+%             hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
+%         end
+
+
+%% frame and label setting
+    setm(ax_m,'frame','on','FLineWidth',1);
+
+    label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
+    label_x=mlabel('MLabelParallel','south', 'MLineLocation',20, 'MLabelLocation',60, 'labelrotation','on');
+    mlabel; plabel;
+    label_y=plabel; label_x=mlabel;
+    for lxi=1:length(label_x)
+        tmp.tmppos=label_x(lxi,1).Position;
+        tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.55; % y position correction
+        label_x(lxi,1).Position=tmp.tmppos;
+        label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
+    end
+    for lyi=1:length(label_y)
+        label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
+        tmp.tmppos=label_y(lyi,1).Position;
+        tmp.tmppos(1)=-fig_cfg.ax_size(3)+2.6; % x position correction
+        label_y(lyi,1).Position=tmp.tmppos;
+    end
+
+    %% save
+    dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_corr_obs_Rdiff_map', filesep, 'model'];
+    if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
+    cfg.figname=[dirs.figdir, filesep, 'corr_obs_Rdiff_model_lens2_ano_map_', tmp.varname, '_', tmp.season, 'y.tif'];
+    print(fig_h, cfg.figname, '-dpng');
+    RemoveWhiteSpace([], 'file', cfg.figname);
+    close all; 
+end
+end
+
+%% assm & model - assm & lens2 corr map --------------------------------------
+if fig_flags(59)==1
+for fake=1:1
+    fig_cfg.name_rgn = 'Glob';
+    fig_cfg.map_proj = 'eqdcylin';  % robinson, eqdcylin
+%     fig_cfg.map_proj = 'robinson';  % robinson, eqdcylin
+
+    fig_cfg.x_lim = [-180 180];
+    fig_cfg.y_lim = [-80 89];
+    fig_cfg.fig_size = [0,0,6,3.5];
+    fig_cfg.ax_size = [0.3,0.7,5.4,2.7];
+    fig_cfg.cb_size = [5.15,0.8,0.15,2.3];
+    fig_cfg.title_pos = [0.5,0.93];
+    fig_cfg.p_lim =0.1;
+    fig_cfg.c_lim = [-1 1];
+    [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('bwr_10', tmp.dropboxpath);
+
+    tmp.X=grid.tlong([end, 1:end],:);
+    tmp.Y=grid.tlat([end, 1:end],:);
+    tmp.C=data2.([tmp.varname, '_corr_assm_ano', '_', tmp.season]) - data2.([tmp.varname, '_corr_assm_lens2_ano', '_', tmp.season]);
+    tmp.C=tmp.C([end, 1:end],:);
+%         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
+%         tmp.C_H=tmp.C_H([end, 1:end],:);
+%         tmp.C_2=tmp.C;
+%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+
+
+    [tmp.mean_corr, tmp.err] = ...
+        Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_corr_assm_ano', '_', tmp.season]) ...
+        -data2.([tmp.varname, '_corr_assm_lens2_ano', '_', tmp.season]), grid.tlong, grid.tlat);
+    fig_cfg.fig_name=[tmp.season, ', corr_assm_Rdiff_ano_, ', tmp. varname, ', ', num2str(round(tmp.mean_corr,2))];
+    fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
+        'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
+    %% map setting
+    ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
+        'fontname','freeserif'); 
+
+    axis off; 
+    hold on;
+    setm(ax_m,'origin',[0,200],'MapLatLimit',fig_cfg.y_lim);  % lat origin(middle point), lon origin (middle point)
+    set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
+    text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
+    'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
+    'fontsize',14,'fontname','freeserif','interpreter','none')
+
+    %% caxis & colorbar
+    caxis(ax_m, fig_cfg.c_lim); 
+    colormap(fig_cfg.c_map);
+    cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
+    set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
+    title(cb,'R','fontsize',12);
+
+    %% draw on ax_m
+    h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
+    shading flat;
+    geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
+
+%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1) %for Chls, it uses all available data
+%             %% <AR1 area -> hatch
+%             pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2, 'parent', ax_m);
+%             set(pp2,'linestyle','none','Tag','HatchingRegion');
+%             hp = findobj(pp2,'Tag','HatchingRegion');
+%             hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
+%         end
+
+
+%% frame and label setting
+    setm(ax_m,'frame','on','FLineWidth',1);
+
+    label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
+    label_x=mlabel('MLabelParallel','south', 'MLineLocation',20, 'MLabelLocation',60, 'labelrotation','on');
+    mlabel; plabel;
+    label_y=plabel; label_x=mlabel;
+    for lxi=1:length(label_x)
+        tmp.tmppos=label_x(lxi,1).Position;
+        tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.55; % y position correction
+        label_x(lxi,1).Position=tmp.tmppos;
+        label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
+    end
+    for lyi=1:length(label_y)
+        label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
+        tmp.tmppos=label_y(lyi,1).Position;
+        tmp.tmppos(1)=-fig_cfg.ax_size(3)+2.6; % x position correction
+        label_y(lyi,1).Position=tmp.tmppos;
+    end
+
+    %% save
+    dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_corr_assm_Rdiff_map', filesep, 'model'];
+    if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
+    cfg.figname=[dirs.figdir, filesep, 'corr_assm_Rdiff_model_lens2_ano_map_', tmp.varname, '_', tmp.season, 'y.tif'];
+    print(fig_h, cfg.figname, '-dpng');
+    RemoveWhiteSpace([], 'file', cfg.figname);
+    close all; 
+end
+end
+
 
 
 
@@ -5255,34 +5247,34 @@ for fake=1:1
     histind=1;
     for corrref=-1:0.1:-0.1
         %% hcst_int
-        corr_histo.(['hcst_int_ind_l', tmp.lyear_str]){histind} = ...
-            find(data.([tmp.varname, '_corr_assm_int', '_l', tmp.lyear_str])>=corrref & ...
-            data.([tmp.varname, '_corr_assm_int', '_l', tmp.lyear_str])<corrref+0.1);
-        corr_histo.(['hcst_int_area_l', tmp.lyear_str])(histind) = ...
-            sum(grid.tarea_60(corr_histo.(['hcst_int_ind_l', tmp.lyear_str]){histind}), 'omitnan');
+        corr_histo.(['hcst_int_ind_', tmp.season]){histind} = ...
+            find(data2.([tmp.varname, '_corr_assm_int2_ano', '_', tmp.season])>=corrref & ...
+            data2.([tmp.varname, '_corr_assm_int2_ano', '_', tmp.season])<corrref+0.1);
+        corr_histo.(['hcst_int_area_', tmp.season])(histind) = ...
+            sum(grid.tarea_60(corr_histo.(['hcst_int_ind_', tmp.season]){histind}), 'omitnan');
         %% lens2
-        corr_histo.(['lens2_ind_l', tmp.lyear_str]){histind} = ...
-            find(data.([tmp.varname, '_corr_assm_lens2', '_l', tmp.lyear_str])>=corrref & ...
-            data.([tmp.varname, '_corr_assm_lens2', '_l', tmp.lyear_str])<corrref+0.1);
-        corr_histo.(['lens2_area_l', tmp.lyear_str])(histind) = ...
-            sum(grid.tarea_60(corr_histo.(['lens2_ind_l', tmp.lyear_str]){histind}), 'omitnan');
+        corr_histo.(['lens2_ind_', tmp.season]){histind} = ...
+            find(data2.([tmp.varname, '_corr_assm_lens2_ano', '_', tmp.season])>=corrref & ...
+            data2.([tmp.varname, '_corr_assm_lens2_ano', '_', tmp.season])<corrref+0.1);
+        corr_histo.(['lens2_area_', tmp.season])(histind) = ...
+            sum(grid.tarea_60(corr_histo.(['lens2_ind_', tmp.season]){histind}), 'omitnan');
         histind=histind+1;
     end
 
     for corrref=0.1:0.1:1.0
         %% hcst_int
-        corr_histo.(['hcst_int_ind_l', tmp.lyear_str]){histind} = ...
-            find(data.([tmp.varname, '_corr_assm_int', '_l', tmp.lyear_str])>corrref-0.1 & ...
-            data.([tmp.varname, '_corr_assm_int', '_l', tmp.lyear_str])<corrref);
-        corr_histo.(['hcst_int_area_l', tmp.lyear_str])(histind) = ...
-            sum(grid.tarea_60(corr_histo.(['hcst_int_ind_l', tmp.lyear_str]){histind}), 'omitnan');
+        corr_histo.(['hcst_int_ind_', tmp.season]){histind} = ...
+            find(data2.([tmp.varname, '_corr_assm_int2_ano', '_', tmp.season])>corrref-0.1 & ...
+            data2.([tmp.varname, '_corr_assm_int2_ano', '_', tmp.season])<corrref);
+        corr_histo.(['hcst_int_area_', tmp.season])(histind) = ...
+            sum(grid.tarea_60(corr_histo.(['hcst_int_ind_', tmp.season]){histind}), 'omitnan');
 
         %% lens2
-        corr_histo.(['lens2_ind_l', tmp.lyear_str]){histind} = ...
-            find(data.([tmp.varname, '_corr_assm_lens2', '_l', tmp.lyear_str])>corrref-0.1 & ...
-            data.([tmp.varname, '_corr_assm_lens2', '_l', tmp.lyear_str])<=corrref);
-        corr_histo.(['lens2_area_l', tmp.lyear_str])(histind) = ...
-            sum(grid.tarea_60(corr_histo.(['lens2_ind_l', tmp.lyear_str]){histind}), 'omitnan');
+        corr_histo.(['lens2_ind_', tmp.season]){histind} = ...
+            find(data2.([tmp.varname, '_corr_assm_lens2_ano', '_', tmp.season])>corrref-0.1 & ...
+            data2.([tmp.varname, '_corr_assm_lens2_ano', '_', tmp.season])<=corrref);
+        corr_histo.(['lens2_area_', tmp.season])(histind) = ...
+            sum(grid.tarea_60(corr_histo.(['lens2_ind_', tmp.season]){histind}), 'omitnan');
         histind=histind+1;
     end
     corr_ref_x=-0.95:0.1:0.95;
@@ -5293,34 +5285,34 @@ for fake=1:1
     histind=1;
     for corrref=-1:0.1:-0.1
         %hcst_int
-        corr_histo.(['obs_hcst_int_ind_l', tmp.lyear_str]){histind} = ...
-            find(data.([tmp.varname, '_corr_obs_int', '_l', tmp.lyear_str])>=corrref & ...
-            data.([tmp.varname, '_corr_obs_int', '_l', tmp.lyear_str])<corrref+0.1);
-        corr_histo.(['obs_hcst_int_area_l', tmp.lyear_str])(histind) = ...
-            sum(grid.tarea_60(corr_histo.(['obs_hcst_int_ind_l', tmp.lyear_str]){histind}), 'omitnan');
+        corr_histo.(['obs_hcst_int_ind_', tmp.season]){histind} = ...
+            find(data2.([tmp.varname, '_corr_obs_int_ano', '_', tmp.season])>=corrref & ...
+            data2.([tmp.varname, '_corr_obs_int_ano', '_', tmp.season])<corrref+0.1);
+        corr_histo.(['obs_hcst_int_area_', tmp.season])(histind) = ...
+            sum(grid.tarea_60(corr_histo.(['obs_hcst_int_ind_', tmp.season]){histind}), 'omitnan');
         %lens2
-        corr_histo.(['obs_lens2_ind_l', tmp.lyear_str]){histind} = ...
-            find(data.([tmp.varname, '_corr_obs_lens2', '_l', tmp.lyear_str])>=corrref & ...
-            data.([tmp.varname, '_corr_obs_lens2', '_l', tmp.lyear_str])<corrref+0.1);
-        corr_histo.(['obs_lens2_area_l', tmp.lyear_str])(histind) = ...
-            sum(grid.tarea_60(corr_histo.(['obs_lens2_ind_l', tmp.lyear_str]){histind}), 'omitnan');
+        corr_histo.(['obs_lens2_ind_', tmp.season]){histind} = ...
+            find(data2.([tmp.varname, '_corr_obs_lens2_ano', '_', tmp.season])>=corrref & ...
+            data2.([tmp.varname, '_corr_obs_lens2_ano', '_', tmp.season])<corrref+0.1);
+        corr_histo.(['obs_lens2_area_', tmp.season])(histind) = ...
+            sum(grid.tarea_60(corr_histo.(['obs_lens2_ind_', tmp.season]){histind}), 'omitnan');
         histind=histind+1;
     end
 
     for corrref=0.1:0.1:1.0
         %hcst_int
-        corr_histo.(['obs_hcst_int_ind_l', tmp.lyear_str]){histind} = ...
-            find(data.([tmp.varname, '_corr_obs_int', '_l', tmp.lyear_str])>corrref-0.1 & ...
-            data.([tmp.varname, '_corr_obs_int', '_l', tmp.lyear_str])<corrref);
-        corr_histo.(['obs_hcst_int_area_l', tmp.lyear_str])(histind) = ...
-            sum(grid.tarea_60(corr_histo.(['obs_hcst_int_ind_l', tmp.lyear_str]){histind}), 'omitnan');
+        corr_histo.(['obs_hcst_int_ind_', tmp.season]){histind} = ...
+            find(data2.([tmp.varname, '_corr_obs_int2_ano', '_', tmp.season])>corrref-0.1 & ...
+            data2.([tmp.varname, '_corr_obs_int2_ano', '_', tmp.season])<corrref);
+        corr_histo.(['obs_hcst_int_area_', tmp.season])(histind) = ...
+            sum(grid.tarea_60(corr_histo.(['obs_hcst_int_ind_', tmp.season]){histind}), 'omitnan');
 
         %lens2
-        corr_histo.(['obs_lens2_ind_l', tmp.lyear_str]){histind} = ...
-            find(data.([tmp.varname, '_corr_obs_lens2', '_l', tmp.lyear_str])>corrref-0.1 & ...
-            data.([tmp.varname, '_corr_obs_lens2', '_l', tmp.lyear_str])<=corrref);
-        corr_histo.(['obs_lens2_area_l', tmp.lyear_str])(histind) = ...
-            sum(grid.tarea_60(corr_histo.(['obs_lens2_ind_l', tmp.lyear_str]){histind}), 'omitnan');
+        corr_histo.(['obs_lens2_ind_', tmp.season]){histind} = ...
+            find(data2.([tmp.varname, '_corr_obs_lens2_ano', '_', tmp.season])>corrref-0.1 & ...
+            data2.([tmp.varname, '_corr_obs_lens2_ano', '_', tmp.season])<=corrref);
+        corr_histo.(['obs_lens2_area_', tmp.season])(histind) = ...
+            sum(grid.tarea_60(corr_histo.(['obs_lens2_ind_', tmp.season]){histind}), 'omitnan');
         histind=histind+1;
     end
     corr_ref_x=-0.95:0.1:0.95;
@@ -5344,59 +5336,54 @@ end
 
     fig_h = figure('name',fig_cfg.fig_name,'visible','off');
 
-    bar(corr_ref_x,corr_histo.(['hcst_int_area_l', tmp.lyear_str]), 'linewidth', 2);
+    bar(corr_ref_x,corr_histo.(['hcst_int_area_', tmp.season]), 'linewidth', 2);
     xlabel('R'); ylabel('Area (km^2)');
     set(gca, 'fontsize', 20)
     grid minor
 %     ylim([-0.2 1])
     dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_histogram', filesep, 'hcst_int'];
     if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'histogram_hcst_int_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
+    cfg.figname=[dirs.figdir, filesep, 'histogram_hcst_int2_ano_', tmp.varname, '_', tmp.season, 'y.tif'];
     print(fig_h, cfg.figname, '-dpng');
     RemoveWhiteSpace([], 'file', cfg.figname);
     close all;
 
 %% lens2 histogram
     fig_h = figure('name',fig_cfg.fig_name,'visible','off');
-    bar(corr_ref_x,corr_histo.(['lens2_area_l', tmp.lyear_str]), 'linewidth', 2)
+    bar(corr_ref_x,corr_histo.(['lens2_area_', tmp.season]), 'linewidth', 2)
     xlabel('R'); ylabel('Area (km^2)');
     set(gca, 'fontsize', 20)
     grid minor
 %     ylim([-0.2 1])
     dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_histogram', filesep, 'lens2'];
     if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=[dirs.figdir, filesep, 'histogram_lens2_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
+    cfg.figname=[dirs.figdir, filesep, 'histogram_lens2_ano_', tmp.varname, '_', tmp.season, 'y.tif'];
     print(fig_h, cfg.figname, '-dpng');
     RemoveWhiteSpace([], 'file', cfg.figname);
     close all;
     
 
 
+
 %% EOF
     tmp.mode_want=3;
     [EOF.lv, EOF.pc, EOF.var_exp] = ...
-        Func_0024_EOF_3d((data.([tmp.varname, '_model_l', tmp.lyear_str])(:,:,1:end-lyear) - data.([tmp.varname, '_lens2_l', tmp.lyear_str])(:,:,1:end-lyear)), tmp.mode_want);
+        Func_0024_EOF_3d((data2.([tmp.varname, '_model_ano_', tmp.season])(:,:,1:end) - data2.([tmp.varname, '_lens2_ano_', tmp.season])(:,:,1:end)), tmp.mode_want);
 
 
 %% EOF- PCT plot
     for EOF_mode=1:tmp.mode_want
-        fig_cfg.fig_name=['l',tmp.lyear_str, ', EOF_pct_, ', tmp. varname];
+        fig_cfg.fig_name=[tmp.season, ', EOF_pct_, ', tmp. varname];
         fig_h = figure('name',fig_cfg.fig_name,'visible','off');
     %     hold on
-        
-        if mean(EOF.pc(:,EOF_mode),'omitnan')<0
-            EOF.pc(:,EOF_mode)=-EOF.pc(:,EOF_mode);
-            EOF.lv(:,:,EOF_mode)=-EOF.lv(:,:,EOF_mode);
-        end
-
-        plot(cfg.iyears(1:end-lyear)+lyear,EOF.pc(:,EOF_mode), 'k-', 'linewidth', 2);
+        plot(cfg.iyears(cfg.clim_tlen)+lyear,EOF.pc(:,EOF_mode), 'k-', 'linewidth', 2);
     %         plot(cfg.iyears(1:end-4)+4,EOF.pc(:,EOF_mode));
         grid minor
         xlabel('year'); ylabel(['PCT-mode', num2str(EOF_mode), ', ', num2str(round(EOF.var_exp(EOF_mode),1)),'% explained']);
         set(gca, 'fontsize', 20)
         dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_EOF', filesep, 'hcst_int'];
         if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-        cfg.figname=[dirs.figdir, filesep, 'PCT_hcst_l', tmp.lyear_str,'_mode',num2str(EOF_mode),'_', tmp.varname, '.tif'];
+        cfg.figname=[dirs.figdir, filesep, 'PCT_hcst_', tmp.season,'_mode',num2str(EOF_mode),'_', tmp.varname, '.tif'];
         print(fig_h, cfg.figname, '-dpng');
         RemoveWhiteSpace([], 'file', cfg.figname);
         close all;
@@ -5405,16 +5392,16 @@ end
 
 %% EOF- LV plot
     for EOF_mode=1:tmp.mode_want
-        [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('bwr_10', tmp.dropboxpath);
         tmp.X=grid.tlong([end, 1:end],:);
         tmp.Y=grid.tlat([end, 1:end],:);
         tmp.C=squeeze(EOF.lv(:,:,EOF_mode));
         tmp.C=tmp.C([end, 1:end],:);
+        [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('bwr_10', tmp.dropboxpath);
         
         tmp.prc95 =prctile(tmp.C(isfinite(tmp.C)), 95);
         tmp.prc05 =prctile(tmp.C(isfinite(tmp.C)), 5);
 
-        fig_cfg.fig_name=['l',tmp.lyear_str, ', ensmean_, ', tmp. varname];
+        fig_cfg.fig_name=[tmp.season, ', ensmean_, ', tmp. varname];
         fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
             'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
         %% map setting
@@ -5470,359 +5457,116 @@ end
         %% save
         dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_EOF', filesep, 'hcst_int'];
         if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-        cfg.figname=[dirs.figdir, filesep, 'LV_hcst_l', tmp.lyear_str, '_mode',num2str(EOF_mode),'_', tmp.varname, '.tif'];
+        cfg.figname=[dirs.figdir, filesep, 'LV_hcst_', tmp.season, '_mode',num2str(EOF_mode),'_', tmp.varname, '.tif'];
         print(fig_h, cfg.figname, '-dpng');
         RemoveWhiteSpace([], 'file', cfg.figname);
         close all;
     end
 
-%     tmp.model_drift(:,:,lyear+1)=mean(data.([tmp.varname, '_model_err_', 'l', tmp.lyear_str]),3,'omitnan');
+
+%% EOF (HCST-svd1)
+    tmp.mode_want=3;
+    [EOF.lv, EOF.pc, EOF.var_exp] = ...
+        Func_0024_EOF_3d((data2.([tmp.varname, '_model_ano_', tmp.season])(:,:,1:end) ...
+        - data2.([tmp.varname, '_svd_lens2_model_right_1mode_recon_', tmp.season])(:,:,1:end)), tmp.mode_want);
+
+
+
+%% EOF- PCT plot (HCST-svd1)
+    for EOF_mode=1:tmp.mode_want
+        fig_cfg.fig_name=[tmp.season, ', EOF_pct_, ', tmp. varname];
+        fig_h = figure('name',fig_cfg.fig_name,'visible','off');
+    %     hold on
+        plot(cfg.iyears(cfg.clim_tlen)+lyear,EOF.pc(:,EOF_mode), 'k-', 'linewidth', 2);
+    %         plot(cfg.iyears(1:end-4)+4,EOF.pc(:,EOF_mode));
+        grid minor
+        xlabel('year'); ylabel(['PCT-mode', num2str(EOF_mode), ', ', num2str(round(EOF.var_exp(EOF_mode),1)),'% explained']);
+        set(gca, 'fontsize', 20)
+        dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_EOF', filesep, 'hcst_int'];
+        if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
+        cfg.figname=[dirs.figdir, filesep, 'PCT_hcst_svd_', tmp.season,'_mode',num2str(EOF_mode),'_', tmp.varname, '.tif'];
+        print(fig_h, cfg.figname, '-dpng');
+        RemoveWhiteSpace([], 'file', cfg.figname);
+        close all;
+    end
+    % hold off
+
+%% EOF- LV plot (HCST-svd1)
+    for EOF_mode=1:tmp.mode_want
+        tmp.X=grid.tlong([end, 1:end],:);
+        tmp.Y=grid.tlat([end, 1:end],:);
+        tmp.C=squeeze(EOF.lv(:,:,EOF_mode));
+        tmp.C=tmp.C([end, 1:end],:);
+        [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('bwr_10', tmp.dropboxpath);
+        
+        tmp.prc95 =prctile(tmp.C(isfinite(tmp.C)), 95);
+        tmp.prc05 =prctile(tmp.C(isfinite(tmp.C)), 5);
+
+        fig_cfg.fig_name=[tmp.season, ', ensmean_, ', tmp. varname];
+        fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
+            'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
+        %% map setting
+        ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
+            'fontname','freeserif'); 
+    
+        axis off; 
+        hold on;
+        setm(ax_m,'origin',[0,200],'MapLatLimit',fig_cfg.y_lim);  % lat origin(middle point), lon origin (middle point)
+        set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
+        text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
+        'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
+        'fontsize',14,'fontname','freeserif','interpreter','none')
+    
+        %% caxis & colorbar
+%         tmp.maxval=max(abs(tmp.C(isfinite(tmp.C))));
+%         caxis(ax_m, [-tmp.maxval tmp.maxval]); 
+%         caxis(ax_m, [tmp.prc05 tmp.prc95]); 
+        tmp.maxval=max(abs([tmp.prc05 tmp.prc95]));
+        caxis(ax_m, [-tmp.maxval tmp.maxval]); 
+        colormap(fig_cfg.c_map);
+%         colormap(jet(20));
+        cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
+        set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
+    %     title(cb,'R','fontsize',12);
+    
+        %% draw on ax_m
+        h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
+        shading flat;
+        geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
+    
+    
+    %% frame and label setting
+        setm(ax_m,'frame','on','FLineWidth',1);
+    
+        label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
+        label_x=mlabel('MLabelParallel','south', 'MLineLocation',20, 'MLabelLocation',60, 'labelrotation','on');
+        mlabel; plabel;
+        label_y=plabel; label_x=mlabel;
+        for lxi=1:length(label_x)
+            tmp.tmppos=label_x(lxi,1).Position;
+            tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.55; % y position correction
+            label_x(lxi,1).Position=tmp.tmppos;
+            label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
+        end
+        for lyi=1:length(label_y)
+            label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
+            tmp.tmppos=label_y(lyi,1).Position;
+            tmp.tmppos(1)=-fig_cfg.ax_size(3)+2.6; % x position correction
+            label_y(lyi,1).Position=tmp.tmppos;
+        end
+    
+        %% save
+        dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_EOF', filesep, 'hcst_int'];
+        if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
+        cfg.figname=[dirs.figdir, filesep, 'LV_hcst_svd_', tmp.season, '_mode',num2str(EOF_mode),'_', tmp.varname, '.tif'];
+        print(fig_h, cfg.figname, '-dpng');
+        RemoveWhiteSpace([], 'file', cfg.figname);
+        close all;
+    end
+
+
+
 end
-
-% %% model drift (function of lead year)
-% % tmp.max_drift=max(abs(tmp.model_drift(:)));
-% tmp.drift_prc99 =prctile(abs(tmp.model_drift(:)), 99);
-% if fig_flags(48)==1
-%     for lyear=0:4
-%         tmp.lyear_str=num2str(lyear,'%02i');
-%         fig_cfg.name_rgn = 'Glob';
-%         fig_cfg.map_proj = 'eqdcylin';  % robinson, eqdcylin
-%     %     fig_cfg.map_proj = 'robinson';  % robinson, eqdcylin
-%     
-%         fig_cfg.x_lim = [-180 180];
-%         fig_cfg.y_lim = [-80 89];
-%         fig_cfg.fig_size = [0,0,6,3.5];
-%         fig_cfg.ax_size = [0.3,0.7,5.4,2.7];
-%         fig_cfg.cb_size = [5.15,0.8,0.15,2.3];
-%         fig_cfg.title_pos = [0.5,0.93];
-%         fig_cfg.p_lim =0.1;
-%         fig_cfg.c_lim = [-1 1];
-%         [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('bwr_10', tmp.dropboxpath);
-%         
-%     
-%         tmp.X=grid.tlong([end, 1:end],:);
-%         tmp.Y=grid.tlat([end, 1:end],:);
-%         tmp.C=tmp.model_drift(:,:,lyear+1);
-%         tmp.C=tmp.C([end, 1:end],:);
-%     
-%         fig_cfg.fig_name=['l',tmp.lyear_str, ', model_drift_assm_, ', tmp.varname];
-%         fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
-%             'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
-%         %% map setting
-%         ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
-%             'fontname','freeserif'); 
-%     
-%         axis off; 
-%         hold on;
-%         setm(ax_m,'origin',[0,200],'MapLatLimit',fig_cfg.y_lim);  % lat origin(middle point), lon origin (middle point)
-%         set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
-%         text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
-%         'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
-%         'fontsize',14,'fontname','freeserif','interpreter','none')
-%     
-%         %% caxis & colorbar
-%         caxis(ax_m, [-tmp.drift_prc99 tmp.drift_prc99]); 
-%         colormap(fig_cfg.c_map);
-%     %     colormap(flip(autumn(10)));
-%         cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
-%         set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
-%         title(cb,data.units,'fontsize',12);
-%     
-%         %% draw on ax_m
-%         h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
-%         shading flat;
-%         geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
-%     
-%     
-%     %% frame and label setting
-%         setm(ax_m,'frame','on','FLineWidth',1);
-%     
-%         label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
-%         label_x=mlabel('MLabelParallel','south', 'MLineLocation',20, 'MLabelLocation',60, 'labelrotation','on');
-%         mlabel; plabel;
-%         label_y=plabel; label_x=mlabel;
-%         for lxi=1:length(label_x)
-%             tmp.tmppos=label_x(lxi,1).Position;
-%             tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.55; % y position correction
-%             label_x(lxi,1).Position=tmp.tmppos;
-%             label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
-%         end
-%         for lyi=1:length(label_y)
-%             label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
-%             tmp.tmppos=label_y(lyi,1).Position;
-%             tmp.tmppos(1)=-fig_cfg.ax_size(3)+2.6; % x position correction
-%             label_y(lyi,1).Position=tmp.tmppos;
-%         end
-%     
-%         %% save
-%         dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_drift_assm_map', filesep, 'model'];
-%         if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-%         cfg.figname=[dirs.figdir, filesep, 'model_drift_assm_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
-%         print(fig_h, cfg.figname, '-dpng');
-%         RemoveWhiteSpace([], 'file', cfg.figname);
-%         close all;
-%     end
-% end
-% 
-
-% %% model drift ratio (drift / RMSE of LENS2; function of lead year)
-% if fig_flags(49)==1
-%     for lyear=0:4
-%         tmp.lyear_str=num2str(lyear,'%02i');
-%         fig_cfg.name_rgn = 'Glob';
-%         fig_cfg.map_proj = 'eqdcylin';  % robinson, eqdcylin
-%     %     fig_cfg.map_proj = 'robinson';  % robinson, eqdcylin
-%     
-%         fig_cfg.x_lim = [-180 180];
-%         fig_cfg.y_lim = [-80 89];
-%         fig_cfg.fig_size = [0,0,6,3.5];
-%         fig_cfg.ax_size = [0.3,0.7,5.4,2.7];
-%         fig_cfg.cb_size = [5.15,0.8,0.15,2.3];
-%         fig_cfg.title_pos = [0.5,0.93];
-%         fig_cfg.p_lim =0.1;
-%         fig_cfg.c_lim = [-1 1];
-%         [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('wr_10_topgray', tmp.dropboxpath);
-%         
-%     
-%         tmp.X=grid.tlong([end, 1:end],:);
-%         tmp.Y=grid.tlat([end, 1:end],:);
-%         tmp.C=abs(tmp.model_drift(:,:,lyear+1))./data.([tmp.varname, '_lens2_rmse_l04']);
-%         tmp.C=tmp.C([end, 1:end],:);
-%     
-%         fig_cfg.fig_name=['l',tmp.lyear_str, ', drift_ratio_assm_, ', tmp.varname];
-%         fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
-%             'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
-%         %% map setting
-%         ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
-%             'fontname','freeserif'); 
-%     
-%         axis off; 
-%         hold on;
-%         setm(ax_m,'origin',[0,200],'MapLatLimit',fig_cfg.y_lim);  % lat origin(middle point), lon origin (middle point)
-%         set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
-%         text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
-%         'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
-%         'fontsize',14,'fontname','freeserif','interpreter','none')
-%     
-%         %% caxis & colorbar
-%         caxis(ax_m, [0 1.01]); 
-%         colormap(fig_cfg.c_map);
-%     %     colormap(flip(autumn(10)));
-%         cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
-%         set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
-%         title(cb,data.units,'fontsize',12);
-%     
-%         %% draw on ax_m
-%         h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
-%         shading flat;
-%         geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
-%     
-%     
-%     %% frame and label setting
-%         setm(ax_m,'frame','on','FLineWidth',1);
-%     
-%         label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
-%         label_x=mlabel('MLabelParallel','south', 'MLineLocation',20, 'MLabelLocation',60, 'labelrotation','on');
-%         mlabel; plabel;
-%         label_y=plabel; label_x=mlabel;
-%         for lxi=1:length(label_x)
-%             tmp.tmppos=label_x(lxi,1).Position;
-%             tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.55; % y position correction
-%             label_x(lxi,1).Position=tmp.tmppos;
-%             label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
-%         end
-%         for lyi=1:length(label_y)
-%             label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
-%             tmp.tmppos=label_y(lyi,1).Position;
-%             tmp.tmppos(1)=-fig_cfg.ax_size(3)+2.6; % x position correction
-%             label_y(lyi,1).Position=tmp.tmppos;
-%         end
-%     
-%         %% save
-%         dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_drift_assm_map', filesep, 'model'];
-%         if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-%         cfg.figname=[dirs.figdir, filesep, 'model_drift_ratio_assm_map_', tmp.varname, '_l', tmp.lyear_str, 'y.tif'];
-%         print(fig_h, cfg.figname, '-dpng');
-%         RemoveWhiteSpace([], 'file', cfg.figname);
-%         close all;
-%     end
-% end
-% 
-
-
-
-
-
-
-%% histogram - all (assm)
-fig_h = figure('name',fig_cfg.fig_name,'visible','off');
-
-% newcolors = {'#F00','#F80','#FF0','#0B0','#00F','#50F','#A0F'}; %rainbow
-newcolors = {'#F00','#F80','#0B0','#00F','#50F','#A0F'}; %rainbow (except yellow)
-
-colororder(newcolors)
-
-for lyear=0:cfg.proj_year-1
-    tmp.lyear_str=num2str(lyear, '%02i');
-    hold on 
-    plot(corr_ref_x,corr_histo.(['hcst_int_area_l', tmp.lyear_str]), 'linewidth', -lyear+cfg.proj_year);
-    tmp.mean_group(lyear+1)=sum(corr_ref_x.*corr_histo.(['hcst_int_area_l', tmp.lyear_str])) / ...
-        sum(corr_histo.(['hcst_int_area_l', tmp.lyear_str]));
-end
-plot(corr_ref_x,corr_histo.lens2_area_l01, 'k--', 'linewidth', 1);
-tmp.mean_group_ext = sum(corr_ref_x.*corr_histo.lens2_area_l01) / ...
-        sum(corr_histo.lens2_area_l01);
-fig_cfg.colororder=colororder;
-xline(0)
-%avg
-% xline(tmp.mean_group(1), 'color', fig_cfg.colororder(1,:), 'linewidth', 4);
-% xline(tmp.mean_group(2), 'color', fig_cfg.colororder(2,:), 'linewidth', 3);
-% xline(tmp.mean_group(3), 'color', fig_cfg.colororder(3,:), 'linewidth', 2);
-% xline(tmp.mean_group(4), 'color', fig_cfg.colororder(4,:), 'linewidth', 1);
-% xline(tmp.mean_group_ext, 'k--', 'linewidth', 1);
-
-switch cfg.comp
-    case 'ocn'
-        ylim([0 12*10^11])
-        tmp.yref=1.*10^11;
-    case 'ice'
-        ylim([0 6.5*10^10])
-        tmp.yref=1.*10^10;
-    case 'atm'
-        ylim([0 14*10^13])
-        tmp.yref = 1.*10^13;
-    case 'lnd'
-        ylim([0 9*10^13])
-        tmp.yref = 1.*10^13;
-end
-line([tmp.mean_group(1), tmp.mean_group(1)], [0, tmp.yref], 'color', fig_cfg.colororder(1,:), 'linewidth', 5);
-line([tmp.mean_group(2), tmp.mean_group(2)], [0, tmp.yref], 'color', fig_cfg.colororder(2,:), 'linewidth', 4);
-line([tmp.mean_group(3), tmp.mean_group(3)], [0, tmp.yref], 'color', fig_cfg.colororder(3,:), 'linewidth', 3);
-line([tmp.mean_group(4), tmp.mean_group(4)], [0, tmp.yref], 'color', fig_cfg.colororder(4,:), 'linewidth', 2);
-line([tmp.mean_group(5), tmp.mean_group(5)], [0, tmp.yref], 'color', fig_cfg.colororder(5,:), 'linewidth', 1);
-
-line([tmp.mean_group_ext, tmp.mean_group_ext], [0, tmp.yref], 'color', 'k', 'linewidth', 1, 'LineStyle','--');
-
-hold off
-% legend('INT-L0', 'INT-L1', 'INT-L2', 'INT-L3', 'INT-L4', 'EXT', 'Location', 'northwest')
-legend('INT-L1', 'INT-L2', 'INT-L3', 'INT-L4', 'INT-L5', 'LENS2', 'Location', 'northwest')
-
-grid minor
-xlim([-1 1])
-
-xlabel('R'); ylabel('Area (km^2)');
-set(gca, 'fontsize', 20)
-dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_histogram', filesep, 'hcst_int'];
-if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-cfg.figname=[dirs.figdir, filesep, 'plot_hcst_all_', tmp.varname, '.tif'];
-print(fig_h, cfg.figname, '-dpng');
-RemoveWhiteSpace([], 'file', cfg.figname);
-close all;
-
-
-
-
-%% histogram - all (obs)
-fig_h = figure('name',fig_cfg.fig_name,'visible','off');
-
-% newcolors = {'#F00','#F80','#FF0','#0B0','#00F','#50F','#A0F'}; %rainbow
-newcolors = {'#F00','#F80','#0B0','#00F','#50F','#A0F'}; %rainbow (except yellow)
-
-colororder(newcolors)
-
-for lyear=0:cfg.proj_year-1
-    tmp.lyear_str=num2str(lyear, '%02i');
-    hold on 
-    plot(corr_ref_x,corr_histo.(['obs_hcst_int_area_l', tmp.lyear_str]), 'linewidth', -lyear+cfg.proj_year);
-    tmp.mean_group(lyear+1)=sum(corr_ref_x.*corr_histo.(['obs_hcst_int_area_l', tmp.lyear_str])) / ...
-        sum(corr_histo.(['obs_hcst_int_area_l', tmp.lyear_str]));
-end
-plot(corr_ref_x,corr_histo.obs_lens2_area_l01, 'k--', 'linewidth', 1);
-tmp.mean_group_ext = sum(corr_ref_x.*corr_histo.obs_lens2_area_l01) / ...
-        sum(corr_histo.obs_lens2_area_l01);
-fig_cfg.colororder=colororder;
-xline(0)
-%avg
-% xline(tmp.mean_group(1), 'color', fig_cfg.colororder(1,:), 'linewidth', 4);
-% xline(tmp.mean_group(2), 'color', fig_cfg.colororder(2,:), 'linewidth', 3);
-% xline(tmp.mean_group(3), 'color', fig_cfg.colororder(3,:), 'linewidth', 2);
-% xline(tmp.mean_group(4), 'color', fig_cfg.colororder(4,:), 'linewidth', 1);
-% xline(tmp.mean_group_ext, 'k--', 'linewidth', 1);
-
-switch cfg.comp
-    case 'ocn'
-        ylim([0 10*10^11])
-        tmp.yref=1.*10^11;
-    case 'atm'
-        ylim([0 14*10^13])
-        tmp.yref = 1.*10^13;
-end
-line([tmp.mean_group(1), tmp.mean_group(1)], [0, tmp.yref], 'color', fig_cfg.colororder(1,:), 'linewidth', 5);
-line([tmp.mean_group(2), tmp.mean_group(2)], [0, tmp.yref], 'color', fig_cfg.colororder(2,:), 'linewidth', 4);
-line([tmp.mean_group(3), tmp.mean_group(3)], [0, tmp.yref], 'color', fig_cfg.colororder(3,:), 'linewidth', 3);
-line([tmp.mean_group(4), tmp.mean_group(4)], [0, tmp.yref], 'color', fig_cfg.colororder(4,:), 'linewidth', 2);
-line([tmp.mean_group(5), tmp.mean_group(5)], [0, tmp.yref], 'color', fig_cfg.colororder(5,:), 'linewidth', 1);
-
-line([tmp.mean_group_ext, tmp.mean_group_ext], [0, tmp.yref], 'color', 'k', 'linewidth', 1, 'LineStyle','--');
-
-hold off
-% legend('INT-L0', 'INT-L1', 'INT-L2', 'INT-L3', 'INT-L4', 'EXT', 'Location', 'northwest')
-legend('INT-L1', 'INT-L2', 'INT-L3', 'INT-L4', 'INT-L5', 'LENS2', 'Location', 'northwest')
-
-grid minor
-xlim([-1 1])
-
-xlabel('R'); ylabel('Area (km^2)');
-set(gca, 'fontsize', 20)
-dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_histogram', filesep, 'obs_hcst_int'];
-if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-cfg.figname=[dirs.figdir, filesep, 'plot_obs_hcst_all_', tmp.varname, '.tif'];
-print(fig_h, cfg.figname, '-dpng');
-RemoveWhiteSpace([], 'file', cfg.figname);
-close all;
-
-
-
-% %% timeseries
-% sta_lonlat = {[345, 75], [300, 85], [260, 85], [220, 80], [180, 80], ...
-%                 [140, 85], [100, 85], [40, 75], [360, 65], [310, 55], ...
-%                 [230, 50], [200, 50], [180, 50], [150, 55], [180, 35], ...
-%                 [140, 33], [124, 35], [240,20], [180, 20], [150, 15], ...
-%                 [180, 10], [260, 0], [160, 0], [280, -20], [240, -20], ...
-%                 [200, -20], [160, -20], [160, -30], [200, -40], [200, -50], ...
-%                 [110, -10], [90, 15], [60, 10], [42, -10], [40, -30], ...
-%                 [40, -40], [40, -50], [340, 40], [320, 30], [300, 30], ...
-%                 [285, 30], [340, 20], [300, 20], [340, 10], [320, 10], ...
-%                 [270, 25], [360, 0], [320, 0], [10, -10], [330, -10], ...
-%                 [330, -30], [5, 40], [60, -65], [180, -70], [240, -70, ...
-%                 [320, -70]};
-% 345, 75 (iceland)
-% 179, 80 (north pole)
-% 160, -30 (Austrailia eastern offshore
-
-% xpoint=160;
-% ypoint = -30;
-% [grid.id_w, grid.id_e, grid.id_s, grid.id_n] = Func_0012_findind_Y(0.5, [xpoint, ypoint], ...
-%             grid.tlong, ...
-%             grid.tlat, 'CESM2'); % find valid lon, lat index near station
-% 
-% 
-% plot(cfg.iyears+4,squeeze(data.([tmp.varname, '_model_l04'])(grid.id_w,grid.id_s,:)), 'linewidth', 2)
-% hold on
-% plot(cfg.iyears+4,squeeze(data.([tmp.varname, '_assm'])(grid.id_w,grid.id_s,:)), 'linewidth', 2)
-% plot(cfg.iyears+4,squeeze(data.([tmp.varname, '_lens2_l04'])(grid.id_w,grid.id_s,:)), 'linewidth', 2)
-% hold off
-% legend ('hcst', 'assm', 'lens2')
-% title(['l04, ', tmp.varname, ', ', num2str(xpoint),'E, ', num2str(ypoint), 'N'])
-% grid minor
-% disp('end')
-
-% plot(squeeze(data.diatChl_model_l04(grid.id_w,grid.id_s,:)) - squeeze(data.diatChl_lens2_l04(grid.id_w,grid.id_s,:)))
-% hold on
-% plot(squeeze(data.diatChl_assm(grid.id_w,grid.id_s,:))- squeeze(data.diatChl_lens2_l04(grid.id_w,grid.id_s,:)))
-% hold off
-% legend ('hcst-lens2', 'assm-lens2')
-% title('l04, diatChl, 179E, 80N')
 
 
 toc;
@@ -5845,13 +5589,15 @@ function obsname_simple = f_obs_name(varn)
         case 'SST'
             obsname_simple='ERSST';
         case 'PRECT'
-            obsname_simple='GPCP';
+%             obsname_simple='GPCP';
+            obsname_simple='GPCC';
         case 'PSL'
             obsname_simple='ERA5';
         case 'SSH'
             obsname_simple='CMEMS';
         case 'TS'
-            obsname_simple='HadCRUT5';
+%             obsname_simple='HadCRUT5';
+            obsname_simple='ERA5';
         case 'sumChl'
             obsname_simple='OC_CCI';
         otherwise
@@ -5921,5 +5667,64 @@ function obsname_simple = f_obs_iyears(varn)
             obsname_simple=1998:2020;
         otherwise
             obsname_simple=1970:2020;
+    end
+end
+
+function mons = f_season_mons(season)
+    switch season
+        case 'INI'
+            mons = [1];
+        case 'FMA'
+            mons = [2,3,4];
+        case 'MAM'
+            mons = [3,4,5];
+        case 'AMJ'
+            mons = [4,5,6];
+        case 'JJA'
+            mons = [6,7,8];
+        case 'JAS'
+            mons = [7,8,9];
+        case 'SON'
+            mons = [9,10,11];
+        case 'OND'
+            mons = [10,11,12];
+        case 'DJF'
+            mons = [12,13,14];
+        case 'JFM'
+            mons = [13,14,15];
+        case 'JFM1'
+            mons = [1,2,3];
+        case 'AMJ1'
+            mons = [4,5,6]; 
+        case 'JAS1'
+            mons = [7,8,9];
+        case 'OND1'
+            mons = [10,11,12];
+        case 'AMJ2'
+            mons = [16,17,18];
+        case 'JAS2'
+            mons = [19,20,21];
+        case 'OND2'
+            mons = [22,23,24];
+        case 'JFM2'
+            mons = [25,26,27];
+        case 'AMJ3'
+            mons = [28,29,30];
+        case 'JAS3'
+            mons = [31,32,33];
+        case 'OND3'
+            mons = [34,35,36];
+        case 'JFM3'
+            mons = [37,38,39];
+        case 'AMJ4'
+            mons = [40,41,42];
+        case 'JAS4'
+            mons = [43,44,45];
+        case 'OND4'
+            mons = [46,47,48];
+        case 'JFM4'
+            mons = [49,50,51];
+        otherwise
+            mons = str2num(season);
     end
 end

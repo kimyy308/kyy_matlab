@@ -8,6 +8,7 @@ tmp.hostname=tmp.hostname(1:end-1);
 switch tmp.hostname
     case 'Yong-Yubs-iMac-Pro.local'
         tmp.dropboxpath = '/Volumes/kyy_raid/kimyy/Dropbox';
+        tmp.rootpath = '/Volumes/kyy_raid/';
     case 'Yong-Yubui-MacBookPro.local'
         tmp.dropboxpath = '/Users/kimyy/Dropbox';
     case {'da1', 'da2', 'da3', 'da4'}
@@ -19,7 +20,7 @@ addpath(genpath([tmp.dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', tmp.fs, 'f
 
 %% model configuration
 
-cfg.vlayer=1:10; % 10layer. don't put more than 15ㅅ
+cfg.vlayer=1:10; % 10layer. don't put more than 15
 cfg.vlayer_1st=min(cfg.vlayer);
 cfg.vlayer_cnt=max(cfg.vlayer)-cfg.vlayer_1st+1;
 
@@ -34,8 +35,8 @@ cfg.obs_iyears=1960:2020;
 disp(cfg.var);
 tic;
 
-dirs.hcstmatroot=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', cfg.var];
-dirs.figroot=['/Users/kimyy/Figure/CESM2/ESP/HCST_EXP/archive/', cfg.comp,'/', cfg.var];
+dirs.hcstmatroot=[tmp.rootpath, '/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', cfg.var];
+dirs.figroot=[tmp.rootpath, '/kimyy/Figure/CESM2/ESP/HCST_EXP/archive/', cfg.comp,'/', cfg.var];
 
 cfg.iyears=cfg.obs_iyears;
 cfg.gnm='f09_g17';
@@ -45,8 +46,8 @@ cfg.len_t_y = length(cfg.iyears);
 cfg.casename_m = ['ens_all'];
 
 % [tmp.error_status, tmp.value]=system(['ls ', dirs.datadir, '/*once*']);  % b.e21.BHISTsmbb.f09_g17.assm.oras4_ba-10p1.pop.h.once.nc
-tmp.gridname = ['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/archive_transfer/', cfg.comp, '/grid.nc'];
-tmp.maskname = '/Users/kimyy/Model/CESM2/ESP/HCST_EXP/archive_transfer/ocn/RECCAP2_region_masks_all_v20210412_POP2_grid.nc';
+tmp.gridname = [tmp.rootpath, 'kimyy/Model/CESM2/ESP/HCST_EXP/archive_transfer/', cfg.comp, '/grid.nc'];
+tmp.maskname = [tmp.rootpath, 'kimyy/Model/CESM2/ESP/HCST_EXP/archive_transfer/ocn/RECCAP2_region_masks_all_v20210412_POP2_grid.nc'];
 
 switch cfg.comp
     case 'ocn'
@@ -78,7 +79,7 @@ tmp.varname=cfg.var;
 for lyear = 0:4
 
 tmp.lyear_str=num2str(lyear, '%02i');
-dirs.hcstmatroot=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', cfg.var];
+dirs.hcstmatroot=[tmp.rootpath, '/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', cfg.var];
 fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', cfg.var, ...
             '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
             '_l', tmp.lyear_str, 'y.mat'];
@@ -86,7 +87,7 @@ load(fig_cfg.mat_name, 'data');
 data_NPP=data;
 
 % tmp.varname='Fe'; %NO3 SiO3 PO4
-% dirs.hcstmatroot=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
+% dirs.hcstmatroot=[tmp.rootpath, '/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
 % fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
 %             '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
 %             '_l', tmp.lyear_str, 'y.mat'];
@@ -94,7 +95,7 @@ data_NPP=data;
 % data_Fe=data;
 % 
 % tmp.varname='NO3'; %NO3 SiO3 PO4
-% dirs.hcstmatroot=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
+% dirs.hcstmatroot=[tmp.rootpath, '/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
 % fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
 %             '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
 %             '_l', tmp.lyear_str, 'y.mat'];
@@ -102,7 +103,7 @@ data_NPP=data;
 % data_NO3=data;
 % 
 % tmp.varname='SiO3'; %NO3 SiO3 PO4
-% dirs.hcstmatroot=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
+% dirs.hcstmatroot=[tmp.rootpath, '/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
 % fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
 %             '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
 %             '_l', tmp.lyear_str, 'y.mat'];
@@ -110,7 +111,7 @@ data_NPP=data;
 % data_SiO3=data;
 % 
 % tmp.varname='PO4'; %NO3 SiO3 PO4
-% dirs.hcstmatroot=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
+% dirs.hcstmatroot=[tmp.rootpath, '/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
 % fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
 %             '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
 %             '_l', tmp.lyear_str, 'y.mat'];
@@ -119,7 +120,7 @@ data_NPP=data;
 
 
 tmp.varname='diat_Fe_lim_Cweight_avg_100m'; %NO3 SiO3 PO4
-dirs.hcstmatroot=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
+dirs.hcstmatroot=[tmp.rootpath, '/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
 fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
             '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
             '_l', tmp.lyear_str, 'y.mat'];
@@ -127,7 +128,7 @@ load(fig_cfg.mat_name, 'data');
 data_Fe=data;
 
 tmp.varname='diat_N_lim_Cweight_avg_100m'; %NO3 SiO3 PO4
-dirs.hcstmatroot=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
+dirs.hcstmatroot=[tmp.rootpath, '/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
 fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
             '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
             '_l', tmp.lyear_str, 'y.mat'];
@@ -135,7 +136,7 @@ load(fig_cfg.mat_name, 'data');
 data_NO3=data;
 
 tmp.varname='diat_SiO3_lim_Cweight_avg_100m'; %NO3 SiO3 PO4
-dirs.hcstmatroot=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
+dirs.hcstmatroot=[tmp.rootpath, '/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
 fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
             '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
             '_l', tmp.lyear_str, 'y.mat'];
@@ -143,7 +144,7 @@ load(fig_cfg.mat_name, 'data');
 data_SiO3=data;
 
 tmp.varname='diat_P_lim_Cweight_avg_100m'; %NO3 SiO3 PO4
-dirs.hcstmatroot=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
+dirs.hcstmatroot=[tmp.rootpath, '/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
 fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
             '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
             '_l', tmp.lyear_str, 'y.mat'];
@@ -151,7 +152,7 @@ load(fig_cfg.mat_name, 'data');
 data_PO4=data;
 
 tmp.varname='diat_light_lim_Cweight_avg_100m'; %NO3 SiO3 PO4
-dirs.hcstmatroot=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
+dirs.hcstmatroot=[tmp.rootpath, '/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
 fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
             '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
             '_l', tmp.lyear_str, 'y.mat'];
@@ -159,7 +160,7 @@ load(fig_cfg.mat_name, 'data');
 data_light=data;
 
 tmp.varname='TEMP'; 
-dirs.hcstmatroot=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
+dirs.hcstmatroot=[tmp.rootpath, '/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
 fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
             '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
             '_l', tmp.lyear_str, 'y.mat'];
@@ -464,7 +465,7 @@ end
 %% Small Phyto
 
 tmp.varname='sp_Fe_lim_Cweight_avg_100m'; %NO3 SiO3 PO4
-dirs.hcstmatroot=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
+dirs.hcstmatroot=[tmp.rootpath, '/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
 fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
             '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
             '_l', tmp.lyear_str, 'y.mat'];
@@ -472,7 +473,7 @@ load(fig_cfg.mat_name, 'data');
 data_Fe=data;
 
 tmp.varname='sp_N_lim_Cweight_avg_100m'; %NO3 SiO3 PO4
-dirs.hcstmatroot=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
+dirs.hcstmatroot=[tmp.rootpath, '/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
 fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
             '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
             '_l', tmp.lyear_str, 'y.mat'];
@@ -480,7 +481,7 @@ load(fig_cfg.mat_name, 'data');
 data_NO3=data;
 
 % tmp.varname='sp_SiO3_lim_Cweight_avg_100m'; %NO3 SiO3 PO4
-% dirs.hcstmatroot=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
+% dirs.hcstmatroot=[tmp.rootpath, '/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
 % fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
 %             '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
 %             '_l', tmp.lyear_str, 'y.mat'];
@@ -488,7 +489,7 @@ data_NO3=data;
 % data_SiO3=data;
 
 tmp.varname='sp_P_lim_Cweight_avg_100m'; %NO3 SiO3 PO4
-dirs.hcstmatroot=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
+dirs.hcstmatroot=[tmp.rootpath, '/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
 fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
             '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
             '_l', tmp.lyear_str, 'y.mat'];
@@ -496,7 +497,7 @@ load(fig_cfg.mat_name, 'data');
 data_PO4=data;
 
 tmp.varname='sp_light_lim_Cweight_avg_100m'; %NO3 SiO3 PO4
-dirs.hcstmatroot=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
+dirs.hcstmatroot=[tmp.rootpath, '/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
 fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
             '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
             '_l', tmp.lyear_str, 'y.mat'];
@@ -504,7 +505,7 @@ load(fig_cfg.mat_name, 'data');
 data_light=data;
 
 tmp.varname='TEMP'; 
-dirs.hcstmatroot=['/Users/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
+dirs.hcstmatroot=[tmp.rootpath, '/kimyy/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', tmp.varname];
 fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
             '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
             '_l', tmp.lyear_str, 'y.mat'];

@@ -113,11 +113,17 @@ function [indw, inde, inds, indn]=Func_0012_findind_Y(dl,section,lon_rho,lat_rho
             lat_x_min=min(find(lat_x~=0));
             lat_x_max=max(find(lat_x~=0));
             
-            indw = lon_y_min(1);
-            inde = lon_y_max(end);
-            inds = lat_x_min(1);
-            indn = lat_x_max(end);
-
+            if isempty(lon_y_min) && isempty(lon_y_max) && isempty(lat_x_min) && isempty(lat_x_max)
+                indw = 1;
+                inde = 1;
+                inds = 1;
+                indn = 1;
+            else
+                indw = lon_y_min(1);
+                inde = lon_y_max(end);
+                inds = lat_x_min(1);
+                indn = lat_x_max(end);
+            end
         end
     end
 end

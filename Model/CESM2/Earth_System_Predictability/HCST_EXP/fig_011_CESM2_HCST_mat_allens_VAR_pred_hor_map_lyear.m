@@ -59,9 +59,10 @@ cfg.vars = {'sithick', 'aice'};
 cfg.vars = {'SST', 'PRECT', 'TS', 'PSL', 'AEROD_v', 'FSDS', 'FSNS', ...
     'SFdst_a1', 'SFdst_a2', 'SFdst_a3', 'U10', 'SFCO2', 'CLDTOT'};
 % cfg.vars = {'SST'};
+cfg.vars = {'zooC'};
 
-cfg.vlayer=1:10; % 10layer. don't put more than 15
-% cfg.vlayer=1; % surface, vertical slice (UVEL55, TEMP145, ...)
+% cfg.vlayer=1:10; % 10layer. don't put more than 15
+cfg.vlayer=1; % surface, vertical slice (UVEL55, TEMP145, ...)
 
 cfg.vlayer_1st=min(cfg.vlayer);
 cfg.vlayer_cnt=max(cfg.vlayer)-cfg.vlayer_1st+1;
