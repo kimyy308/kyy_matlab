@@ -24,7 +24,8 @@ dirs.lens2root=['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/LENS2/archive_analysis/
 dirs.figroot=['/Volumes/kyy_raid/kimyy/Figure/CESM2/ESP/HCST_EXP/archive/atm/', cfg.var];
 
 % cfg.iyears=1970:2019;
-cfg.iyears=1970:2021;
+% cfg.iyears=1970:2021;
+cfg.iyears=1960:2020;
 
 % cfg.iyears=1982:2016;
 
@@ -96,6 +97,8 @@ tmp.varname=cfg.var;
 for iyear=min(cfg.iyears):max(cfg.iyears)
     tmp.iyear_str=num2str(iyear, '%04i');
     cfg.casename_m=['ens_all'];
+%     cfg.casename_m=['ensmean_all'];
+
     cfg.casename=[cfg.casename_m, '_i', tmp.iyear_str];
     dirs.datadir= [dirs.hcstroot, filesep, cfg.casename_m, filesep, cfg.casename, tmp.fs, cfg.region];
     dirs.lens2dir= [dirs.lens2root, filesep, cfg.casename_m, tmp.fs, cfg.region];
@@ -113,12 +116,20 @@ for iyear=min(cfg.iyears):max(cfg.iyears)
             % HCST
             cfg.datafilename=[dirs.datadir, filesep, ...
                 'M_', cfg.region, '_', tmp.varname, '_', cfg.gnm, '.hcst.', cfg.casename, '.cam.h0.', tmp.fy_str, '-', tmp.mon_str, '.nc'];
+            cfg.datafilename=[dirs.datadir, filesep, ...
+                'M_', cfg.region, '_', tmp.varname, '_', cfg.gnm, '.hcst.', 'ensmean_all_i',tmp.iyear_str, '.cam.h0.', tmp.fy_str, '-', tmp.mon_str, '.nc'];
+
+%             [tmp.err,cfg.datafilename]=system(['ls ', dirs.datadir, '/M_', cfg.region, '* | grep ', tmp.fy_str, '- | grep ', tmp.mon_str, '.nc']);
+%             cfg.datafilename=strtrim(cfg.datafilename);
             data.(tmp.modelvar)((fy-iyear)*12+mon)=ncread(cfg.datafilename, tmp.varname);
             data.time_tmp((fy-iyear)*12+mon)=ncread(cfg.datafilename, 'time');
 
             %LENS2
             cfg.lens2filename=[dirs.lens2dir, filesep, ...
                 'M_', cfg.region, '_', tmp.varname, '_', 'ensmean_', tmp.fy_str, '-', tmp.mon_str, '.nc'];
+            [tmp.err,cfg.lens2filename]=system(['ls ', dirs.lens2dir, '/M_', cfg.region, '* | grep ', tmp.fy_str, '- | grep ', tmp.mon_str, '.nc']);
+            cfg.lens2filename=strtrim(cfg.lens2filename);
+
             data.(tmp.lens2var)((fy-iyear)*12+mon)=ncread(cfg.lens2filename, tmp.varname);
 
             cfg.obsfnm = [dirs.obsroot, tmp.fs, cfg.region, tmp.fs, 'M_', cfg.region, '_', 'ersst_reg_cesm2.v5.',tmp.fy_str,tmp.mon_str, '.nc'];

@@ -5,8 +5,6 @@ testpolygon = ...
      150.8, 20.8;
      150.8, 20.0];
 
-
-
 % % North Western Pacific polygon
 nwppolygon = ...
     [115.0, 15.0;
@@ -876,3 +874,16 @@ ref_sal_polygon = ...
     122.2, 25.0;
     123.4, 25.0;
     123.4, 23.8];
+
+%% stleedrifter
+stlee_drifter_polygon = ...
+    [121, 24;
+    122, 24.5;
+    124, 25;
+    126, 26;
+    129, 28;
+    131, 34;
+    122, 34;
+    122, 30;
+    120, 28;
+    120, 27];

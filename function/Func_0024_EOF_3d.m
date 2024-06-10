@@ -1,4 +1,4 @@
-function [lv, pc, var_exp] = Func_0024_EOF_3d(data,X)
+function [lv, pc, var_exp] = Func_0024_EOF_3d(data,X, lat)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % function [lv, pc, var_exp] = Func_0024_EOF_3d(data,X);
@@ -8,6 +8,7 @@ function [lv, pc, var_exp] = Func_0024_EOF_3d(data,X)
 %  input:
 %  X            The number of modes that you'd like to get (integer)
 %  data         The 3-dimensional input data [x,y,t] to be analyzed
+%  lat          latitude, for weighting
 %
 %  output:
 %  lv           Dimensionless Eigenvector(Loading vector) [x,y,l]
@@ -19,9 +20,15 @@ function [lv, pc, var_exp] = Func_0024_EOF_3d(data,X)
 %  Updated      14-Dec-2022 by Yong-Yub Kim
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
+if (nargin ==2)
+
     %% get the original size of data
     [M,N,L]=size(data);
     
+    %% make anomaly
+    data=data-mean(data,3);
+
     %% get grids of finite value
     mask_finite=isfinite(sum(data,3)); % get finite mask considering whole period
     K=sum(mask_finite(:)); % length of valid values at certain time
@@ -53,6 +60,50 @@ function [lv, pc, var_exp] = Func_0024_EOF_3d(data,X)
     var_exp=var/sum(var) .*100; % get percentage
     var_exp=var_exp(1:X); % get valid modes
 
+elseif (nargin ==3)
+    
+   
+    %% get the original size of data
+    [M,N,L]=size(data);
+    
+    %% make anomaly
+    data=data-mean(data,3);
+
+    %% latitude weight
+    data= data.* cosd(lat).^2 ./ cosd(lat(1,1));
+
+    %% get grids of finite value
+    mask_finite=isfinite(sum(data,3)); % get finite mask considering whole period
+    K=sum(mask_finite(:)); % length of valid values at certain time
+    
+    %% Create 2-D matrix using finite values only
+    data_compact=zeros(K,L);
+    for i=1:L
+        tmpdata=data(:,:,i);
+        data_compact(:,i)=tmpdata(mask_finite);
+    end
+    
+    %% Singular Value Decomposition
+    [u,s,pc]= svd(data_compact,0);
+    
+    %% get loading vector
+    u=u(:,1:X); % get valid modes
+    lv=NaN(M,N,X); % lv initialization
+    for i=1:X
+        tmpdata=NaN(M,N);
+        tmpdata(mask_finite)=u(:,i); % recast u to the raw grid
+        lv(1:M,1:N,i)=tmpdata;
+    end
+    
+    %% get principal component(pc)
+    pc=pc(:,1:X); % get valid modes
+    
+    %% get explained variance (%)
+    var=diag(s).^2;
+    var_exp=var/sum(var) .*100; % get percentage
+    var_exp=var_exp(1:X); % get valid modes
+end
+    
 end
 
 

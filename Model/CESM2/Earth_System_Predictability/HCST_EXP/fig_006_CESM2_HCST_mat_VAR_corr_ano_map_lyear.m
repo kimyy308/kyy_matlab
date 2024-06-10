@@ -149,6 +149,7 @@ cfg.vars={'Jint_100m_NO3'};
 cfg.vars={'NO3'};
 cfg.vars={'FG_CO2'};
 cfg.vars={'DIC'};
+cfg.vars={'DIC_ALT_CO2'};
 
 % cfg.vlayer=1:10; % 10layer. don't put more than 15
 cfg.vlayer=1; % surface, vertical slice

@@ -46,6 +46,12 @@ cfg.vars={'NO3'};
 cfg.vars={'DIC'};
 cfg.vars={'FG_CO2'};
 cfg.vars={'TWS'};
+cfg.vars={'SST'};
+
+cfg.vars ={'photoC_TOT_zint_100m', 'NO3', 'Fe', 'PO4'};
+% cfg.vars ={'HBLT'};
+% cfg.vars ={'PD'};
+
 
 cfg.vlayer=1; % surface, vertical slice
 % cfg.vlayer=10; % 100m, vertical slice
@@ -84,6 +90,7 @@ end
 dirs.hcstmatroot=[tmp.kimyypath, '/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', cfg.var];
 vstr=['v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i')];
 dirs.figroot=[tmp.kimyypath, '/Figure/CESM2/ESP/HCST_EXP/archive_anomaly/', cfg.comp,'/', cfg.var, filesep, vstr];
+
 
 
 
@@ -242,9 +249,20 @@ sta_lonlat = {[345, 75], [300, 85], [260, 85], [220, 80], [180, 80], ...
                  [200, 20], [200,50], [250, 20], [160, -10], [180,-10],...
                  [210,-25], [300, 25], [330, -10], [360, -10], [330, -30]};
 
-sta_lonlat = {[122, 60]};
+sta_lonlat = {[350, 55]};
 
-% sta_lonlat =  { [1 40 15 25], [1 120 -80 -60], [1 359 -40ㅇㄹ며러0], [100 280 -30 20], [180 260 -10 30], ...
+sta_lonlat = { [160, 20], [160 -12], [220 -30], [60 -24], [300, 25], [330, 22], [359 -8], [338, -30]};
+sta_lonlat = {[25, 33]};
+sta_lonlat = {[260, 85]};
+sta_lonlat = {[10, 40]};
+sta_lonlat = {[1, -10]};
+sta_lonlat = {[25, 33]};
+sta_lonlat = {[310, 25]};
+sta_lonlat = {[90, 10]};
+sta_lonlat = {[180, 0]};
+sta_lonlat = {[160, 15]};
+
+% sta_lonlat =  { [1 40 15 25], [1 120 -80 -60], [1 359 -40 40], [100 280 -30 20], [180 260 -10 30], ...
 %      [160 280 -70 -50], [140 240 -10 50], [190 280 -30 20], ... 
 %      [200 240 30 60], [280 359 50 80], [50 90 -40 -15], [40 120 -40 0], [40 120 -30 20], [1 80 -70 55], ...
 %      [220 280 -70 -40], [280 340 10 30], [280 359 -20 30], [300 359 60 90], [310 359 -60 -30], [320 359 -20 10] };
@@ -260,6 +278,8 @@ tmp.varname=cfg.var;
 clear tmp.ydata tmp.ydata_lens2 tmp.ydata_obs tmp.ydata_assm
 for lyear=0:cfg.proj_year-1
     tmp.lyear_str=num2str(lyear, '%02i');
+    tmp.lyear2_str=num2str(lyear+1, '%02i');
+
     fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
             '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
             '_l', tmp.lyear_str, 'y.mat'];
@@ -307,217 +327,322 @@ for lyear=0:cfg.proj_year-1
         
         grids.tlong_cut=grids.tlong(grids.id_w:grids.id_e,grids.id_s:grids.id_n,:);
         grids.tlat_cut=grids.tlat(grids.id_w:grids.id_e,grids.id_s:grids.id_n,:);
-        
-        tmp.HCST_mean = Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_model_ano_l', tmp.lyear_str])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,:), grids.tlong_cut, grids.tlat_cut);
-        tmp.ASSM_mean = Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_assm_ano_l', tmp.lyear_str])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,:), grids.tlong_cut, grids.tlat_cut);
-        tmp.LENS2_mean = Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_lens2_ano_l', tmp.lyear_str])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,:), grids.tlong_cut, grids.tlat_cut);
+        tmp.time= cfg.iyears;
 
-        
-        
-        if length(sta_lonlat{stai})==2
-            tmp.HCST_lower= Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_model_ano_l', tmp.lyear_str])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,:) - ...
-                squeeze(data.([tmp.varname, '_model_stde_l', tmp.lyear_str])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,6-lyear:end-lyear))/2.0, grids.tlong_cut, grids.tlat_cut);
-            tmp.HCST_upper= Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_model_ano_l', tmp.lyear_str])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,:) + ...
-                squeeze(data.([tmp.varname, '_model_stde_l', tmp.lyear_str])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,6-lyear:end-lyear))/2.0, grids.tlong_cut, grids.tlat_cut);
-            tmp.ASSM_lower= Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_assm_ano_l', tmp.lyear_str])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,:) - ...
-                squeeze(data.([tmp.varname, '_assm_stde'])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,6-lyear:end-lyear))/2.0, grids.tlong_cut, grids.tlat_cut);
-            tmp.ASSM_upper= Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_assm_ano_l', tmp.lyear_str])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,:) + ...
-                squeeze(data.([tmp.varname, '_assm_stde'])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,6-lyear:end-lyear))/2.0, grids.tlong_cut, grids.tlat_cut);
-            tmp.LENS2_lower= Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_lens2_ano_l', tmp.lyear_str])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,:) - ...
-                squeeze(data.([tmp.varname, '_lens2_stde_l', tmp.lyear_str])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,6-lyear:end-lyear))/2.0, grids.tlong_cut, grids.tlat_cut);
-            tmp.LENS2_upper= Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_lens2_ano_l', tmp.lyear_str])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,:) + ...
-                squeeze(data.([tmp.varname, '_lens2_stde_l', tmp.lyear_str])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,6-lyear:end-lyear))/2.0, grids.tlong_cut, grids.tlat_cut);
+% % % % %         tmp.HCST_mean = Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_model_ano_l', tmp.lyear_str])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,:), grids.tlong_cut, grids.tlat_cut);
+% % % % %         tmp.ASSM_mean = Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_assm_ano_l', tmp.lyear_str])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,:), grids.tlong_cut, grids.tlat_cut);
+% % % % %         tmp.LENS2_mean = Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_lens2_ano_l', tmp.lyear_str])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,:), grids.tlong_cut, grids.tlat_cut);
+% % % % % 
+% % % % %         
+% % % % %         
+% % % % %         if length(sta_lonlat{stai})==2
+% % % % %             tmp.HCST_lower= Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_model_ano_l', tmp.lyear_str])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,:) - ...
+% % % % %                 squeeze(data.([tmp.varname, '_model_stde_l', tmp.lyear_str])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,6-lyear:end-lyear))/2.0, grids.tlong_cut, grids.tlat_cut);
+% % % % %             tmp.HCST_upper= Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_model_ano_l', tmp.lyear_str])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,:) + ...
+% % % % %                 squeeze(data.([tmp.varname, '_model_stde_l', tmp.lyear_str])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,6-lyear:end-lyear))/2.0, grids.tlong_cut, grids.tlat_cut);
+% % % % %             tmp.ASSM_lower= Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_assm_ano_l', tmp.lyear_str])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,:) - ...
+% % % % %                 squeeze(data.([tmp.varname, '_assm_stde'])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,6-lyear:end-lyear))/2.0, grids.tlong_cut, grids.tlat_cut);
+% % % % %             tmp.ASSM_upper= Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_assm_ano_l', tmp.lyear_str])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,:) + ...
+% % % % %                 squeeze(data.([tmp.varname, '_assm_stde'])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,6-lyear:end-lyear))/2.0, grids.tlong_cut, grids.tlat_cut);
+% % % % %             tmp.LENS2_lower= Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_lens2_ano_l', tmp.lyear_str])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,:) - ...
+% % % % %                 squeeze(data.([tmp.varname, '_lens2_stde_l', tmp.lyear_str])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,6-lyear:end-lyear))/2.0, grids.tlong_cut, grids.tlat_cut);
+% % % % %             tmp.LENS2_upper= Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_lens2_ano_l', tmp.lyear_str])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,:) + ...
+% % % % %                 squeeze(data.([tmp.varname, '_lens2_stde_l', tmp.lyear_str])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,6-lyear:end-lyear))/2.0, grids.tlong_cut, grids.tlat_cut);
+% % % % % 
+% % % % %         end
+% % % % %         tmp.OBS = Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_obs_ano_l', tmp.lyear_str])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,:), grids.tlong_cut, grids.tlat_cut);
+% % % % %         
+% % % % % %         tmp.OBS=NaN(1,length(tmp.HCST_mean));
+% % % % % 
+% % % % %         hold on
+% % % % %         if length(sta_lonlat{stai})==2
+% % % % %             fig_ts.LENS2_range=fill([tmp.time(6:end+tlag), flip(tmp.time(6:end+tlag))], ...
+% % % % %                 [tmp.LENS2_lower(1:end); flip(tmp.LENS2_upper(1:end))], cmap_LENS2_b);
+% % % % %             fig_ts.LENS2_range.EdgeColor = 'none';
+% % % % %             set(get(get(fig_ts.LENS2_range,'Annotation'),'LegendInformation'),'IconDisplayStyle','off');
+% % % % %             
+% % % % %             fig_ts.HCST_range=fill([tmp.time(6:end+tlag), flip(tmp.time(6:end+tlag))], ...
+% % % % %                 [tmp.HCST_lower; flip(tmp.HCST_upper)], cmap_HCST_b);
+% % % % %             fig_ts.HCST_range.EdgeColor = 'none';
+% % % % %             set(get(get(fig_ts.HCST_range,'Annotation'),'LegendInformation'),'IconDisplayStyle','off');
+% % % % %     
+% % % % %             fig_ts.ASSM_range=fill([tmp.time(6:end+tlag), flip(tmp.time(6:end+tlag))], ...
+% % % % %                 [tmp.ASSM_lower(1:end); flip(tmp.ASSM_upper(1:end))], cmap_ASSM_b);
+% % % % %             fig_ts.ASSM_range.EdgeColor = 'none';
+% % % % %             set(get(get(fig_ts.ASSM_range,'Annotation'),'LegendInformation'),'IconDisplayStyle','off');
+% % % % %         end
+% % % % % 
+% % % % % 
+% % % % %         plot(tmp.time(6:end+tlag), tmp.LENS2_mean(1:end), 'linewidth', 2, 'color', cmap_LENS2)
+% % % % %         plot(tmp.time(6:end+tlag), tmp.ASSM_mean(1:end), 'linewidth', 2, 'color', cmap_ASSM)
+% % % % %         plot(tmp.time(6:end+tlag), tmp.HCST_mean, 'linewidth', 2, 'color', cmap_HCST)
+% % % % %         plot(tmp.time(6:end+tlag), tmp.OBS(1:end), 'linewidth', 2, 'color', cmap_OBS)
+% % % % % 
+% % % % %         hold off
+% % % % %         
+% % % % % %         plot(cfg.iyears+lyear,squeeze(data2.([tmp.varname, '_model_ano_l', tmp.lyear_str])(grids.id_w,grids.id_s,:)), 'linewidth', 2)
+% % % % % %         hold on
+% % % % % %         plot(cfg.iyears+lyear,squeeze(data2.([tmp.varname, '_assm_ano_l', tmp.lyear_str])(grids.id_w,grids.id_s,:)), 'linewidth', 2)
+% % % % % %         plot(cfg.iyears+lyear,squeeze(data2.([tmp.varname, '_lens2_l', tmp.lyear_str])(grids.id_w,grids.id_s,:)), 'linewidth', 2)
+% % % % % %         hold off
+% % % % % %         legend ('LENS2', 'ASSM', 'HCST', 'OBS', 'Location', 'Northwest', 'Orientation', 'Horizontal')
+% % % % %         legend ('LENS2', 'ASSM', 'HCST', 'OBS', 'Location', 'Southoutside', 'Orientation', 'Horizontal')
+% % % % % 
+% % % % %         if length(sta_lonlat{stai})==2
+% % % % %             title(['l', tmp.lyear_str, ', ', tmp.varname, ', ', num2str(xpoint),'E, ', num2str(ypoint), 'N'])
+% % % % %         elseif length(sta_lonlat{stai})==4
+% % % % %             title(['l', tmp.lyear_str, ', ', tmp.varname, ', ', num2str(xpoint1),'E~', num2str(xpoint2),'E, ', ...
+% % % % %                 num2str(ypoint1), 'N~',num2str(ypoint2), 'N'])
+% % % % %         end
+% % % % %         grid minor
+% % % % %         xlim([1960 2025])
+% % % % %         set(gca, 'fontsize', 20)
+% % % % %         
+% % % % %         %% corr skills
+% % % % %         [tmp.pot_skill_hcst, tmp.pot_skill_hcst_p]=corrcoef(tmp.ASSM_mean(1:end), tmp.HCST_mean(1:end));
+% % % % %         if (tmp.pot_skill_hcst_p>0.05) tmp.pot_skill_hcst=NaN(2,2); end
+% % % % %         [tmp.pot_skill_lens2, tmp.pot_skill_lens2_p]=corrcoef(tmp.ASSM_mean(1:end), tmp.LENS2_mean(1:end));
+% % % % %         if (tmp.pot_skill_lens2_p>0.05) tmp.pot_skill_lens2=NaN(2,2); end
+% % % % % 
+% % % % %         [tmp.skill_assm, tmp.skill_assm_p]=corrcoef(tmp.OBS(1:end), tmp.ASSM_mean(1:end), 'Rows', 'complete');
+% % % % %         if (tmp.skill_assm_p>0.05) tmp.skill_assm=NaN(2,2); end
+% % % % %         [tmp.skill_hcst, tmp.skill_hcst_p]=corrcoef(tmp.OBS(1:end), tmp.HCST_mean(1:end), 'Rows', 'complete');
+% % % % %         if (tmp.skill_hcst_p>0.05) tmp.skill_hcst=NaN(2,2); end
+% % % % %         [tmp.skill_lens2, tmp.skill_lens2_p]=corrcoef(tmp.OBS(1:end), tmp.LENS2_mean(1:end), 'Rows', 'complete');
+% % % % %         if (tmp.skill_lens2_p>0.05) tmp.skill_lens2=NaN(2,2); end
+% % % % %         
+% % % % %         yl=ylim;
+% % % % %         text(1960, min(yl)+diff(yl)/30, ['AS-HC:', num2str(round(tmp.pot_skill_hcst(1,2),2))])
+% % % % %         text(1967, min(yl)+diff(yl)/30, ['AS-LE:', num2str(round(tmp.pot_skill_lens2(1,2),2))])
+% % % % %         
+% % % % %         text(1980, min(yl)+diff(yl)/30, ['OB-AS:', num2str(round(tmp.skill_assm(1,2),2))])
+% % % % %         text(1987, min(yl)+diff(yl)/30, ['OB-HC:', num2str(round(tmp.skill_hcst(1,2),2))])
+% % % % %         text(1994, min(yl)+diff(yl)/30, ['OB-LE:', num2str(round(tmp.skill_lens2(1,2),2))])
+% % % % %         
+% % % % %         vstr=['v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i')];
+% % % % %         if length(sta_lonlat{stai})==4
+% % % % %             dirs.figdir= [dirs.figroot, filesep,  cfg.casename_m, filesep, tmp.varname, '_time_series', filesep, 'regional_mean', filesep, 'l',tmp.lyear_str];
+% % % % %         else
+% % % % %             dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_time_series', filesep, 'l',tmp.lyear_str];            
+% % % % %         end
+% % % % %         if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
+% % % % %         if length(sta_lonlat{stai})==2
+% % % % %             cfg.figname=[dirs.figdir, filesep, 'ts_all_l',tmp.lyear_str, '_', num2str(xpoint), 'E_', num2str(ypoint), 'N_', tmp.varname, '.tif'];
+% % % % %         elseif length(sta_lonlat{stai})==4
+% % % % %             cfg.figname=[dirs.figdir, filesep, 'ts_all_l',tmp.lyear_str, '_', num2str(xpoint1), 'E_', num2str(xpoint2), 'E_', ...
+% % % % %                 num2str(ypoint1), 'N_', num2str(ypoint2), 'N_', tmp.varname, '.tif'];
+% % % % %         end
+% % % % %             print(fig_h, cfg.figname, '-dpng');
+% % % % %         RemoveWhiteSpace([], 'file', cfg.figname);
+% % % % %         close all;
+% % % % %         
+% % % % %         %% detrended plot
+% % % % %         fig_h = figure('name','ts','visible','off');
+% % % % %         fig_h.Position= [0,0,1000,500];
+% % % % % 
+% % % % %         [tmp.HCST_mean_det, tmp.HCST_mean_trend] = Func_0028_detrend_linear_1d(tmp.HCST_mean, 'omitnan');
+% % % % %         tmp.HCST_mean_tr_ano=tmp.HCST_mean-tmp.HCST_mean_det;
+% % % % %                [tmp.ASSM_mean_det, tmp.ASSM_mean_trend] = Func_0028_detrend_linear_1d(tmp.ASSM_mean, 'omitnan');
+% % % % %         tmp.ASSM_mean_tr_ano=tmp.ASSM_mean-tmp.ASSM_mean_det;
+% % % % %       
+% % % % %         [tmp.LENS2_mean_det, tmp.LENS2_mean_trend] = Func_0028_detrend_linear_1d(tmp.LENS2_mean, 'omitnan');
+% % % % %         tmp.LENS2_mean_tr_ano=tmp.LENS2_mean-tmp.LENS2_mean_det;
+% % % % %         
+% % % % %         if length(sta_lonlat{stai})==2
+% % % % %             tmp.HCST_lower_det = tmp.HCST_lower-tmp.HCST_mean_tr_ano;
+% % % % %             tmp.HCST_upper_det = tmp.HCST_upper-tmp.HCST_mean_tr_ano;
+% % % % %             tmp.ASSM_lower_det = tmp.ASSM_lower-tmp.ASSM_mean_tr_ano;
+% % % % %             tmp.ASSM_upper_det = tmp.ASSM_upper-tmp.ASSM_mean_tr_ano;
+% % % % %             tmp.LENS2_lower_det = tmp.LENS2_lower-tmp.LENS2_mean_tr_ano;
+% % % % %             tmp.LENS2_upper_det = tmp.LENS2_upper-tmp.LENS2_mean_tr_ano;
+% % % % %         end
+% % % % % 
+% % % % %         [tmp.OBS_det, tmp.OBS_trend] =Func_0028_detrend_linear_1d(tmp.OBS, 'omitnan');
+% % % % % 
+% % % % %         hold on
+% % % % %         if length(sta_lonlat{stai})==2
+% % % % %             fig_ts.LENS2_range=fill([tmp.time(6:end+tlag), flip(tmp.time(6:end+tlag))], ...
+% % % % %                 [tmp.LENS2_lower_det(1:end); flip(tmp.LENS2_upper_det(1:end))], cmap_LENS2_b);
+% % % % %             fig_ts.LENS2_range.EdgeColor = 'none';
+% % % % %             set(get(get(fig_ts.LENS2_range,'Annotation'),'LegendInformation'),'IconDisplayStyle','off');
+% % % % %     
+% % % % %             fig_ts.HCST_range=fill([tmp.time(6:end+tlag), flip(tmp.time(6:end+tlag))], ...
+% % % % %                 [tmp.HCST_lower_det; flip(tmp.HCST_upper_det)], cmap_HCST_b);
+% % % % %             fig_ts.HCST_range.EdgeColor = 'none';
+% % % % %             set(get(get(fig_ts.HCST_range,'Annotation'),'LegendInformation'),'IconDisplayStyle','off');
+% % % % %     
+% % % % %             fig_ts.ASSM_range=fill([tmp.time(6:end+tlag), flip(tmp.time(6:end+tlag))], ...
+% % % % %                 [tmp.ASSM_lower_det(1:end); flip(tmp.ASSM_upper_det(1:end))], cmap_ASSM_b);
+% % % % %             fig_ts.ASSM_range.EdgeColor = 'none';
+% % % % %             set(get(get(fig_ts.ASSM_range,'Annotation'),'LegendInformation'),'IconDisplayStyle','off');
+% % % % %         end
+% % % % % 
+% % % % % 
+% % % % %         plot(tmp.time(6:end+tlag), tmp.LENS2_mean_det(1:end), 'linewidth', 2, 'color', cmap_LENS2)
+% % % % %         plot(tmp.time(6:end+tlag), tmp.ASSM_mean_det(1:end), 'linewidth', 2, 'color', cmap_ASSM)
+% % % % %         plot(tmp.time(6:end+tlag), tmp.HCST_mean_det, 'linewidth', 2, 'color', cmap_HCST)
+% % % % %         plot(tmp.time(6:end+tlag), tmp.OBS_det(1:end), 'linewidth', 2, 'color', cmap_OBS)
+% % % % % 
+% % % % %         hold off
+% % % % % 
+% % % % % %         legend ('LENS2', 'ASSM', 'HCST', 'OBS', 'Location', 'Northwest')
+% % % % %         legend ('LENS2', 'ASSM', 'HCST', 'OBS', 'Location', 'Southoutside', 'Orientation', 'Horizontal')
+% % % % % 
+% % % % %         if length(sta_lonlat{stai})==2
+% % % % %             title(['det, l', tmp.lyear_str, ', ', tmp.varname, ', ', num2str(xpoint),'E, ', num2str(ypoint), 'N'])
+% % % % %         elseif length(sta_lonlat{stai})==4
+% % % % %             title(['det, l', tmp.lyear_str, ', ', tmp.varname, ', ', num2str(xpoint1),'E', num2str(xpoint2),'E, ', ...
+% % % % %                 num2str(ypoint1), 'N',num2str(ypoint2), 'N'])
+% % % % %         end
+% % % % %         grid minor
+% % % % %         xlim([1960 2025])
+% % % % %         set(gca, 'fontsize', 20)
+% % % % %         
+% % % % % %% corr skills
+% % % % %         [tmp.pot_skill_hcst, tmp.pot_skill_hcst_p]=corrcoef(tmp.ASSM_mean_det(1:end), tmp.HCST_mean_det(1:end));
+% % % % %         if (tmp.pot_skill_hcst_p>0.05) tmp.pot_skill_hcst=NaN(2,2); end
+% % % % %         [tmp.pot_skill_lens2, tmp.pot_skill_lens2_p]=corrcoef(tmp.ASSM_mean_det(1:end), tmp.LENS2_mean_det(1:end));
+% % % % %         if (tmp.pot_skill_lens2_p>0.05) tmp.pot_skill_lens2=NaN(2,2); end
+% % % % % 
+% % % % %         [tmp.skill_assm, tmp.skill_assm_p]=corrcoef(tmp.OBS_det(1:end), tmp.ASSM_mean_det(1:end), 'Rows', 'complete');
+% % % % %         if (tmp.skill_assm_p>0.05) tmp.skill_assm=NaN(2,2); end
+% % % % %         [tmp.skill_hcst, tmp.skill_hcst_p]=corrcoef(tmp.OBS_det(1:end), tmp.HCST_mean_det(1:end), 'Rows', 'complete');
+% % % % %         if (tmp.skill_hcst_p>0.05) tmp.skill_hcst=NaN(2,2); end
+% % % % %         [tmp.skill_lens2, tmp.skill_lens2_p]=corrcoef(tmp.OBS_det(1:end), tmp.LENS2_mean_det(1:end), 'Rows', 'complete');
+% % % % %         if (tmp.skill_lens2_p>0.05) tmp.skill_lens2=NaN(2,2); end
+% % % % %         
+% % % % %         yl=ylim;
+% % % % %         text(1960, min(yl)+diff(yl)/30, ['AS-HC:', num2str(round(tmp.pot_skill_hcst(1,2),2))])
+% % % % %         text(1967, min(yl)+diff(yl)/30, ['AS-LE:', num2str(round(tmp.pot_skill_lens2(1,2),2))])
+% % % % %         
+% % % % %         text(1980, min(yl)+diff(yl)/30, ['OB-AS:', num2str(round(tmp.skill_assm(1,2),2))])
+% % % % %         text(1987, min(yl)+diff(yl)/30, ['OB-HC:', num2str(round(tmp.skill_hcst(1,2),2))])
+% % % % %         text(1994, min(yl)+diff(yl)/30, ['OB-LE:', num2str(round(tmp.skill_lens2(1,2),2))])
+% % % % % 
+% % % % %         if length(sta_lonlat{stai})==4
+% % % % %             dirs.figdir= [dirs.figroot,  filesep, cfg.casename_m, filesep, tmp.varname, '_time_series_det', filesep, 'regional_mean', filesep, 'l',tmp.lyear_str];            
+% % % % %         else
+% % % % %             dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_time_series_det', filesep, 'l',tmp.lyear_str];
+% % % % %         end
+% % % % %         if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
+% % % % %         if length(sta_lonlat{stai})==2
+% % % % %             cfg.figname=[dirs.figdir, filesep, 'ts_det_all_l',tmp.lyear_str, '_', num2str(xpoint), 'E_', num2str(ypoint), 'N_', tmp.varname, '.tif'];
+% % % % %         elseif length(sta_lonlat{stai})==4
+% % % % %             cfg.figname=[dirs.figdir, filesep, 'ts_det_all_l',tmp.lyear_str, '_', num2str(xpoint1), 'E_', num2str(xpoint2), 'E_', ...
+% % % % %                 num2str(ypoint1), 'N_', num2str(ypoint2), 'N_', tmp.varname, '.tif'];
+% % % % %         end
+% % % % %             print(fig_h, cfg.figname, '-dpng');
+% % % % %         RemoveWhiteSpace([], 'file', cfg.figname);
+% % % % %         close all;
+% % % % % 
+% % % % % 
+% % % % %         
+% % % % % %% raw plot
+% % % % %         fig_h = figure('name','ts','visible','off');
+% % % % %         fig_h.Position= [0,0,1000,500];
+% % % % % 
+% % % % %         tmp.HCST_mean_raw = Func_0011_get_area_weighted_mean( ...
+% % % % %             data.([tmp.varname, '_model_l', tmp.lyear_str])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,6-lyear:end-lyear), grids.tlong_cut, grids.tlat_cut);
+% % % % %         tmp.ASSM_mean_raw = Func_0011_get_area_weighted_mean( ...
+% % % % %             data.([tmp.varname, '_assm'])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,6-lyear:end-lyear), grids.tlong_cut, grids.tlat_cut);
+% % % % %         tmp.LENS2_mean_raw = Func_0011_get_area_weighted_mean( ...
+% % % % %             data.([tmp.varname, '_lens2_l', tmp.lyear_str])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,6-lyear:end-lyear), grids.tlong_cut, grids.tlat_cut);
+% % % % % 
+% % % % %         if length(sta_lonlat{stai})==2
+% % % % %             tmp.HCST_lower_raw= Func_0011_get_area_weighted_mean(data.([tmp.varname, '_model_l', tmp.lyear_str])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,6-lyear:end-lyear) - ...
+% % % % %                 squeeze(data.([tmp.varname, '_model_stde_l', tmp.lyear_str])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,6-lyear:end-lyear))/2.0, grids.tlong_cut, grids.tlat_cut);
+% % % % %             tmp.HCST_upper_raw= Func_0011_get_area_weighted_mean(data.([tmp.varname, '_model_l', tmp.lyear_str])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,6-lyear:end-lyear) + ...
+% % % % %                 squeeze(data.([tmp.varname, '_model_stde_l', tmp.lyear_str])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,6-lyear:end-lyear))/2.0, grids.tlong_cut, grids.tlat_cut);
+% % % % %             tmp.ASSM_lower_raw= Func_0011_get_area_weighted_mean(data.([tmp.varname, '_assm'])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,6-lyear:end-lyear) - ...
+% % % % %                 squeeze(data.([tmp.varname, '_assm_stde'])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,6-lyear:end-lyear))/2.0, grids.tlong_cut, grids.tlat_cut);
+% % % % %             tmp.ASSM_upper_raw= Func_0011_get_area_weighted_mean(data.([tmp.varname, '_assm'])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,6-lyear:end-lyear) + ...
+% % % % %                 squeeze(data.([tmp.varname, '_assm_stde'])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,6-lyear:end-lyear))/2.0, grids.tlong_cut, grids.tlat_cut);
+% % % % %             tmp.LENS2_lower_raw= Func_0011_get_area_weighted_mean(data.([tmp.varname, '_lens2_l', tmp.lyear_str])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,6-lyear:end-lyear) - ...
+% % % % %                 squeeze(data.([tmp.varname, '_lens2_stde_l', tmp.lyear_str])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,6-lyear:end-lyear))/2.0, grids.tlong_cut, grids.tlat_cut);
+% % % % %             tmp.LENS2_upper_raw= Func_0011_get_area_weighted_mean(data.([tmp.varname, '_lens2_l', tmp.lyear_str])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,6-lyear:end-lyear) + ...
+% % % % %                 squeeze(data.([tmp.varname, '_lens2_stde_l', tmp.lyear_str])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,6-lyear:end-lyear))/2.0, grids.tlong_cut, grids.tlat_cut);
+% % % % %         end
+% % % % % 
+% % % % %         tmp.OBS_raw = Func_0011_get_area_weighted_mean( ...
+% % % % %                     data.([tmp.varname, '_obs'])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,6-lyear:end-lyear), grids.tlong_cut, grids.tlat_cut);
+% % % % %         hold on
+% % % % %         if length(sta_lonlat{stai})==2
+% % % % %             fig_ts.LENS2_range=fill([tmp.time(6:end+tlag), flip(tmp.time(6:end+tlag))], ...
+% % % % %                 [tmp.LENS2_lower_raw(1:end); flip(tmp.LENS2_upper_raw(1:end))], cmap_LENS2_b);
+% % % % %             fig_ts.LENS2_range.EdgeColor = 'none';
+% % % % %             set(get(get(fig_ts.LENS2_range,'Annotation'),'LegendInformation'),'IconDisplayStyle','off');
+% % % % %     
+% % % % %             fig_ts.HCST_range=fill([tmp.time(6:end+tlag), flip(tmp.time(6:end+tlag))], ...
+% % % % %                 [tmp.HCST_lower_raw; flip(tmp.HCST_upper_raw)], cmap_HCST_b);
+% % % % %             fig_ts.HCST_range.EdgeColor = 'none';
+% % % % %             set(get(get(fig_ts.HCST_range,'Annotation'),'LegendInformation'),'IconDisplayStyle','off');
+% % % % %     
+% % % % %             fig_ts.ASSM_range=fill([tmp.time(6:end+tlag), flip(tmp.time(6:end+tlag))], ...
+% % % % %                 [tmp.ASSM_lower_raw(1:end); flip(tmp.ASSM_upper_raw(1:end))], cmap_ASSM_b);
+% % % % %             fig_ts.ASSM_range.EdgeColor = 'none';
+% % % % %             set(get(get(fig_ts.ASSM_range,'Annotation'),'LegendInformation'),'IconDisplayStyle','off');
+% % % % %         end
+% % % % % 
+% % % % % 
+% % % % %         plot(tmp.time(6:end+tlag), tmp.LENS2_mean_raw(1:end), 'linewidth', 2, 'color', cmap_LENS2)
+% % % % %         plot(tmp.time(6:end+tlag), tmp.ASSM_mean_raw(1:end), 'linewidth', 2, 'color', cmap_ASSM)
+% % % % %         plot(tmp.time(6:end+tlag), tmp.HCST_mean_raw, 'linewidth', 2, 'color', cmap_HCST)
+% % % % %         plot(tmp.time(6:end+tlag), tmp.OBS_raw(1:end), 'linewidth', 2, 'color', cmap_OBS)
+% % % % % 
+% % % % %         hold off
+% % % % % 
+% % % % % %         legend ('LENS2', 'ASSM', 'HCST', 'OBS', 'Location', 'Northwest')
+% % % % %         legend ('LENS2', 'ASSM', 'HCST', 'OBS', 'Location', 'Southoutside', 'Orientation', 'Horizontal')
+% % % % % 
+% % % % %         if length(sta_lonlat{stai})==2
+% % % % %             title(['raw, l', tmp.lyear_str, ', ', tmp.varname, ', ', num2str(xpoint),'E, ', num2str(ypoint), 'N'])
+% % % % %         elseif length(sta_lonlat{stai})==4
+% % % % %             title(['raw, l', tmp.lyear_str, ', ', tmp.varname, ', ', num2str(xpoint1),'E', num2str(xpoint2),'E, ', ...
+% % % % %                 num2str(ypoint1), 'N',num2str(ypoint2), 'N'])
+% % % % %         end
+% % % % %         grid minor
+% % % % %         xlim([1960 2025])
+% % % % %         set(gca, 'fontsize', 20)
+% % % % %         
+% % % % % %% corr skills
+% % % % %         [tmp.pot_skill_hcst, tmp.pot_skill_hcst_p]=corrcoef(tmp.ASSM_mean_raw(1:end), tmp.HCST_mean_raw(1:end));
+% % % % %         if (tmp.pot_skill_hcst_p>0.05) tmp.pot_skill_hcst=NaN(2,2); end
+% % % % %         [tmp.pot_skill_lens2, tmp.pot_skill_lens2_p]=corrcoef(tmp.ASSM_mean_raw(1:end), tmp.LENS2_mean_raw(1:end));
+% % % % %         if (tmp.pot_skill_lens2_p>0.05) tmp.pot_skill_lens2=NaN(2,2); end
+% % % % % 
+% % % % %         [tmp.skill_assm, tmp.skill_assm_p]=corrcoef(tmp.OBS_raw(1:end), tmp.ASSM_mean_raw(1:end), 'Rows', 'complete');
+% % % % %         if (tmp.skill_assm_p>0.05) tmp.skill_assm=NaN(2,2); end
+% % % % %         [tmp.skill_hcst, tmp.skill_hcst_p]=corrcoef(tmp.OBS_raw(1:end), tmp.HCST_mean_raw(1:end), 'Rows', 'complete');
+% % % % %         if (tmp.skill_hcst_p>0.05) tmp.skill_hcst=NaN(2,2); end
+% % % % %         [tmp.skill_lens2, tmp.skill_lens2_p]=corrcoef(tmp.OBS_raw(1:end), tmp.LENS2_mean_raw(1:end), 'Rows', 'complete');
+% % % % %         if (tmp.skill_lens2_p>0.05) tmp.skill_lens2=NaN(2,2); end
+% % % % %         
+% % % % %         yl=ylim;
+% % % % %         text(1960, min(yl)+diff(yl)/30, ['AS-HC:', num2str(round(tmp.pot_skill_hcst(1,2),2))])
+% % % % %         text(1967, min(yl)+diff(yl)/30, ['AS-LE:', num2str(round(tmp.pot_skill_lens2(1,2),2))])
+% % % % %         
+% % % % %         text(1980, min(yl)+diff(yl)/30, ['OB-AS:', num2str(round(tmp.skill_assm(1,2),2))])
+% % % % %         text(1987, min(yl)+diff(yl)/30, ['OB-HC:', num2str(round(tmp.skill_hcst(1,2),2))])
+% % % % %         text(1994, min(yl)+diff(yl)/30, ['OB-LE:', num2str(round(tmp.skill_lens2(1,2),2))])
+% % % % % 
+% % % % %         if length(sta_lonlat{stai})==4
+% % % % %             dirs.figdir= [dirs.figroot,  filesep, cfg.casename_m, filesep, tmp.varname, '_time_series_raw', filesep, 'regional_mean', filesep, 'l',tmp.lyear_str];            
+% % % % %         else
+% % % % %             dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_time_series_raw', filesep, 'l',tmp.lyear_str];
+% % % % %         end
+% % % % %         if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
+% % % % %         if length(sta_lonlat{stai})==2
+% % % % %             cfg.figname=[dirs.figdir, filesep, 'ts_det_all_l',tmp.lyear_str, '_', num2str(xpoint), 'E_', num2str(ypoint), 'N_', tmp.varname, '.tif'];
+% % % % %         elseif length(sta_lonlat{stai})==4
+% % % % %             cfg.figname=[dirs.figdir, filesep, 'ts_det_all_l',tmp.lyear_str, '_', num2str(xpoint1), 'E_', num2str(xpoint2), 'E_', ...
+% % % % %                 num2str(ypoint1), 'N_', num2str(ypoint2), 'N_', tmp.varname, '.tif'];
+% % % % %         end
+% % % % %             print(fig_h, cfg.figname, '-dpng');
+% % % % %         RemoveWhiteSpace([], 'file', cfg.figname);
+% % % % %         close all;
 
-        end
-        tmp.OBS = Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_obs_ano_l', tmp.lyear_str])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,:), grids.tlong_cut, grids.tlat_cut);
-        
-%         tmp.OBS=NaN(1,length(tmp.HCST_mean));
 
-        tmp.time= cfg.iyears+lyear;
-        hold on
-        if length(sta_lonlat{stai})==2
-            fig_ts.LENS2_range=fill([tmp.time(6:end+tlag), flip(tmp.time(6:end+tlag))], ...
-                [tmp.LENS2_lower(1:end); flip(tmp.LENS2_upper(1:end))], cmap_LENS2_b);
-            fig_ts.LENS2_range.EdgeColor = 'none';
-            set(get(get(fig_ts.LENS2_range,'Annotation'),'LegendInformation'),'IconDisplayStyle','off');
-            
-            fig_ts.HCST_range=fill([tmp.time(6:end+tlag), flip(tmp.time(6:end+tlag))], ...
-                [tmp.HCST_lower; flip(tmp.HCST_upper)], cmap_HCST_b);
-            fig_ts.HCST_range.EdgeColor = 'none';
-            set(get(get(fig_ts.HCST_range,'Annotation'),'LegendInformation'),'IconDisplayStyle','off');
-    
-            fig_ts.ASSM_range=fill([tmp.time(6:end+tlag), flip(tmp.time(6:end+tlag))], ...
-                [tmp.ASSM_lower(1:end); flip(tmp.ASSM_upper(1:end))], cmap_ASSM_b);
-            fig_ts.ASSM_range.EdgeColor = 'none';
-            set(get(get(fig_ts.ASSM_range,'Annotation'),'LegendInformation'),'IconDisplayStyle','off');
-        end
-
-
-        plot(tmp.time(6:end+tlag), tmp.LENS2_mean(1:end), 'linewidth', 2, 'color', cmap_LENS2)
-        plot(tmp.time(6:end+tlag), tmp.ASSM_mean(1:end), 'linewidth', 2, 'color', cmap_ASSM)
-        plot(tmp.time(6:end+tlag), tmp.HCST_mean, 'linewidth', 2, 'color', cmap_HCST)
-        plot(tmp.time(6:end+tlag), tmp.OBS(1:end), 'linewidth', 2, 'color', cmap_OBS)
-
-        hold off
-        
-%         plot(cfg.iyears+lyear,squeeze(data2.([tmp.varname, '_model_ano_l', tmp.lyear_str])(grids.id_w,grids.id_s,:)), 'linewidth', 2)
-%         hold on
-%         plot(cfg.iyears+lyear,squeeze(data2.([tmp.varname, '_assm_ano_l', tmp.lyear_str])(grids.id_w,grids.id_s,:)), 'linewidth', 2)
-%         plot(cfg.iyears+lyear,squeeze(data2.([tmp.varname, '_lens2_l', tmp.lyear_str])(grids.id_w,grids.id_s,:)), 'linewidth', 2)
-%         hold off
-%         legend ('LENS2', 'ASSM', 'HCST', 'OBS', 'Location', 'Northwest', 'Orientation', 'Horizontal')
-        legend ('LENS2', 'ASSM', 'HCST', 'OBS', 'Location', 'Southoutside', 'Orientation', 'Horizontal')
-
-        if length(sta_lonlat{stai})==2
-            title(['l', tmp.lyear_str, ', ', tmp.varname, ', ', num2str(xpoint),'E, ', num2str(ypoint), 'N'])
-        elseif length(sta_lonlat{stai})==4
-            title(['l', tmp.lyear_str, ', ', tmp.varname, ', ', num2str(xpoint1),'E~', num2str(xpoint2),'E, ', ...
-                num2str(ypoint1), 'N~',num2str(ypoint2), 'N'])
-        end
-        grid minor
-        xlim([1960 2025])
-        set(gca, 'fontsize', 20)
-        
-        %% corr skills
-        [tmp.pot_skill_hcst, tmp.pot_skill_hcst_p]=corrcoef(tmp.ASSM_mean(1:end), tmp.HCST_mean(1:end));
-        if (tmp.pot_skill_hcst_p>0.05) tmp.pot_skill_hcst=NaN(2,2); end
-        [tmp.pot_skill_lens2, tmp.pot_skill_lens2_p]=corrcoef(tmp.ASSM_mean(1:end), tmp.LENS2_mean(1:end));
-        if (tmp.pot_skill_lens2_p>0.05) tmp.pot_skill_lens2=NaN(2,2); end
-
-        [tmp.skill_assm, tmp.skill_assm_p]=corrcoef(tmp.OBS(1:end), tmp.ASSM_mean(1:end), 'Rows', 'complete');
-        if (tmp.skill_assm_p>0.05) tmp.skill_assm=NaN(2,2); end
-        [tmp.skill_hcst, tmp.skill_hcst_p]=corrcoef(tmp.OBS(1:end), tmp.HCST_mean(1:end), 'Rows', 'complete');
-        if (tmp.skill_hcst_p>0.05) tmp.skill_hcst=NaN(2,2); end
-        [tmp.skill_lens2, tmp.skill_lens2_p]=corrcoef(tmp.OBS(1:end), tmp.LENS2_mean(1:end), 'Rows', 'complete');
-        if (tmp.skill_lens2_p>0.05) tmp.skill_lens2=NaN(2,2); end
-        
-        yl=ylim;
-        text(1960, min(yl)+diff(yl)/30, ['AS-HC:', num2str(round(tmp.pot_skill_hcst(1,2),2))])
-        text(1967, min(yl)+diff(yl)/30, ['AS-LE:', num2str(round(tmp.pot_skill_lens2(1,2),2))])
-        
-        text(1980, min(yl)+diff(yl)/30, ['OB-AS:', num2str(round(tmp.skill_assm(1,2),2))])
-        text(1987, min(yl)+diff(yl)/30, ['OB-HC:', num2str(round(tmp.skill_hcst(1,2),2))])
-        text(1994, min(yl)+diff(yl)/30, ['OB-LE:', num2str(round(tmp.skill_lens2(1,2),2))])
-        
-        vstr=['v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i')];
-        if length(sta_lonlat{stai})==4
-            dirs.figdir= [dirs.figroot, filesep,  cfg.casename_m, filesep, tmp.varname, '_time_series', filesep, 'regional_mean', filesep, 'l',tmp.lyear_str];
-        else
-            dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_time_series', filesep, 'l',tmp.lyear_str];            
-        end
-        if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-        if length(sta_lonlat{stai})==2
-            cfg.figname=[dirs.figdir, filesep, 'ts_all_l',tmp.lyear_str, '_', num2str(xpoint), 'E_', num2str(ypoint), 'N_', tmp.varname, '.tif'];
-        elseif length(sta_lonlat{stai})==4
-            cfg.figname=[dirs.figdir, filesep, 'ts_all_l',tmp.lyear_str, '_', num2str(xpoint1), 'E_', num2str(xpoint2), 'E_', ...
-                num2str(ypoint1), 'N_', num2str(ypoint2), 'N_', tmp.varname, '.tif'];
-        end
-            print(fig_h, cfg.figname, '-dpng');
-        RemoveWhiteSpace([], 'file', cfg.figname);
-        close all;
-        
-        %% detrended plot
-        fig_h = figure('name','ts','visible','off');
-        fig_h.Position= [0,0,1000,500];
-
-        [tmp.HCST_mean_det, tmp.HCST_mean_trend] = Func_0028_detrend_linear_1d(tmp.HCST_mean, 'omitnan');
-        tmp.HCST_mean_tr_ano=tmp.HCST_mean-tmp.HCST_mean_det;
-               [tmp.ASSM_mean_det, tmp.ASSM_mean_trend] = Func_0028_detrend_linear_1d(tmp.ASSM_mean, 'omitnan');
-        tmp.ASSM_mean_tr_ano=tmp.ASSM_mean-tmp.ASSM_mean_det;
-      
-        [tmp.LENS2_mean_det, tmp.LENS2_mean_trend] = Func_0028_detrend_linear_1d(tmp.LENS2_mean, 'omitnan');
-        tmp.LENS2_mean_tr_ano=tmp.LENS2_mean-tmp.LENS2_mean_det;
-        
-        if length(sta_lonlat{stai})==2
-            tmp.HCST_lower_det = tmp.HCST_lower-tmp.HCST_mean_tr_ano;
-            tmp.HCST_upper_det = tmp.HCST_upper-tmp.HCST_mean_tr_ano;
-            tmp.ASSM_lower_det = tmp.ASSM_lower-tmp.ASSM_mean_tr_ano;
-            tmp.ASSM_upper_det = tmp.ASSM_upper-tmp.ASSM_mean_tr_ano;
-            tmp.LENS2_lower_det = tmp.LENS2_lower-tmp.LENS2_mean_tr_ano;
-            tmp.LENS2_upper_det = tmp.LENS2_upper-tmp.LENS2_mean_tr_ano;
-        end
-
-        [tmp.OBS_det, tmp.OBS_trend] =Func_0028_detrend_linear_1d(tmp.OBS, 'omitnan');
-
-        hold on
-        if length(sta_lonlat{stai})==2
-            fig_ts.LENS2_range=fill([tmp.time(6:end+tlag), flip(tmp.time(6:end+tlag))], ...
-                [tmp.LENS2_lower_det(1:end); flip(tmp.LENS2_upper_det(1:end))], cmap_LENS2_b);
-            fig_ts.LENS2_range.EdgeColor = 'none';
-            set(get(get(fig_ts.LENS2_range,'Annotation'),'LegendInformation'),'IconDisplayStyle','off');
-    
-            fig_ts.HCST_range=fill([tmp.time(6:end+tlag), flip(tmp.time(6:end+tlag))], ...
-                [tmp.HCST_lower_det; flip(tmp.HCST_upper_det)], cmap_HCST_b);
-            fig_ts.HCST_range.EdgeColor = 'none';
-            set(get(get(fig_ts.HCST_range,'Annotation'),'LegendInformation'),'IconDisplayStyle','off');
-    
-            fig_ts.ASSM_range=fill([tmp.time(6:end+tlag), flip(tmp.time(6:end+tlag))], ...
-                [tmp.ASSM_lower_det(1:end); flip(tmp.ASSM_upper_det(1:end))], cmap_ASSM_b);
-            fig_ts.ASSM_range.EdgeColor = 'none';
-            set(get(get(fig_ts.ASSM_range,'Annotation'),'LegendInformation'),'IconDisplayStyle','off');
-        end
-
-
-        plot(tmp.time(6:end+tlag), tmp.LENS2_mean_det(1:end), 'linewidth', 2, 'color', cmap_LENS2)
-        plot(tmp.time(6:end+tlag), tmp.ASSM_mean_det(1:end), 'linewidth', 2, 'color', cmap_ASSM)
-        plot(tmp.time(6:end+tlag), tmp.HCST_mean_det, 'linewidth', 2, 'color', cmap_HCST)
-        plot(tmp.time(6:end+tlag), tmp.OBS_det(1:end), 'linewidth', 2, 'color', cmap_OBS)
-
-        hold off
-
-%         legend ('LENS2', 'ASSM', 'HCST', 'OBS', 'Location', 'Northwest')
-        legend ('LENS2', 'ASSM', 'HCST', 'OBS', 'Location', 'Southoutside', 'Orientation', 'Horizontal')
-
-        if length(sta_lonlat{stai})==2
-            title(['det, l', tmp.lyear_str, ', ', tmp.varname, ', ', num2str(xpoint),'E, ', num2str(ypoint), 'N'])
-        elseif length(sta_lonlat{stai})==4
-            title(['det, l', tmp.lyear_str, ', ', tmp.varname, ', ', num2str(xpoint1),'E', num2str(xpoint2),'E, ', ...
-                num2str(ypoint1), 'N',num2str(ypoint2), 'N'])
-        end
-        grid minor
-        xlim([1960 2025])
-        set(gca, 'fontsize', 20)
-        
-        %% corr skills
-        [tmp.pot_skill_hcst, tmp.pot_skill_hcst_p]=corrcoef(tmp.ASSM_mean_det(1:end), tmp.HCST_mean_det(1:end));
-        if (tmp.pot_skill_hcst_p>0.05) tmp.pot_skill_hcst=NaN(2,2); end
-        [tmp.pot_skill_lens2, tmp.pot_skill_lens2_p]=corrcoef(tmp.ASSM_mean_det(1:end), tmp.LENS2_mean_det(1:end));
-        if (tmp.pot_skill_lens2_p>0.05) tmp.pot_skill_lens2=NaN(2,2); end
-
-        [tmp.skill_assm, tmp.skill_assm_p]=corrcoef(tmp.OBS_det(1:end), tmp.ASSM_mean_det(1:end), 'Rows', 'complete');
-        if (tmp.skill_assm_p>0.05) tmp.skill_assm=NaN(2,2); end
-        [tmp.skill_hcst, tmp.skill_hcst_p]=corrcoef(tmp.OBS_det(1:end), tmp.HCST_mean_det(1:end), 'Rows', 'complete');
-        if (tmp.skill_hcst_p>0.05) tmp.skill_hcst=NaN(2,2); end
-        [tmp.skill_lens2, tmp.skill_lens2_p]=corrcoef(tmp.OBS_det(1:end), tmp.LENS2_mean_det(1:end), 'Rows', 'complete');
-        if (tmp.skill_lens2_p>0.05) tmp.skill_lens2=NaN(2,2); end
-        
-        yl=ylim;
-        text(1960, min(yl)+diff(yl)/30, ['AS-HC:', num2str(round(tmp.pot_skill_hcst(1,2),2))])
-        text(1967, min(yl)+diff(yl)/30, ['AS-LE:', num2str(round(tmp.pot_skill_lens2(1,2),2))])
-        
-        text(1980, min(yl)+diff(yl)/30, ['OB-AS:', num2str(round(tmp.skill_assm(1,2),2))])
-        text(1987, min(yl)+diff(yl)/30, ['OB-HC:', num2str(round(tmp.skill_hcst(1,2),2))])
-        text(1994, min(yl)+diff(yl)/30, ['OB-LE:', num2str(round(tmp.skill_lens2(1,2),2))])
-
-        if length(sta_lonlat{stai})==4
-            dirs.figdir= [dirs.figroot,  filesep, cfg.casename_m, filesep, tmp.varname, '_time_series_det', filesep, 'regional_mean', filesep, 'l',tmp.lyear_str];            
-        else
-            dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_time_series_det', filesep, 'l',tmp.lyear_str];
-        end
-        if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-        if length(sta_lonlat{stai})==2
-            cfg.figname=[dirs.figdir, filesep, 'ts_det_all_l',tmp.lyear_str, '_', num2str(xpoint), 'E_', num2str(ypoint), 'N_', tmp.varname, '.tif'];
-        elseif length(sta_lonlat{stai})==4
-            cfg.figname=[dirs.figdir, filesep, 'ts_det_all_l',tmp.lyear_str, '_', num2str(xpoint1), 'E_', num2str(xpoint2), 'E_', ...
-                num2str(ypoint1), 'N_', num2str(ypoint2), 'N_', tmp.varname, '.tif'];
-        end
-            print(fig_h, cfg.figname, '-dpng');
-        RemoveWhiteSpace([], 'file', cfg.figname);
-        close all;
-
-
-        
-        %% raw plot
+%% raw222 plot
         fig_h = figure('name','ts','visible','off');
         fig_h.Position= [0,0,1000,500];
 
@@ -543,8 +668,6 @@ for lyear=0:cfg.proj_year-1
                 squeeze(data.([tmp.varname, '_lens2_stde_l', tmp.lyear_str])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,6-lyear:end-lyear))/2.0, grids.tlong_cut, grids.tlat_cut);
         end
 
-        tmp.OBS_raw = Func_0011_get_area_weighted_mean( ...
-                    data.([tmp.varname, '_obs'])(grids.id_w:grids.id_e,grids.id_s:grids.id_n,6-lyear:end-lyear), grids.tlong_cut, grids.tlat_cut);
         hold on
         if length(sta_lonlat{stai})==2
             fig_ts.LENS2_range=fill([tmp.time(6:end+tlag), flip(tmp.time(6:end+tlag))], ...
@@ -567,60 +690,37 @@ for lyear=0:cfg.proj_year-1
         plot(tmp.time(6:end+tlag), tmp.LENS2_mean_raw(1:end), 'linewidth', 2, 'color', cmap_LENS2)
         plot(tmp.time(6:end+tlag), tmp.ASSM_mean_raw(1:end), 'linewidth', 2, 'color', cmap_ASSM)
         plot(tmp.time(6:end+tlag), tmp.HCST_mean_raw, 'linewidth', 2, 'color', cmap_HCST)
-        plot(tmp.time(6:end+tlag), tmp.OBS_raw(1:end), 'linewidth', 2, 'color', cmap_OBS)
 
         hold off
 
 %         legend ('LENS2', 'ASSM', 'HCST', 'OBS', 'Location', 'Northwest')
-        legend ('LENS2', 'ASSM', 'HCST', 'OBS', 'Location', 'Southoutside', 'Orientation', 'Horizontal')
+        legend ('LENS2', 'ASSM', 'HCST', 'Location', 'Southoutside', 'Orientation', 'Horizontal')
 
         if length(sta_lonlat{stai})==2
-            title(['raw, l', tmp.lyear_str, ', ', tmp.varname, ', ', num2str(xpoint),'E, ', num2str(ypoint), 'N'])
+            title(['raw, l', tmp.lyear2_str, ', ', tmp.varname, ', ', num2str(xpoint),'E, ', num2str(ypoint), 'N'])
         elseif length(sta_lonlat{stai})==4
-            title(['raw, l', tmp.lyear_str, ', ', tmp.varname, ', ', num2str(xpoint1),'E', num2str(xpoint2),'E, ', ...
+            title(['raw, l', tmp.lyear2_str, ', ', tmp.varname, ', ', num2str(xpoint1),'E', num2str(xpoint2),'E, ', ...
                 num2str(ypoint1), 'N',num2str(ypoint2), 'N'])
         end
         grid minor
         xlim([1960 2025])
         set(gca, 'fontsize', 20)
-        
-        %% corr skills
-        [tmp.pot_skill_hcst, tmp.pot_skill_hcst_p]=corrcoef(tmp.ASSM_mean_raw(1:end), tmp.HCST_mean_raw(1:end));
-        if (tmp.pot_skill_hcst_p>0.05) tmp.pot_skill_hcst=NaN(2,2); end
-        [tmp.pot_skill_lens2, tmp.pot_skill_lens2_p]=corrcoef(tmp.ASSM_mean_raw(1:end), tmp.LENS2_mean_raw(1:end));
-        if (tmp.pot_skill_lens2_p>0.05) tmp.pot_skill_lens2=NaN(2,2); end
-
-        [tmp.skill_assm, tmp.skill_assm_p]=corrcoef(tmp.OBS_raw(1:end), tmp.ASSM_mean_raw(1:end), 'Rows', 'complete');
-        if (tmp.skill_assm_p>0.05) tmp.skill_assm=NaN(2,2); end
-        [tmp.skill_hcst, tmp.skill_hcst_p]=corrcoef(tmp.OBS_raw(1:end), tmp.HCST_mean_raw(1:end), 'Rows', 'complete');
-        if (tmp.skill_hcst_p>0.05) tmp.skill_hcst=NaN(2,2); end
-        [tmp.skill_lens2, tmp.skill_lens2_p]=corrcoef(tmp.OBS_raw(1:end), tmp.LENS2_mean_raw(1:end), 'Rows', 'complete');
-        if (tmp.skill_lens2_p>0.05) tmp.skill_lens2=NaN(2,2); end
-        
-        yl=ylim;
-        text(1960, min(yl)+diff(yl)/30, ['AS-HC:', num2str(round(tmp.pot_skill_hcst(1,2),2))])
-        text(1967, min(yl)+diff(yl)/30, ['AS-LE:', num2str(round(tmp.pot_skill_lens2(1,2),2))])
-        
-        text(1980, min(yl)+diff(yl)/30, ['OB-AS:', num2str(round(tmp.skill_assm(1,2),2))])
-        text(1987, min(yl)+diff(yl)/30, ['OB-HC:', num2str(round(tmp.skill_hcst(1,2),2))])
-        text(1994, min(yl)+diff(yl)/30, ['OB-LE:', num2str(round(tmp.skill_lens2(1,2),2))])
 
         if length(sta_lonlat{stai})==4
-            dirs.figdir= [dirs.figroot,  filesep, cfg.casename_m, filesep, tmp.varname, '_time_series_raw', filesep, 'regional_mean', filesep, 'l',tmp.lyear_str];            
+            dirs.figdir= [dirs.figroot,  filesep, cfg.casename_m, filesep, tmp.varname, '_time_series_raw2', filesep, 'regional_mean', filesep, 'l',tmp.lyear_str];            
         else
-            dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_time_series_raw', filesep, 'l',tmp.lyear_str];
+            dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_time_series_raw2', filesep, 'l',tmp.lyear_str];
         end
         if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
         if length(sta_lonlat{stai})==2
-            cfg.figname=[dirs.figdir, filesep, 'ts_det_all_l',tmp.lyear_str, '_', num2str(xpoint), 'E_', num2str(ypoint), 'N_', tmp.varname, '.tif'];
+            cfg.figname=[dirs.figdir, filesep, 'ts_raw_all_l',tmp.lyear_str, '_', num2str(xpoint), 'E_', num2str(ypoint), 'N_', tmp.varname, '.tif'];
         elseif length(sta_lonlat{stai})==4
-            cfg.figname=[dirs.figdir, filesep, 'ts_det_all_l',tmp.lyear_str, '_', num2str(xpoint1), 'E_', num2str(xpoint2), 'E_', ...
+            cfg.figname=[dirs.figdir, filesep, 'ts_raw_all_l',tmp.lyear_str, '_', num2str(xpoint1), 'E_', num2str(xpoint2), 'E_', ...
                 num2str(ypoint1), 'N_', num2str(ypoint2), 'N_', tmp.varname, '.tif'];
         end
             print(fig_h, cfg.figname, '-dpng');
         RemoveWhiteSpace([], 'file', cfg.figname);
         close all;
-
 
 
 

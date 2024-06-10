@@ -22,7 +22,8 @@ dirs.hcstroot=['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/HCST_EXP/archive/atm/', 
 dirs.obsroot=['/Volumes/kyy_raid/kimyy/Observation/ERSST/monthly_reg_cam'];
 dirs.figroot=['/Volumes/kyy_raid/kimyy/Figure/CESM2/ESP/HCST_EXP/archive/atm/', cfg.var];
 
-cfg.iyears=1970:2019;
+cfg.iyears=1960:2020;
+% cfg.iyears=1970:2019;
 % cfg.iyears=1982:2016;
 
 cfg.months=1:12;

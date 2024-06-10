@@ -109,6 +109,7 @@ cfg.vars = { 'GPP', 'NPP', 'TOTVEGC', 'TWS', 'COL_FIRE_CLOSS', 'COL_FIRE_NLOSS',
             'RAIN', 'QSOIL', 'QSOIL_ICE', 'QRUNOFF', 'QOVER', 'QRGWL', ...
             'QH2OSFC', 'NEP', 'DSTFLXT' };
 
+cfg.vars ={'photoC_TOT_zint_100m', 'NO3', 'Fe'};
 
 cfg.vlayer=1:10; % 10layer. don't put more than 15
 cfg.vlayer_1st=min(cfg.vlayer);
@@ -221,6 +222,8 @@ sta_lonlat = {[345, 75], [300, 85], [260, 85], [220, 80], [180, 80], ...
 % sta_lonlat = { [200, -40]};
 sta_lonlat = { [260, -20]};
 sta_lonlat = { [80, 60]};
+
+sta_lonlat = { [160, 20], [160 -12], [220 -30], [60 -24], [300, 25], [330, 22], [359 -8], [338, -30]};
 
 % CalCOFI : 238, 32
 % K2 : 160, 47`
