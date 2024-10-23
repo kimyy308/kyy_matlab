@@ -22,13 +22,14 @@ addpath(genpath([tmp.dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', tmp.fs, 'f
 %% model configuration
 % cfg.var='TS'; %SST PRECT PSL TS SSH sumChl
 cfg.vars = {'TS', 'SST', 'PRECT', 'PSL'};
-% cfg.vars = {'TS'};
-% cfg.vlayer=1:10; % 10layer. don't put more than 15
+% cfg.vars = {'TS'}; cfg.vlayer=1:10; % 10layer. don't put more than 15
+
 cfg.vlayer=1; % surface, vertical slice
 
 cfg.vars = {'TS', 'SST', 'PRECT', 'PSL'};
 cfg.vars={'TLAI','SOILWATER_10CM', 'COL_FIRE_CLOSS', 'FAREA_BURNED'};
 
+cfg.vars = {'TS', 'SST'};
 
 cfg.vlayer_1st=min(cfg.vlayer);
 cfg.vlayer_cnt=max(cfg.vlayer)-cfg.vlayer_1st+1;
@@ -47,11 +48,16 @@ cfg.obs_iyears=1960:2020;
 disp(cfg.var);
 tic;
 
-% dirs.hcstroot=['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/HCST_EXP/archive/', cfg.comp, '/', cfg.var];
-% dirs.obsroot=['/Volumes/kyy_raid/kimyy/Observation/', cfg.obs_name, '/monthly_reg_', cfg.obs_fname_module(2:4)];
-% dirs.figroot=['/Volumes/kyy_raid/kimyy/Figure/CESM2/ESP/HCST_EXP/archive/', cfg.comp,'/', cfg.var];
-% dirs.lens2root=['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/LENS2/archive_analysis/', cfg.comp, '/', cfg.var];
-% dirs.assmroot=['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/ASSM_EXP/archive_analysis/', cfg.comp, '/', cfg.var];
+% dirs.hcstroot=['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/HCST_EXP/archive/',
+% cfg.comp, '/', cfg.var];
+% dirs.obsroot=['/Volumes/kyy_raid/kimyy/Observation/', cfg.obs_name,
+% '/monthly_reg_', cfg.obs_fname_module(2:4)];
+% dirs.figroot=['/Volumes/kyy_raid/kimyy/Figure/CESM2/ESP/HCST_EXP/archive/',
+% cfg.comp,'/', cfg.var];
+% dirs.lens2root=['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/LENS2/archive_analysis/',
+% cfg.comp, '/', cfg.var];
+% dirs.assmroot=['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/ASSM_EXP/archive_analysis/',
+% cfg.comp, '/', cfg.var];
 
 dirs.hcstmatroot=[tmp.kimyypath, '/Model/CESM2/ESP/HCST_EXP/mat/', cfg.comp, '/', cfg.var];
 vstr=['v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i')];
@@ -67,26 +73,25 @@ cfg.season = {'JFM1', 'AMJ1', 'JAS1', 'OND1'};
 cfg.len_t_y = length(cfg.iyears);
 cfg.casename_m = ['ens_all'];
 
-% cfg.len_t_m = length(cfg.months);
-% cfg.len_t = cfg.len_t_y *cfg.len_t_m;
+% cfg.len_t_m = length(cfg.months); cfg.len_t = cfg.len_t_y *cfg.len_t_m;
 
-% %% grid set(mask from model)
-% tmp.obsname=cfg.obsnames{1};
-% iyear=min(cfg.iyears);
-% cfg.casename_m=[cfg.gridname, '.hcst.', tmp.obsname, '-', cfg.assm_factor, 'p', cfg.ens_member];
-% cfg.casename=[cfg.casename_m, '_i', num2str(iyear)];
-% dirs.datadir= [dirs.hcstroot, filesep, cfg.casename_m, filesep, 'GMSV'];
+% %% grid set(mask from model) tmp.obsname=cfg.obsnames{1};
+% iyear=min(cfg.iyears); cfg.casename_m=[cfg.gridname, '.hcst.',
+% tmp.obsname, '-', cfg.assm_factor, 'p', cfg.ens_member];
+% cfg.casename=[cfg.casename_m, '_i', num2str(iyear)]; dirs.datadir=
+% [dirs.hcstroot, filesep, cfg.casename_m, filesep, 'GMSV'];
 
 % f09_g17.hcst.en4.2_ba-10p1_i2021.pop.h.once.nc
 
-% [tmp.error_status, tmp.value]=system(['ls ', dirs.datadir, '/*once*']);  % b.e21.BHISTsmbb.f09_g17.assm.oras4_ba-10p1.pop.h.once.nc
+% [tmp.error_status, tmp.value]=system(['ls ', dirs.datadir, '/*once*']);
+% % b.e21.BHISTsmbb.f09_g17.assm.oras4_ba-10p1.pop.h.once.nc
 tmp.gridname = [tmp.kimyypath, '/Model/CESM2/ESP/HCST_EXP/archive_transfer/', cfg.comp, '/grid.nc'];
 tmp.maskname = [tmp.kimyypath, '/Model/CESM2/ESP/HCST_EXP/archive_transfer/ocn/RECCAP2_region_masks_all_v20210412_POP2_grid.nc'];
 
-% grid.region_mask=ncread(tmp.gridname, 'REGION_MASK'); 
+% grid.region_mask=ncread(tmp.gridname, 'REGION_MASK');
 % grid.ocean_mask=NaN(size(grid.region_mask));
-% grid.ocean_mask(grid.region_mask>0)=1;
-% grid.tarea = ncread(tmp.gridname, 'TAREA');
+% grid.ocean_mask(grid.region_mask>0)=1; grid.tarea = ncread(tmp.gridname,
+% 'TAREA');
 
 switch cfg.comp
     case {'ocn', 'ice'}
@@ -116,36 +121,25 @@ grid.nlat=size(grid.tlat,2);
 
 fig_flags(1:100)=0;
 
-% fig_flags(2:9)=1; %OBS ACC
-% fig_flags(17)=1; %OBS trend
-% fig_flags(21:26)=1; %OBS ACC
-% fig_flags(31)=1; %OBS ensmean
-% fig_flags(38:43)=1; %OBS ensmean bias
-% fig_flags(35:37)=1;
+% fig_flags(2:9)=1; %OBS ACC fig_flags(17)=1; %OBS trend
+% fig_flags(21:26)=1; %OBS ACC fig_flags(31)=1; %OBS ensmean
+% fig_flags(38:43)=1; %OBS ensmean bias fig_flags(35:37)=1;
 fig_flags(1:100)=1;
-% fig_flags(48)=1; %model drift
-% fig_flags(24)=1; %assm obs nRMSE
-% fig_flags(24:26)=1; %assm obs RMSE
-% fig_flags(41:43)=1; %assm mean bias
-% fig_flags(21:30)=1; % RMSEs
-% fig_flags(49)=1; %model drift ratio
-% fig_flags(50:51)=1; %obs-AR1 coef, noise
-% fig_flags(31:34)=1;
-% fig_flags(53:57)=1;
-% fig_flags(6)=1;
-% fig_flags(52)=1;
+% fig_flags(48)=1; %model drift fig_flags(24)=1; %assm obs nRMSE
+% fig_flags(24:26)=1; %assm obs RMSE fig_flags(41:43)=1; %assm mean bias
+% fig_flags(21:30)=1; % RMSEs fig_flags(49)=1; %model drift ratio
+% fig_flags(50:51)=1; %obs-AR1 coef, noise fig_flags(31:34)=1;
+% fig_flags(53:57)=1; fig_flags(6)=1; fig_flags(52)=1;
+fig_flags(17:20)=1; 
+fig_flags(38:39)=1; 
+
+fig_flags_abs_cbar=1;
+
 
 %% no observation
-% fig_flags(1)=1;
-% fig_flags(11:16)=1;
-% fig_flags(18:20)=1;
-% fig_flags(27:30)=1;
-% fig_flags(32:37)=1;
-% fig_flags(39)=1;
-% fig_flags(44:47)=1;
-% fig_flags(48:49)=1;
-% fig_flags(13)=1;
-% fig_flags(52)=1;
+% fig_flags(1)=1; fig_flags(11:16)=1; fig_flags(18:20)=1;
+% fig_flags(27:30)=1; fig_flags(32:37)=1; fig_flags(39)=1;
+% fig_flags(44:47)=1; fig_flags(48:49)=1; fig_flags(13)=1; fig_flags(52)=1;
 % fig_flags(58:59)=1;
 
 S = shaperead('landareas.shp');
@@ -174,20 +168,22 @@ fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
             '_OND1', '.mat'];
 load(fig_cfg.mat_name, 'data', 'data2')
 data2_OND1=data2;
-% % % fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
-% % %             '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
-% % %             '_l04', 'y.mat'];
-% % % load(fig_cfg.mat_name, 'data', 'data2')
-% % % data2_l4=data2;
+% % % fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_',
+% tmp.varname, ... % %             '_v', num2str(cfg.vlayer_1st, '%02i'),
+% '_v', num2str(max(cfg.vlayer), '%02i'), ... % %             '_l04',
+% 'y.mat']; % % load(fig_cfg.mat_name, 'data', 'data2') % % data2_l4=data2;
 
 clear tmp.ydata tmp.ydata_lens2 tmp.ydata_obs tmp.ydata_assm
 % for lyear=0:cfg.proj_year-1
 %     tmp.lyear_str=num2str(lyear, '%02i');
-%     fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_', tmp.varname, ...
-%             '_v', num2str(cfg.vlayer_1st, '%02i'), '_v', num2str(max(cfg.vlayer), '%02i'), ...
-%             '_', tmp.season, 'y.mat'];
+%     fig_cfg.mat_name=[dirs.hcstmatroot, filesep, 'hcst_corr_assm_',
+%     tmp.varname, ...
+%             '_v', num2str(cfg.vlayer_1st, '%02i'), '_v',
+%             num2str(max(cfg.vlayer), '%02i'), ... '_', tmp.season,
+%             'y.mat'];
 %     load(fig_cfg.mat_name, 'data', 'data2')
-%     pcolor(data2.([tmp.varname,'_corr_assm_int_', tmp.season])'); shading flat; colorbar;
+%     pcolor(data2.([tmp.varname,'_corr_assm_int_', tmp.season])'); shading
+%     flat; colorbar;
 for lss=1:length(cfg.season)
     tmp.season=cfg.season{lss};
     tmp.mons = f_season_mons(tmp.season);
@@ -233,9 +229,8 @@ for fake=1:1
     tmp.C=data2.([tmp.varname, '_corr_assm_AR1_ano', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
 %         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+%         tmp.C_H=tmp.C_H([end, 1:end],:); tmp.C_2=tmp.C;
+%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN
 
     [tmp.mean_corr, tmp.err] = ...
         Func_0011_get_area_weighted_mean(data2.([tmp.varname, '_corr_assm_AR1_ano', '_', tmp.season]), grid.tlong, grid.tlat);
@@ -319,9 +314,8 @@ for fake=1:1
     tmp.C=data2.([tmp.varname, '_corr_obs_AR1', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
 %         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+%         tmp.C_H=tmp.C_H([end, 1:end],:); tmp.C_2=tmp.C;
+%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN
 
 
     [tmp.mean_corr, tmp.err] = ...
@@ -405,9 +399,8 @@ for fake=1:1
     tmp.C=data2.([tmp.varname, '_corr_obs_ano', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
 %         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+%         tmp.C_H=tmp.C_H([end, 1:end],:); tmp.C_2=tmp.C;
+%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN
 
 
     [tmp.mean_corr, tmp.err] = ...
@@ -439,12 +432,13 @@ for fake=1:1
     shading flat;
     geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
 
-%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1) %for Chls, it uses all available data
-%             %% <AR1 area -> hatch
-%             pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2, 'parent', ax_m);
-%             set(pp2,'linestyle','none','Tag','HatchingRegion');
-%             hp = findobj(pp2,'Tag','HatchingRegion');
-%             hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
+%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1)
+%         %for Chls, it uses all available data
+%             %% <AR1 area -> hatch pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2,
+%             'parent', ax_m);
+%             set(pp2,'linestyle','none','Tag','HatchingRegion'); hp =
+%             findobj(pp2,'Tag','HatchingRegion'); hh =
+%             hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
 %         end
 
 
@@ -500,9 +494,8 @@ for fake=1:1
     tmp.C=data2.([tmp.varname, '_corr_obs_assm_ano', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
 %         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+%         tmp.C_H=tmp.C_H([end, 1:end],:); tmp.C_2=tmp.C;
+%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN
 
 
     [tmp.mean_corr, tmp.err] = ...
@@ -534,12 +527,13 @@ for fake=1:1
     shading flat;
     geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
 
-%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1) %for Chls, it uses all available data
-%             %% <AR1 area -> hatch
-%             pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2, 'parent', ax_m);
-%             set(pp2,'linestyle','none','Tag','HatchingRegion');
-%             hp = findobj(pp2,'Tag','HatchingRegion');
-%             hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
+%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1)
+%         %for Chls, it uses all available data
+%             %% <AR1 area -> hatch pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2,
+%             'parent', ax_m);
+%             set(pp2,'linestyle','none','Tag','HatchingRegion'); hp =
+%             findobj(pp2,'Tag','HatchingRegion'); hh =
+%             hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
 %         end
 
 
@@ -595,9 +589,8 @@ for fake=1:1
     tmp.C=data2.([tmp.varname, '_corr_obs_lens2_ano', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
 %         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+%         tmp.C_H=tmp.C_H([end, 1:end],:); tmp.C_2=tmp.C;
+%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN
 
 
     [tmp.mean_corr, tmp.err] = ...
@@ -629,12 +622,13 @@ for fake=1:1
     shading flat;
     geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
 
-%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1) %for Chls, it uses all available data
-%             %% <AR1 area -> hatch
-%             pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2, 'parent', ax_m);
-%             set(pp2,'linestyle','none','Tag','HatchingRegion');
-%             hp = findobj(pp2,'Tag','HatchingRegion');
-%             hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
+%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1)
+%         %for Chls, it uses all available data
+%             %% <AR1 area -> hatch pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2,
+%             'parent', ax_m);
+%             set(pp2,'linestyle','none','Tag','HatchingRegion'); hp =
+%             findobj(pp2,'Tag','HatchingRegion'); hh =
+%             hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
 %         end
 
 
@@ -690,9 +684,8 @@ for fake=1:1
     tmp.C=data2.([tmp.varname, '_corr_obs_int_ano', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
 %         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+%         tmp.C_H=tmp.C_H([end, 1:end],:); tmp.C_2=tmp.C;
+%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN
 
 
     [tmp.mean_corr, tmp.err] = ...
@@ -724,12 +717,13 @@ for fake=1:1
     shading flat;
     geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
 
-%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1) %for Chls, it uses all available data
-%             %% <AR1 area -> hatch
-%             pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2, 'parent', ax_m);
-%             set(pp2,'linestyle','none','Tag','HatchingRegion');
-%             hp = findobj(pp2,'Tag','HatchingRegion');
-%             hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
+%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1)
+%         %for Chls, it uses all available data
+%             %% <AR1 area -> hatch pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2,
+%             'parent', ax_m);
+%             set(pp2,'linestyle','none','Tag','HatchingRegion'); hp =
+%             findobj(pp2,'Tag','HatchingRegion'); hh =
+%             hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
 %         end
 
 
@@ -781,9 +775,8 @@ for fake=1:1
     tmp.C=data2.([tmp.varname, '_corr_obs_int2_ano', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
 %         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+%         tmp.C_H=tmp.C_H([end, 1:end],:); tmp.C_2=tmp.C;
+%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN
 
 
     [tmp.mean_corr, tmp.err] = ...
@@ -815,12 +808,13 @@ for fake=1:1
     shading flat;
     geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
 
-%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1) %for Chls, it uses all available data
-%             %% <AR1 area -> hatch
-%             pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2, 'parent', ax_m);
-%             set(pp2,'linestyle','none','Tag','HatchingRegion');
-%             hp = findobj(pp2,'Tag','HatchingRegion');
-%             hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
+%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1)
+%         %for Chls, it uses all available data
+%             %% <AR1 area -> hatch pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2,
+%             'parent', ax_m);
+%             set(pp2,'linestyle','none','Tag','HatchingRegion'); hp =
+%             findobj(pp2,'Tag','HatchingRegion'); hh =
+%             hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
 %         end
 
 
@@ -876,9 +870,8 @@ for fake=1:1
     tmp.C=data2.([tmp.varname, '_corr_obs_det_ano', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
 %         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+%         tmp.C_H=tmp.C_H([end, 1:end],:); tmp.C_2=tmp.C;
+%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN
 
 
     [tmp.mean_corr, tmp.err] = ...
@@ -910,12 +903,13 @@ for fake=1:1
     shading flat;
     geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
 
-%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1) %for Chls, it uses all available data
-%             %% <AR1 area -> hatch
-%             pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2, 'parent', ax_m);
-%             set(pp2,'linestyle','none','Tag','HatchingRegion');
-%             hp = findobj(pp2,'Tag','HatchingRegion');
-%             hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
+%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1)
+%         %for Chls, it uses all available data
+%             %% <AR1 area -> hatch pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2,
+%             'parent', ax_m);
+%             set(pp2,'linestyle','none','Tag','HatchingRegion'); hp =
+%             findobj(pp2,'Tag','HatchingRegion'); hh =
+%             hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
 %         end
 
 
@@ -971,9 +965,8 @@ for fake=1:1
     tmp.C=data2.([tmp.varname, '_corr_obs_assm_det_ano', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
 %         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+%         tmp.C_H=tmp.C_H([end, 1:end],:); tmp.C_2=tmp.C;
+%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN
 
 
     [tmp.mean_corr, tmp.err] = ...
@@ -1005,12 +998,13 @@ for fake=1:1
     shading flat;
     geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
 
-%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1) %for Chls, it uses all available data
-%             %% <AR1 area -> hatch
-%             pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2, 'parent', ax_m);
-%             set(pp2,'linestyle','none','Tag','HatchingRegion');
-%             hp = findobj(pp2,'Tag','HatchingRegion');
-%             hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
+%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1)
+%         %for Chls, it uses all available data
+%             %% <AR1 area -> hatch pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2,
+%             'parent', ax_m);
+%             set(pp2,'linestyle','none','Tag','HatchingRegion'); hp =
+%             findobj(pp2,'Tag','HatchingRegion'); hh =
+%             hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
 %         end
 
 
@@ -1066,9 +1060,8 @@ for fake=1:1
     tmp.C=data2.([tmp.varname, '_corr_obs_lens2_det_ano', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
 %         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+%         tmp.C_H=tmp.C_H([end, 1:end],:); tmp.C_2=tmp.C;
+%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN
 
 
     [tmp.mean_corr, tmp.err] = ...
@@ -1100,12 +1093,13 @@ for fake=1:1
     shading flat;
     geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
 
-%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1) %for Chls, it uses all available data
-%             %% <AR1 area -> hatch
-%             pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2, 'parent', ax_m);
-%             set(pp2,'linestyle','none','Tag','HatchingRegion');
-%             hp = findobj(pp2,'Tag','HatchingRegion');
-%             hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
+%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1)
+%         %for Chls, it uses all available data
+%             %% <AR1 area -> hatch pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2,
+%             'parent', ax_m);
+%             set(pp2,'linestyle','none','Tag','HatchingRegion'); hp =
+%             findobj(pp2,'Tag','HatchingRegion'); hh =
+%             hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
 %         end
 
 
@@ -1166,8 +1160,8 @@ for fake=1:1
 
     tmp.C(tmp.C<tmp.C_H)=-1;
 
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+%         tmp.C_2=tmp.C; tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model
+%         = NaN
 
 
     [tmp.mean_corr, tmp.err] = ...
@@ -1200,12 +1194,13 @@ for fake=1:1
     shading flat;
     geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
 
-%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1) %for Chls, it uses all available data
-%             %% <AR1 area -> hatch
-%             pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2, 'parent', ax_m);
-%             set(pp2,'linestyle','none','Tag','HatchingRegion');
-%             hp = findobj(pp2,'Tag','HatchingRegion');
-%             hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
+%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1)
+%         %for Chls, it uses all available data
+%             %% <AR1 area -> hatch pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2,
+%             'parent', ax_m);
+%             set(pp2,'linestyle','none','Tag','HatchingRegion'); hp =
+%             findobj(pp2,'Tag','HatchingRegion'); hh =
+%             hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
 %         end
 
 
@@ -1262,9 +1257,8 @@ for fake=1:1
     tmp.C=data2.([tmp.varname, '_corr_assm_ano', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
 %         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+%         tmp.C_H=tmp.C_H([end, 1:end],:); tmp.C_2=tmp.C;
+%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN
 
 
     [tmp.mean_corr, tmp.err] = ...
@@ -1296,12 +1290,13 @@ for fake=1:1
     shading flat;
     geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
 
-%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1) %for Chls, it uses all available data
-%             %% <AR1 area -> hatch
-%             pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2, 'parent', ax_m);
-%             set(pp2,'linestyle','none','Tag','HatchingRegion');
-%             hp = findobj(pp2,'Tag','HatchingRegion');
-%             hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
+%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1)
+%         %for Chls, it uses all available data
+%             %% <AR1 area -> hatch pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2,
+%             'parent', ax_m);
+%             set(pp2,'linestyle','none','Tag','HatchingRegion'); hp =
+%             findobj(pp2,'Tag','HatchingRegion'); hh =
+%             hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
 %         end
 
 
@@ -1439,9 +1434,8 @@ for fake=1:1
     tmp.C=data2.([tmp.varname, '_corr_assm_int_ano', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
 %         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+%         tmp.C_H=tmp.C_H([end, 1:end],:); tmp.C_2=tmp.C;
+%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN
 
 
     [tmp.mean_corr, tmp.err] = ...
@@ -1473,12 +1467,13 @@ for fake=1:1
     shading flat;
     geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
 
-%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1) %for Chls, it uses all available data
-%             %% <AR1 area -> hatch
-%             pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2, 'parent', ax_m);
-%             set(pp2,'linestyle','none','Tag','HatchingRegion');
-%             hp = findobj(pp2,'Tag','HatchingRegion');
-%             hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
+%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1)
+%         %for Chls, it uses all available data
+%             %% <AR1 area -> hatch pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2,
+%             'parent', ax_m);
+%             set(pp2,'linestyle','none','Tag','HatchingRegion'); hp =
+%             findobj(pp2,'Tag','HatchingRegion'); hh =
+%             hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
 %         end
 
 
@@ -1530,9 +1525,8 @@ for fake=1:1
     tmp.C=data2.([tmp.varname, '_corr_assm_int2_ano', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
 %         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+%         tmp.C_H=tmp.C_H([end, 1:end],:); tmp.C_2=tmp.C;
+%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN
 
 
     [tmp.mean_corr, tmp.err] = ...
@@ -1564,12 +1558,13 @@ for fake=1:1
     shading flat;
     geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
 
-%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1) %for Chls, it uses all available data
-%             %% <AR1 area -> hatch
-%             pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2, 'parent', ax_m);
-%             set(pp2,'linestyle','none','Tag','HatchingRegion');
-%             hp = findobj(pp2,'Tag','HatchingRegion');
-%             hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
+%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1)
+%         %for Chls, it uses all available data
+%             %% <AR1 area -> hatch pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2,
+%             'parent', ax_m);
+%             set(pp2,'linestyle','none','Tag','HatchingRegion'); hp =
+%             findobj(pp2,'Tag','HatchingRegion'); hh =
+%             hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
 %         end
 
 
@@ -1625,9 +1620,8 @@ for fake=1:1
     tmp.C=data2.([tmp.varname, '_corr_assm_lens2_ano', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
 %         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+%         tmp.C_H=tmp.C_H([end, 1:end],:); tmp.C_2=tmp.C;
+%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN
 
 
     [tmp.mean_corr, tmp.err] = ...
@@ -1659,12 +1653,13 @@ for fake=1:1
     shading flat;
     geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
 
-%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1) %for Chls, it uses all available data
-%             %% <AR1 area -> hatch
-%             pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2, 'parent', ax_m);
-%             set(pp2,'linestyle','none','Tag','HatchingRegion');
-%             hp = findobj(pp2,'Tag','HatchingRegion');
-%             hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
+%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1)
+%         %for Chls, it uses all available data
+%             %% <AR1 area -> hatch pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2,
+%             'parent', ax_m);
+%             set(pp2,'linestyle','none','Tag','HatchingRegion'); hp =
+%             findobj(pp2,'Tag','HatchingRegion'); hh =
+%             hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
 %         end
 
 
@@ -1807,8 +1802,8 @@ for fake=1:1
 
     tmp.C(tmp.C<tmp.C_H)=-1;
 
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+%         tmp.C_2=tmp.C; tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model
+%         = NaN
 
 
     [tmp.mean_corr, tmp.err] = ...
@@ -1842,12 +1837,13 @@ for fake=1:1
     shading flat;
     geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
 
-%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1) %for Chls, it uses all available data
-%             %% <AR1 area -> hatch
-%             pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2, 'parent', ax_m);
-%             set(pp2,'linestyle','none','Tag','HatchingRegion');
-%             hp = findobj(pp2,'Tag','HatchingRegion');
-%             hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
+%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1)
+%         %for Chls, it uses all available data
+%             %% <AR1 area -> hatch pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2,
+%             'parent', ax_m);
+%             set(pp2,'linestyle','none','Tag','HatchingRegion'); hp =
+%             findobj(pp2,'Tag','HatchingRegion'); hh =
+%             hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
 %         end
 
 
@@ -1912,9 +1908,8 @@ for fake=1:1
     tmp.C=data2.([tmp.varname, '_obs_trend2', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
 %         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+%         tmp.C_H=tmp.C_H([end, 1:end],:); tmp.C_2=tmp.C;
+%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN
 
 
     [tmp.mean_corr, tmp.err] = ...
@@ -1935,7 +1930,11 @@ for fake=1:1
     'fontsize',14,'fontname','freeserif','interpreter','none')
 
     %% caxis & colorbar
-    caxis(ax_m, [-tmp.trend_max tmp.trend_max]); 
+    if fig_flags_abs_cbar==1
+        caxis(ax_m, [-0.07 0.07])
+    else
+        caxis(ax_m, [-tmp.trend_max tmp.trend_max]); 
+    end 
     colormap(fig_cfg.c_map);
     cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
     set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
@@ -1946,12 +1945,13 @@ for fake=1:1
     shading flat;
     geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
 
-%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1) %for Chls, it uses all available data
-%             %% <AR1 area -> hatch
-%             pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2, 'parent', ax_m);
-%             set(pp2,'linestyle','none','Tag','HatchingRegion');
-%             hp = findobj(pp2,'Tag','HatchingRegion');
-%             hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
+%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1)
+%         %for Chls, it uses all available data
+%             %% <AR1 area -> hatch pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2,
+%             'parent', ax_m);
+%             set(pp2,'linestyle','none','Tag','HatchingRegion'); hp =
+%             findobj(pp2,'Tag','HatchingRegion'); hh =
+%             hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
 %         end
 
 
@@ -2017,9 +2017,8 @@ for fake=1:1
     tmp.C=data2.([tmp.varname, '_assm_trend2', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
 %         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+%         tmp.C_H=tmp.C_H([end, 1:end],:); tmp.C_2=tmp.C;
+%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN
 
 
     [tmp.mean_corr, tmp.err] = ...
@@ -2040,7 +2039,11 @@ for fake=1:1
     'fontsize',14,'fontname','freeserif','interpreter','none')
 
     %% caxis & colorbar
-    caxis(ax_m, [-tmp.trend_max tmp.trend_max]); 
+    if fig_flags_abs_cbar==1
+        caxis(ax_m, [-0.07 0.07])
+    else
+        caxis(ax_m, [-tmp.trend_max tmp.trend_max]); 
+    end 
     colormap(fig_cfg.c_map);
     cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
     set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
@@ -2051,12 +2054,13 @@ for fake=1:1
     shading flat;
     geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
 
-%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1) %for Chls, it uses all available data
-%             %% <AR1 area -> hatch
-%             pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2, 'parent', ax_m);
-%             set(pp2,'linestyle','none','Tag','HatchingRegion');
-%             hp = findobj(pp2,'Tag','HatchingRegion');
-%             hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
+%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1)
+%         %for Chls, it uses all available data
+%             %% <AR1 area -> hatch pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2,
+%             'parent', ax_m);
+%             set(pp2,'linestyle','none','Tag','HatchingRegion'); hp =
+%             findobj(pp2,'Tag','HatchingRegion'); hh =
+%             hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
 %         end
 
 
@@ -2113,9 +2117,8 @@ for fake=1:1
     tmp.C=data2.([tmp.varname, '_lens2_trend2', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
 %         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+%         tmp.C_H=tmp.C_H([end, 1:end],:); tmp.C_2=tmp.C;
+%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN
 
 
     [tmp.mean_corr, tmp.err] = ...
@@ -2136,7 +2139,11 @@ for fake=1:1
     'fontsize',14,'fontname','freeserif','interpreter','none')
 
     %% caxis & colorbar
-    caxis(ax_m, [-tmp.trend_max tmp.trend_max]); 
+    if fig_flags_abs_cbar==1
+        caxis(ax_m, [-0.07 0.07])
+    else
+        caxis(ax_m, [-tmp.trend_max tmp.trend_max]); 
+    end  
     colormap(fig_cfg.c_map);
     cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
     set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
@@ -2147,12 +2154,13 @@ for fake=1:1
     shading flat;
     geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
 
-%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1) %for Chls, it uses all available data
-%             %% <AR1 area -> hatch
-%             pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2, 'parent', ax_m);
-%             set(pp2,'linestyle','none','Tag','HatchingRegion');
-%             hp = findobj(pp2,'Tag','HatchingRegion');
-%             hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
+%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1)
+%         %for Chls, it uses all available data
+%             %% <AR1 area -> hatch pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2,
+%             'parent', ax_m);
+%             set(pp2,'linestyle','none','Tag','HatchingRegion'); hp =
+%             findobj(pp2,'Tag','HatchingRegion'); hh =
+%             hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
 %         end
 
 
@@ -2209,9 +2217,8 @@ for fake=1:1
     tmp.C=data2.([tmp.varname, '_model_trend2', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
 %         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+%         tmp.C_H=tmp.C_H([end, 1:end],:); tmp.C_2=tmp.C;
+%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN
 
 
     [tmp.mean_corr, tmp.err] = ...
@@ -2232,7 +2239,12 @@ for fake=1:1
     'fontsize',14,'fontname','freeserif','interpreter','none')
 
     %% caxis & colorbar
-    caxis(ax_m, [-tmp.trend_max tmp.trend_max]); 
+    if fig_flags_abs_cbar==1
+        caxis(ax_m, [-0.07 0.07])
+    else
+        caxis(ax_m, [-tmp.trend_max tmp.trend_max]); 
+    end
+
     colormap(fig_cfg.c_map);
     cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
     set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
@@ -2243,12 +2255,13 @@ for fake=1:1
     shading flat;
     geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
 
-%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1) %for Chls, it uses all available data
-%             %% <AR1 area -> hatch
-%             pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2, 'parent', ax_m);
-%             set(pp2,'linestyle','none','Tag','HatchingRegion');
-%             hp = findobj(pp2,'Tag','HatchingRegion');
-%             hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
+%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1)
+%         %for Chls, it uses all available data
+%             %% <AR1 area -> hatch pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2,
+%             'parent', ax_m);
+%             set(pp2,'linestyle','none','Tag','HatchingRegion'); hp =
+%             findobj(pp2,'Tag','HatchingRegion'); hh =
+%             hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
 %         end
 
 
@@ -2320,9 +2333,8 @@ for fake=1:1
     tmp.C=data2.([tmp.varname, '_assm_rmse2_obs', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
 %         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+%         tmp.C_H=tmp.C_H([end, 1:end],:); tmp.C_2=tmp.C;
+%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN
 
 
     [tmp.mean_corr, tmp.err] = ...
@@ -2354,12 +2366,13 @@ for fake=1:1
     shading flat;
     geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
 
-%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1) %for Chls, it uses all available data
-%             %% <AR1 area -> hatch
-%             pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2, 'parent', ax_m);
-%             set(pp2,'linestyle','none','Tag','HatchingRegion');
-%             hp = findobj(pp2,'Tag','HatchingRegion');
-%             hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
+%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1)
+%         %for Chls, it uses all available data
+%             %% <AR1 area -> hatch pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2,
+%             'parent', ax_m);
+%             set(pp2,'linestyle','none','Tag','HatchingRegion'); hp =
+%             findobj(pp2,'Tag','HatchingRegion'); hh =
+%             hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
 %         end
 
 
@@ -2417,9 +2430,8 @@ for fake=1:1
     tmp.C=data2.([tmp.varname, '_lens2_rmse2_obs', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
 %         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+%         tmp.C_H=tmp.C_H([end, 1:end],:); tmp.C_2=tmp.C;
+%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN
 
 
     [tmp.mean_corr, tmp.err] = ...
@@ -2451,12 +2463,13 @@ for fake=1:1
     shading flat;
     geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
 
-%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1) %for Chls, it uses all available data
-%             %% <AR1 area -> hatch
-%             pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2, 'parent', ax_m);
-%             set(pp2,'linestyle','none','Tag','HatchingRegion');
-%             hp = findobj(pp2,'Tag','HatchingRegion');
-%             hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
+%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1)
+%         %for Chls, it uses all available data
+%             %% <AR1 area -> hatch pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2,
+%             'parent', ax_m);
+%             set(pp2,'linestyle','none','Tag','HatchingRegion'); hp =
+%             findobj(pp2,'Tag','HatchingRegion'); hh =
+%             hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
 %         end
 
 
@@ -2514,9 +2527,8 @@ for fake=1:1
     tmp.C=data2.([tmp.varname, '_model_rmse2_obs', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
 %         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+%         tmp.C_H=tmp.C_H([end, 1:end],:); tmp.C_2=tmp.C;
+%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN
 
 
     [tmp.mean_corr, tmp.err] = ...
@@ -2548,12 +2560,13 @@ for fake=1:1
     shading flat;
     geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
 
-%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1) %for Chls, it uses all available data
-%             %% <AR1 area -> hatch
-%             pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2, 'parent', ax_m);
-%             set(pp2,'linestyle','none','Tag','HatchingRegion');
-%             hp = findobj(pp2,'Tag','HatchingRegion');
-%             hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
+%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1)
+%         %for Chls, it uses all available data
+%             %% <AR1 area -> hatch pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2,
+%             'parent', ax_m);
+%             set(pp2,'linestyle','none','Tag','HatchingRegion'); hp =
+%             findobj(pp2,'Tag','HatchingRegion'); hh =
+%             hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
 %         end
 
 
@@ -2631,9 +2644,8 @@ for fake=1:1
     tmp.C=tmp.C([end, 1:end],:);
     tmp.C(isinf(tmp.C))=NaN;
 %         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+%         tmp.C_H=tmp.C_H([end, 1:end],:); tmp.C_2=tmp.C;
+%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN
 
 
     [tmp.mean_corr, tmp.err] = ...
@@ -2665,12 +2677,13 @@ for fake=1:1
     shading flat;
     geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
 
-%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1) %for Chls, it uses all available data
-%             %% <AR1 area -> hatch
-%             pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2, 'parent', ax_m);
-%             set(pp2,'linestyle','none','Tag','HatchingRegion');
-%             hp = findobj(pp2,'Tag','HatchingRegion');
-%             hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
+%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1)
+%         %for Chls, it uses all available data
+%             %% <AR1 area -> hatch pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2,
+%             'parent', ax_m);
+%             set(pp2,'linestyle','none','Tag','HatchingRegion'); hp =
+%             findobj(pp2,'Tag','HatchingRegion'); hh =
+%             hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
 %         end
 
 
@@ -2728,9 +2741,8 @@ for fake=1:1
     tmp.C=tmp.C([end, 1:end],:);
     tmp.C(isinf(tmp.C))=NaN;
 %         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+%         tmp.C_H=tmp.C_H([end, 1:end],:); tmp.C_2=tmp.C;
+%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN
 
 
     [tmp.mean_corr, tmp.err] = ...
@@ -2762,12 +2774,13 @@ for fake=1:1
     shading flat;
     geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
 
-%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1) %for Chls, it uses all available data
-%             %% <AR1 area -> hatch
-%             pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2, 'parent', ax_m);
-%             set(pp2,'linestyle','none','Tag','HatchingRegion');
-%             hp = findobj(pp2,'Tag','HatchingRegion');
-%             hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
+%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1)
+%         %for Chls, it uses all available data
+%             %% <AR1 area -> hatch pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2,
+%             'parent', ax_m);
+%             set(pp2,'linestyle','none','Tag','HatchingRegion'); hp =
+%             findobj(pp2,'Tag','HatchingRegion'); hh =
+%             hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
 %         end
 
 
@@ -2826,9 +2839,8 @@ for fake=1:1
     tmp.C=tmp.C([end, 1:end],:);
     tmp.C(isinf(tmp.C))=NaN;
 %         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+%         tmp.C_H=tmp.C_H([end, 1:end],:); tmp.C_2=tmp.C;
+%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN
 
 
     [tmp.mean_corr, tmp.err] = ...
@@ -2860,12 +2872,13 @@ for fake=1:1
     shading flat;
     geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
 
-%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1) %for Chls, it uses all available data
-%             %% <AR1 area -> hatch
-%             pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2, 'parent', ax_m);
-%             set(pp2,'linestyle','none','Tag','HatchingRegion');
-%             hp = findobj(pp2,'Tag','HatchingRegion');
-%             hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
+%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1)
+%         %for Chls, it uses all available data
+%             %% <AR1 area -> hatch pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2,
+%             'parent', ax_m);
+%             set(pp2,'linestyle','none','Tag','HatchingRegion'); hp =
+%             findobj(pp2,'Tag','HatchingRegion'); hh =
+%             hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
 %         end
 
 
@@ -2933,9 +2946,8 @@ for fake=1:1
     tmp.C=data2.([tmp.varname, '_lens2_rmse2', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
 %         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+%         tmp.C_H=tmp.C_H([end, 1:end],:); tmp.C_2=tmp.C;
+%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN
 
 
     [tmp.mean_corr, tmp.err] = ...
@@ -2967,12 +2979,13 @@ for fake=1:1
     shading flat;
     geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
 
-%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1) %for Chls, it uses all available data
-%             %% <AR1 area -> hatch
-%             pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2, 'parent', ax_m);
-%             set(pp2,'linestyle','none','Tag','HatchingRegion');
-%             hp = findobj(pp2,'Tag','HatchingRegion');
-%             hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
+%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1)
+%         %for Chls, it uses all available data
+%             %% <AR1 area -> hatch pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2,
+%             'parent', ax_m);
+%             set(pp2,'linestyle','none','Tag','HatchingRegion'); hp =
+%             findobj(pp2,'Tag','HatchingRegion'); hh =
+%             hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
 %         end
 
 
@@ -3030,9 +3043,8 @@ for fake=1:1
     tmp.C=data2.([tmp.varname, '_model_rmse2', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
 %         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+%         tmp.C_H=tmp.C_H([end, 1:end],:); tmp.C_2=tmp.C;
+%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN
 
 
     [tmp.mean_corr, tmp.err] = ...
@@ -3064,12 +3076,13 @@ for fake=1:1
     shading flat;
     geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
 
-%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1) %for Chls, it uses all available data
-%             %% <AR1 area -> hatch
-%             pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2, 'parent', ax_m);
-%             set(pp2,'linestyle','none','Tag','HatchingRegion');
-%             hp = findobj(pp2,'Tag','HatchingRegion');
-%             hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
+%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1)
+%         %for Chls, it uses all available data
+%             %% <AR1 area -> hatch pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2,
+%             'parent', ax_m);
+%             set(pp2,'linestyle','none','Tag','HatchingRegion'); hp =
+%             findobj(pp2,'Tag','HatchingRegion'); hh =
+%             hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
 %         end
 
 
@@ -3137,9 +3150,8 @@ for fake=1:1
     tmp.C=data2.([tmp.varname, '_lens2_nrmse2', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
 %         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+%         tmp.C_H=tmp.C_H([end, 1:end],:); tmp.C_2=tmp.C;
+%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN
 
 
     [tmp.mean_corr, tmp.err] = ...
@@ -3171,12 +3183,13 @@ for fake=1:1
     shading flat;
     geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
 
-%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1) %for Chls, it uses all available data
-%             %% <AR1 area -> hatch
-%             pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2, 'parent', ax_m);
-%             set(pp2,'linestyle','none','Tag','HatchingRegion');
-%             hp = findobj(pp2,'Tag','HatchingRegion');
-%             hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
+%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1)
+%         %for Chls, it uses all available data
+%             %% <AR1 area -> hatch pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2,
+%             'parent', ax_m);
+%             set(pp2,'linestyle','none','Tag','HatchingRegion'); hp =
+%             findobj(pp2,'Tag','HatchingRegion'); hh =
+%             hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
 %         end
 
 
@@ -3234,9 +3247,8 @@ for fake=1:1
     tmp.C=data2.([tmp.varname, '_model_nrmse2', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
 %         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+%         tmp.C_H=tmp.C_H([end, 1:end],:); tmp.C_2=tmp.C;
+%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN
 
 
     [tmp.mean_corr, tmp.err] = ...
@@ -3268,12 +3280,13 @@ for fake=1:1
     shading flat;
     geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
 
-%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1) %for Chls, it uses all available data
-%             %% <AR1 area -> hatch
-%             pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2, 'parent', ax_m);
-%             set(pp2,'linestyle','none','Tag','HatchingRegion');
-%             hp = findobj(pp2,'Tag','HatchingRegion');
-%             hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
+%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1)
+%         %for Chls, it uses all available data
+%             %% <AR1 area -> hatch pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2,
+%             'parent', ax_m);
+%             set(pp2,'linestyle','none','Tag','HatchingRegion'); hp =
+%             findobj(pp2,'Tag','HatchingRegion'); hh =
+%             hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
 %         end
 
 
@@ -3339,9 +3352,8 @@ for fake=1:1
     tmp.C=data2.obs_stdt;
     tmp.C=tmp.C([end, 1:end],:);
 %         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_', tmp.season]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+%         tmp.C_H=tmp.C_H([end, 1:end],:); tmp.C_2=tmp.C;
+%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN
 
 
     fig_cfg.fig_name=[tmp.season, ', ensstdt_, ', tmp. varname];
@@ -3360,7 +3372,11 @@ for fake=1:1
     'fontsize',14,'fontname','freeserif','interpreter','none')
 
     %% caxis & colorbar
-    caxis(ax_m, [tmp.stdt_prc01 tmp.stdt_prc99]); 
+    if fig_flags_abs_cbar==1
+        caxis(ax_m, [0 1.5])
+    else
+        caxis(ax_m, [tmp.stdt_prc01 tmp.stdt_prc99]); 
+    end
 %     colormap(fig_cfg.c_map);
     colormap(flip(autumn(10)));
     cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
@@ -3434,9 +3450,8 @@ for fake=1:1
     tmp.C=data2.([tmp.varname,'_assm_ano_det2_stdt']);
     tmp.C=tmp.C([end, 1:end],:);
 %         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_', tmp.season]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+%         tmp.C_H=tmp.C_H([end, 1:end],:); tmp.C_2=tmp.C;
+%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN
 
 
     fig_cfg.fig_name=[tmp.season, ', ensstdt_, ', tmp. varname];
@@ -3455,7 +3470,11 @@ for fake=1:1
     'fontsize',14,'fontname','freeserif','interpreter','none')
 
     %% caxis & colorbar
-    caxis(ax_m, [tmp.stdt_prc01 tmp.stdt_prc99]); 
+    if fig_flags_abs_cbar==1
+        caxis(ax_m, [0 1.5])
+    else
+        caxis(ax_m, [tmp.stdt_prc01 tmp.stdt_prc99]); 
+    end
 %     colormap(fig_cfg.c_map);
     colormap(flip(autumn(10)));
     cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
@@ -3498,6 +3517,108 @@ for fake=1:1
 end
 end
 
+%% temporal std of lens2
+if fig_flags(39)==1
+    for fake=1:1
+        data2.obs_stdt=mean(data2.([tmp.varname,'_obs_ano_det2_stdt']),3, 'omitnan');    
+        data2.assm_stdt=mean(data2.([tmp.varname,'_assm_ano_det2_stdt']),3, 'omitnan');
+        data2.lens2_stdt=mean(data2.([tmp.varname,'_lens2_ano_det2_stdt_', tmp.season]),3, 'omitnan');
+    
+
+        tmp.stdt_all= [  data2.assm_stdt, ...
+                     data2.obs_stdt];
+        
+
+
+        tmp.stdt_prc99 =prctile(tmp.stdt_all(:), 99);
+        tmp.stdt_prc01 =prctile(tmp.stdt_all(:), 1);
+    
+        fig_cfg.name_rgn = 'Glob';
+        fig_cfg.map_proj = 'eqdcylin';  % robinson, eqdcylin
+    %     fig_cfg.map_proj = 'robinson';  % robinson, eqdcylin
+    
+        fig_cfg.x_lim = [-180 180];
+        fig_cfg.y_lim = [-80 89];
+        fig_cfg.fig_size = [0,0,6,3.5];
+        fig_cfg.ax_size = [0.3,0.7,5.4,2.7];
+        fig_cfg.cb_size = [5.15,0.8,0.15,2.3];
+        fig_cfg.title_pos = [0.5,0.93];
+        fig_cfg.p_lim =0.1;
+        fig_cfg.c_lim = [-1 1];
+        [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('bwr_10', tmp.dropboxpath);
+    
+        tmp.X=grid.tlong([end, 1:end],:);
+        tmp.Y=grid.tlat([end, 1:end],:);
+%         tmp.C=data2.([tmp.varname,'_assm_ano_det2_stdt']);
+        tmp.C=data2.([tmp.varname,'_lens2_ano_det2_stdt_', tmp.season]);
+        tmp.C=tmp.C([end, 1:end],:);
+    %         tmp.C_H=data.([tmp.varname, '_corr_AR1', '_', tmp.season]);
+    %         tmp.C_H=tmp.C_H([end, 1:end],:); tmp.C_2=tmp.C;
+    %         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN
+    
+    
+        fig_cfg.fig_name=[tmp.season, ', ensstdt_, ', tmp. varname];
+        fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
+            'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
+        %% map setting
+        ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
+            'fontname','freeserif'); 
+    
+        axis off; 
+        hold on;
+        setm(ax_m,'origin',[0,200],'MapLatLimit',fig_cfg.y_lim);  % lat origin(middle point), lon origin (middle point)
+        set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
+        text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
+        'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
+        'fontsize',14,'fontname','freeserif','interpreter','none')
+    
+        %% caxis & colorbar
+        if fig_flags_abs_cbar==1
+            caxis(ax_m, [0 1.5])
+        else
+            caxis(ax_m, [tmp.stdt_prc01 tmp.stdt_prc99]); 
+        end
+    %     colormap(fig_cfg.c_map);
+        colormap(flip(autumn(10)));
+        cb = colorbar(ax_m,'units','inches','position',fig_cfg.cb_size);
+        set(cb,'fontsize',12,'fontname','freeserif','TickDir','both');
+        title(cb,'\sigma_t','fontsize',12);
+    
+        %% draw on ax_m
+        h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
+        shading flat;
+        geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
+    
+    %% frame and label setting
+        setm(ax_m,'frame','on','FLineWidth',1);
+    
+        label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
+        label_x=mlabel('MLabelParallel','south', 'MLineLocation',20, 'MLabelLocation',60, 'labelrotation','on');
+        mlabel; plabel;
+        label_y=plabel; label_x=mlabel;
+        for lxi=1:length(label_x)
+            tmp.tmppos=label_x(lxi,1).Position;
+            tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.55; % y position correction
+            label_x(lxi,1).Position=tmp.tmppos;
+            label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
+        end
+        for lyi=1:length(label_y)
+            label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
+            tmp.tmppos=label_y(lyi,1).Position;
+            tmp.tmppos(1)=-fig_cfg.ax_size(3)+2.6; % x position correction
+            label_y(lyi,1).Position=tmp.tmppos;
+        end
+    
+        %% save
+        dirs.figdir= [dirs.figroot, filesep, cfg.casename_m, filesep, tmp.varname, '_ensstdt_map', filesep, 'lens2'];
+        if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
+        cfg.figname=[dirs.figdir, filesep, 'ensstdt_assm_ano_det2_map_', tmp.varname, '_', tmp.season, 'y.tif'];
+        print(fig_h, cfg.figname, '-dpng');
+        RemoveWhiteSpace([], 'file', cfg.figname);
+        close all;
+    end
+end
+
 %% temporal std difference of assm (ASSM - OBS)
 if fig_flags(40)==1
 for fake=1:1
@@ -3523,9 +3644,8 @@ for fake=1:1
         - data2.([tmp.varname,'_obs_ano_det2_stdt']);
     tmp.C=tmp.C([end, 1:end],:);
 %         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+%         tmp.C_H=tmp.C_H([end, 1:end],:); tmp.C_2=tmp.C;
+%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN
 
 
     fig_cfg.fig_name=[tmp.season, ', diff_ensstdt_, ', tmp.varname];
@@ -3587,10 +3707,6 @@ for fake=1:1
 end
 end
 
-
-
-
-
 %% AR1 coefficient based on assm
 if fig_flags(46)==1
 for fake=1:1
@@ -3614,9 +3730,8 @@ for fake=1:1
         tmp.C=-data2.([tmp.varname, '_assm_AR1_coef']);
         tmp.C=tmp.C([end, 1:end],:);
     %         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
-    %         tmp.C_H=tmp.C_H([end, 1:end],:);
-    %         tmp.C_2=tmp.C;
-    %         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+    %         tmp.C_H=tmp.C_H([end, 1:end],:); tmp.C_2=tmp.C;
+    %         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN
     
     
         fig_cfg.fig_name=[tmp.season, ', AR1_coef_, ', tmp. varname];
@@ -3700,9 +3815,8 @@ for fake=1:1
         tmp.C=data2.([tmp.varname, '_assm_AR1_noise']);
         tmp.C=tmp.C([end, 1:end],:);
     %         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
-    %         tmp.C_H=tmp.C_H([end, 1:end],:);
-    %         tmp.C_2=tmp.C;
-    %         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+    %         tmp.C_H=tmp.C_H([end, 1:end],:); tmp.C_2=tmp.C;
+    %         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN
     
     
         fig_cfg.fig_name=[tmp.season, ', AR1_noise_, ', tmp. varname];
@@ -3786,9 +3900,8 @@ for fake=1:1
         tmp.C=-data2.([tmp.varname, '_obs_AR1_coef']);
         tmp.C=tmp.C([end, 1:end],:);
     %         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
-    %         tmp.C_H=tmp.C_H([end, 1:end],:);
-    %         tmp.C_2=tmp.C;
-    %         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+    %         tmp.C_H=tmp.C_H([end, 1:end],:); tmp.C_2=tmp.C;
+    %         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN
     
     
         fig_cfg.fig_name=[tmp.season, ', obs_AR1_coef_, ', tmp. varname];
@@ -3872,9 +3985,8 @@ for fake=1:1
         tmp.C=data2.([tmp.varname, '_obs_AR1_noise']);
         tmp.C=tmp.C([end, 1:end],:);
     %         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
-    %         tmp.C_H=tmp.C_H([end, 1:end],:);
-    %         tmp.C_2=tmp.C;
-    %         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+    %         tmp.C_H=tmp.C_H([end, 1:end],:); tmp.C_2=tmp.C;
+    %         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN
     
     
         fig_cfg.fig_name=[tmp.season, ', AR1_noise_, ', tmp. varname];
@@ -3935,7 +4047,6 @@ for fake=1:1
 end
 end
 
-
  %% model-svd_1st(model-lens2) & assm corr map --------------------------------------
 if fig_flags(52)==1
 
@@ -3956,9 +4067,8 @@ if fig_flags(52)==1
     tmp.C=data2.([tmp.varname, '_corr_assm_int_svd', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
 %         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+%         tmp.C_H=tmp.C_H([end, 1:end],:); tmp.C_2=tmp.C;
+%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN
 
 
     [tmp.mean_corr, tmp.err] = ...
@@ -3990,12 +4100,13 @@ if fig_flags(52)==1
     shading flat;
     geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
 
-%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1) %for Chls, it uses all available data
-%             %% <AR1 area -> hatch
-%             pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2, 'parent', ax_m);
-%             set(pp2,'linestyle','none','Tag','HatchingRegion');
-%             hp = findobj(pp2,'Tag','HatchingRegion');
-%             hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
+%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1)
+%         %for Chls, it uses all available data
+%             %% <AR1 area -> hatch pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2,
+%             'parent', ax_m);
+%             set(pp2,'linestyle','none','Tag','HatchingRegion'); hp =
+%             findobj(pp2,'Tag','HatchingRegion'); hh =
+%             hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
 %         end
 
 
@@ -4046,9 +4157,8 @@ if fig_flags(52)==1
     tmp.C=data2.([tmp.varname, '_corr_assm_int2_svd', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
 %         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+%         tmp.C_H=tmp.C_H([end, 1:end],:); tmp.C_2=tmp.C;
+%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN
 
 
     [tmp.mean_corr, tmp.err] = ...
@@ -4080,12 +4190,13 @@ if fig_flags(52)==1
     shading flat;
     geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
 
-%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1) %for Chls, it uses all available data
-%             %% <AR1 area -> hatch
-%             pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2, 'parent', ax_m);
-%             set(pp2,'linestyle','none','Tag','HatchingRegion');
-%             hp = findobj(pp2,'Tag','HatchingRegion');
-%             hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
+%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1)
+%         %for Chls, it uses all available data
+%             %% <AR1 area -> hatch pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2,
+%             'parent', ax_m);
+%             set(pp2,'linestyle','none','Tag','HatchingRegion'); hp =
+%             findobj(pp2,'Tag','HatchingRegion'); hh =
+%             hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
 %         end
 
 
@@ -4139,9 +4250,8 @@ if fig_flags(52)==1
     tmp.C=data2.([tmp.varname, '_corr_obs_int_svd', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
 %         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+%         tmp.C_H=tmp.C_H([end, 1:end],:); tmp.C_2=tmp.C;
+%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN
 
 
     [tmp.mean_corr, tmp.err] = ...
@@ -4173,12 +4283,13 @@ if fig_flags(52)==1
     shading flat;
     geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
 
-%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1) %for Chls, it uses all available data
-%             %% <AR1 area -> hatch
-%             pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2, 'parent', ax_m);
-%             set(pp2,'linestyle','none','Tag','HatchingRegion');
-%             hp = findobj(pp2,'Tag','HatchingRegion');
-%             hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
+%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1)
+%         %for Chls, it uses all available data
+%             %% <AR1 area -> hatch pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2,
+%             'parent', ax_m);
+%             set(pp2,'linestyle','none','Tag','HatchingRegion'); hp =
+%             findobj(pp2,'Tag','HatchingRegion'); hh =
+%             hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
 %         end
 
 
@@ -4229,9 +4340,8 @@ if fig_flags(52)==1
     tmp.C=data2.([tmp.varname, '_corr_obs_int2_svd', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
 %         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+%         tmp.C_H=tmp.C_H([end, 1:end],:); tmp.C_2=tmp.C;
+%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN
 
 
     [tmp.mean_corr, tmp.err] = ...
@@ -4263,12 +4373,13 @@ if fig_flags(52)==1
     shading flat;
     geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
 
-%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1) %for Chls, it uses all available data
-%             %% <AR1 area -> hatch
-%             pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2, 'parent', ax_m);
-%             set(pp2,'linestyle','none','Tag','HatchingRegion');
-%             hp = findobj(pp2,'Tag','HatchingRegion');
-%             hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
+%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1)
+%         %for Chls, it uses all available data
+%             %% <AR1 area -> hatch pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2,
+%             'parent', ax_m);
+%             set(pp2,'linestyle','none','Tag','HatchingRegion'); hp =
+%             findobj(pp2,'Tag','HatchingRegion'); hh =
+%             hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
 %         end
 
 
@@ -4333,9 +4444,8 @@ for fake=1:1
     tmp.C=tmp.C([end, 1:end],:);
 
 %         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+%         tmp.C_H=tmp.C_H([end, 1:end],:); tmp.C_2=tmp.C;
+%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN
 
 
     [tmp.mean_corr, tmp.err] = ...
@@ -4367,12 +4477,13 @@ for fake=1:1
     shading flat;
     geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
 
-%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1) %for Chls, it uses all available data
-%             %% <AR1 area -> hatch
-%             pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2, 'parent', ax_m);
-%             set(pp2,'linestyle','none','Tag','HatchingRegion');
-%             hp = findobj(pp2,'Tag','HatchingRegion');
-%             hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
+%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1)
+%         %for Chls, it uses all available data
+%             %% <AR1 area -> hatch pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2,
+%             'parent', ax_m);
+%             set(pp2,'linestyle','none','Tag','HatchingRegion'); hp =
+%             findobj(pp2,'Tag','HatchingRegion'); hh =
+%             hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
 %         end
 
 
@@ -4429,9 +4540,8 @@ for fake=1:1
     tmp.C=tmp.C([end, 1:end],:);
 
 %         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+%         tmp.C_H=tmp.C_H([end, 1:end],:); tmp.C_2=tmp.C;
+%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN
 
 
     [tmp.mean_corr, tmp.err] = ...
@@ -4463,12 +4573,13 @@ for fake=1:1
     shading flat;
     geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
 
-%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1) %for Chls, it uses all available data
-%             %% <AR1 area -> hatch
-%             pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2, 'parent', ax_m);
-%             set(pp2,'linestyle','none','Tag','HatchingRegion');
-%             hp = findobj(pp2,'Tag','HatchingRegion');
-%             hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
+%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1)
+%         %for Chls, it uses all available data
+%             %% <AR1 area -> hatch pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2,
+%             'parent', ax_m);
+%             set(pp2,'linestyle','none','Tag','HatchingRegion'); hp =
+%             findobj(pp2,'Tag','HatchingRegion'); hh =
+%             hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
 %         end
 
 
@@ -4501,7 +4612,6 @@ for fake=1:1
     close all; 
 end
 end
-
 
 %% SVD - lens2-model plot
 if fig_flags(55)==1
@@ -5065,9 +5175,8 @@ for fake=1:1
     tmp.C=data2.([tmp.varname, '_corr_obs_ano', '_', tmp.season]) - data2.([tmp.varname, '_corr_obs_lens2_ano', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
 %         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+%         tmp.C_H=tmp.C_H([end, 1:end],:); tmp.C_2=tmp.C;
+%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN
 
 
     [tmp.mean_corr, tmp.err] = ...
@@ -5100,12 +5209,13 @@ for fake=1:1
     shading flat;
     geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
 
-%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1) %for Chls, it uses all available data
-%             %% <AR1 area -> hatch
-%             pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2, 'parent', ax_m);
-%             set(pp2,'linestyle','none','Tag','HatchingRegion');
-%             hp = findobj(pp2,'Tag','HatchingRegion');
-%             hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
+%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1)
+%         %for Chls, it uses all available data
+%             %% <AR1 area -> hatch pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2,
+%             'parent', ax_m);
+%             set(pp2,'linestyle','none','Tag','HatchingRegion'); hp =
+%             findobj(pp2,'Tag','HatchingRegion'); hh =
+%             hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
 %         end
 
 
@@ -5161,9 +5271,8 @@ for fake=1:1
     tmp.C=data2.([tmp.varname, '_corr_assm_ano', '_', tmp.season]) - data2.([tmp.varname, '_corr_assm_lens2_ano', '_', tmp.season]);
     tmp.C=tmp.C([end, 1:end],:);
 %         tmp.C_H=data2.([tmp.varname, '_corr_AR1', '_', tmp.season]);
-%         tmp.C_H=tmp.C_H([end, 1:end],:);
-%         tmp.C_2=tmp.C;
-%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN 
+%         tmp.C_H=tmp.C_H([end, 1:end],:); tmp.C_2=tmp.C;
+%         tmp.C_2(tmp.C>tmp.C_H)=NaN;  % if AR1 corr > model = NaN
 
 
     [tmp.mean_corr, tmp.err] = ...
@@ -5196,12 +5305,13 @@ for fake=1:1
     shading flat;
     geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
 
-%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1) %for Chls, it uses all available data
-%             %% <AR1 area -> hatch
-%             pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2, 'parent', ax_m);
-%             set(pp2,'linestyle','none','Tag','HatchingRegion');
-%             hp = findobj(pp2,'Tag','HatchingRegion');
-%             hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
+%         if (strcmp(tmp.season, 'INI')~=1 & strcmp(cfg.var, 'sumChl')~=1)
+%         %for Chls, it uses all available data
+%             %% <AR1 area -> hatch pp2 = pcolorm(tmp.Y,tmp.X,tmp.C_2,
+%             'parent', ax_m);
+%             set(pp2,'linestyle','none','Tag','HatchingRegion'); hp =
+%             findobj(pp2,'Tag','HatchingRegion'); hh =
+%             hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
 %         end
 
 
@@ -5417,9 +5527,8 @@ end
         'fontsize',14,'fontname','freeserif','interpreter','none')
     
         %% caxis & colorbar
-%         tmp.maxval=max(abs(tmp.C(isfinite(tmp.C))));
-%         caxis(ax_m, [-tmp.maxval tmp.maxval]); 
-%         caxis(ax_m, [tmp.prc05 tmp.prc95]); 
+%         tmp.maxval=max(abs(tmp.C(isfinite(tmp.C)))); caxis(ax_m,
+%         [-tmp.maxval tmp.maxval]); caxis(ax_m, [tmp.prc05 tmp.prc95]);
         tmp.maxval=max(abs([tmp.prc05 tmp.prc95]));
         caxis(ax_m, [-tmp.maxval tmp.maxval]); 
         colormap(fig_cfg.c_map);
@@ -5518,9 +5627,8 @@ end
         'fontsize',14,'fontname','freeserif','interpreter','none')
     
         %% caxis & colorbar
-%         tmp.maxval=max(abs(tmp.C(isfinite(tmp.C))));
-%         caxis(ax_m, [-tmp.maxval tmp.maxval]); 
-%         caxis(ax_m, [tmp.prc05 tmp.prc95]); 
+%         tmp.maxval=max(abs(tmp.C(isfinite(tmp.C)))); caxis(ax_m,
+%         [-tmp.maxval tmp.maxval]); caxis(ax_m, [tmp.prc05 tmp.prc95]);
         tmp.maxval=max(abs([tmp.prc05 tmp.prc95]));
         caxis(ax_m, [-tmp.maxval tmp.maxval]); 
         colormap(fig_cfg.c_map);

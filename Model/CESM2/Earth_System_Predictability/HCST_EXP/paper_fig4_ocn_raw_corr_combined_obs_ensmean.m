@@ -950,7 +950,7 @@ end
         filesep, 'Figureset_raw', filesep, 'fig4','_OCN_comb_obs_ensmean', '.tif'];
     print(fig_h, cfg.figname, '-dpng');
 %     RemoveWhiteSpace([], 'file', cfg.figname);
-    close all;
+    close all;ㄴ
 
 % end
 

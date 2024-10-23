@@ -894,6 +894,17 @@ for mi1= 1:cfg_assm.len_mem
                 corrval_lens2.assm_lens2.val((mi1-1)*cfg_lens2.len_mem+mi2, vali)=single(tmp.corr(1,2));
         end
     end
+    %% assm individual <-> LENS2 mean
+    corrval_lens2.assm_lens2_em.corr_member{1,mi1}=[tmp.member1, ' x ', 'LENS2 ensemble mean'];
+    disp([tmp.varname, 'corr, ', corrval_lens2.assm_lens2_em.corr_member{1,mi1}]);
+    for vali=1:length(grid.valid_ind)
+        loni=grid.valid_ind_i(vali);
+        lati=grid.valid_ind_j(vali);
+            [tmp.corr, tmp.corr_p]=corrcoef(data_assm.([cfg.var,'_ym'])(mi1,loni,lati,:), ...
+                data_lens2_em.([cfg.var,'_ym'])(loni,lati,:), 'Rows', 'complete');
+            corrval_lens2.assm_lens2_em.val_sr(mi1, vali)=single(tmp.corr(1,2));
+    end
+
 end
 corrval_lens2.assm_lens2.val_mean=squeeze(mean(corrval_lens2.assm_lens2.val,1));
 corrval_lens2.assm_lens2.val_median=squeeze(median(corrval_lens2.assm_lens2.val,1));
@@ -915,6 +926,17 @@ for mvi=2:4
                     corrval_lens2.(['assm_lens2_', str_mvi, 'ym']).val((mi1-1)*cfg_lens2.len_mem+mi2, vali)=single(tmp.corr(1,2));
             end
         end
+        %% assm individual <-> LENS2 mean (single realization, perferct forecast approach)
+        corrval_lens2.assm_lens2_em.corr_member{1,mi1}=[tmp.member1, ' x ', 'LENS2 ensemble mean'];
+        disp([tmp.varname, 'corr, ly', str_mvi, ', ', corrval_lens2.assm_lens2_em.corr_member{1,mi1}]);
+        for vali=1:length(grid.valid_ind)
+            loni=grid.valid_ind_i(vali);
+            lati=grid.valid_ind_j(vali);
+                [tmp.corr, tmp.corr_p]=corrcoef(data_assm.([cfg.var,'_', str_mvi, 'ym'])(mi1,loni,lati,:), ...
+                    data_lens2_em.([cfg.var,'_', str_mvi, 'ym'])(loni,lati,:), 'Rows', 'complete');
+                corrval_lens2.(['assm_lens2_em_', str_mvi, 'ym']).val_sr(mi1, vali)=single(tmp.corr(1,2));
+        end
+
     end
     corrval_lens2.(['assm_lens2_', str_mvi, 'ym']).val_mean=squeeze(mean(corrval_lens2.(['assm_lens2_', str_mvi, 'ym']).val,1));
     corrval_lens2.(['assm_lens2_', str_mvi, 'ym']).val_median=squeeze(median(corrval_lens2.(['assm_lens2_', str_mvi, 'ym']).val,1));
@@ -1151,6 +1173,21 @@ for ly=1:5 %1:5
 %                 corrval_hcst.assm_hcst_int.(tmp.ly_str).p((mi1-1)*cfg_hcst.len_mem+mi2, vali)=single(tmp.corr_p(1,2));
             end
         end
+        %% ASSM individual <-> HCST ensmean (single realization, perferct forecast approach)
+        corrval_hcst.assm_hcst_em.(tmp.ly_str).corr_member{1,mi1}=[tmp.member1, ' x ', 'HCST ensemble mean'];
+        disp([tmp.varname,', ly:', num2str(ly), ', corr, ', corrval_hcst.assm_hcst_em.(tmp.ly_str).corr_member{1,mi1}]);
+        for vali=1:length(grid.valid_ind)
+            loni=grid.valid_ind_i(vali);
+            lati=grid.valid_ind_j(vali);
+             [tmp.corr, tmp.corr_p]=corrcoef(data_assm.([cfg.var,'_ym'])(mi1,loni,lati,:), ...
+                data_hcst_em.(tmp.ly_str).([cfg.var, '_ym'])(loni,lati,:), 'Rows', 'complete');
+            corrval_hcst.assm_hcst.(tmp.ly_str).val_sr(mi1, vali)=single(tmp.corr(1,2));
+            %% internal signal
+            [tmp.corr, tmp.corr_p]=corrcoef(data_assm.([cfg.var,'_ym'])(mi1,loni,lati,:), ...
+                squeeze(data_hcst_em.(tmp.ly_str).([cfg.var, '_ym'])(loni,lati,:)) - ...
+                squeeze(data_lens2_em.([cfg.var, '_ym'])(loni,lati,:)), 'Rows', 'complete');
+            corrval_hcst.assm_hcst_em_int.(tmp.ly_str).val_sr(mi1, vali)=single(tmp.corr(1,2));
+        end
     end
     corrval_hcst.assm_hcst.(tmp.ly_str).val_mean=squeeze(mean(corrval_hcst.assm_hcst.(tmp.ly_str).val,1));
     corrval_hcst.assm_hcst.(tmp.ly_str).val_median=squeeze(median(corrval_hcst.assm_hcst.(tmp.ly_str).val,1));
@@ -1319,7 +1356,7 @@ data_hcst_em.([cfg.var, '_2ym'])=squeeze(mean(data_hcst.([cfg.var, '_2ym']),1));
 data_hcst_em.([cfg.var, '_3ym'])=squeeze(mean(data_hcst.([cfg.var, '_3ym']),1));
 data_hcst_em.([cfg.var, '_4ym'])=squeeze(mean(data_hcst.([cfg.var, '_4ym']),1));
 
-%% corr, ASSM <-> HCST
+%% corr, ASSM <-> HCST (moving averaged)
 for mvi=2:4
     str_mvi=num2str(mvi);
     disp(['mvy', str_mvi]);
@@ -1343,6 +1380,23 @@ for mvi=2:4
                 corrval_hcst.(['assm_hcst_int_', str_mvi, 'ym']).val((mi1-1)*cfg_hcst.len_mem+mi2, vali)=single(tmp.corr(1,2));
             end
         end
+        corrval_hcst.(['assm_hcst_em_',str_mvi, 'ym']).corr_member{1,mi1}=[tmp.member1, ' x ', 'HCST ensemble mean'];
+        disp([tmp.varname,', mvy:', str_mvi, ', corr, ', corrval_hcst.(['assm_hcst_em_',str_mvi, 'ym']).corr_member{1,mi1}]);
+        for vali=1:length(grid.valid_ind)
+            loni=grid.valid_ind_i(vali);
+            lati=grid.valid_ind_j(vali);
+             [tmp.corr, tmp.corr_p]=corrcoef(data_assm.([cfg.var,'_', str_mvi, 'ym'])(mi1,loni,lati,:), ...
+                data_hcst_em.([cfg.var, '_', str_mvi, 'ym'])(loni,lati,:), 'Rows', 'complete');
+            corrval_hcst.(['assm_hcst_em_',str_mvi, 'ym']).val_sr(mi1, vali)=single(tmp.corr(1,2));
+
+            %% internal signal
+            [tmp.corr, tmp.corr_p]=corrcoef(data_assm.([cfg.var,'_', str_mvi, 'ym'])(mi1,loni,lati,:), ...
+                squeeze(data_hcst_em.([cfg.var,'_', str_mvi, 'ym'])(loni,lati,:)) - ...
+                squeeze(data_lens2_em.([cfg.var, '_', str_mvi, 'ym'])(loni,lati,:)), 'Rows', 'complete');
+            corrval_hcst.(['assm_hcst_em_int_', str_mvi, 'ym']).val_sr(mi1, vali)=single(tmp.corr(1,2));
+        end
+
+
     end
     corrval_hcst.(['assm_hcst_',str_mvi, 'ym']).val_mean=squeeze(mean(corrval_hcst.(['assm_hcst_',str_mvi, 'ym']).val,1));
     corrval_hcst.(['assm_hcst_',str_mvi, 'ym']).val_median=squeeze(median(corrval_hcst.(['assm_hcst_',str_mvi, 'ym']).val,1));

@@ -115,7 +115,7 @@ cfg.vars = {'TS'};
 cfg.vars={'mul_VVEL_NO3', 'mul_WVEL_NO3', 'mul_UVEL_NO3'};
 cfg.vars={'WVEL', 'VVEL', 'UVEL'};
 cfg.vars={'SST'};
-cfg.vars={'TEMP'};
+cfg.vars={'SSH'};
 
 cfg.vlayer=1:10; % 10layer. don't put more than 15
 % cfg.vlayer=1; % surface, vertical slice
@@ -227,7 +227,7 @@ fig_flags(1:100)=0;
 % fig_flags(27:30)=1;
 % fig_flags(32:34)=1; % ensmean
 % % % % fig_flags(35:37)=1; % spread
-% fig_flags(39)=1;
+fig_flags(39)=1;
 % fig_flags(44:45)=1;
 % fig_flags(13)=1;
 % % % % fig_flags(52)=1;
@@ -3941,12 +3941,17 @@ for fake=1:1
 end
 end
 
+data.([tmp.varname,'_obs_stdt'])=std(data.([tmp.varname,'_obs']),1,3);
+data.([tmp.varname,'_assm_stdt'])=std(data.([tmp.varname,'_assm']),1,3);
+data.([tmp.varname,'_lens2_stdt'])=std(data.([tmp.varname,'_lens2_l00']),1,3);
+
 %% temporal std of obs
 if fig_flags(38)==1
 for fake=1:1
-
+    
     data.obs_stdt=mean(data.([tmp.varname,'_obs_stdt']),3, 'omitnan');    
-    data.assm_stdt=mean(data.([tmp.varname,'_assm_stdt']),3, 'omitnan');    
+    data.assm_stdt=mean(data.([tmp.varname,'_assm_stdt']),3, 'omitnan');
+    data.lens2_stdt=mean(data.([tmp.varname,'_lens2_stdt']),3, 'omitnan');
 
     tmp.stdt_all= [  data.assm_stdt, ...
                  data.obs_stdt];
@@ -4054,7 +4059,9 @@ for fake=1:1
 %     fig_cfg.map_proj = 'robinson';  % robinson, eqdcylin
 
     fig_cfg.x_lim = [-180 180];
+%     fig_cfg.x_lim = [110 180];
     fig_cfg.y_lim = [-80 89];
+%     fig_cfg.y_lim = [25 45];
     fig_cfg.fig_size = [0,0,6,3.5];
     fig_cfg.ax_size = [0.3,0.7,5.4,2.7];
     fig_cfg.cb_size = [5.15,0.8,0.15,2.3];
@@ -4075,7 +4082,7 @@ for fake=1:1
 
     fig_cfg.fig_name=['l',tmp.lyear_str, ', ensstdt_, ', tmp. varname];
     fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
-        'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
+        'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','on');
     %% map setting
     ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
         'fontname','freeserif'); 
@@ -4083,6 +4090,8 @@ for fake=1:1
     axis off; 
     hold on;
     setm(ax_m,'origin',[0,200],'MapLatLimit',fig_cfg.y_lim);  % lat origin(middle point), lon origin (middle point)
+%     setm(ax_m,'origin',[35,145],'MapLatLimit',fig_cfg.y_lim);  % lat origin(middle point), lon origin (middle point)
+
     set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
     text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
     'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...

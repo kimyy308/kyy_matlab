@@ -1,6 +1,7 @@
 clc;clear all;close all;
 % % This script is based on MATLAB 2017a
 % % Updated 28-Mar-2019 by Y-Y. Kim.
+warning off
 
 system_name=computer;
 if (strcmp(system_name,'PCWIN64'))
@@ -16,118 +17,164 @@ elseif (strcmp(system_name,'GLNXA64'))
     addpath(genpath([dropboxpath '/source/matlab/Common/Figure']));
     addpath(genpath([dropboxpath '/source/matlab/Common/netcdf_old']));
     addpath(genpath([dropboxpath '/source/matlab/Model/ROMS/Grid_kyy']));
+elseif (strcmp(system_name,'MACI64'))
+    dropboxpath='/Volumes/kyy_raid/kimyy/Dropbox';
+    addpath(genpath([dropboxpath '/source/matlab/Common/m_map']));
+    addpath(genpath([dropboxpath '/source/matlab/Common/Figure']));
+    addpath(genpath([dropboxpath '/source/matlab/Common/netcdf_old']));
+    addpath(genpath([dropboxpath '/source/matlab/Model/ROMS/Grid_kyy']));
 end
 
 presentdir = pwd;
 
-workdir='/data1/kimyy/etc/CMIP5_CSEOF';
-% var_names = {'tas', 'psl', 'hur', 'rsds', 'ua', 'va'};  % tas, psl, hur, rsds, ua, va
-var_names = {'zos'};  % tas, psl, hur, rsds, ua, va
+workdir='/Users/kimyy/CSEOF'; % %% eigen fortran codes cannot recognize filenames longer than 50 characters. must be short.
+var_names = {'sst'};  % tas, psl, hur, rsds, ua, va ...
 
-model_name = 'NorESM1-M';
+model_name = 'ERSST';
 scen_name = 'historical';
-inputyear = 1976:2005;
-dl = 0.5;
-section = [115 164 15 52];  
-regress_flag = 1;   % regression switch
+inputyear = 1981:2020;
+
+regress_flag = 0;   % regression switch
 tgt_var_name = 'tas';   % target variable name
 % if (regress_flag == 1)
 %     regress_tgt_mode = 2;
 % end
 
+
+
+
+%%
+    %% blue-white-red colormap
+    %%
+    i=1:20;
+      bwrmap(i,1)= 0.;
+      bwrmap(i,2)= 0.2:(0.3/19.):0.5;
+      bwrmap(i,3)= 0.4:(0.6/19.):1.;
+    
+    i=21:49;
+      bwrmap(i,1)= 0.:(1./28.):1.;
+      bwrmap(i,2)= 0.5:(0.5/28.):1.;
+      bwrmap(i,3)= 1.;   
+    
+    i=49:51;
+      bwrmap(i,1)= 1.;
+      bwrmap(i,2)= 1.;
+      bwrmap(i,3)= 1.;
+    
+    i=51:56;
+      bwrmap(i,1)= 1.;
+      bwrmap(i,2)= 1.:(-0.1/5.):0.9;
+      bwrmap(i,3)= 1.:(-0.1/5.):0.9;
+    
+    i=56:70;
+      bwrmap(i,1)= 1.;
+      bwrmap(i,2)= 0.9:(-0.45/14.):0.45;
+      bwrmap(i,3)= 0.9:(-0.45/14.):0.45;
+     
+    i=70:80;
+      bwrmap(i,1)= 1.;
+      bwrmap(i,2)= 0.45:(-0.45/10.):0.;
+      bwrmap(i,3)= 0.45:(-0.45/10.):0.;
+     
+    i=80:100;
+      bwrmap(i,1)= 1.:(-0.6/20.):0.4;
+      bwrmap(i,2)= 0.;
+      bwrmap(i,3)= 0.;
+      
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 for nvar = 1:length(var_names)
     var_name = var_names{nvar};
-    %% ---------case 1. ATM file(ocean mask)-------------%
-    %example of temperature (40 layer)
+    %% ---------case 1. ERSST file (ocean mask)-------------%
+    %example of ERSST
     %-----------STEP1. set the variables----------------%
     %input file path,name
     %path in the damo server
     tfreq = 1;  %% 1 : monthly, 2 : daily
 
     for nyear = 1:length(inputyear)
-      tempyear = inputyear(nyear);
-      filepath = [workdir, '/data/', model_name, '_mon/', scen_name, '/', var_name]
-      
-      if (strcmp('zos',var_name) == 1)
-        filename = [var_name, '_interp_', model_name, '_', ...
-          scen_name, '_r1i1p1_', num2str(tempyear,'%04i'), '.nc']
-      else
-        filename = [var_name, '_mon_', model_name, '_', ...
-          scen_name, '_r1i1p1_', num2str(tempyear,'%04i'), '.nc']
-      end
-      file = strcat(filepath, '/', filename)
-
-    % % % %  open nc file and set the study area
-      if (nyear == 1)
-        lon_glo = ncread(file,'lon');
-        lat_glo = ncread(file,'lat');
-    %    lev = ncread(file,'S');
-        xlen_glo=length(lon_glo);
-        ylen_glo=length(lat_glo);
-    %    zlen=length(lev)
-        [indw, inde, inds, indn] = findind_Y(dl, section, lon_glo, lat_glo);
-
-        lon = ncread(file,'lon',indw, inde-indw+1);
-        lat = ncread(file,'lat',inds, indn-inds+1);
-        xlen = length(lon);
-        ylen = length(lat);
-      end 
-      % first time is 16-JAN-1979, monthly data.
-      %time = nc{'TIME1'}(49:408);
-      %time = ncread(file, 'TIME1')
-
-      if (tfreq==1)
-          tstart=(nyear-1)*12+1;
-          tend=nyear*12;
-          temptime = ncread(file,'time',1,12);
-          ttemp = ncread(file,var_name,[indw inds 1], [xlen ylen 12]);
-      elseif (tfreq==2)
-          tstart=(nyear-1)*365+1;
-          tend=nyear*365;
-          temptime = ncread(file,'time',1,365);
-          ttemp = ncread(file,var_name,[indw inds 1], [xlen ylen 365]);
-      end
-
-    %   temptime = ncread(file,'time');
-      time(tstart:tend)=temptime;
-      tlen=length(time)
-
-      temp(:,:,tstart:tend)=ttemp;
+        tempyear = inputyear(nyear);
+        for nmon = 1:12
+          filepath = [workdir, '/NWP'];
+          filename = ['NWP_ersst_reg_cesm2.v5.', num2str(tempyear,'%04i'), num2str(nmon, '%02i'), '.nc'];
+          file = strcat(filepath, '/', filename);
+    
+        %%  open nc file
+          if (nyear == 1)
+            lon = ncread(file, 'lon');
+            lat = ncread(file, 'lat');
+    
+            xlen = length(lon);
+            ylen = length(lat);
+          end 
+          
+          predict_file_info=ncinfo(file);
+          num_of_var=length(predict_file_info.Variables);
+          for i=1:num_of_var
+            if (strcmp(predict_file_info.Variables(i).Name,var_name)==1)
+                predictor_varind=i;
+            end
+          end
+          num_of_dim=length(predict_file_info.Variables(predictor_varind).Dimensions);
+          
+          if (tfreq==1)
+            temptime = ncread(file,'time');
+            ttemp = ncread(file,var_name);
+          elseif (tfreq==2)
+              tstart=(nyear-1)*365+1;
+              tend=nyear*365;
+              temptime = ncread(file,'time',1,365);
+              ttemp = ncread(file,var_name,[indw inds 1], [xlen ylen 365]);
+          end
+    
+          time((nyear-1)*12+nmon)=temptime;
+          temp(:,:,(nyear-1)*12+nmon)=ttemp;
+        end
     end
+    tlen=length(time);
 
     % j : layer(vertical)
     for j = 1 : 1  
-        %setting land mask and save mask file
+        %% setting land&ocean mask and save mask file for recast
     %     size(temp2)
         n=length(lon);
         q=length(lat);
         m=length(time);
-    %     get salt data for land mask
-        saltname = [workdir, '/data/', model_name, '_mon/so_interp_', model_name, '_', scen_name, '_r1i1p1_', num2str(inputyear(1),'%04i'), '.nc'];
-        salt = ncread(saltname,'so');
-        lon_salt =ncread(saltname, 'lon');
-        lat_salt =ncread(saltname, 'lat');
-        salt_interped=griddata(double(lon_salt),double(lat_salt'), double(squeeze(salt(:,:,1,1))'), double(lon), double(lat'))';
+        temp_mask=squeeze(temp(:,:,1));
         land_idx = zeros(n*q,1);
-        idx = find(isnan(salt_interped)==1) ; %land mask: temp==0
+        idx = find(isnan(temp_mask)) ; %land mask: temp==0
         land_idx(idx) = 1 ;
         land_mask = find(land_idx ==1);
         ocean_mask = find(land_idx ==0);
-        ocean_mask_name=strcat(workdir, '/data/', model_name, '_mon/ocean_mask_layer_', num2str(j,'%02i'), '.txt');
+        ocean_mask_name=strcat(workdir, '/test/input/', model_name, '_', 'ocean_mask_layer_', num2str(j,'%02i'), '.txt');
         save(ocean_mask_name,'ocean_mask','-ascii');
 
-        %extract temp data(NaN data remove)
+        %% extract temp data(exclude NaN)
         data =zeros(n*q- length(land_mask),m);
         for i = 1:m 
             temp2=squeeze(temp(:,:,i));
         %temp2(i,j,:,:)=permute(temp(:,:,j,i), [4 3 2 1]); %temp : lon, lat , depth, time
             temp2(land_mask) = [];
             data(:,i) = temp2(:)' ; % [space time]
-    %	size(temp2)
         end
 
         sizedata=size(data); 
-        %% for the fast calculation speed, if [M*N], M must be higher than N.
+        %% for fast calculation speed, if [M*N], M must be higher than N.
         if (sizedata(1) >= sizedata(2)) 
             data2 = data;
         else
@@ -137,7 +184,7 @@ for nvar = 1:length(var_names)
         size(data2)
         slen = size(data2,1);
         %save data
-        tt = strcat(workdir, '/data/', model_name, '_mon/', scen_name, '/', var_name, '/', model_name, '_', var_name, '_', num2str(j,'%02i'), '.data');
+        tt = strcat(workdir, '/test/input/', model_name, '_', var_name, '_', num2str(j,'%02i'), '.data');
         save(tt,'data2','-ASCII');
         disp(['dimension of sampling stations : ',num2str(slen)]);
         disp(['number of sampling points at each station : ',num2str(tlen)]);
@@ -147,25 +194,23 @@ for nvar = 1:length(var_names)
 
     %% STEP 2_1 Makescript_eigen
 
-    % make cseof directory for each variable, model
-%     var_name='hur'
-    cd([workdir, '/script/']);
-    cseof_output_dir = [workdir, '/cseofs/', model_name, '/', scen_name, '/', var_name]
+    %% make cseof directory for each variable, model
+    cd([workdir, '/test/']);
+    cseof_output_dir = [workdir, '/test/output'];
     mkdir(cseof_output_dir);
 
     name= cell(28);
     %----------STEP2. make script file-----------------------------------%
     name{1} = '#!/bin/csh';     %use csh shell
-    % for i = 1:length(nn);
     name{2} = char('');
-    name{3} = char(['gfortran -fno-backtrace -o eigen ', workdir, '/programs/eigen/eigenx.f']); %compile the eigen file
+    name{3} = char(['gfortran  -fno-backtrace -o eigen ', workdir, '/programs/eigen/eigenx.f']); %compile the eigen file
     name{4} = char('');
     name{5} = char('cat >! eof.com <<ENDc'  );
-%     name1 = char(name1, strcat('../data/',nn(i,:),'.data')  );         %load variable file
-%         name{6} = char(tt);  %load variable file. if it is longer than 50 character, you must correct filename variable size in eigenx.f or eigen.f
-    ttt = ['./../data/', model_name, '_', var_name, '_', num2str(j,'%02i'), '.data'];
-    system(['ln -sf ', tt, ' ', ttt]);  %% eigen fortran codes cannot recognize filenames longer than 50 characters.
-    name{6} = char(ttt);
+%     ttt = ['./../data/', model_name, '_', var_name, '_', num2str(j,'%02i'), '.data'];
+%     ttt = ['./', model_name, '_', var_name, '_', num2str(j,'%02i'), '.data'];
+%     system(['ln -sf ', tt, ' ', ttt]);  %% eigen fortran codes cannot recognize filenames longer than 50 characters.
+%     name{6} = char(ttt);
+    name{6} = char(tt);  % input file name
     name{7} = char(['((', num2str(tlen), 'e16.7))'] );  %ascii file read, (time_num)e16.7
     name{8} = char([num2str(slen), ' 1']); %space number
     name{9} = char(num2str(tlen));  %time number
@@ -174,43 +219,39 @@ for nvar = 1:length(var_names)
     name{12} = char('1          '  );
     name{13} = char('0              ' ); %% area adjustment (0: No)
     name{14} = char('15. 37.' );  %% starting latitude and increment for area adjustment
-    name{15} = char('99.99');  %want to modes to explain 95% (percent variance)
+%     name{15} = char('99.99');  %want to modes to explain 95% (percent variance)
+    name{15} = char('100.0');  %want to modes to explain 95% (percent variance)
     name{16} = char('1.' );  %% EOF scaling factor
     eofmodenum= 10;
     maxmodenum = num2str(eofmodenum);
     name{17} = char(maxmodenum);  %% number of EOFs to be printed                              
     name{18} = char('0');  %% PC normalization
-%     name{} = char(name{}, strcat('../cseofs/eof_',nn(i,:),'.dat')   );  %save eof LV file
-%         name{19} = char(strcat(cseof_output_dir, '/eof_', model_name, '_', var_name, '.dat')   );  %save eof LV file    
     eof_tt = strcat(cseof_output_dir, '/eof_', model_name, '_', var_name, '.dat');
-    eof_ttt = strcat('./../data/eof_', model_name, '_', var_name, '.dat');
-    name{19} = char(eof_ttt);  %save eof LV file    
+    name{19} = char(eof_tt);  %save eof LV file    
     name{20} = char('DIR');                                       %DIR : binary
-%     name{} = char(name{}, strcat('../cseofs/pct_',nn(i,:),'.dat')   );  %save eof pct file
     pct_tt = strcat(cseof_output_dir, '/pct_', model_name, '_', var_name, '.dat');
-    pct_ttt = strcat('./../cseofs/pct_', model_name, '_', var_name, '.dat');    
-    name{21} = char(pct_ttt);  %save eof pct file
+    name{21} = char(pct_tt);  %save eof pct file
     name{22} = char('(5e13.5)' );     %% ASCII format "in parenthesis"                               %save option: 6e13.5 acsii
     name{23} = strtrim(char('ENDc'));
     name{24} = char(['./eigen < ./eof.com'] );
-%     name{} = char(name{}, [workdir, '/script/eigen < ', workdir, '/script/eof.com'] );
-    name{25} = char(['mv -f ', workdir, '/script/inform.d ', cseof_output_dir, '/inf_', 'NorESM1-M_', var_name,'.d']); %save information file
-    name{26} = char(['mv -f ', workdir, '/script/avg.d ', cseof_output_dir, '/avg_', 'NorESM1-M_', var_name,'.d']);  %save average file
+    name{25} = char(['mv -f ', workdir, '/script/inform.d ', cseof_output_dir, '/inf_', model_name, '_', var_name,'.d']); %save information file
+    name{26} = char(['mv -f ', workdir, '/script/avg.d ', cseof_output_dir, '/avg_', model_name, '_', var_name,'.d']);  %save average file
     name{27} = char('rm -f eigen eof.com' );
     name{28} = char('' );
     %     name = char(name,strtrim(name1));
     % end
 
-    fid = fopen([workdir, '/script/eigen.c'], 'w+')
+    fid = fopen([workdir, '/test/scripts/eigen.c'], 'w+')
     for nline=1:length(name)
         fprintf(fid, '%s\n', name{nline});
     end
     fclose(fid);
-    system(['cd ', workdir, '/script'])
-    system(['csh -xv eigen.c > ', cseof_output_dir, '/eigen_log.log']);
+%     system(['cd ', workdir, '/test/scripts'])
+    cd([workdir, '/test/scripts']);
+    system(['export PATH=$PATH:/usr/local/bin; csh -xv eigen.c > ', cseof_output_dir, '/eigen_log.log']);
         
     %% STEP 2_1 Makescript_cseof
-    name = cell(28);
+    name = cell(30);
     name{1} = '#!/bin/csh';     %use csh shell
     % for i = 1:length(nn);
     name{2} = char('');
@@ -218,7 +259,7 @@ for nvar = 1:length(var_names)
     name{4} = char( '' );
     name{5} = char( 'cat >! cseof.com <<ENDc'  );
     name{6} = char('0');  %% job number (only 0)
-    name{7} = char( pct_ttt  );     %load variable file
+    name{7} = char( pct_tt  );     %load variable file
     name{8} = char( '(5e13.5)' );
     name{9} = char( [maxmodenum, ' 1']  ); %max.mode number(same to eigen.c)
     name{10} = char( num2str(tlen)); %time number
@@ -230,35 +271,36 @@ for nvar = 1:length(var_names)
     name{14} = char( '1              ' );  %% interval subdivisions for integrations
     name{15} = char( '0' );  %% cycle for detrending
     name{16} = char( num2str(tlen));    %time number (size of cov matrix)
-    name{17} = char( '99.99' );   %want explain %
+%     name{17} = char( '99.99' );   %want explain %
+    name{17} = char( '100.0' );   %want explain %
     cseofmodenum=10;
     name{18} = char( num2str(cseofmodenum) );    %want max.mode number
     name{19} = char( '1.');   %% eof scale factor (Do not change)
     name{20} = char( '2');  %% 1: rc ts    2 : cov
     name{21} = char( 'ENDc' );
-    name{22} = char( [workdir, '/script/cseof < ', workdir, '/script/cseof.com'] );
+    name{22} = char( [workdir, '/test/scripts/cseof < ', workdir, '/test/scripts/cseof.com'] );
     cinf_tt = strcat(cseof_output_dir, '/cinf_', model_name, '_', var_name, '.d');
-    cinf_ttt = strcat('./../cseofs/cinf_', model_name, '_', var_name, '.d');
     blo_tt = strcat(cseof_output_dir, '/blo_', model_name, '_', var_name, '.d');
-    blo_ttt = strcat('./../cseofs/blo_', model_name, '_', var_name, '.d');
     cpct_tt = strcat(cseof_output_dir, '/cpct_', model_name, '_', var_name, '.d');
-    cpct_ttt = strcat('./../cseofs/cpct_', model_name, '_', var_name, '.d');
     ceig_tt = strcat(cseof_output_dir, '/ceig_', model_name, '_', var_name, '.d');
-    ceig_ttt = strcat('./../cseofs/ceig_', model_name, '_', var_name, '.d');
-    name{23} = char( ['mv -f inform.d ', cinf_ttt]);
-    name{24} = char(  ['mv -f Bloch.d ', blo_ttt] );
-    name{25} = char(  ['mv -f pcts.d ', cpct_ttt] );
-    name{26} = char(  ['mv -f eigen.d ', ceig_ttt] );
-    name{27} = char( 'rm -f cseof cseof.com' );
-    name{28} = char( '' );
+    covm_tt = strcat(cseof_output_dir, '/covm_', model_name, '_', var_name, '.d');
+    hcoef_tt = strcat(cseof_output_dir, '/hcoef_', model_name, '_', var_name, '.d');
+    name{23} = char( ['mv -f inform.d ', cinf_tt]);
+    name{24} = char(  ['mv -f Bloch.d ', blo_tt] );
+    name{25} = char(  ['mv -f pcts.d ', cpct_tt] );
+    name{26} = char(  ['mv -f eigen.d ', ceig_tt] );
+    name{27} = char(  ['mv -f covm.d ', covm_tt] );
+    name{28} = char(  ['mv -f hcoef.d ', hcoef_tt] );
+    name{29} = char( 'rm -f cseof cseof.com' );
+    name{30} = char( '' );
     % end
 
-    fid = fopen([workdir, '/script/cseof.c'], 'w+')
+    fid = fopen([workdir, '/test/scripts/cseof.c'], 'w+')
     for nline=1:size(name,1)
         fprintf(fid, '%s\n', name{nline});
     end
     fclose(fid);
-    system(['csh -xv cseof.c > ', cseof_output_dir, '/cseof_log.log']);
+    system(['export PATH=$PATH:/usr/local/bin; csh -xv cseof.c > ', cseof_output_dir, '/cseof_log.log']);
     
     
     
@@ -268,12 +310,11 @@ for nvar = 1:length(var_names)
     name = cell(23);
     name{1} = '#!/bin/csh';     %use csh shell
 
-    % for i = 2:2;
     name{2} = char('');
-    name{3} = char('gfortran -fno-backtrace -o recast ../programs/util/recastx.f');
+    name{3} = char(['gfortran -fno-backtrace -o recast ', workdir, '/programs/util/recastx.f']);
     name{4} = char( '' );
     name{5} = char( 'cat >! recast.com <<ENDc'  );
-    name{6} = char( eof_ttt  ); %predictor eof file
+    name{6} = char( eof_tt  ); %predictor eof file
     name{7} = char( 'DIR' );
     name{8} = char( 'nofile'  );
     name{9} = char( num2str(cseofmodenum));                     %max. eof mode number
@@ -281,53 +322,36 @@ for nvar = 1:length(var_names)
     name{11} = char(  '1.      ' );                              
     name{12} = char(  [num2str(slen), ' 1']  );     %space structure
     % name{13} = char( strcat('../regress/blo_reg_', 'NorESM1-M_', varname,'.d') ); %regressed blo file
-    name{13} = char( blo_ttt ); %blo file
+    name{13} = char( blo_tt ); %blo file
     name{14} = char( 'SEQ' );
     name{15} = char( '0');
     sizeLV = LVnumber * cseofmodenum;
     name{16} = char( num2str(sizeLV) );  %LV number * cseof mode number (365*10)
     name{17} = char( '1' );
     LV_tt = strcat(cseof_output_dir, '/LV_', model_name, '_', var_name, '.dat');
-    LV_ttt = strcat('./../cseofs/LV_', model_name, '_', var_name, '.dat');
-    name{18} = char( LV_ttt);     %LV file name
+    name{18} = char( LV_tt);     %LV file name
     name{19} = char( 'DIR');
     name{20} = char( 'ENDc' );
-    name{21} = char( [workdir, '/script/recast < ', workdir, '/script/recast.com'] );
+    name{21} = char( [workdir, '/test/scripts/recast < ', workdir, '/test/scripts/recast.com'] );
     name{22} = char( 'rm -f recast recast.com' );
     name{23} = char( '' );
-    % end
 
-    fid = fopen([workdir, '/script/recast.c'], 'w+')
+    fid = fopen([workdir, '/test/scripts/recast.c'], 'w+')
     for nline=1:size(name,1)
         fprintf(fid, '%s\n', name{nline});
     end
     fclose(fid);
-    system(['csh -xv recast.c > ', cseof_output_dir, '/recast_log.log']);
-    
-    system(['mv -f ', eof_ttt, ' ', eof_tt]); 
-    system(['mv -f ', pct_ttt, ' ', pct_tt]);  
-    system(['mv -f ', cinf_ttt, ' ', cinf_tt]); 
-    system(['mv -f ', blo_ttt, ' ', blo_tt]);  
-    system(['mv -f ', cpct_ttt, ' ', cpct_tt]); 
-    system(['mv -f ', ceig_ttt, ' ', ceig_tt]);  
-    system(['mv -f ', LV_ttt, ' ', LV_tt]);  
-
-    system(['rm -f ', ttt]);
+    system(['export PATH=$PATH:/usr/local/bin; csh -xv recast.c > ', cseof_output_dir, '/recast_log.log']);
     
     cd(presentdir);
     
     
     %% STEP 3 LV_layer_merge
-    filepath = [workdir, '/cseofs/', model_name, '_mon/', scen_name, '/', var_name]
-    
-    if (strcmp('zos',var_name) == 1)
-        filename = [var_name, '_interp_', model_name, '_', scen_name, ...
-            '_', num2str(tempyear,'%04i'), '.nc']
-    else
-        filename = [var_name, '_mon_', model_name, '_', scen_name, ...
-            '_', num2str(tempyear,'%04i'), '.nc']
-    end
-    file = strcat(filepath, '/', filename)
+%     filepath = [workdir, '/test/output'];
+%     filename = [var_name, '_interp_', model_name, '_', scen_name, ...
+%         '_', num2str(tempyear,'%04i'), '.nc']
+
+%     file = strcat(filepath, '/', filename)
 
     %----------STEP1. load lon,lat information-------------%
     %load atm lon,lat information
@@ -339,15 +363,14 @@ for nvar = 1:length(var_names)
     lat2 = lat;
 
     %% ocean component
-
     %thetao
     T= LVnumber;
     mode = cseofmodenum;
     LV_increment1 = zeros(1,length(lon2),length(lat2),T,mode);
     for layer = 1 : 1
         %set filepath , variables
-        filepath = [workdir, '/cseofs/', model_name, '/', scen_name, '/', var_name]
-        LV_name = strcat(filepath,'/', 'LV_NorESM1-M_', var_name, '.dat');
+        filepath = [workdir, '/test/output']
+        LV_name = strcat(filepath,'/', 'LV_', model_name, '_', var_name, '.dat');
         %load mask data
         ocean_mask = importdata(ocean_mask_name);
         time = size(data,2) ; % time(month)
@@ -373,12 +396,12 @@ for nvar = 1:length(var_names)
     
 % % %     STEP4, PLOT
     rehash toolboxcache
-    figure_output_dir = [workdir, '/figure/', model_name, '/', scen_name, '/', var_name]
+    figure_output_dir = [workdir, '/test/figure'];
     mkdir([figure_output_dir]);
 % % %     %load loading vector file
-%     load([cseof_output_dir, '/lv_layer_merge.mat']);
+% % %     load([cseof_output_dir, '/lv_layer_merge.mat']);
 
-    mode = 3;
+    mode = 10;
     %load cseof pc time series
     pct_data = importdata(cpct_tt)';
     pct = pct_data(:)';
@@ -389,7 +412,7 @@ for nvar = 1:length(var_names)
     for nyear = 1:length(inputyear)
         tempyear = inputyear(nyear);
         for month=1:12
-            xData((12*(nyear-1))+month) = datenum([num2str(tempyear),'-',num2str(month,'%02i'),'-01',]);
+            xData((12*(nyear-1))+month) = datenum([num2str(tempyear),'-',num2str(month,'%02i'),'-01',]); %% time
         end
     end
     
@@ -406,51 +429,141 @@ for nvar = 1:length(var_names)
         i
     end
 
-    %LV = LV(layer,lon,lat,period,mode)
     LV_increment1(LV_increment1==0) = NaN;
-    %LV_thetao(:,:,:,:,2) = -LV_thetao(:,:,:,:,2);
 
-    %%%%%%%%%%%%%%%%%%%%%%%%%%% surface plot %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-     hh = 1;
-    %plot - surface
-    [lon2, lat2] = meshgrid(lon,lat);
-    %[lat2, lon2] = meshgrid(lat,lon);
-    
-    mkdir([figure_output_dir, '/surface']);
-    %sst
-
-    for i = 1 : mode
-        for period = 1:T
-        %dat3 = squeeze(LV_increment1(hh,:,:,period,i));
-        dat3 = squeeze(LV_increment1(hh,:,:,period,i));
-        dat3(dat3==1e20) = NaN;
-        m_proj('mercator','lon',[115 164],'lat',[15 52]);
-        m_gshhs_l('color','k');
-        m_gshhs_l('patch',[.8,.8,.8]);
-        m_grid('box','fancy','tickdir','in','linewidth',1);
-        hold on;
-        %[C,h] = m_contour(lon2,lat2,dat3,'LineWidth',2);
-        m_pcolor(lon2,lat2,dat3');
-        %clabel(C,h,'FontSize',14,'Color','k','Rotation',0,'fontweight','bold');
-        shading interp;
-        colorbar;
-%         colormap jet;
-        bwr_map
-        colormap(bwrmap);
-        xlabel(['Longitude (^o E)'],'fontsize',18,'fontweight','bold','fontname','times new roman');
-        ylabel(['Latitude(^o N)'],'fontsize',18,'fontweight','bold','fontname','times new roman');
-        tt = [var_name, '-',num2str(i,'%02i'),'mode','(period-',num2str(period,'%02i'),')'];
-        title(tt,'fontsize',18,'fontweight','bold');   %��ٲٱ�
-%         caxis([-4 4]);
-        clim_val=max(max(abs(dat3')));
-        caxis([-clim_val clim_val]);
-        axis tight;
-        saveas(gcf,strcat([figure_output_dir, '/surface/',tt,'.png']),'png');
-        close all;
-        [i period]
+    %% too many --> off
+    fig_flag=0;
+    if fig_flag==1
+        %%%%%%%%%%%%%%%%%%%%%%%%%%% surface(LV) plot %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+         hh = 1;
+        %plot - surface
+        [lon2, lat2] = meshgrid(lon,lat);
+        %[lat2, lon2] = meshgrid(lat,lon);
+        
+        mkdir([figure_output_dir, '/surface']);
+        %sst
+        
+        for lvi = 1 : mode
+            for period = 1:T
+            %dat3 = squeeze(LV_increment1(hh,:,:,period,i));
+            dat3 = squeeze(LV_increment1(hh,:,:,period,lvi));
+            dat3(dat3==1e20) = NaN;
+            m_proj('mercator', 'lon',[110 165],'lat',[15 52]);
+            m_gshhs_l('color','k');
+            m_gshhs_l('patch',[.8,.8,.8]);
+            m_grid('box','fancy','tickdir','in','linewidth',1);
+            hold on;
+            %[C,h] = m_contour(lon2,lat2,dat3,'LineWidth',2);
+            m_pcolor(lon2,lat2,dat3');
+            %clabel(C,h,'FontSize',14,'Color','k','Rotation',0,'fontweight','bold');
+            shading interp;
+            colorbar;
+    %         colormap jet;
+            bwr_map;
+            colormap(bwrmap);
+            xlabel(['Longitude (^o E)'],'fontsize',18,'fontweight','bold','fontname','times new roman');
+            ylabel(['Latitude(^o N)'],'fontsize',18,'fontweight','bold','fontname','times new roman');
+            tt = [var_name, '-',num2str(lvi,'%02i'),'mode','(period-',num2str(period,'%02i'),')'];
+            title(tt,'fontsize',18,'fontweight','bold'); 
+    %         caxis([-4 4]);
+            clim_val=max(max(abs(dat3')));
+            caxis([-clim_val clim_val]);
+            axis tight;
+            saveas(gcf,strcat([figure_output_dir, '/surface/',tt,'.png']),'png');
+            close all;
+            disp([lvi period]);
+            end
         end
     end
     
+%% data reconstruction
+temp_recon=zeros(size(temp));
+for mi=1:12
+    for modei=1:eofmodenum
+        tmp_lv=repmat(squeeze(LV_increment1(:,:,:,mi,modei)), [1,1,length(inputyear)]);
+        tmp_pct=reshape(pct(mi:12:size(pct,1)-12+mi,modei), [1,1,length(inputyear)]);
+        temp_recon(:,:,mi:12:size(pct,1)-12+mi)=temp_recon(:,:,mi:12:size(pct,1)-12+mi) + ...
+            tmp_lv .* tmp_pct;
+    end
+    temp_recon1(:,:,mi:12:size(pct,1)-12+mi)=temp_recon(:,:,mi:12:size(pct,1)-12+mi) + ...
+        mean(temp(:,:,mi:12:size(pct,1)-12+mi),3)-mean(temp_recon(:,:,mi:12:size(pct,1)-12+mi),3);
+    temp_recon2(:,:,mi:12:size(pct,1)-12+mi)=temp_recon(:,:,mi:12:size(pct,1)-12+mi) + ...
+        mean(temp(:,:,:)-temp_recon(:,:,:),3);
+end
+
+% pcolor(temp(:,:,14)'-temp_recon(:,:,14)'); shading flat; colorbar;
+
+
+%practice
+%raw plot
+close all;
+hold off
+plot(squeeze(temp_recon1(45,35,1:60)))
+hold on
+plot(squeeze(temp(45,35,1:60)))
+
+% anomaly plot
+close all;
+hold off
+plot(squeeze(temp_recon1(45,35,:)-temp_clim_cycle(45,35,:)), 'linewidth', 2)
+hold on
+plot(squeeze(temp(45,35,:)-temp_clim_cycle(45,35,:)), 'linewidth', 2)
+
+sqrt(sum((temp_recon1(45,35,:)-temp(45,35,:)).^2)/480); 
+std(squeeze(temp(45,35,:)-temp_clim_cycle(45,35,:)));
+std(squeeze(temp(45,35,:));
+
+
+bwr_map;
+%% fig 1
+close all;
+sb1=subplot(3,2,1);
+pcolor(mean(temp,3)'); shading flat; colorbar; colormap(sb1,jet); caxis([5 28]); set(gca, 'fontsize', 20);
+sb2=subplot(3,2,2);
+pcolor(mean(temp_recon1,3)'); shading flat; colorbar; colormap(sb2,jet); caxis([5 28]); set(gca, 'fontsize', 20);
+sb3=subplot(3,2,3);
+pcolor(mean(temp-temp_recon1,3)'); shading flat; colorbar; colormap(sb3,bwrmap); set(gca, 'fontsize', 20);
+sb4=subplot(3,2,4);
+pcolor(temp(:,:,115)'-temp_recon1(:,:,115)'); shading flat; colorbar; colormap(sb4,bwrmap); set(gca, 'fontsize', 20);
+sb5=subplot(3,2,5);
+plot(squeeze(temp_recon1(45,35,1:60))); hold on; plot(squeeze(temp(45,35,1:60)));
+sb6=subplot(3,2,6);
+plot(squeeze(temp_recon1(45,35,:)-temp_clim_cycle(45,35,:)), 'linewidth', 2); hold on; plot(squeeze(temp(45,35,:)-temp_clim_cycle(45,35,:)), 'linewidth', 2)
+
+% pcolor(sqrt(temp-temp_recon1,3)'); shading flat; colorbar; colormap(sb3,bwrmap); set(gca, 'fontsize', 20);
+
+
+temp_clim=reshape(temp,[45,39,12,40]);
+temp_clim_cycle=repmat(mean(temp_clim,4), [1,1,40]);
+
+
+
+
+% %% fig 1-2 (wrong)
+% close all;
+% sb1=subplot(2,2,1);
+% pcolor(mean(temp,3)'); shading flat; colorbar; colormap(sb1,jet); caxis([5 28]); set(gca, 'fontsize', 20);
+% sb2=subplot(2,2,2);
+% pcolor(mean(temp_recon2,3)'); shading flat; colorbar; colormap(sb2,jet); caxis([5 28]); set(gca, 'fontsize', 20);
+% sb3=subplot(2,2,3);
+% pcolor(mean(temp-temp_recon2,3)'); shading flat; colorbar; colormap(sb3,bwrmap); set(gca, 'fontsize', 20);
+% sb3=subplot(2,2,4);
+% pcolor(temp(:,:,120)'-temp_recon2(:,:,120)'); shading flat; colorbar; colormap(sb3,bwrmap); set(gca, 'fontsize', 20);
+
+
+%% fig 2
+close all;
+sb1=subplot(2,1,1);
+plot(pct(:,1));
+sb2=subplot(2,1,2);
+plot(pct(:,2));
+
+
+
+
+
+
+
 % % % %% STEP 2_3 Makescript_regress
     if (regress_flag == 1 && strcmp(tgt_var_name,var_name) ~= 1)
         
@@ -487,7 +600,8 @@ for nvar = 1:length(var_names)
             name{10} =  char( ['1 ', num2str(tlen)]);                    %data interval for target time series
             name{11} =  char(  cpct_ttt    ); %predictor time series
             name{12} =  char(  '(6e13.5)    ' );                     %format
-            name{13} =  char( '0'  );                     %skip amout
+%             name{13} =  char( num2str(regress_skip_line)  );                 %skip amount   
+            name{13} =  char( '0'  );                     %skip amount
             name{14} =  char( ['1 ', num2str(tlen)] );    %data interval for predictor time series
             name{15} =  char( ['1 ', num2str(tlen)] );    %regression interval
             name{16} =  char( 'regress.d');
@@ -495,9 +609,16 @@ for nvar = 1:length(var_names)
             name{18} =  char( '2        ' );   %confidence interval(0:no,2:90%,3:95%,4:99%)
             name{19} =  char( '2          ');  % scaling option (just use 2)
             name{20} =  char( tgt_cinf_ttt);    %target cinf file
-            name{21} =  char( '(41x,e15.7)' );                             %format
+            if (regress_tgt_mode==1)
+                name{21} =  char( '(41x,e15.7)' );                             %format
+                num_slash=['/'];
+            else
+                num_slash=[num_slash,'/'];
+                format_tgt = ['(', num_slash, ',41x,e15.7)'];
+                name{21} =  char( format_tgt );                             %format
+            end
             name{22} =  char( cinf_ttt );   %predictor cinf file
-            name{23} =  char( '(41x,e15.7) ' );                            %format
+            name{23} =  char( '(41x,e15.7) ' );                   %predictor format. put first line's format (because program reads variables of all modes)
             name{24} =  char( 'END' );
             name{25} =  char( ['./regress < regress', num2str(regress_tgt_mode, '%02i'),'.com'] );
             name{26} =  char( 'mv regress.d regress.s');
@@ -563,9 +684,7 @@ for nvar = 1:length(var_names)
         end
         fclose(fid);
         system(['csh -xv combin.c > ', cseof_output_dir, '/regress_combin_log.log']);
-
-
-        
+       
         
         % % % %% STEP 2_5 Makescript_regress_recast
         
@@ -661,13 +780,9 @@ for nvar = 1:length(var_names)
         
         %% STEP 3 LV_layer_merge
         filepath = [workdir, '/cseofs/', model_name, '_mon/', scen_name, '/', var_name]
-        if (strcmp('zos',var_name) == 1)
-            filename = [var_name, '_interp_', model_name, '_', scen_name, ...
-                '_', num2str(tempyear,'%04i'), '.nc']
-        else
-            filename = [var_name, '_mon_', model_name, '_', scen_name, ...
-                '_', num2str(tempyear,'%04i'), '.nc']
-        end
+        filename = [var_name, '_interp_', model_name, '_', scen_name, ...
+            '_', num2str(tempyear,'%04i'), '.nc']
+
         file = strcat(filepath, '/', filename)
 
         %----------STEP1. load lon,lat information-------------%
@@ -774,6 +889,7 @@ for nvar = 1:length(var_names)
             shading interp;
             colorbar;
 %             colormap jet;
+            bwr_map
             colormap(bwrmap);
             xlabel(['Longitude (^o E)'],'fontsize',18,'fontweight','bold','fontname','times new roman');
             ylabel(['Latitude(^o N)'],'fontsize',18,'fontweight','bold','fontname','times new roman');

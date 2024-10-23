@@ -25,6 +25,7 @@ addpath(genpath([tmp.dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', tmp.fs, 'f
 % cfg.vars= {'sumChl'};
 % cfg.vars = { 'sumChl', 'photoC_TOT_zint',  'SSH'};
 cfg.vars = {  'SST', 'PRECT', 'PSL'};
+cfg.vars = {  'SST', 'TS'};
 
 for vari=1:length(cfg.vars)
     cfg.var=cfg.vars{vari};

@@ -111,7 +111,7 @@ for subi=1:1
 
 
 %     fig_cfg.fig_name='$$ (c) \hspace{1mm}  r_{A,E(I)}^{\tau=2 \textendash 5} $$';
-    fig_cfg.fig_name='$$ (a) \hspace{1mm}  r_{A,E(I)}^{\tau=1} $$';
+    fig_cfg.fig_name='$$ (a) \hspace{1mm}  r_{E(A),E(I)}^{\tau=1} $$';
     fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
         'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','on');
 
@@ -217,7 +217,7 @@ for subi=1:1
     
 
 %     fig_cfg.fig_name='$$ (d) \hspace{1mm}  r_{A,E(I)}^{\tau=2 \textendash 5} -  r_{A,E(U)}^{\tau=2 \textendash 5} $$';
-    fig_cfg.fig_name='$$ (b) \hspace{1mm}  r_{A,E(I)}^{\tau=1} -  r_{A,E(U)}^{\tau=1} $$';
+    fig_cfg.fig_name='$$ (b) \hspace{1mm}  r_{E(A),E(I)}^{\tau=1} -  r_{E(A),E(U)}^{\tau=1} $$';
 
     %% map setting
     subplot(3,2,2);
@@ -307,7 +307,7 @@ for subi=1:1
         end
     end
 
-    fig_cfg.fig_name='$$ (c) \hspace{1mm}  r_{A,E(I)}^{\tau=1} $$';
+    fig_cfg.fig_name='$$ (c) \hspace{1mm}  r_{E(A),E(I)}^{\tau=1} $$';
 
     %% map setting
     subplot(3,2,3);
@@ -415,7 +415,7 @@ for subi=1:1
     
 
 
-    fig_cfg.fig_name='$$ (d) \hspace{1mm}  r_{A,E(I)}^{\tau=1} -  r_{A,E(U)}^{\tau=1} $$';
+    fig_cfg.fig_name='$$ (d) \hspace{1mm}  r_{E(A),E(I)}^{\tau=1} -  r_{E(A),E(U)}^{\tau=1} $$';
 
     %% map setting
     subplot(3,2,4);
@@ -504,7 +504,7 @@ for subi=1:1
         end
     end
 
-    fig_cfg.fig_name='$$ (e) \hspace{1mm}  r_{A,E(I)}^{\tau=1} $$';
+    fig_cfg.fig_name='$$ (e) \hspace{1mm}  r_{E(A),E(I)}^{\tau=1} $$';
 
     %% map setting
     subplot(3,2,5);
@@ -605,7 +605,7 @@ for subi=1:1
     tmp.C=tmp.C([end, 1:end],:);
     tmp.C2=tmp.C2([end, 1:end],:);
 
-    fig_cfg.fig_name='$$ (f) \hspace{1mm}  r_{A,E(I)}^{\tau=1} -  r_{A,E(U)}^{\tau=1} $$';
+    fig_cfg.fig_name='$$ (f) \hspace{1mm}  r_{E(A),E(I)}^{\tau=1} -  r_{E(A),E(U)}^{\tau=1} $$';
 
     %% map setting
     subplot(3,2,6);
