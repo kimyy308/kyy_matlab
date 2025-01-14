@@ -36,17 +36,29 @@ grid.regions = [0 360 -90 90];
 %     'COL_FIRE_CLOSS', 'SOILWATER_10CM', 'TLAI', 'SSH', 'PSL', 'AEROD_v'};
 % cfg.vars={'SST'};
 % cfg.vars={'PSL'};
-cfg.vars={'SSH'};
+cfg.vars={'SST'};
 % cfg.vars={'TEMP', 'SALT'};
 % cfg.vars={'SSH'};
 % cfg.vars={'photoC_TOT_zint_100m'};
 % cfg.vars={'NO3'};
+% cfg.vars={'Z500'};
 
-flags.AMO=1;
-flags.ENSO=1;
-flags.PDO=1;
+flags.AMO=0;
+flags.ENSO=0;
+flags.PDO=0;
+flags.PDO_l=0;
 flags.SAM=0;
-
+flags.SAM_d=0;
+flags.ATL3=1;
+flags.ATL3_d=1;
+flags.TNA=0;
+flags.TSA=0;
+flags.NAO_STA=0;
+flags.NAO_PC=0;
+flags.KEI_O=0;
+flags.KEI_LE=0;
+flags.IOD=1;
+flags.IPO=1;
 
 
 for vari=1:length(cfg.vars)
@@ -212,6 +224,8 @@ for ty=1:length(cfg.iyears)
             elseif (strcmp(cfg.obs_name, 'NOAA')==1 && strcmp(cfg.var, 'TWS')==1)
                 tmp.dd(tmp.dd<=0)=NaN;
                 tmp.dd(tmp.dd>740)=NaN;
+            elseif (strcmp(cfg.obs_name, 'ERA5')==1 && strcmp(cfg.var, 'Z500')==1)
+                tmp.dd=tmp.dd./9.81; % divide by gravity acceleration;
             elseif strcmp(cfg.var, 'FAREA_BURNED')
 %                                 tmp.dd=tmp.dd./86400./eomday(tmp.fy,mi)./grid.area;
                     tmp.dd=tmp.dd./86400./grid.area;
@@ -654,6 +668,7 @@ if flags.ENSO==1
     %% ENSO - OBS
     tmp.data=data_obs.(cfg.var)(data_ENSO.id_w:data_ENSO.id_e, data_ENSO.id_s:data_ENSO.id_n, :);
     tmp.data(tmp.data<-900)=NaN;
+
     [data_ENSO.obs, tmp.err] = ...
         Func_0011_get_area_weighted_mean(squeeze(tmp.data), data_ENSO.cut_tlong, data_ENSO.cut_tlat);
     
@@ -702,6 +717,526 @@ if flags.ENSO==1
                 'obs_', cfg.obs_name, '.mat'];
     save(matfilename, 'cfg', 'cfg_assm', 'cfg_hcst', 'cfg_lens2', 'data_ENSO');
 end
+
+if flags.KEI_O==1
+
+
+    %% KEI_O
+    %% KEI_O - grid information
+    data_KEI_O.regions = [140 165 31 36];
+    [data_KEI_O.id_w, data_KEI_O.id_e, data_KEI_O.id_s, data_KEI_O.id_n] = ...
+        Func_0012_findind_Y(0.1, data_KEI_O.regions, ...
+                grid.tlong, grid.tlat, 'CESM2'); % find valid lon, lat index near station
+    data_KEI_O.cut_tlong=grid.tlong(data_KEI_O.id_w:data_KEI_O.id_e, data_KEI_O.id_s:data_KEI_O.id_n);
+    data_KEI_O.cut_tlat=grid.tlat(data_KEI_O.id_w:data_KEI_O.id_e, data_KEI_O.id_s:data_KEI_O.id_n);
+    data_KEI_O.cut_nlon=size(data_KEI_O.cut_tlong,1);
+    data_KEI_O.cut_nlat=size(data_KEI_O.cut_tlat,2);
+    
+    
+    %% KEI_O - time set
+    for ti=1:length(cfg.iyears)
+        for mi=1:12
+            data_KEI_O.time((ti-1)*12+mi)=cfg.iyears(ti)+mi*1/12-1/24;
+        end
+    end
+    
+    %% KEI_O - OBS
+    tmp.data=data_obs.(cfg.var)(data_KEI_O.id_w:data_KEI_O.id_e, data_KEI_O.id_s:data_KEI_O.id_n, :);
+    tmp.data(tmp.data<-900)=NaN;
+    tmp.data_dseason= ...
+        reshape(reshape(tmp.data, [size(tmp.data,1), size(tmp.data,2), 12, size(tmp.data,3)/12]) - ...
+        mean(reshape(tmp.data, [size(tmp.data,1), size(tmp.data,2), 12, size(tmp.data,3)/12]),4, 'omitnan'), [size(tmp.data)]);
+    [data_KEI_O.obs, tmp.err] = ...
+        Func_0011_get_area_weighted_mean(squeeze(tmp.data), data_KEI_O.cut_tlong, data_KEI_O.cut_tlat);
+    [data_KEI_O.obs_dseason, tmp.err] = ...
+        Func_0011_get_area_weighted_mean(squeeze(tmp.data_dseason), data_KEI_O.cut_tlong, data_KEI_O.cut_tlat);
+
+
+
+    %% KEI_O - ASSM
+    data_KEI_O.assm_members=cfg_assm.members;
+    for mi=1:size(data_assm.(cfg.var),1)
+        tmp.data=squeeze(data_assm.(cfg.var)(mi,data_KEI_O.id_w:data_KEI_O.id_e, data_KEI_O.id_s:data_KEI_O.id_n,:));
+        tmp.data_dseason= ...
+            reshape(reshape(tmp.data, [size(tmp.data,1), size(tmp.data,2), 12, size(tmp.data,3)/12]) - ...
+            mean(reshape(tmp.data, [size(tmp.data,1), size(tmp.data,2), 12, size(tmp.data,3)/12]),4, 'omitnan'), [size(tmp.data)]);
+        [data_KEI_O.assm(mi,:), tmp.err] = ...
+            Func_0011_get_area_weighted_mean(squeeze(tmp.data), data_KEI_O.cut_tlong, data_KEI_O.cut_tlat);
+        [data_KEI_O.assm_dseason(mi,:), tmp.err] = ...
+            Func_0011_get_area_weighted_mean(squeeze(tmp.data_dseason), data_KEI_O.cut_tlong, data_KEI_O.cut_tlat);
+    end
+    
+    % hold on
+    % for mi=1:size(data_assm.(cfg.var),1)
+    %     plot(data_KEI_O.time,data_KEI_O.lens2(mi,:));
+    % end
+    % hold off
+    
+    %% KEI_O - LENS2
+    data_KEI_O.lens2_members=cfg_lens2.members;
+    for mi=1:size(data_lens2.(cfg.var),1)
+        tmp.data=squeeze(data_lens2.(cfg.var)(mi,data_KEI_O.id_w:data_KEI_O.id_e, data_KEI_O.id_s:data_KEI_O.id_n,:));
+        tmp.data_dseason= ...
+            reshape(reshape(tmp.data, [size(tmp.data,1), size(tmp.data,2), 12, size(tmp.data,3)/12]) - ...
+            mean(reshape(tmp.data, [size(tmp.data,1), size(tmp.data,2), 12, size(tmp.data,3)/12]),4, 'omitnan'), [size(tmp.data)]);
+        [data_KEI_O.lens2(mi,:), tmp.err] = ...
+            Func_0011_get_area_weighted_mean(squeeze(tmp.data), data_KEI_O.cut_tlong, data_KEI_O.cut_tlat);
+        [data_KEI_O.lens2_dseason(mi,:), tmp.err] = ...
+            Func_0011_get_area_weighted_mean(squeeze(tmp.data_dseason), data_KEI_O.cut_tlong, data_KEI_O.cut_tlat);
+    end
+    
+    %% KEI_O - HCST
+    data_KEI_O.hcst_members=cfg_hcst.members;
+    for ly=1:5 %1:5
+        tmp.ly_str=['ly',num2str(ly)];
+        for mi=1:size(data_hcst.(cfg.var).(tmp.ly_str),1)
+            tmp.data=squeeze(data_hcst.(cfg.var).(tmp.ly_str)(mi,data_KEI_O.id_w:data_KEI_O.id_e, data_KEI_O.id_s:data_KEI_O.id_n,:));
+            tmp.data_dseason= ...
+                reshape(reshape(tmp.data, [size(tmp.data,1), size(tmp.data,2), 12, size(tmp.data,3)/12]) - ...
+                mean(reshape(tmp.data, [size(tmp.data,1), size(tmp.data,2), 12, size(tmp.data,3)/12]),4, 'omitnan'), [size(tmp.data)]);
+            [data_KEI_O.hcst(ly,mi,:), tmp.err] = ...
+                Func_0011_get_area_weighted_mean(squeeze(tmp.data), data_KEI_O.cut_tlong, data_KEI_O.cut_tlat);
+            [data_KEI_O.hcst_dseason(ly,mi,:), tmp.err] = ...
+                Func_0011_get_area_weighted_mean(squeeze(tmp.data_dseason), data_KEI_O.cut_tlong, data_KEI_O.cut_tlat);
+        end
+    end
+    
+    % hold on
+    % for mi=1:size(data_hcst.(cfg.var).ly1,1)
+    %     plot(data_KEI_O.time,squeeze(data_KEI_O.hcst(4,mi,:)));
+    % end
+    % hold off
+    
+    %% KEI_O - save matfile 
+    mkdir([dirs.saveroot, '/clim_indices']);
+    matfilename=[dirs.saveroot, '/clim_indices/', 'clim_indices_', cfg.var, '_all_','KEI_O_', ...
+                'obs_', cfg.obs_name, '.mat'];
+    save(matfilename, 'cfg', 'cfg_assm', 'cfg_hcst', 'cfg_lens2', 'data_KEI_O');
+end
+
+
+if flags.KEI_LE==1
+
+
+    %% KEI_LE
+    %% KEI_LE - grid information
+    data_KEI_LE.regions = [141 165 37 43];
+    
+    [data_KEI_LE.id_w, data_KEI_LE.id_e, data_KEI_LE.id_s, data_KEI_LE.id_n] = ...
+        Func_0012_findind_Y(0.1, data_KEI_LE.regions, ...
+                grid.tlong, grid.tlat, 'CESM2'); % find valid lon, lat index near station
+    data_KEI_LE.cut_tlong=grid.tlong(data_KEI_LE.id_w:data_KEI_LE.id_e, data_KEI_LE.id_s:data_KEI_LE.id_n);
+    data_KEI_LE.cut_tlat=grid.tlat(data_KEI_LE.id_w:data_KEI_LE.id_e, data_KEI_LE.id_s:data_KEI_LE.id_n);
+    data_KEI_LE.cut_nlon=size(data_KEI_LE.cut_tlong,1);
+    data_KEI_LE.cut_nlat=size(data_KEI_LE.cut_tlat,2);
+    
+    
+    %% KEI_LE - time set
+    for ti=1:length(cfg.iyears)
+        for mi=1:12
+            data_KEI_LE.time((ti-1)*12+mi)=cfg.iyears(ti)+mi*1/12-1/24;
+        end
+    end
+    
+    %% KEI_LE - OBS
+    tmp.data=data_obs.(cfg.var)(data_KEI_LE.id_w:data_KEI_LE.id_e, data_KEI_LE.id_s:data_KEI_LE.id_n, :);
+    tmp.data(tmp.data<-900)=NaN;
+    tmp.data_dseason= ...
+        reshape(reshape(tmp.data, [size(tmp.data,1), size(tmp.data,2), 12, size(tmp.data,3)/12]) - ...
+        mean(reshape(tmp.data, [size(tmp.data,1), size(tmp.data,2), 12, size(tmp.data,3)/12]),4, 'omitnan'), [size(tmp.data)]);
+    [data_KEI_LE.obs, tmp.err] = ...
+        Func_0011_get_area_weighted_mean(squeeze(tmp.data), data_KEI_LE.cut_tlong, data_KEI_LE.cut_tlat);
+    [data_KEI_LE.obs_dseason, tmp.err] = ...
+        Func_0011_get_area_weighted_mean(squeeze(tmp.data_dseason), data_KEI_LE.cut_tlong, data_KEI_LE.cut_tlat);
+
+
+
+    %% KEI_LE - ASSM
+    data_KEI_LE.assm_members=cfg_assm.members;
+    for mi=1:size(data_assm.(cfg.var),1)
+        tmp.data=squeeze(data_assm.(cfg.var)(mi,data_KEI_LE.id_w:data_KEI_LE.id_e, data_KEI_LE.id_s:data_KEI_LE.id_n,:));
+        tmp.data_dseason= ...
+            reshape(reshape(tmp.data, [size(tmp.data,1), size(tmp.data,2), 12, size(tmp.data,3)/12]) - ...
+            mean(reshape(tmp.data, [size(tmp.data,1), size(tmp.data,2), 12, size(tmp.data,3)/12]),4, 'omitnan'), [size(tmp.data)]);
+        [data_KEI_LE.assm(mi,:), tmp.err] = ...
+            Func_0011_get_area_weighted_mean(squeeze(tmp.data), data_KEI_LE.cut_tlong, data_KEI_LE.cut_tlat);
+        [data_KEI_LE.assm_dseason(mi,:), tmp.err] = ...
+            Func_0011_get_area_weighted_mean(squeeze(tmp.data_dseason), data_KEI_LE.cut_tlong, data_KEI_LE.cut_tlat);
+    end
+    
+    % hold on
+    % for mi=1:size(data_assm.(cfg.var),1)
+    %     plot(data_KEI_LE.time,data_KEI_LE.lens2(mi,:));
+    % end
+    % hold off
+    
+    %% KEI_LE - LENS2
+    data_KEI_LE.lens2_members=cfg_lens2.members;
+    for mi=1:size(data_lens2.(cfg.var),1)
+        tmp.data=squeeze(data_lens2.(cfg.var)(mi,data_KEI_LE.id_w:data_KEI_LE.id_e, data_KEI_LE.id_s:data_KEI_LE.id_n,:));
+        tmp.data_dseason= ...
+            reshape(reshape(tmp.data, [size(tmp.data,1), size(tmp.data,2), 12, size(tmp.data,3)/12]) - ...
+            mean(reshape(tmp.data, [size(tmp.data,1), size(tmp.data,2), 12, size(tmp.data,3)/12]),4, 'omitnan'), [size(tmp.data)]);
+        [data_KEI_LE.lens2(mi,:), tmp.err] = ...
+            Func_0011_get_area_weighted_mean(squeeze(tmp.data), data_KEI_LE.cut_tlong, data_KEI_LE.cut_tlat);
+        [data_KEI_LE.lens2_dseason(mi,:), tmp.err] = ...
+            Func_0011_get_area_weighted_mean(squeeze(tmp.data_dseason), data_KEI_LE.cut_tlong, data_KEI_LE.cut_tlat);
+    end
+    
+    %% KEI_LE - HCST
+    data_KEI_LE.hcst_members=cfg_hcst.members;
+    for ly=1:5 %1:5
+        tmp.ly_str=['ly',num2str(ly)];
+        for mi=1:size(data_hcst.(cfg.var).(tmp.ly_str),1)
+            tmp.data=squeeze(data_hcst.(cfg.var).(tmp.ly_str)(mi,data_KEI_LE.id_w:data_KEI_LE.id_e, data_KEI_LE.id_s:data_KEI_LE.id_n,:));
+            tmp.data_dseason= ...
+                reshape(reshape(tmp.data, [size(tmp.data,1), size(tmp.data,2), 12, size(tmp.data,3)/12]) - ...
+                mean(reshape(tmp.data, [size(tmp.data,1), size(tmp.data,2), 12, size(tmp.data,3)/12]),4, 'omitnan'), [size(tmp.data)]);
+            [data_KEI_LE.hcst(ly,mi,:), tmp.err] = ...
+                Func_0011_get_area_weighted_mean(squeeze(tmp.data), data_KEI_LE.cut_tlong, data_KEI_LE.cut_tlat);
+            [data_KEI_LE.hcst_dseason(ly,mi,:), tmp.err] = ...
+                Func_0011_get_area_weighted_mean(squeeze(tmp.data_dseason), data_KEI_LE.cut_tlong, data_KEI_LE.cut_tlat);
+        end
+    end
+    
+    % hold on
+    % for mi=1:size(data_hcst.(cfg.var).ly1,1)
+    %     plot(data_KEI_LE.time,squeeze(data_KEI_LE.hcst(4,mi,:)));
+    % end
+    % hold off
+    
+    %% KEI_LE - save matfile 
+    mkdir([dirs.saveroot, '/clim_indices']);
+    matfilename=[dirs.saveroot, '/clim_indices/', 'clim_indices_', cfg.var, '_all_','KEI_LE_', ...
+                'obs_', cfg.obs_name, '.mat'];
+    save(matfilename, 'cfg', 'cfg_assm', 'cfg_hcst', 'cfg_lens2', 'data_KEI_LE');
+end
+
+
+
+
+
+if flags.ATL3==1
+
+
+    %% ATL3
+    %% ATL3 - grid information
+    data_ATL3.regions = [340 360 -3 3];
+    [data_ATL3.id_w, data_ATL3.id_e, data_ATL3.id_s, data_ATL3.id_n] = ...
+        Func_0012_findind_Y(0.1, data_ATL3.regions, ...
+                grid.tlong, grid.tlat, 'CESM2'); % find valid lon, lat index near station
+    data_ATL3.cut_tlong=grid.tlong(data_ATL3.id_w:data_ATL3.id_e, data_ATL3.id_s:data_ATL3.id_n);
+    data_ATL3.cut_tlat=grid.tlat(data_ATL3.id_w:data_ATL3.id_e, data_ATL3.id_s:data_ATL3.id_n);
+    data_ATL3.cut_nlon=size(data_ATL3.cut_tlong,1);
+    data_ATL3.cut_nlat=size(data_ATL3.cut_tlat,2);
+    
+    
+    %% ATL3 - time set
+    for ti=1:length(cfg.iyears)
+        for mi=1:12
+            data_ATL3.time((ti-1)*12+mi)=cfg.iyears(ti)+mi*1/12-1/24;
+        end
+    end
+    
+    %% ATL3 - OBS
+    tmp.data=data_obs.(cfg.var)(data_ATL3.id_w:data_ATL3.id_e, data_ATL3.id_s:data_ATL3.id_n, :);
+    tmp.data(tmp.data<-900)=NaN;
+    [data_ATL3.obs, tmp.err] = ...
+        Func_0011_get_area_weighted_mean(squeeze(tmp.data), data_ATL3.cut_tlong, data_ATL3.cut_tlat);
+    
+    %% ATL3 - ASSM
+    data_ATL3.assm_members=cfg_assm.members;
+    for mi=1:size(data_assm.(cfg.var),1)
+        tmp.data=squeeze(data_assm.(cfg.var)(mi,data_ATL3.id_w:data_ATL3.id_e, data_ATL3.id_s:data_ATL3.id_n,:));
+        [data_ATL3.assm(mi,:), tmp.err] = ...
+            Func_0011_get_area_weighted_mean(squeeze(tmp.data), data_ATL3.cut_tlong, data_ATL3.cut_tlat);
+        enda
+    
+    % hold on
+    % for mi=1:size(data_assm.(cfg.var),1)
+    %     plot(data_ATL3.time,data_ATL3.lens2(mi,:));
+    % end
+    % hold off
+    
+    %% ATL3 - LENS2
+    data_ATL3.lens2_members=cfg_lens2.members;
+    for mi=1:size(data_lens2.(cfg.var),1)
+        tmp.data=squeeze(data_lens2.(cfg.var)(mi,data_ATL3.id_w:data_ATL3.id_e, data_ATL3.id_s:data_ATL3.id_n,:));
+        [data_ATL3.lens2(mi,:), tmp.err] = ...
+            Func_0011_get_area_weighted_mean(squeeze(tmp.data), data_ATL3.cut_tlong, data_ATL3.cut_tlat);
+    end
+    
+    %% ATL3 - HCST
+    data_ATL3.hcst_members=cfg_hcst.members;
+    for ly=1:5 %1:5
+        tmp.ly_str=['ly',num2str(ly)];
+        for mi=1:size(data_hcst.(cfg.var).(tmp.ly_str),1)
+            tmp.data=squeeze(data_hcst.(cfg.var).(tmp.ly_str)(mi,data_ATL3.id_w:data_ATL3.id_e, data_ATL3.id_s:data_ATL3.id_n,:));
+            [data_ATL3.hcst(ly,mi,:), tmp.err] = ...
+                Func_0011_get_area_weighted_mean(squeeze(tmp.data), data_ATL3.cut_tlong, data_ATL3.cut_tlat);
+        end
+    end
+    
+    % hold on
+    % for mi=1:size(data_hcst.(cfg.var).ly1,1)
+    %     plot(data_ATL3.time,squeeze(data_ATL3.hcst(4,mi,:)));
+    % end
+    % hold off
+    
+    %% ATL3 - save matfile 
+    mkdir([dirs.saveroot, '/clim_indices']);
+    matfilename=[dirs.saveroot, '/clim_indices/', 'clim_indices_', cfg.var, '_all_','ATL3_', ...
+                'obs_', cfg.obs_name, '.mat'];
+    save(matfilename, 'cfg', 'cfg_assm', 'cfg_hcst', 'cfg_lens2', 'data_ATL3');
+end
+
+
+if flags.ATL3_d==1
+
+
+    %% ATL3_d
+    %% ATL3_d - grid information
+    data_ATL3_d.regions = [340 360 -3 3];
+    [data_ATL3_d.id_w, data_ATL3_d.id_e, data_ATL3_d.id_s, data_ATL3_d.id_n] = ...
+        Func_0012_findind_Y(0.1, data_ATL3_d.regions, ...
+                grid.tlong, grid.tlat, 'CESM2'); % find valid lon, lat index near station
+    data_ATL3_d.cut_tlong=grid.tlong(data_ATL3_d.id_w:data_ATL3_d.id_e, data_ATL3_d.id_s:data_ATL3_d.id_n);
+    data_ATL3_d.cut_tlat=grid.tlat(data_ATL3_d.id_w:data_ATL3_d.id_e, data_ATL3_d.id_s:data_ATL3_d.id_n);
+    data_ATL3_d.cut_nlon=size(data_ATL3_d.cut_tlong,1);
+    data_ATL3_d.cut_nlat=size(data_ATL3_d.cut_tlat,2);
+    
+    
+    %% ATL3_d - time set
+    for ti=1:length(cfg.iyears)
+        for mi=1:12
+            data_ATL3_d.time((ti-1)*12+mi)=cfg.iyears(ti)+mi*1/12-1/24;
+        end
+    end
+    
+    %% ATL3_d - OBS
+    tmp.data=data_obs.(cfg.var)(data_ATL3_d.id_w:data_ATL3_d.id_e, data_ATL3_d.id_s:data_ATL3_d.id_n, :);
+    tmp.data(tmp.data<-900)=NaN;
+    for loni=1:size(tmp.data,1)
+        for lati=1:size(tmp.data,2)
+            [tmp.data(loni,lati,:), tr] = Func_0028_detrend_linear_1d(tmp.data(loni,lati,:));
+        end
+    end
+    [data_ATL3_d.obs, tmp.err] = ...
+        Func_0011_get_area_weighted_mean(squeeze(tmp.data), data_ATL3_d.cut_tlong, data_ATL3_d.cut_tlat);
+    
+    %% ATL3_d - ASSM
+    data_ATL3_d.assm_members=cfg_assm.members;
+    for mi=1:size(data_assm.(cfg.var),1)
+        tmp.data=squeeze(data_assm.(cfg.var)(mi,data_ATL3_d.id_w:data_ATL3_d.id_e, data_ATL3_d.id_s:data_ATL3_d.id_n,:));
+        for loni=1:size(tmp.data,1)
+            for lati=1:size(tmp.data,2)
+                [tmp.data(loni,lati,:), tr] = Func_0028_detrend_linear_1d(tmp.data(loni,lati,:));
+            end
+        end
+        [data_ATL3_d.assm(mi,:), tmp.err] = ...
+            Func_0011_get_area_weighted_mean(squeeze(tmp.data), data_ATL3_d.cut_tlong, data_ATL3_d.cut_tlat);
+    end
+    
+    % hold on
+    % for mi=1:size(data_assm.(cfg.var),1)
+    %     plot(data_ATL3_d.time,data_ATL3_d.lens2(mi,:));
+    % end
+    % hold off
+    
+    %% ATL3_d - LENS2
+    data_ATL3_d.lens2_members=cfg_lens2.members;
+    for mi=1:size(data_lens2.(cfg.var),1)
+        tmp.data=squeeze(data_lens2.(cfg.var)(mi,data_ATL3_d.id_w:data_ATL3_d.id_e, data_ATL3_d.id_s:data_ATL3_d.id_n,:));
+        for loni=1:size(tmp.data,1)
+            for lati=1:size(tmp.data,2)
+                [tmp.data(loni,lati,:), tr] = Func_0028_detrend_linear_1d(tmp.data(loni,lati,:));
+            end
+        end
+        [data_ATL3_d.lens2(mi,:), tmp.err] = ...
+            Func_0011_get_area_weighted_mean(squeeze(tmp.data), data_ATL3_d.cut_tlong, data_ATL3_d.cut_tlat);
+    end
+    
+    %% ATL3_d - HCST
+    data_ATL3_d.hcst_members=cfg_hcst.members;
+    for ly=1:5 %1:5
+        tmp.ly_str=['ly',num2str(ly)];
+        for mi=1:size(data_hcst.(cfg.var).(tmp.ly_str),1)
+            tmp.data=squeeze(data_hcst.(cfg.var).(tmp.ly_str)(mi,data_ATL3_d.id_w:data_ATL3_d.id_e, data_ATL3_d.id_s:data_ATL3_d.id_n,:));
+            for loni=1:size(tmp.data,1)
+                for lati=1:size(tmp.data,2)
+                    [tmp.data(loni,lati,:), tr] = Func_0028_detrend_linear_1d(tmp.data(loni,lati,:));
+                end
+            end
+            [data_ATL3_d.hcst(ly,mi,:), tmp.err] = ...
+                Func_0011_get_area_weighted_mean(squeeze(tmp.data), data_ATL3_d.cut_tlong, data_ATL3_d.cut_tlat);
+        end
+    end
+    
+    % hold on
+    % for mi=1:size(data_hcst.(cfg.var).ly1,1)
+    %     plot(data_ATL3_d.time,squeeze(data_ATL3_d.hcst(4,mi,:)));
+    % end
+    % hold off
+    
+    %% ATL3_d - save matfile 
+    mkdir([dirs.saveroot, '/clim_indices']);
+    matfilename=[dirs.saveroot, '/clim_indices/', 'clim_indices_', cfg.var, '_all_','ATL3_d_', ...
+                'obs_', cfg.obs_name, '.mat'];
+    save(matfilename, 'cfg', 'cfg_assm', 'cfg_hcst', 'cfg_lens2', 'data_ATL3_d');
+end
+
+
+
+
+if flags.TNA==1
+
+
+    %% TNA
+    %% TNA - grid information
+    data_TNA.regions = [305 345 5 25];
+    [data_TNA.id_w, data_TNA.id_e, data_TNA.id_s, data_TNA.id_n] = ...
+        Func_0012_findind_Y(0.1, data_TNA.regions, ...
+                grid.tlong, grid.tlat, 'CESM2'); % find valid lon, lat index near station
+    data_TNA.cut_tlong=grid.tlong(data_TNA.id_w:data_TNA.id_e, data_TNA.id_s:data_TNA.id_n);
+    data_TNA.cut_tlat=grid.tlat(data_TNA.id_w:data_TNA.id_e, data_TNA.id_s:data_TNA.id_n);
+    data_TNA.cut_nlon=size(data_TNA.cut_tlong,1);
+    data_TNA.cut_nlat=size(data_TNA.cut_tlat,2);
+    
+    
+    %% TNA - time set
+    for ti=1:length(cfg.iyears)
+        for mi=1:12
+            data_TNA.time((ti-1)*12+mi)=cfg.iyears(ti)+mi*1/12-1/24;
+        end
+    end
+    
+    %% TNA - OBS
+    tmp.data=data_obs.(cfg.var)(data_TNA.id_w:data_TNA.id_e, data_TNA.id_s:data_TNA.id_n, :);
+    tmp.data(tmp.data<-900)=NaN;
+    [data_TNA.obs, tmp.err] = ...
+        Func_0011_get_area_weighted_mean(squeeze(tmp.data), data_TNA.cut_tlong, data_TNA.cut_tlat);
+    
+    %% TNA - ASSM
+    data_TNA.assm_members=cfg_assm.members;
+    for mi=1:size(data_assm.(cfg.var),1)
+        tmp.data=squeeze(data_assm.(cfg.var)(mi,data_TNA.id_w:data_TNA.id_e, data_TNA.id_s:data_TNA.id_n,:));
+        [data_TNA.assm(mi,:), tmp.err] = ...
+            Func_0011_get_area_weighted_mean(squeeze(tmp.data), data_TNA.cut_tlong, data_TNA.cut_tlat);
+    end
+    
+    %% TNA - LENS2
+    data_TNA.lens2_members=cfg_lens2.members;
+    for mi=1:size(data_lens2.(cfg.var),1)
+        tmp.data=squeeze(data_lens2.(cfg.var)(mi,data_TNA.id_w:data_TNA.id_e, data_TNA.id_s:data_TNA.id_n,:));
+        [data_TNA.lens2(mi,:), tmp.err] = ...
+            Func_0011_get_area_weighted_mean(squeeze(tmp.data), data_TNA.cut_tlong, data_TNA.cut_tlat);
+    end
+    
+    %% TNA - HCST
+    data_TNA.hcst_members=cfg_hcst.members;
+    for ly=1:5 %1:5
+        tmp.ly_str=['ly',num2str(ly)];
+        for mi=1:size(data_hcst.(cfg.var).(tmp.ly_str),1)
+            tmp.data=squeeze(data_hcst.(cfg.var).(tmp.ly_str)(mi,data_TNA.id_w:data_TNA.id_e, data_TNA.id_s:data_TNA.id_n,:));
+            [data_TNA.hcst(ly,mi,:), tmp.err] = ...
+                Func_0011_get_area_weighted_mean(squeeze(tmp.data), data_TNA.cut_tlong, data_TNA.cut_tlat);
+        end
+    end
+    
+    %% TNA - save matfile 
+    mkdir([dirs.saveroot, '/clim_indices']);
+    matfilename=[dirs.saveroot, '/clim_indices/', 'clim_indices_', cfg.var, '_all_','TNA_', ...
+                'obs_', cfg.obs_name, '.mat'];
+    save(matfilename, 'cfg', 'cfg_assm', 'cfg_hcst', 'cfg_lens2', 'data_TNA');
+end
+
+
+if flags.TSA==1
+
+
+    %% TSA
+    %% TSA - grid information
+    data_TSA.regions1 = [330 360 -20 0];
+    data_TSA.regions2 = [0 10 -20 0];
+
+    [data_TSA.id_w1, data_TSA.id_e1, data_TSA.id_s1, data_TSA.id_n1] = ...
+        Func_0012_findind_Y(0.1, data_TSA.regions1, ...
+                grid.tlong, grid.tlat, 'CESM2'); % find valid lon, lat index near station
+    [data_TSA.id_w2, data_TSA.id_e2, data_TSA.id_s2, data_TSA.id_n2] = ...
+        Func_0012_findind_Y(0.1, data_TSA.regions2, ...
+                grid.tlong, grid.tlat, 'CESM2'); % find valid lon, lat index near station
+    data_TSA.cut_tlong1=grid.tlong(data_TSA.id_w1:data_TSA.id_e1, data_TSA.id_s1:data_TSA.id_n1);
+    data_TSA.cut_tlat1=grid.tlat(data_TSA.id_w1:data_TSA.id_e1, data_TSA.id_s1:data_TSA.id_n1);
+    data_TSA.cut_tlong2=grid.tlong(data_TSA.id_w2:data_TSA.id_e2, data_TSA.id_s2:data_TSA.id_n2)+360;
+    data_TSA.cut_tlat2=grid.tlat(data_TSA.id_w2:data_TSA.id_e2, data_TSA.id_s2:data_TSA.id_n2);
+
+    data_TSA.cut_tlong=[data_TSA.cut_tlong1; data_TSA.cut_tlong2];
+    data_TSA.cut_tlat=[data_TSA.cut_tlat1; data_TSA.cut_tlat2];
+
+    data_TSA.cut_nlon=size(data_TSA.cut_tlong,1);
+    data_TSA.cut_nlat=size(data_TSA.cut_tlat,2);
+    
+    
+    %% TSA - time set
+    for ti=1:length(cfg.iyears)
+        for mi=1:12
+            data_TSA.time((ti-1)*12+mi)=cfg.iyears(ti)+mi*1/12-1/24;
+        end
+    end
+    
+    %% TSA - OBS
+    tmp.data1=data_obs.(cfg.var)(data_TSA.id_w1:data_TSA.id_e1, data_TSA.id_s1:data_TSA.id_n1, :);
+    tmp.data2=data_obs.(cfg.var)(data_TSA.id_w2:data_TSA.id_e2, data_TSA.id_s2:data_TSA.id_n2, :);
+    tmp.data=[tmp.data1; tmp.data2];
+    tmp.data(tmp.data<-900)=NaN;
+    [data_TSA.obs, tmp.err] = ...
+        Func_0011_get_area_weighted_mean(squeeze(tmp.data), data_TSA.cut_tlong, data_TSA.cut_tlat);
+    
+    %% TSA - ASSM
+    data_TSA.assm_members=cfg_assm.members;
+    for mi=1:size(data_assm.(cfg.var),1)
+        tmp.data1=squeeze(data_assm.(cfg.var)(mi,data_TSA.id_w1:data_TSA.id_e1, data_TSA.id_s1:data_TSA.id_n1,:));
+        tmp.data2=squeeze(data_assm.(cfg.var)(mi,data_TSA.id_w2:data_TSA.id_e2, data_TSA.id_s2:data_TSA.id_n2,:));
+        tmp.data=[tmp.data1; tmp.data2];
+        [data_TSA.assm(mi,:), tmp.err] = ...
+            Func_0011_get_area_weighted_mean(squeeze(tmp.data), data_TSA.cut_tlong, data_TSA.cut_tlat);
+    end
+    
+    %% TSA - LENS2
+    data_TSA.lens2_members=cfg_lens2.members;
+    for mi=1:size(data_lens2.(cfg.var),1)
+        tmp.data1=squeeze(data_lens2.(cfg.var)(mi,data_TSA.id_w1:data_TSA.id_e1, data_TSA.id_s1:data_TSA.id_n1,:));
+        tmp.data2=squeeze(data_lens2.(cfg.var)(mi,data_TSA.id_w2:data_TSA.id_e2, data_TSA.id_s2:data_TSA.id_n2,:));
+        tmp.data=[tmp.data1; tmp.data2];
+        [data_TSA.lens2(mi,:), tmp.err] = ...
+            Func_0011_get_area_weighted_mean(squeeze(tmp.data), data_TSA.cut_tlong, data_TSA.cut_tlat);
+    end
+    
+    %% TSA - HCST
+    data_TSA.hcst_members=cfg_hcst.members;
+    for ly=1:5 %1:5
+        tmp.ly_str=['ly',num2str(ly)];
+        for mi=1:size(data_hcst.(cfg.var).(tmp.ly_str),1)
+            tmp.data1=squeeze(data_hcst.(cfg.var).(tmp.ly_str)(mi,data_TSA.id_w1:data_TSA.id_e1, data_TSA.id_s1:data_TSA.id_n1,:));
+            tmp.data2=squeeze(data_hcst.(cfg.var).(tmp.ly_str)(mi,data_TSA.id_w2:data_TSA.id_e2, data_TSA.id_s2:data_TSA.id_n2,:));
+            tmp.data=[tmp.data1; tmp.data2];
+
+            [data_TSA.hcst(ly,mi,:), tmp.err] = ...
+                Func_0011_get_area_weighted_mean(squeeze(tmp.data), data_TSA.cut_tlong, data_TSA.cut_tlat);
+        end
+    end
+    
+    %% TSA - save matfile 
+    mkdir([dirs.saveroot, '/clim_indices']);
+    matfilename=[dirs.saveroot, '/clim_indices/', 'clim_indices_', cfg.var, '_all_','TSA_', ...
+                'obs_', cfg.obs_name, '.mat'];
+    save(matfilename, 'cfg', 'cfg_assm', 'cfg_hcst', 'cfg_lens2', 'data_TSA');
+end
+
+
+
+
+
 
 
 if flags.AMO==1
@@ -1130,6 +1665,223 @@ if flags.PDO==1
 
 end
 
+
+
+if flags.PDO_l==1
+    
+%     AMO_matfilename=[dirs.saveroot, '/clim_indices/', 'clim_indices_', cfg.var, '_all_','AMO_', ...
+%                 'obs_', cfg.obs_name, '.mat'];
+%   
+%     load(AMO_matfilename, 'cfg', 'cfg_assm', 'cfg_hcst', 'cfg_lens2', 'data_AMO');
+
+    %% PDO_l index (PDO -> linear detrend)
+    %% PDO_l - grid information
+    data_PDO_l.regions = [120 260 20 60];
+    [data_PDO_l.id_w, data_PDO_l.id_e, data_PDO_l.id_s, data_PDO_l.id_n] = ...
+        Func_0012_findind_Y(0.1, data_PDO_l.regions, ...
+                grid.tlong, grid.tlat, 'CESM2'); % find valid lon, lat index near station
+    data_PDO_l.cut_tlong=grid.tlong(data_PDO_l.id_w:data_PDO_l.id_e, data_PDO_l.id_s:data_PDO_l.id_n);
+    data_PDO_l.cut_tlat=grid.tlat(data_PDO_l.id_w:data_PDO_l.id_e, data_PDO_l.id_s:data_PDO_l.id_n);
+    data_PDO_l.cut_nlon=size(data_PDO_l.cut_tlong,1);
+    data_PDO_l.cut_nlat=size(data_PDO_l.cut_tlat,2);
+    
+    % [lv, pc, var_exp] = Func_0024_EOF_3d(data,X);
+    
+    %% PDO_l - time set
+    for ti=1:length(cfg.iyears)
+        for mi=1:12
+            data_PDO_l.time((ti-1)*12+mi)=cfg.iyears(ti)+mi*1/12-1/24;
+        end
+    end
+    
+    %% PDO_l & NPGO - OBS 
+    tmp.data=data_obs.(cfg.var)(data_PDO_l.id_w:data_PDO_l.id_e, data_PDO_l.id_s:data_PDO_l.id_n, :);
+    tmp.data(tmp.data<-900)=NaN;
+
+    for loni=1:size(tmp.data,1)
+        for lati=1:size(tmp.data,2)
+            [tmp.data(loni,lati,:), tr] = Func_0028_detrend_linear_1d(tmp.data(loni,lati,:));
+        end
+    end
+    
+    tmp.data_dseason= ...
+        reshape(reshape(tmp.data, [size(tmp.data,1), size(tmp.data,2), 12, size(tmp.data,3)/12]) - ...
+        mean(reshape(tmp.data, [size(tmp.data,1), size(tmp.data,2), 12, size(tmp.data,3)/12]),4, 'omitnan'), [size(tmp.data)]);
+    
+%     tmp.GLO_obs_3d(1,1,:)=data_AMO.GLO_obs_dseason;
+%     tmp.data_dseason=tmp.data_dseason-tmp.GLO_obs_3d;
+    tmp.data_dseason=tmp.data_dseason-mean(tmp.data_dseason,3,'omitnan'); % make anomaly before PDO_l calculation
+    
+%     maxnind=find(data_AMO.GLO_obs_dseason==0,1,'last');
+
+    tmp.num_modes=3;
+%     [data_PDO_l.lv_obs, data_PDO_l.pct_obs, data_PDO_l.var_exp_obs] = Func_0024_EOF_3d(tmp.data_dseason(:,:,maxnind+1:end),tmp.num_modes, data_PDO_l.cut_tlat);
+    [data_PDO_l.lv_obs, data_PDO_l.pct_obs, data_PDO_l.var_exp_obs] = Func_0024_EOF_3d(tmp.data_dseason(:,:,:),tmp.num_modes, data_PDO_l.cut_tlat);
+
+%     plot(data_PDO_l.time,-data_PDO_l.pct_obs(:,1))
+    
+    % [data_PDO_l.GLO_obs, tmp.err] = ...
+    %     Func_0011_get_area_weighted_mean(squeeze(tmp.data), data_PDO_l.GLO_cut_tlong, data_PDO_l.GLO_cut_tlat);
+    
+    
+    %% normal lowpass_dseason
+    data_PDO_l.lp_period_month=120;
+    for modei=1:length(tmp.num_modes)
+        data_PDO_l.pct_obs_lp(:,modei)=lowpass(data_PDO_l.pct_obs(:,modei), 1/data_PDO_l.lp_period_month,  'steepness', 0.9999);
+    end
+    
+    
+    %% PDO_l & NPGO - ASSM
+    data_PDO_l.assm_members=cfg_assm.members;
+    
+    for mi=1:size(data_assm.(cfg.var),1)
+        tmp.data=squeeze(data_assm.(cfg.var)(mi,data_PDO_l.id_w:data_PDO_l.id_e, data_PDO_l.id_s:data_PDO_l.id_n, :));
+        tmp.data(tmp.data==0)=NaN;
+        tmp.data_mean=mean(tmp.data,3);
+        tmp.data(isnan(repmat(tmp.data_mean, [1 1 size(tmp.data,3)])))=NaN;
+
+        for loni=1:size(tmp.data,1)
+            for lati=1:size(tmp.data,2)
+                [tmp.data(loni,lati,:), tr] = Func_0028_detrend_linear_1d(tmp.data(loni,lati,:));
+            end
+        end
+    
+        tmp.data_dseason= ...
+            reshape(reshape(tmp.data, [size(tmp.data,1), size(tmp.data,2), 12, size(tmp.data,3)/12]) - ...
+            mean(reshape(tmp.data, [size(tmp.data,1), size(tmp.data,2), 12, size(tmp.data,3)/12]),4), [size(tmp.data)]);
+%         tmp.GLO_assm_3d(1,1,:)=data_AMO.GLO_assm_dseason(mi,:);
+%         tmp.data_dseason=tmp.data_dseason-tmp.GLO_assm_3d; %% remove global increase
+        tmp.data_dseason=tmp.data_dseason-mean(tmp.data_dseason,3); % make anomaly before PDO_l calculation
+    
+        [data_PDO_l.lv_assm(mi,:,:,:), data_PDO_l.pct_assm(mi,:,:), data_PDO_l.var_exp_assm(mi,:)] = ...
+            Func_0024_EOF_3d(tmp.data_dseason,tmp.num_modes, data_PDO_l.cut_tlat);
+    
+        data_PDO_l.assm_members{mi};
+    end
+    
+    for mi=1:size(data_assm.(cfg.var),1)
+        for modei=1:length(tmp.num_modes)
+            data_PDO_l.pct_assm_lp(mi,:,modei)=lowpass(data_PDO_l.pct_assm(mi,:,modei), 1/data_AMO.lp_period_month,  'steepness', 0.9999);
+        end
+    end
+    
+    %% PDO_l & NPGO - LENS2
+    data_PDO_l.lens2_members=cfg_lens2.members;
+    
+    for mi=1:size(data_lens2.(cfg.var),1)
+        tmp.data=squeeze(data_lens2.(cfg.var)(mi,data_PDO_l.id_w:data_PDO_l.id_e, data_PDO_l.id_s:data_PDO_l.id_n, :));
+        tmp.data(tmp.data==0)=NaN;
+        tmp.data_mean=mean(tmp.data,3);
+        tmp.data(isnan(repmat(tmp.data_mean, [1 1 size(tmp.data,3)])))=NaN;
+        for loni=1:size(tmp.data,1)
+            for lati=1:size(tmp.data,2)
+                [tmp.data(loni,lati,:), tr] = Func_0028_detrend_linear_1d(tmp.data(loni,lati,:));
+            end
+        end
+    
+        tmp.data_dseason= ...
+            reshape(reshape(tmp.data, [size(tmp.data,1), size(tmp.data,2), 12, size(tmp.data,3)/12]) - ...
+            mean(reshape(tmp.data, [size(tmp.data,1), size(tmp.data,2), 12, size(tmp.data,3)/12]),4), [size(tmp.data)]);
+%         tmp.GLO_lens2_3d(1,1,:)=data_AMO.GLO_lens2_dseason(mi,:);
+%         tmp.data_dseason=tmp.data_dseason-tmp.GLO_lens2_3d; %% remove global increase
+        tmp.data_dseason=tmp.data_dseason-mean(tmp.data_dseason,3); % make anomaly before PDO_l calculation
+    
+        [data_PDO_l.lv_lens2(mi,:,:,:), data_PDO_l.pct_lens2(mi,:,:), data_PDO_l.var_exp_lens2(mi,:)] = ...
+            Func_0024_EOF_3d(tmp.data_dseason,tmp.num_modes, data_PDO_l.cut_tlat);
+    
+        data_PDO_l.lens2_members{mi};
+    end
+    
+    for mi=1:size(data_lens2.(cfg.var),1)
+        for modei=1:length(tmp.num_modes)
+            data_PDO_l.pct_lens2_lp(mi,:,modei)=lowpass(data_PDO_l.pct_lens2(mi,:,modei), 1/data_AMO.lp_period_month,  'steepness', 0.9999);
+        end
+    end
+    
+    
+    %% PDO_l & NPGO - HCST
+    data_PDO_l.hcst_members=cfg_hcst.members;
+    
+    for ly=1:5 %1:5
+        tmp.ly_str=['ly',num2str(ly)];
+        for mi=1:size(data_hcst.(cfg.var).(tmp.ly_str),1)
+            tmp.data=squeeze(data_hcst.(cfg.var).(tmp.ly_str)(mi,data_PDO_l.id_w:data_PDO_l.id_e, data_PDO_l.id_s:data_PDO_l.id_n, :));
+            tmp.data(tmp.data==0)=NaN;
+            tmp.data_mean=mean(tmp.data,3);
+            tmp.data(isnan(repmat(tmp.data_mean, [1 1 size(tmp.data,3)])))=NaN;
+
+            for loni=1:size(tmp.data,1)
+                for lati=1:size(tmp.data,2)
+                    [tmp.data(loni,lati,:), tr] = Func_0028_detrend_linear_1d(tmp.data(loni,lati,:));
+                end
+            end
+    
+            tmp.data_dseason= ...
+            reshape(reshape(tmp.data, [size(tmp.data,1), size(tmp.data,2), 12, size(tmp.data,3)/12]) - ...
+            mean(reshape(tmp.data, [size(tmp.data,1), size(tmp.data,2), 12, size(tmp.data,3)/12]),4), [size(tmp.data)]);
+    
+%             tmp.GLO_hcst_3d(1,1,:)=data_AMO.GLO_hcst_dseason(ly,mi,:);
+%             tmp.data_dseason=tmp.data_dseason-tmp.GLO_hcst_3d; %% remove global increase
+            tmp.data_dseason=tmp.data_dseason-mean(tmp.data_dseason,3); % make anomaly before PDO_l calculation
+            
+            [data_PDO_l.lv_hcst(ly,mi,:,:,:), data_PDO_l.pct_hcst(ly,mi,:,:), data_PDO_l.var_exp_hcst(ly,mi,:)] = ...
+                Func_0024_EOF_3d(tmp.data_dseason,tmp.num_modes, data_PDO_l.cut_tlat);
+    
+    %         [data_AMO.ATL_hcst_dseason(ly,mi,:), tmp.err] = ...
+    %             Func_0011_get_area_weighted_mean(squeeze(tmp.data_dseason), data_AMO.ATL_cut_tlong, data_AMO.ATL_cut_tlat);
+    
+            ly*100+mi
+        end
+    end
+    
+    for ly=1:5 %1:5
+        tmp.ly_str=['ly',num2str(ly)];
+        for mi=1:size(data_hcst.(cfg.var).(tmp.ly_str),1)
+            for modei=1:length(tmp.num_modes)
+                data_PDO_l.pct_hcst_lp(ly,mi,:,modei)=lowpass(squeeze(data_PDO_l.pct_hcst(ly,mi,:,modei)), 1/data_AMO.lp_period_month,  'steepness', 0.9999);
+            end
+        end
+    end
+    
+    %% PDO_l - save matfile 
+    mkdir([dirs.saveroot, '/clim_indices']);
+    matfilename=[dirs.saveroot, '/clim_indices/', 'clim_indices_', cfg.var, '_all_','PDO_l_', ...
+                'obs_', cfg.obs_name, '.mat'];
+    save(matfilename, 'cfg', 'cfg_assm', 'cfg_hcst', 'cfg_lens2', 'data_PDO_l');
+
+%     hold on
+%     for pi=1:20
+%         if mean(data_PDO_l.pct_assm(pi,end,1))<0
+%             plot(data_PDO_l.time,data_PDO_l.pct_assm(pi,:,1), 'r')
+%         else
+%             plot(data_PDO_l.time,-data_PDO_l.pct_assm(pi,:,1), 'r')            
+%         end
+%     end
+%     plot(data_PDO_l.time,data_PDO_l.pct_obs(:,1), 'color', 'k', 'linewidth', 2)
+% 
+% 
+%     hold on
+%     for pi=1:20
+%             plot(data_AMO.time,data_AMO.assm_dseason_lp(pi,:), 'r')
+%     end
+%     plot(data_PDO_l.time,data_AMO.obs_dseason_lp(:), 'color', 'k', 'linewidth', 2)
+
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 if flags.SAM==1
     grid.regions_40= [0 360 -40 -40];
     [grid.id_w_40, grid.id_e_40, grid.id_s_40, grid.id_n_40] = Func_0012_findind_Y(0.1, grid.regions_40, ...
@@ -1169,6 +1921,7 @@ if flags.SAM==1
     data_SAM.obs_65=data_SAM.obs_65./std(data_SAM.obs_65);
 
     data_SAM.obs=data_SAM.obs_40-data_SAM.obs_65;
+
     
      %% SAM - time set
     for ti=1:length(cfg.iyears)
@@ -1179,7 +1932,7 @@ if flags.SAM==1
     data_SAM.lp_period_month=120;
     data_SAM.obs_lp=lowpass(data_SAM.obs, 1/data_SAM.lp_period_month,  'steepness', 0.989);
 
-    plot(data_SAM.time,data_SAM.obs_lp)
+%     plot(data_SAM.time,data_SAM.obs_lp)
 
 
     %% SAM-ASSM
@@ -1203,7 +1956,7 @@ if flags.SAM==1
     
         data_SAM.assm(mi,:)=data_SAM.assm_40(mi,:)-data_SAM.assm_65(mi,:);
         data_SAM.assm_lp(mi,:)=lowpass(squeeze(data_SAM.assm(mi,:)), 1/data_SAM.lp_period_month,  'steepness', 0.989);
-
+        
     end
 
 %     hold on
@@ -1235,6 +1988,7 @@ if flags.SAM==1
     
         data_SAM.lens2(mi,:)=data_SAM.lens2_40(mi,:)-data_SAM.lens2_65(mi,:);
         data_SAM.lens2_lp(mi,:)=lowpass(squeeze(data_SAM.lens2(mi,:)), 1/data_SAM.lp_period_month,  'steepness', 0.989);
+        
 
     end
   
@@ -1293,6 +2047,845 @@ if flags.SAM==1
 
 end
 
+if flags.SAM_d==1
+    grid.regions_40= [0 360 -40 -40];
+    [grid.id_w_40, grid.id_e_40, grid.id_s_40, grid.id_n_40] = Func_0012_findind_Y(0.1, grid.regions_40, ...
+                grid.cut_tlong, grid.cut_tlat, 'CESM2'); % find valid lon, lat index near station
+    tmp.idlat=round((grid.id_s_40+grid.id_n_40)/2);
+    grid.id_s_40=tmp.idlat;
+    grid.id_n_40=tmp.idlat;
+
+    grid.regions_65= [0 360 -65 -65];
+    [grid.id_w_65, grid.id_e_65, grid.id_s_65, grid.id_n_65] = Func_0012_findind_Y(0.5, grid.regions_65, ...
+                grid.cut_tlong, grid.cut_tlat, 'CESM2'); % find valid lon, lat index near station
+    tmp.idlat=round((grid.id_s_65+grid.id_n_65)/2);
+    grid.id_s_65=tmp.idlat;
+    grid.id_n_65=tmp.idlat;
+
+    grid.cut_tlong_40=grid.cut_tlong(grid.id_w_40:grid.id_e_40, grid.id_s_40:grid.id_n_40);
+    grid.cut_tlat_40=grid.cut_tlat(grid.id_w_40:grid.id_e_40, grid.id_s_40:grid.id_n_40);
+    grid.cut_nlon_40=size(grid.cut_tlong,1);
+
+    grid.cut_tlong_65=grid.cut_tlong(grid.id_w_65:grid.id_e_65, grid.id_s_65:grid.id_n_65);
+    grid.cut_tlat_65=grid.cut_tlat(grid.id_w_65:grid.id_e_65, grid.id_s_65:grid.id_n_65);
+    grid.cut_nlon_65=size(grid.cut_tlong,1);
+
+    %% SAM_d - OBS
+    tmp.data_40=data_obs.(cfg.var)(grid.id_w_40:grid.id_e_40, grid.id_s_40:grid.id_n_40, :);
+    tmp.data_40(tmp.data_40<-900)=NaN;
+    tmp.data_40(tmp.data_40==0)=NaN;
+    data_SAM_d.obs_40=squeeze(mean(tmp.data_40,1));
+    data_SAM_d.obs_40=data_SAM_d.obs_40-mean(data_SAM_d.obs_40);
+    data_SAM_d.obs_40=data_SAM_d.obs_40./std(data_SAM_d.obs_40);
+
+    tmp.data_65=data_obs.(cfg.var)(grid.id_w_65:grid.id_e_65, grid.id_s_65:grid.id_n_65, :);
+    tmp.data_65(tmp.data_65<-900)=NaN;
+    tmp.data_65(tmp.data_65==0)=NaN;
+    data_SAM_d.obs_65=squeeze(mean(tmp.data_65,1));
+    data_SAM_d.obs_65=data_SAM_d.obs_65-mean(data_SAM_d.obs_65);
+    data_SAM_d.obs_65=data_SAM_d.obs_65./std(data_SAM_d.obs_65);
+
+    data_SAM_d.obs=data_SAM_d.obs_40-data_SAM_d.obs_65;
+    [data_SAM_d.obs, tr] = Func_0028_detrend_linear_1d(data_SAM_d.obs);
+
+    
+     %% SAM_d - time set
+    for ti=1:length(cfg.iyears)
+        for mi=1:12
+            data_SAM_d.time((ti-1)*12+mi)=cfg.iyears(ti)+mi*1/12-1/24;
+        end
+    end
+    data_SAM_d.lp_period_month=120;
+    data_SAM_d.obs_lp=lowpass(data_SAM_d.obs, 1/data_SAM_d.lp_period_month,  'steepness', 0.989);
+
+%     plot(data_SAM_d.time,data_SAM_d.obs_lp)
+
+
+    %% SAM_d-ASSM
+
+    data_SAM_d.assm_members=cfg_assm.members;
+    
+    for mi=1:size(data_assm.(cfg.var),1)
+        tmp.data_40=squeeze(data_assm.(cfg.var)(mi,grid.id_w_40:grid.id_e_40, grid.id_s_40:grid.id_n_40, :));
+        tmp.data_40(tmp.data_40<-900)=NaN;
+        tmp.data_40(tmp.data_40==0)=NaN;
+        data_SAM_d.assm_40(mi,:)=squeeze(mean(tmp.data_40,1));
+        data_SAM_d.assm_40(mi,:)=data_SAM_d.assm_40(mi,:)-mean(data_SAM_d.assm_40(mi,:));
+        data_SAM_d.assm_40(mi,:)=data_SAM_d.assm_40(mi,:)./std(data_SAM_d.assm_40(mi,:));
+    
+        tmp.data_65=squeeze(data_assm.(cfg.var)(mi,grid.id_w_65:grid.id_e_65, grid.id_s_65:grid.id_n_65, :));
+        tmp.data_65(tmp.data_65<-900)=NaN;
+        tmp.data_65(tmp.data_65==0)=NaN;
+        data_SAM_d.assm_65(mi,:)=squeeze(mean(tmp.data_65,1));
+        data_SAM_d.assm_65(mi,:)=data_SAM_d.assm_65(mi,:)-mean(data_SAM_d.assm_65(mi,:));
+        data_SAM_d.assm_65(mi,:)=data_SAM_d.assm_65(mi,:)./std(data_SAM_d.assm_65(mi,:));
+    
+        data_SAM_d.assm(mi,:)=data_SAM_d.assm_40(mi,:)-data_SAM_d.assm_65(mi,:);
+        [data_SAM_d.assm(mi,:), tr] = Func_0028_detrend_linear_1d(data_SAM_d.assm(mi,:)');
+        data_SAM_d.assm_lp(mi,:)=lowpass(squeeze(data_SAM_d.assm(mi,:)), 1/data_SAM_d.lp_period_month,  'steepness', 0.989);
+        
+    end
+
+%     hold on
+%     for pi=1:20
+%             plot(data_SAM_d.time,data_SAM_d.assm_lp(pi,:), 'r', 'linewidth', 0.5)
+%     end
+%     plot(data_SAM_d.time,mean(data_SAM_d.assm_lp,1), 'color', 'r', 'linewidth', 3)
+%     plot(data_SAM_d.time,data_SAM_d.obs_lp(:), 'color', 'k', 'linewidth', 3)
+    
+
+    %% SAM_d-LENS2
+
+    data_SAM_d.lens2_members=cfg_lens2.members;
+    
+    for mi=1:size(data_lens2.(cfg.var),1)
+        tmp.data_40=squeeze(data_lens2.(cfg.var)(mi,grid.id_w_40:grid.id_e_40, grid.id_s_40:grid.id_n_40, :));
+        tmp.data_40(tmp.data_40<-900)=NaN;
+        tmp.data_40(tmp.data_40==0)=NaN;
+        data_SAM_d.lens2_40(mi,:)=squeeze(mean(tmp.data_40,1));
+        data_SAM_d.lens2_40(mi,:)=data_SAM_d.lens2_40(mi,:)-mean(data_SAM_d.lens2_40(mi,:));
+        data_SAM_d.lens2_40(mi,:)=data_SAM_d.lens2_40(mi,:)./std(data_SAM_d.lens2_40(mi,:));
+    
+        tmp.data_65=squeeze(data_lens2.(cfg.var)(mi,grid.id_w_65:grid.id_e_65, grid.id_s_65:grid.id_n_65, :));
+        tmp.data_65(tmp.data_65<-900)=NaN;
+        tmp.data_65(tmp.data_65==0)=NaN;
+        data_SAM_d.lens2_65(mi,:)=squeeze(mean(tmp.data_65,1));
+        data_SAM_d.lens2_65(mi,:)=data_SAM_d.lens2_65(mi,:)-mean(data_SAM_d.lens2_65(mi,:));
+        data_SAM_d.lens2_65(mi,:)=data_SAM_d.lens2_65(mi,:)./std(data_SAM_d.lens2_65(mi,:));
+    
+        data_SAM_d.lens2(mi,:)=data_SAM_d.lens2_40(mi,:)-data_SAM_d.lens2_65(mi,:);
+        [data_SAM_d.lens2(mi,:), tr] = Func_0028_detrend_linear_1d(data_SAM_d.lens2(mi,:)');
+        data_SAM_d.lens2_lp(mi,:)=lowpass(squeeze(data_SAM_d.lens2(mi,:)), 1/data_SAM_d.lp_period_month,  'steepness', 0.989);
+        
+
+    end
+  
+
+
+    %% SAM_d-HCST
+    data_SAM_d.hcst_members=cfg_hcst.members;
+    
+    for ly=1:5
+        tmp.ly_str=['ly',num2str(ly)];
+        for mi=1:size(data_hcst.(cfg.var).(tmp.ly_str),1)
+            tmp.data_40=squeeze(data_hcst.(cfg.var).(tmp.ly_str)(mi,grid.id_w_40:grid.id_e_40, grid.id_s_40:grid.id_n_40, :));
+            tmp.data_40(tmp.data_40<-900)=NaN;
+            tmp.data_40(tmp.data_40==0)=NaN;
+            data_SAM_d.hcst_40(ly,mi,:)=squeeze(mean(tmp.data_40,1));
+            data_SAM_d.hcst_40(ly,mi,:)=data_SAM_d.hcst_40(ly,mi,:)-mean(data_SAM_d.hcst_40(ly,mi,:));
+            data_SAM_d.hcst_40(ly,mi,:)=data_SAM_d.hcst_40(ly,mi,:)./std(data_SAM_d.hcst_40(ly,mi,:));
+        
+            tmp.data_65=squeeze(data_hcst.(cfg.var).(tmp.ly_str)(mi,grid.id_w_65:grid.id_e_65, grid.id_s_65:grid.id_n_65, :));
+            tmp.data_65(tmp.data_65<-900)=NaN;
+            tmp.data_65(tmp.data_65==0)=NaN;
+            data_SAM_d.hcst_65(ly,mi,:)=squeeze(mean(tmp.data_65,1));
+            data_SAM_d.hcst_65(ly,mi,:)=data_SAM_d.hcst_65(ly,mi,:)-mean(data_SAM_d.hcst_65(ly,mi,:));
+            data_SAM_d.hcst_65(ly,mi,:)=data_SAM_d.hcst_65(ly,mi,:)./std(data_SAM_d.hcst_65(ly,mi,:));
+        
+            data_SAM_d.hcst(ly,mi,:)=data_SAM_d.hcst_40(ly,mi,:)-data_SAM_d.hcst_65(ly,mi,:);
+            [data_SAM_d.hcst(ly,mi,:), tr] = Func_0028_detrend_linear_1d(squeeze(data_SAM_d.hcst(ly,mi,:)));
+            data_SAM_d.hcst_lp(ly,mi,:)=lowpass(squeeze(data_SAM_d.hcst(ly,mi,:)), 1/data_SAM_d.lp_period_month,  'steepness', 0.989);
+        end
+    end
+    
+%     hold on
+%     for pi=1:50
+%             plot(data_SAM_d.time,data_SAM_d.lens2_lp(pi,:), 'g', 'linewidth', 0.5)
+%     end
+%     plot(data_SAM_d.time,mean(data_SAM_d.lens2_lp,1), 'color', 'g', 'linewidth', 3)
+% 
+%     for pi=1:20
+%             plot(data_SAM_d.time,data_SAM_d.assm_lp(pi,:), 'r', 'linewidth', 0.5)
+%     end
+%     plot(data_SAM_d.time,mean(data_SAM_d.assm_lp,1), 'color', 'r', 'linewidth', 3)
+% 
+%     ly=5;
+%     for pi=1:20
+%             plot(data_SAM_d.time,squeeze(data_SAM_d.hcst_lp(ly,pi,:)), 'b', 'linewidth', 0.5)
+%     end
+%     plot(data_SAM_d.time+ly-1,squeeze(mean(data_SAM_d.hcst_lp(ly,:,:),2)), 'color', 'b', 'linewidth', 3)
+% 
+%     plot(data_SAM_d.time,data_SAM_d.obs_lp(:), 'color', 'k', 'linewidth', 3)
+
+
+    %% SAM_d - save matfile 
+    mkdir([dirs.saveroot, '/clim_indices']);
+    matfilename=[dirs.saveroot, '/clim_indices/', 'clim_indices_', cfg.var, '_all_','SAM_d_', ...
+                'obs_', cfg.obs_name, '.mat'];
+    save(matfilename, 'cfg', 'cfg_assm', 'cfg_hcst', 'cfg_lens2', 'data_SAM_d');
+
+end
+
+
+
+if flags.NAO_STA==1
+    grid.regions_AZO= [332 364 36 40];
+    [grid.id_w_AZO, grid.id_e_AZO, grid.id_s_AZO, grid.id_n_AZO] = Func_0012_findind_Y(0.1, grid.regions_AZO, ...
+                grid.cut_tlong, grid.cut_tlat, 'CESM2'); % find valid lon, lat index near station
+    tmp.idlat=round((grid.id_s_AZO+grid.id_n_AZO)/2);
+    grid.id_s_AZO=tmp.idlat;
+    grid.id_n_AZO=tmp.idlat;
+
+    grid.regions_ICE= [335 344 63 70];
+    [grid.id_w_ICE, grid.id_e_ICE, grid.id_s_ICE, grid.id_n_ICE] = Func_0012_findind_Y(0.5, grid.regions_ICE, ...
+                grid.cut_tlong, grid.cut_tlat, 'CESM2'); % find valid lon, lat index near station
+    tmp.idlat=round((grid.id_s_ICE+grid.id_n_ICE)/2);
+    grid.id_s_ICE=tmp.idlat;
+    grid.id_n_ICE=tmp.idlat;
+
+    grid.cut_tlong_AZO=grid.cut_tlong(grid.id_w_AZO:grid.id_e_AZO, grid.id_s_AZO:grid.id_n_AZO);
+    grid.cut_tlat_AZO=grid.cut_tlat(grid.id_w_AZO:grid.id_e_AZO, grid.id_s_AZO:grid.id_n_AZO);
+    grid.cut_nlon_AZO=size(grid.cut_tlong,1);
+
+    grid.cut_tlong_ICE=grid.cut_tlong(grid.id_w_ICE:grid.id_e_ICE, grid.id_s_ICE:grid.id_n_ICE);
+    grid.cut_tlat_ICE=grid.cut_tlat(grid.id_w_ICE:grid.id_e_ICE, grid.id_s_ICE:grid.id_n_ICE);
+    grid.cut_nlon_ICE=size(grid.cut_tlong,1);
+
+    %% NAO_STA - OBS
+    tmp.data_AZO=data_obs.(cfg.var)(grid.id_w_AZO:grid.id_e_AZO, grid.id_s_AZO:grid.id_n_AZO, :);
+    tmp.data_AZO(tmp.data_AZO<-900)=NaN;
+    tmp.data_AZO(tmp.data_AZO==0)=NaN;
+    data_NAO_STA.obs_AZO=squeeze(mean(tmp.data_AZO,1));
+    data_NAO_STA.obs_AZO=data_NAO_STA.obs_AZO-mean(data_NAO_STA.obs_AZO);
+    data_NAO_STA.obs_AZO=data_NAO_STA.obs_AZO./std(data_NAO_STA.obs_AZO);
+
+    tmp.data_ICE=data_obs.(cfg.var)(grid.id_w_ICE:grid.id_e_ICE, grid.id_s_ICE:grid.id_n_ICE, :);
+    tmp.data_ICE(tmp.data_ICE<-900)=NaN;
+    tmp.data_ICE(tmp.data_ICE==0)=NaN;
+    data_NAO_STA.obs_ICE=squeeze(mean(tmp.data_ICE,1));
+    data_NAO_STA.obs_ICE=data_NAO_STA.obs_ICE-mean(data_NAO_STA.obs_ICE);
+    data_NAO_STA.obs_ICE=data_NAO_STA.obs_ICE./std(data_NAO_STA.obs_ICE);
+
+    data_NAO_STA.obs=data_NAO_STA.obs_AZO-data_NAO_STA.obs_ICE;
+    
+     %% NAO_STA - time set
+    for ti=1:length(cfg.iyears)
+        for mi=1:12
+            data_NAO_STA.time((ti-1)*12+mi)=cfg.iyears(ti)+mi*1/12-1/24;
+        end
+    end
+    data_NAO_STA.lp_period_month=120;
+    data_NAO_STA.obs_lp=lowpass(data_NAO_STA.obs, 1/data_NAO_STA.lp_period_month,  'steepness', 0.989);
+
+    plot(data_NAO_STA.time,data_NAO_STA.obs_lp)
+
+
+    %% NAO_STA-ASSM
+
+    data_NAO_STA.assm_members=cfg_assm.members;
+    
+    for mi=1:size(data_assm.(cfg.var),1)
+        tmp.data_AZO=squeeze(data_assm.(cfg.var)(mi,grid.id_w_AZO:grid.id_e_AZO, grid.id_s_AZO:grid.id_n_AZO, :));
+        tmp.data_AZO(tmp.data_AZO<-900)=NaN;
+        tmp.data_AZO(tmp.data_AZO==0)=NaN;
+        data_NAO_STA.assm_AZO(mi,:)=squeeze(mean(tmp.data_AZO,1));
+        data_NAO_STA.assm_AZO(mi,:)=data_NAO_STA.assm_AZO(mi,:)-mean(data_NAO_STA.assm_AZO(mi,:));
+        data_NAO_STA.assm_AZO(mi,:)=data_NAO_STA.assm_AZO(mi,:)./std(data_NAO_STA.assm_AZO(mi,:));
+    
+        tmp.data_ICE=squeeze(data_assm.(cfg.var)(mi,grid.id_w_ICE:grid.id_e_ICE, grid.id_s_ICE:grid.id_n_ICE, :));
+        tmp.data_ICE(tmp.data_ICE<-900)=NaN;
+        tmp.data_ICE(tmp.data_ICE==0)=NaN;
+        data_NAO_STA.assm_ICE(mi,:)=squeeze(mean(tmp.data_ICE,1));
+        data_NAO_STA.assm_ICE(mi,:)=data_NAO_STA.assm_ICE(mi,:)-mean(data_NAO_STA.assm_ICE(mi,:));
+        data_NAO_STA.assm_ICE(mi,:)=data_NAO_STA.assm_ICE(mi,:)./std(data_NAO_STA.assm_ICE(mi,:));
+    
+        data_NAO_STA.assm(mi,:)=data_NAO_STA.assm_AZO(mi,:)-data_NAO_STA.assm_ICE(mi,:);
+        data_NAO_STA.assm_lp(mi,:)=lowpass(squeeze(data_NAO_STA.assm(mi,:)), 1/data_NAO_STA.lp_period_month,  'steepness', 0.989);
+
+    end
+
+%     hold on
+%     for pi=1:20
+%             plot(data_NAO_STA.time,data_NAO_STA.assm_lp(pi,:), 'r', 'linewidth', 0.5)
+%     end
+%     plot(data_NAO_STA.time,mean(data_NAO_STA.assm_lp,1), 'color', 'r', 'linewidth', 3)
+%     plot(data_NAO_STA.time,data_NAO_STA.obs_lp(:), 'color', 'k', 'linewidth', 3)
+    
+
+    %% NAO_STA-LENS2
+
+    data_NAO_STA.lens2_members=cfg_lens2.members;
+    
+    for mi=1:size(data_lens2.(cfg.var),1)
+        tmp.data_AZO=squeeze(data_lens2.(cfg.var)(mi,grid.id_w_AZO:grid.id_e_AZO, grid.id_s_AZO:grid.id_n_AZO, :));
+        tmp.data_AZO(tmp.data_AZO<-900)=NaN;
+        tmp.data_AZO(tmp.data_AZO==0)=NaN;
+        data_NAO_STA.lens2_AZO(mi,:)=squeeze(mean(tmp.data_AZO,1));
+        data_NAO_STA.lens2_AZO(mi,:)=data_NAO_STA.lens2_AZO(mi,:)-mean(data_NAO_STA.lens2_AZO(mi,:));
+        data_NAO_STA.lens2_AZO(mi,:)=data_NAO_STA.lens2_AZO(mi,:)./std(data_NAO_STA.lens2_AZO(mi,:));
+    
+        tmp.data_ICE=squeeze(data_lens2.(cfg.var)(mi,grid.id_w_ICE:grid.id_e_ICE, grid.id_s_ICE:grid.id_n_ICE, :));
+        tmp.data_ICE(tmp.data_ICE<-900)=NaN;
+        tmp.data_ICE(tmp.data_ICE==0)=NaN;
+        data_NAO_STA.lens2_ICE(mi,:)=squeeze(mean(tmp.data_ICE,1));
+        data_NAO_STA.lens2_ICE(mi,:)=data_NAO_STA.lens2_ICE(mi,:)-mean(data_NAO_STA.lens2_ICE(mi,:));
+        data_NAO_STA.lens2_ICE(mi,:)=data_NAO_STA.lens2_ICE(mi,:)./std(data_NAO_STA.lens2_ICE(mi,:));
+    
+        data_NAO_STA.lens2(mi,:)=data_NAO_STA.lens2_AZO(mi,:)-data_NAO_STA.lens2_ICE(mi,:);
+        data_NAO_STA.lens2_lp(mi,:)=lowpass(squeeze(data_NAO_STA.lens2(mi,:)), 1/data_NAO_STA.lp_period_month,  'steepness', 0.989);
+
+    end
+  
+
+
+    %% NAO_STA-HCST
+    data_NAO_STA.hcst_members=cfg_hcst.members;
+    
+    for ly=1:5
+        tmp.ly_str=['ly',num2str(ly)];
+        for mi=1:size(data_hcst.(cfg.var).(tmp.ly_str),1)
+            tmp.data_AZO=squeeze(data_hcst.(cfg.var).(tmp.ly_str)(mi,grid.id_w_AZO:grid.id_e_AZO, grid.id_s_AZO:grid.id_n_AZO, :));
+            tmp.data_AZO(tmp.data_AZO<-900)=NaN;
+            tmp.data_AZO(tmp.data_AZO==0)=NaN;
+            data_NAO_STA.hcst_AZO(ly,mi,:)=squeeze(mean(tmp.data_AZO,1));
+            data_NAO_STA.hcst_AZO(ly,mi,:)=data_NAO_STA.hcst_AZO(ly,mi,:)-mean(data_NAO_STA.hcst_AZO(ly,mi,:));
+            data_NAO_STA.hcst_AZO(ly,mi,:)=data_NAO_STA.hcst_AZO(ly,mi,:)./std(data_NAO_STA.hcst_AZO(ly,mi,:));
+        
+            tmp.data_ICE=squeeze(data_hcst.(cfg.var).(tmp.ly_str)(mi,grid.id_w_ICE:grid.id_e_ICE, grid.id_s_ICE:grid.id_n_ICE, :));
+            tmp.data_ICE(tmp.data_ICE<-900)=NaN;
+            tmp.data_ICE(tmp.data_ICE==0)=NaN;
+            data_NAO_STA.hcst_ICE(ly,mi,:)=squeeze(mean(tmp.data_ICE,1));
+            data_NAO_STA.hcst_ICE(ly,mi,:)=data_NAO_STA.hcst_ICE(ly,mi,:)-mean(data_NAO_STA.hcst_ICE(ly,mi,:));
+            data_NAO_STA.hcst_ICE(ly,mi,:)=data_NAO_STA.hcst_ICE(ly,mi,:)./std(data_NAO_STA.hcst_ICE(ly,mi,:));
+        
+            data_NAO_STA.hcst(ly,mi,:)=data_NAO_STA.hcst_AZO(ly,mi,:)-data_NAO_STA.hcst_ICE(ly,mi,:);
+            data_NAO_STA.hcst_lp(ly,mi,:)=lowpass(squeeze(data_NAO_STA.hcst(ly,mi,:)), 1/data_NAO_STA.lp_period_month,  'steepness', 0.989);
+        end
+    end
+    
+%     hold on
+%     for pi=1:50
+%             plot(data_NAO_STA.time,data_NAO_STA.lens2_lp(pi,:), 'g', 'linewidth', 0.5)
+%     end
+%     plot(data_NAO_STA.time,mean(data_NAO_STA.lens2_lp,1), 'color', 'g', 'linewidth', 3)
+% 
+%     for pi=1:20
+%             plot(data_NAO_STA.time,data_NAO_STA.assm_lp(pi,:), 'r', 'linewidth', 0.5)
+%     end
+%     plot(data_NAO_STA.time,mean(data_NAO_STA.assm_lp,1), 'color', 'r', 'linewidth', 3)
+% 
+%     ly=5;
+%     for pi=1:20
+%             plot(data_NAO_STA.time,squeeze(data_NAO_STA.hcst_lp(ly,pi,:)), 'b', 'linewidth', 0.5)
+%     end
+%     plot(data_NAO_STA.time+ly-1,squeeze(mean(data_NAO_STA.hcst_lp(ly,:,:),2)), 'color', 'b', 'linewidth', 3)
+% 
+%     plot(data_NAO_STA.time,data_NAO_STA.obs_lp(:), 'color', 'k', 'linewidth', 3)
+
+
+    %% NAO_STA - save matfile 
+    mkdir([dirs.saveroot, '/clim_indices']);
+    matfilename=[dirs.saveroot, '/clim_indices/', 'clim_indices_', cfg.var, '_all_','NAO_STA_', ...
+                'obs_', cfg.obs_name, '.mat'];
+    save(matfilename, 'cfg', 'cfg_assm', 'cfg_hcst', 'cfg_lens2', 'data_NAO_STA');
+
+end
+
+
+
+if flags.NAO_PC==1
+
+
+    %% NAO_PC
+    %% NAO_PC - grid information
+    data_NAO_PC.regions1 = [270 360 20 80];
+    data_NAO_PC.regions2 = [0 40 20 80];
+
+    [data_NAO_PC.id_w1, data_NAO_PC.id_e1, data_NAO_PC.id_s1, data_NAO_PC.id_n1] = ...
+        Func_0012_findind_Y(0.1, data_NAO_PC.regions1, ...
+                grid.tlong, grid.tlat, 'CESM2'); % find valid lon, lat index near station
+    [data_NAO_PC.id_w2, data_NAO_PC.id_e2, data_NAO_PC.id_s2, data_NAO_PC.id_n2] = ...
+        Func_0012_findind_Y(0.1, data_NAO_PC.regions2, ...
+                grid.tlong, grid.tlat, 'CESM2'); % find valid lon, lat index near station
+    data_NAO_PC.cut_tlong1=grid.tlong(data_NAO_PC.id_w1:data_NAO_PC.id_e1, data_NAO_PC.id_s1:data_NAO_PC.id_n1);
+    data_NAO_PC.cut_tlat1=grid.tlat(data_NAO_PC.id_w1:data_NAO_PC.id_e1, data_NAO_PC.id_s1:data_NAO_PC.id_n1);
+    data_NAO_PC.cut_tlong2=grid.tlong(data_NAO_PC.id_w2:data_NAO_PC.id_e2, data_NAO_PC.id_s2:data_NAO_PC.id_n2)+360;
+    data_NAO_PC.cut_tlat2=grid.tlat(data_NAO_PC.id_w2:data_NAO_PC.id_e2, data_NAO_PC.id_s2:data_NAO_PC.id_n2);
+
+    data_NAO_PC.cut_tlong=[data_NAO_PC.cut_tlong1; data_NAO_PC.cut_tlong2];
+    data_NAO_PC.cut_tlat=[data_NAO_PC.cut_tlat1; data_NAO_PC.cut_tlat2];
+
+    data_NAO_PC.cut_nlon=size(data_NAO_PC.cut_tlong,1);
+    data_NAO_PC.cut_nlat=size(data_NAO_PC.cut_tlat,2);
+    
+    
+    %% NAO_PC - time set
+    for ti=1:length(cfg.iyears)
+        for mi=1:12
+            data_NAO_PC.time((ti-1)*12+mi)=cfg.iyears(ti)+mi*1/12-1/24;
+        end
+    end
+    
+    %% NAO_PC - OBS
+    tmp.data1=data_obs.(cfg.var)(data_NAO_PC.id_w1:data_NAO_PC.id_e1, data_NAO_PC.id_s1:data_NAO_PC.id_n1, :);
+    tmp.data2=data_obs.(cfg.var)(data_NAO_PC.id_w2:data_NAO_PC.id_e2, data_NAO_PC.id_s2:data_NAO_PC.id_n2, :);
+    tmp.data=[tmp.data1; tmp.data2];
+%     tmp.data(tmp.data<-900)=NaN;
+%     tmp.data(tmp.data==0)=NaN;
+    tmp.data_dseason= ...
+        reshape(reshape(tmp.data, [size(tmp.data,1), size(tmp.data,2), 12, size(tmp.data,3)/12]) - ...
+        mean(reshape(tmp.data, [size(tmp.data,1), size(tmp.data,2), 12, size(tmp.data,3)/12]),4, 'omitnan'), [size(tmp.data)]);
+
+    [data_NAO_PC.obs, tmp.err] = ...
+        Func_0011_get_area_weighted_mean(squeeze(tmp.data_dseason), data_NAO_PC.cut_tlong, data_NAO_PC.cut_tlat);
+%     maxnind=find(tmp.data==0,1,'last');
+    tmp.num_modes=3;
+%     [data_NAO_PC.lv_obs, data_NAO_PC.pct_obs, data_NAO_PC.var_exp_obs] = Func_0024_EOF_3d(tmp.data_dseason(:,:,maxnind+1:end),tmp.num_modes, data_NAO_PC.cut_tlat);
+    [data_NAO_PC.lv_obs, data_NAO_PC.pct_obs, data_NAO_PC.var_exp_obs] = Func_0024_EOF_3d(tmp.data_dseason(:,:,1:end),tmp.num_modes, data_NAO_PC.cut_tlat);
+
+
+    %% NAO_PC - ASSM
+    data_NAO_PC.assm_members=cfg_assm.members;
+    for mi=1:size(data_assm.(cfg.var),1)
+        tmp.data1=squeeze(data_assm.(cfg.var)(mi,data_NAO_PC.id_w1:data_NAO_PC.id_e1, data_NAO_PC.id_s1:data_NAO_PC.id_n1,:));
+        tmp.data2=squeeze(data_assm.(cfg.var)(mi,data_NAO_PC.id_w2:data_NAO_PC.id_e2, data_NAO_PC.id_s2:data_NAO_PC.id_n2,:));
+        tmp.data=[tmp.data1; tmp.data2];
+        tmp.data_dseason= ...
+            reshape(reshape(tmp.data, [size(tmp.data,1), size(tmp.data,2), 12, size(tmp.data,3)/12]) - ...
+            mean(reshape(tmp.data, [size(tmp.data,1), size(tmp.data,2), 12, size(tmp.data,3)/12]),4, 'omitnan'), [size(tmp.data)]);
+
+        [data_NAO_PC.lv_assm(mi,:,:,:), data_NAO_PC.pct_assm(mi,:,:), data_NAO_PC.var_exp_assm(mi,:)] = ...
+            Func_0024_EOF_3d(tmp.data_dseason,tmp.num_modes, data_NAO_PC.cut_tlat);
+    end
+    
+    %% NAO_PC - LENS2
+    data_NAO_PC.lens2_members=cfg_lens2.members;
+    for mi=1:size(data_lens2.(cfg.var),1)
+        tmp.data1=squeeze(data_lens2.(cfg.var)(mi,data_NAO_PC.id_w1:data_NAO_PC.id_e1, data_NAO_PC.id_s1:data_NAO_PC.id_n1,:));
+        tmp.data2=squeeze(data_lens2.(cfg.var)(mi,data_NAO_PC.id_w2:data_NAO_PC.id_e2, data_NAO_PC.id_s2:data_NAO_PC.id_n2,:));
+        tmp.data=[tmp.data1; tmp.data2]; 
+        tmp.data_dseason= ...
+            reshape(reshape(tmp.data, [size(tmp.data,1), size(tmp.data,2), 12, size(tmp.data,3)/12]) - ...
+            mean(reshape(tmp.data, [size(tmp.data,1), size(tmp.data,2), 12, size(tmp.data,3)/12]),4, 'omitnan'), [size(tmp.data)]);
+        [data_NAO_PC.lv_lens2(mi,:,:,:), data_NAO_PC.pct_lens2(mi,:,:), data_NAO_PC.var_exp_lens2(mi,:)] = ...
+            Func_0024_EOF_3d(tmp.data_dseason,tmp.num_modes, data_NAO_PC.cut_tlat);    
+    end
+    
+    %% NAO_PC - HCST
+    data_NAO_PC.hcst_members=cfg_hcst.members;
+    for ly=1:5 %1:5
+        tmp.ly_str=['ly',num2str(ly)];
+        for mi=1:size(data_hcst.(cfg.var).(tmp.ly_str),1)
+            tmp.data1=squeeze(data_hcst.(cfg.var).(tmp.ly_str)(mi,data_NAO_PC.id_w1:data_NAO_PC.id_e1, data_NAO_PC.id_s1:data_NAO_PC.id_n1,:));
+            tmp.data2=squeeze(data_hcst.(cfg.var).(tmp.ly_str)(mi,data_NAO_PC.id_w2:data_NAO_PC.id_e2, data_NAO_PC.id_s2:data_NAO_PC.id_n2,:));
+            tmp.data=[tmp.data1; tmp.data2];
+            tmp.data_dseason= ...
+                reshape(reshape(tmp.data, [size(tmp.data,1), size(tmp.data,2), 12, size(tmp.data,3)/12]) - ...
+                mean(reshape(tmp.data, [size(tmp.data,1), size(tmp.data,2), 12, size(tmp.data,3)/12]),4, 'omitnan'), [size(tmp.data)]);
+            [data_NAO_PC.lv_hcst(ly,mi,:,:,:), data_NAO_PC.pct_hcst(ly,mi,:,:), data_NAO_PC.var_exp_hcst(ly,mi,:)] = ...
+                Func_0024_EOF_3d(tmp.data_dseason,tmp.num_modes, data_NAO_PC.cut_tlat);
+        end
+    end
+    
+    %% NAO_PC - save matfile 
+    mkdir([dirs.saveroot, '/clim_indices']);
+    matfilename=[dirs.saveroot, '/clim_indices/', 'clim_indices_', cfg.var, '_all_','NAO_PC_', ...
+                'obs_', cfg.obs_name, '.mat'];
+    save(matfilename, 'cfg', 'cfg_assm', 'cfg_hcst', 'cfg_lens2', 'data_NAO_PC');
+end
+
+
+if flags.IOD==1
+    grid.regions_40= [50 70 -10 10]; % west
+    [grid.id_w_40, grid.id_e_40, grid.id_s_40, grid.id_n_40] = Func_0012_findind_Y(0.1, grid.regions_40, ...
+                grid.cut_tlong, grid.cut_tlat, 'CESM2'); % find valid lon, lat index near station
+%     tmp.idlat=round((grid.id_s_40+grid.id_n_40)/2);
+%     grid.id_s_40=tmp.idlat;
+%     grid.id_n_40=tmp.idlat;
+
+    grid.regions_65= [90 110 -10 0]; % east
+    [grid.id_w_65, grid.id_e_65, grid.id_s_65, grid.id_n_65] = Func_0012_findind_Y(0.5, grid.regions_65, ...
+                grid.cut_tlong, grid.cut_tlat, 'CESM2'); % find valid lon, lat index near station
+%     tmp.idlat=round((grid.id_s_65+grid.id_n_65)/2);
+%     grid.id_s_65=tmp.idlat;
+%     grid.id_n_65=tmp.idlat;
+
+    grid.cut_tlong_40=grid.cut_tlong(grid.id_w_40:grid.id_e_40, grid.id_s_40:grid.id_n_40);
+    grid.cut_tlat_40=grid.cut_tlat(grid.id_w_40:grid.id_e_40, grid.id_s_40:grid.id_n_40);
+    grid.cut_nlon_40=size(grid.cut_tlong,1);
+
+    grid.cut_tlong_65=grid.cut_tlong(grid.id_w_65:grid.id_e_65, grid.id_s_65:grid.id_n_65);
+    grid.cut_tlat_65=grid.cut_tlat(grid.id_w_65:grid.id_e_65, grid.id_s_65:grid.id_n_65);
+    grid.cut_nlon_65=size(grid.cut_tlong,1);
+
+    %% IOD - OBS
+    tmp.data_40=data_obs.(cfg.var)(grid.id_w_40:grid.id_e_40, grid.id_s_40:grid.id_n_40, :);
+    tmp.data_40(tmp.data_40<-900)=NaN;
+    tmp.data_40(tmp.data_40==0)=NaN;
+    for loni=1:size(tmp.data_40,1)
+        for lati=1:size(tmp.data_40,2)
+            [tmp.data_40(loni,lati,:), tr] = Func_0028_detrend_linear_1d(tmp.data_40(loni,lati,:));
+        end
+    end
+    tmp.data_40_dseason= ...
+            reshape(reshape(tmp.data_40, [size(tmp.data_40,1), size(tmp.data_40,2), 12, size(tmp.data_40,3)/12]) - ...
+            mean(reshape(tmp.data_40, [size(tmp.data_40,1), size(tmp.data_40,2), 12, size(tmp.data_40,3)/12]),4, 'omitnan'), [size(tmp.data_40)]);
+    data_IOD.obs_40= Func_0011_get_area_weighted_mean(squeeze(tmp.data_40_dseason), grid.cut_tlong_40, grid.cut_tlat_40);
+
+    tmp.data_65=data_obs.(cfg.var)(grid.id_w_65:grid.id_e_65, grid.id_s_65:grid.id_n_65, :);
+    tmp.data_65(tmp.data_65<-900)=NaN;
+    tmp.data_65(tmp.data_65==0)=NaN;
+    for loni=1:size(tmp.data_65,1)
+        for lati=1:size(tmp.data_65,2)
+            [tmp.data_65(loni,lati,:), tr] = Func_0028_detrend_linear_1d(tmp.data_65(loni,lati,:));
+        end
+    end
+    tmp.data_65_dseason= ...
+            reshape(reshape(tmp.data_65, [size(tmp.data_65,1), size(tmp.data_65,2), 12, size(tmp.data_65,3)/12]) - ...
+            mean(reshape(tmp.data_65, [size(tmp.data_65,1), size(tmp.data_65,2), 12, size(tmp.data_65,3)/12]),4, 'omitnan'), [size(tmp.data_65)]);
+    data_IOD.obs_65= Func_0011_get_area_weighted_mean(squeeze(tmp.data_65_dseason), grid.cut_tlong_65, grid.cut_tlat_65);
+
+
+    data_IOD.obs=data_IOD.obs_40-data_IOD.obs_65;
+    
+     %% IOD - time set
+    for ti=1:length(cfg.iyears)
+        for mi=1:12
+            data_IOD.time((ti-1)*12+mi)=cfg.iyears(ti)+mi*1/12-1/24;
+        end
+    end
+    data_IOD.lp_period_month=36;
+    data_IOD.obs_lp=lowpass(data_IOD.obs, 1/data_IOD.lp_period_month,  'steepness', 0.989);
+
+    plot(data_IOD.time,data_IOD.obs_lp)
+
+
+    %% IOD-ASSM
+
+    data_IOD.assm_members=cfg_assm.members;
+    
+    for mi=1:size(data_assm.(cfg.var),1)
+        tmp.data_40=squeeze(data_assm.(cfg.var)(mi,grid.id_w_40:grid.id_e_40, grid.id_s_40:grid.id_n_40, :));
+        tmp.data_40(tmp.data_40<-900)=NaN;
+        tmp.data_40(tmp.data_40==0)=NaN;
+        for loni=1:size(tmp.data_40,1)
+            for lati=1:size(tmp.data_40,2)
+                [tmp.data_40(loni,lati,:), tr] = Func_0028_detrend_linear_1d(tmp.data_40(loni,lati,:));
+            end
+        end
+        tmp.data_40_dseason= ...
+            reshape(reshape(tmp.data_40, [size(tmp.data_40,1), size(tmp.data_40,2), 12, size(tmp.data_40,3)/12]) - ...
+            mean(reshape(tmp.data_40, [size(tmp.data_40,1), size(tmp.data_40,2), 12, size(tmp.data_40,3)/12]),4, 'omitnan'), [size(tmp.data_40)]);
+        data_IOD.assm_40(mi,:)= Func_0011_get_area_weighted_mean(squeeze(tmp.data_40_dseason), grid.cut_tlong_40, grid.cut_tlat_40);
+
+
+
+        tmp.data_65=squeeze(data_assm.(cfg.var)(mi,grid.id_w_65:grid.id_e_65, grid.id_s_65:grid.id_n_65, :));
+        tmp.data_65(tmp.data_65<-900)=NaN;
+        tmp.data_65(tmp.data_65==0)=NaN;
+        for loni=1:size(tmp.data_65,1)
+            for lati=1:size(tmp.data_65,2)
+                [tmp.data_65(loni,lati,:), tr] = Func_0028_detrend_linear_1d(tmp.data_65(loni,lati,:));
+            end
+        end
+        tmp.data_65_dseason= ...
+            reshape(reshape(tmp.data_65, [size(tmp.data_65,1), size(tmp.data_65,2), 12, size(tmp.data_65,3)/12]) - ...
+            mean(reshape(tmp.data_65, [size(tmp.data_65,1), size(tmp.data_65,2), 12, size(tmp.data_65,3)/12]),4, 'omitnan'), [size(tmp.data_65)]);
+        data_IOD.assm_65(mi,:)= Func_0011_get_area_weighted_mean(squeeze(tmp.data_65_dseason), grid.cut_tlong_65, grid.cut_tlat_65);
+    
+        data_IOD.assm(mi,:)=data_IOD.assm_40(mi,:)-data_IOD.assm_65(mi,:);
+        data_IOD.assm_lp(mi,:)=lowpass(squeeze(data_IOD.assm(mi,:)), 1/data_IOD.lp_period_month,  'steepness', 0.989);
+
+    end
+
+%     hold on
+%     for pi=1:20
+%             plot(data_IOD.time,data_IOD.assm_lp(pi,:), 'r', 'linewidth', 0.5)
+%     end
+%     plot(data_IOD.time,mean(data_IOD.assm_lp,1), 'color', 'r', 'linewidth', 3)
+%     plot(data_IOD.time,data_IOD.obs_lp(:), 'color', 'k', 'linewidth', 3)
+    
+
+    %% IOD-LENS2
+
+    data_IOD.lens2_members=cfg_lens2.members;
+    
+    for mi=1:size(data_lens2.(cfg.var),1)
+        tmp.data_40=squeeze(data_lens2.(cfg.var)(mi,grid.id_w_40:grid.id_e_40, grid.id_s_40:grid.id_n_40, :));
+        tmp.data_40(tmp.data_40<-900)=NaN;
+        tmp.data_40(tmp.data_40==0)=NaN;
+        for loni=1:size(tmp.data_40,1)
+            for lati=1:size(tmp.data_40,2)
+                [tmp.data_40(loni,lati,:), tr] = Func_0028_detrend_linear_1d(tmp.data_40(loni,lati,:));
+            end
+        end
+        tmp.data_40_dseason= ...
+            reshape(reshape(tmp.data_40, [size(tmp.data_40,1), size(tmp.data_40,2), 12, size(tmp.data_40,3)/12]) - ...
+            mean(reshape(tmp.data_40, [size(tmp.data_40,1), size(tmp.data_40,2), 12, size(tmp.data_40,3)/12]),4, 'omitnan'), [size(tmp.data_40)]);
+        data_IOD.lens2_40(mi,:)= Func_0011_get_area_weighted_mean(squeeze(tmp.data_40_dseason), grid.cut_tlong_40, grid.cut_tlat_40);
+    
+        tmp.data_65=squeeze(data_lens2.(cfg.var)(mi,grid.id_w_65:grid.id_e_65, grid.id_s_65:grid.id_n_65, :));
+        tmp.data_65(tmp.data_65<-900)=NaN;
+        tmp.data_65(tmp.data_65==0)=NaN;
+        for loni=1:size(tmp.data_65,1)
+            for lati=1:size(tmp.data_65,2)
+                [tmp.data_65(loni,lati,:), tr] = Func_0028_detrend_linear_1d(tmp.data_65(loni,lati,:));
+            end
+        end
+        tmp.data_65_dseason= ...
+            reshape(reshape(tmp.data_65, [size(tmp.data_65,1), size(tmp.data_65,2), 12, size(tmp.data_65,3)/12]) - ...
+            mean(reshape(tmp.data_65, [size(tmp.data_65,1), size(tmp.data_65,2), 12, size(tmp.data_65,3)/12]),4, 'omitnan'), [size(tmp.data_65)]);
+        data_IOD.lens2_65(mi,:)= Func_0011_get_area_weighted_mean(squeeze(tmp.data_65_dseason), grid.cut_tlong_65, grid.cut_tlat_65);
+    
+        data_IOD.lens2(mi,:)=data_IOD.lens2_40(mi,:)-data_IOD.lens2_65(mi,:);
+        data_IOD.lens2_lp(mi,:)=lowpass(squeeze(data_IOD.lens2(mi,:)), 1/data_IOD.lp_period_month,  'steepness', 0.989);
+
+    end
+  
+
+
+    %% IOD-HCST
+    data_IOD.hcst_members=cfg_hcst.members;
+    
+    for ly=1:5
+        tmp.ly_str=['ly',num2str(ly)];
+        for mi=1:size(data_hcst.(cfg.var).(tmp.ly_str),1)
+            tmp.data_40=squeeze(data_hcst.(cfg.var).(tmp.ly_str)(mi,grid.id_w_40:grid.id_e_40, grid.id_s_40:grid.id_n_40, :));
+            tmp.data_40(tmp.data_40<-900)=NaN;
+            tmp.data_40(tmp.data_40==0)=NaN;
+            for loni=1:size(tmp.data_40,1)
+                for lati=1:size(tmp.data_40,2)
+                    [tmp.data_40(loni,lati,:), tr] = Func_0028_detrend_linear_1d(tmp.data_40(loni,lati,:));
+                end
+            end
+            tmp.data_40_dseason= ...
+                reshape(reshape(tmp.data_40, [size(tmp.data_40,1), size(tmp.data_40,2), 12, size(tmp.data_40,3)/12]) - ...
+                mean(reshape(tmp.data_40, [size(tmp.data_40,1), size(tmp.data_40,2), 12, size(tmp.data_40,3)/12]),4, 'omitnan'), [size(tmp.data_40)]);
+            data_IOD.hcst_40(ly,mi,:)= Func_0011_get_area_weighted_mean(squeeze(tmp.data_40_dseason), grid.cut_tlong_40, grid.cut_tlat_40);
+        
+            tmp.data_65=squeeze(data_hcst.(cfg.var).(tmp.ly_str)(mi,grid.id_w_65:grid.id_e_65, grid.id_s_65:grid.id_n_65, :));
+            tmp.data_65(tmp.data_65<-900)=NaN;
+            tmp.data_65(tmp.data_65==0)=NaN;
+            for loni=1:size(tmp.data_65,1)
+                for lati=1:size(tmp.data_65,2)
+                    [tmp.data_65(loni,lati,:), tr] = Func_0028_detrend_linear_1d(tmp.data_65(loni,lati,:));
+                end
+            end
+            tmp.data_65_dseason= ...
+                reshape(reshape(tmp.data_65, [size(tmp.data_65,1), size(tmp.data_65,2), 12, size(tmp.data_65,3)/12]) - ...
+                mean(reshape(tmp.data_65, [size(tmp.data_65,1), size(tmp.data_65,2), 12, size(tmp.data_65,3)/12]),4, 'omitnan'), [size(tmp.data_65)]);
+            data_IOD.hcst_65(ly,mi,:)= Func_0011_get_area_weighted_mean(squeeze(tmp.data_65_dseason), grid.cut_tlong_65, grid.cut_tlat_65);
+        
+            data_IOD.hcst(ly,mi,:)=data_IOD.hcst_40(ly,mi,:)-data_IOD.hcst_65(ly,mi,:);
+            data_IOD.hcst_lp(ly,mi,:)=lowpass(squeeze(data_IOD.hcst(ly,mi,:)), 1/data_IOD.lp_period_month,  'steepness', 0.989);
+        end
+    end
+    
+%     hold on
+%     for pi=1:50
+%             plot(data_IOD.time,data_IOD.lens2_lp(pi,:), 'g', 'linewidth', 0.5)
+%     end
+%     plot(data_IOD.time,mean(data_IOD.lens2_lp,1), 'color', 'g', 'linewidth', 3)
+% 
+%     for pi=1:20
+%             plot(data_IOD.time,data_IOD.assm_lp(pi,:), 'r', 'linewidth', 0.5)
+%     end
+%     plot(data_IOD.time,mean(data_IOD.assm_lp,1), 'color', 'r', 'linewidth', 3)
+% 
+%     ly=5;
+%     for pi=1:20
+%             plot(data_IOD.time,squeeze(data_IOD.hcst_lp(ly,pi,:)), 'b', 'linewidth', 0.5)
+%     end
+%     plot(data_IOD.time+ly-1,squeeze(mean(data_IOD.hcst_lp(ly,:,:),2)), 'color', 'b', 'linewidth', 3)
+% 
+%     plot(data_IOD.time,data_IOD.obs_lp(:), 'color', 'k', 'linewidth', 3)
+
+
+    %% IOD - save matfile 
+    mkdir([dirs.saveroot, '/clim_indices']);
+    matfilename=[dirs.saveroot, '/clim_indices/', 'clim_indices_', cfg.var, '_all_','IOD_', ...
+                'obs_', cfg.obs_name, '.mat'];
+    save(matfilename, 'cfg', 'cfg_assm', 'cfg_hcst', 'cfg_lens2', 'data_IOD');
+
+end
+
+if flags.IPO==1
+    grid.regions_r1= [140 215 25 45]; % wesid_w_r3t
+    [grid.id_w_r1, grid.id_e_r1, grid.id_s_r1, grid.id_n_r1] = Func_0012_findind_Y(0.1, grid.regions_r1, ...
+                grid.cut_tlong, grid.cut_tlat, 'CESM2'); % find valid lon, lat index near station
+
+    grid.regions_r2= [170 270 -10 10]; % east
+    [grid.id_w_r2, grid.id_e_r2, grid.id_s_r2, grid.id_n_r2] = Func_0012_findind_Y(0.5, grid.regions_r2, ...
+                grid.cut_tlong, grid.cut_tlat, 'CESM2'); % find valid lon, lat index near station
+
+    grid.regions_r3= [150 200 -50 -15]; % east
+    [grid.id_w_r3, grid.id_e_r3, grid.id_s_r3, grid.id_n_r3] = Func_0012_findind_Y(0.5, grid.regions_r3, ...
+                grid.cut_tlong, grid.cut_tlat, 'CESM2'); % find valid lon, lat index near station
+
+    grid.cut_tlong_r1=grid.cut_tlong(grid.id_w_r1:grid.id_e_r1, grid.id_s_r1:grid.id_n_r1);
+    grid.cut_tlat_r1=grid.cut_tlat(grid.id_w_r1:grid.id_e_r1, grid.id_s_r1:grid.id_n_r1);
+    grid.cut_nlon_r1=size(grid.cut_tlong,1);
+
+    grid.cut_tlong_r2=grid.cut_tlong(grid.id_w_r2:grid.id_e_r2, grid.id_s_r2:grid.id_n_r2);
+    grid.cut_tlat_r2=grid.cut_tlat(grid.id_w_r2:grid.id_e_r2, grid.id_s_r2:grid.id_n_r2);
+    grid.cut_nlon_r2=size(grid.cut_tlong,1);
+
+    grid.cut_tlong_r3=grid.cut_tlong(grid.id_w_r3:grid.id_e_r3, grid.id_s_r3:grid.id_n_r3);
+    grid.cut_tlat_r3=grid.cut_tlat(grid.id_w_r3:grid.id_e_r3, grid.id_s_r3:grid.id_n_r3);
+    grid.cut_nlon_r3=size(grid.cut_tlong,1);
+
+    %% IPO - OBS
+    tmp.data_r1=data_obs.(cfg.var)(grid.id_w_r1:grid.id_e_r1, grid.id_s_r1:grid.id_n_r1, :);
+    tmp.data_r1(tmp.data_r1<-900)=NaN;
+    tmp.data_r1(tmp.data_r1==0)=NaN;
+    tmp.data_r1_dseason= ...
+            reshape(reshape(tmp.data_r1, [size(tmp.data_r1,1), size(tmp.data_r1,2), 12, size(tmp.data_r1,3)/12]) - ...
+            mean(reshape(tmp.data_r1, [size(tmp.data_r1,1), size(tmp.data_r1,2), 12, size(tmp.data_r1,3)/12]),4, 'omitnan'), [size(tmp.data_r1)]);
+    data_IPO.obs_r1= Func_0011_get_area_weighted_mean(squeeze(tmp.data_r1_dseason), grid.cut_tlong_r1, grid.cut_tlat_r1);
+
+    tmp.data_r2=data_obs.(cfg.var)(grid.id_w_r2:grid.id_e_r2, grid.id_s_r2:grid.id_n_r2, :);
+    tmp.data_r2(tmp.data_r2<-900)=NaN;
+    tmp.data_r2(tmp.data_r2==0)=NaN;
+    tmp.data_r2_dseason= ...
+            reshape(reshape(tmp.data_r2, [size(tmp.data_r2,1), size(tmp.data_r2,2), 12, size(tmp.data_r2,3)/12]) - ...
+            mean(reshape(tmp.data_r2, [size(tmp.data_r2,1), size(tmp.data_r2,2), 12, size(tmp.data_r2,3)/12]),4, 'omitnan'), [size(tmp.data_r2)]);
+    data_IPO.obs_r2= Func_0011_get_area_weighted_mean(squeeze(tmp.data_r2_dseason), grid.cut_tlong_r2, grid.cut_tlat_r2);
+
+    tmp.data_r3=data_obs.(cfg.var)(grid.id_w_r3:grid.id_e_r3, grid.id_s_r3:grid.id_n_r3, :);
+    tmp.data_r3(tmp.data_r3<-900)=NaN;
+    tmp.data_r3(tmp.data_r3==0)=NaN;
+    tmp.data_r3_dseason= ...
+            reshape(reshape(tmp.data_r3, [size(tmp.data_r3,1), size(tmp.data_r3,2), 12, size(tmp.data_r3,3)/12]) - ...
+            mean(reshape(tmp.data_r3, [size(tmp.data_r3,1), size(tmp.data_r3,2), 12, size(tmp.data_r3,3)/12]),4, 'omitnan'), [size(tmp.data_r3)]);
+    data_IPO.obs_r3= Func_0011_get_area_weighted_mean(squeeze(tmp.data_r3_dseason), grid.cut_tlong_r3, grid.cut_tlat_r3);
+
+
+    data_IPO.obs=data_IPO.obs_r2 - (data_IPO.obs_r1+data_IPO.obs_r3)/2;
+    
+     %% IPO - time set
+    for ti=1:length(cfg.iyears)
+        for mi=1:12
+            data_IPO.time((ti-1)*12+mi)=cfg.iyears(ti)+mi*1/12-1/24;
+        end
+    end
+    data_IPO.lp_period_month=120;
+    data_IPO.obs_lp=lowpass(data_IPO.obs, 1/data_IPO.lp_period_month,  'steepness', 0.989);
+
+    plot(data_IPO.time,data_IPO.obs_lp)
+
+
+    %% IPO-ASSM
+    data_IPO.assm_members=cfg_assm.members;
+    
+    for mi=1:size(data_assm.(cfg.var),1)
+        tmp.data_r1=squeeze(data_assm.(cfg.var)(mi,grid.id_w_r1:grid.id_e_r1, grid.id_s_r1:grid.id_n_r1, :));
+        tmp.data_r1(tmp.data_r1<-900)=NaN;
+        tmp.data_r1(tmp.data_r1==0)=NaN;
+        tmp.data_r1_dseason= ...
+            reshape(reshape(tmp.data_r1, [size(tmp.data_r1,1), size(tmp.data_r1,2), 12, size(tmp.data_r1,3)/12]) - ...
+            mean(reshape(tmp.data_r1, [size(tmp.data_r1,1), size(tmp.data_r1,2), 12, size(tmp.data_r1,3)/12]),4, 'omitnan'), [size(tmp.data_r1)]);
+        data_IPO.assm_r1(mi,:)= Func_0011_get_area_weighted_mean(squeeze(tmp.data_r1_dseason), grid.cut_tlong_r1, grid.cut_tlat_r1);
+
+        tmp.data_r2=squeeze(data_assm.(cfg.var)(mi,grid.id_w_r2:grid.id_e_r2, grid.id_s_r2:grid.id_n_r2, :));
+        tmp.data_r2(tmp.data_r2<-900)=NaN;
+        tmp.data_r2(tmp.data_r2==0)=NaN;
+        tmp.data_r2_dseason= ...
+            reshape(reshape(tmp.data_r2, [size(tmp.data_r2,1), size(tmp.data_r2,2), 12, size(tmp.data_r2,3)/12]) - ...
+            mean(reshape(tmp.data_r2, [size(tmp.data_r2,1), size(tmp.data_r2,2), 12, size(tmp.data_r2,3)/12]),4, 'omitnan'), [size(tmp.data_r2)]);
+        data_IPO.assm_r2(mi,:)= Func_0011_get_area_weighted_mean(squeeze(tmp.data_r2_dseason), grid.cut_tlong_r2, grid.cut_tlat_r2);
+    
+        data_IPO.assm(mi,:)=data_IPO.assm_r1(mi,:)-data_IPO.assm_r2(mi,:);
+        data_IPO.assm_lp(mi,:)=lowpass(squeeze(data_IPO.assm(mi,:)), 1/data_IPO.lp_period_month,  'steepness', 0.989);
+        
+        tmp.data_r3=squeeze(data_assm.(cfg.var)(mi,grid.id_w_r3:grid.id_e_r3, grid.id_s_r3:grid.id_n_r3, :));
+        tmp.data_r3(tmp.data_r3<-900)=NaN;
+        tmp.data_r3(tmp.data_r3==0)=NaN;
+        tmp.data_r3_dseason= ...
+            reshape(reshape(tmp.data_r3, [size(tmp.data_r3,1), size(tmp.data_r3,2), 12, size(tmp.data_r3,3)/12]) - ...
+            mean(reshape(tmp.data_r3, [size(tmp.data_r3,1), size(tmp.data_r3,2), 12, size(tmp.data_r3,3)/12]),4, 'omitnan'), [size(tmp.data_r3)]);
+        data_IPO.assm_r3(mi,:)= Func_0011_get_area_weighted_mean(squeeze(tmp.data_r3_dseason), grid.cut_tlong_r3, grid.cut_tlat_r3);
+        
+        data_IPO.assm(mi,:)=data_IPO.assm_r2(mi,:)-(data_IPO.assm_r1(mi,:)+data_IPO.assm_r3(mi,:))/2;
+        data_IPO.assm_lp(mi,:)=lowpass(squeeze(data_IPO.assm(mi,:)), 1/data_IPO.lp_period_month,  'steepness', 0.989);
+
+    end
+
+    %% IPO-LENS2
+
+    data_IPO.lens2_members=cfg_lens2.members;
+    
+    for mi=1:size(data_lens2.(cfg.var),1)
+        tmp.data_r1=squeeze(data_lens2.(cfg.var)(mi,grid.id_w_r1:grid.id_e_r1, grid.id_s_r1:grid.id_n_r1, :));
+        tmp.data_r1(tmp.data_r1<-900)=NaN;
+        tmp.data_r1(tmp.data_r1==0)=NaN;
+        tmp.data_r1_dseason= ...
+            reshape(reshape(tmp.data_r1, [size(tmp.data_r1,1), size(tmp.data_r1,2), 12, size(tmp.data_r1,3)/12]) - ...
+            mean(reshape(tmp.data_r1, [size(tmp.data_r1,1), size(tmp.data_r1,2), 12, size(tmp.data_r1,3)/12]),4, 'omitnan'), [size(tmp.data_r1)]);
+        data_IPO.lens2_r1(mi,:)= Func_0011_get_area_weighted_mean(squeeze(tmp.data_r1_dseason), grid.cut_tlong_r1, grid.cut_tlat_r1);
+    
+        tmp.data_r2=squeeze(data_lens2.(cfg.var)(mi,grid.id_w_r2:grid.id_e_r2, grid.id_s_r2:grid.id_n_r2, :));
+        tmp.data_r2(tmp.data_r2<-900)=NaN;
+        tmp.data_r2(tmp.data_r2==0)=NaN;
+        tmp.data_r2_dseason= ...
+            reshape(reshape(tmp.data_r2, [size(tmp.data_r2,1), size(tmp.data_r2,2), 12, size(tmp.data_r2,3)/12]) - ...
+            mean(reshape(tmp.data_r2, [size(tmp.data_r2,1), size(tmp.data_r2,2), 12, size(tmp.data_r2,3)/12]),4, 'omitnan'), [size(tmp.data_r2)]);
+        data_IPO.lens2_r2(mi,:)= Func_0011_get_area_weighted_mean(squeeze(tmp.data_r2_dseason), grid.cut_tlong_r2, grid.cut_tlat_r2);
+        
+        tmp.data_r3=squeeze(data_lens2.(cfg.var)(mi,grid.id_w_r3:grid.id_e_r3, grid.id_s_r3:grid.id_n_r3, :));
+        tmp.data_r3(tmp.data_r3<-900)=NaN;
+        tmp.data_r3(tmp.data_r3==0)=NaN;
+        tmp.data_r3_dseason= ...
+            reshape(reshape(tmp.data_r3, [size(tmp.data_r3,1), size(tmp.data_r3,2), 12, size(tmp.data_r3,3)/12]) - ...
+            mean(reshape(tmp.data_r3, [size(tmp.data_r3,1), size(tmp.data_r3,2), 12, size(tmp.data_r3,3)/12]),4, 'omitnan'), [size(tmp.data_r3)]);
+        data_IPO.lens2_r3(mi,:)= Func_0011_get_area_weighted_mean(squeeze(tmp.data_r3_dseason), grid.cut_tlong_r3, grid.cut_tlat_r3);
+
+
+        data_IPO.lens2(mi,:)=data_IPO.lens2_r2(mi,:)-(data_IPO.lens2_r1(mi,:)+data_IPO.lens2_r3(mi,:))/2;
+        data_IPO.lens2_lp(mi,:)=lowpass(squeeze(data_IPO.lens2(mi,:)), 1/data_IPO.lp_period_month,  'steepness', 0.989);
+
+    end
+  
+
+
+    %% IPO-HCST
+    data_IPO.hcst_members=cfg_hcst.members;
+    
+    for ly=1:5
+        tmp.ly_str=['ly',num2str(ly)];
+        for mi=1:size(data_hcst.(cfg.var).(tmp.ly_str),1)
+            tmp.data_r1=squeeze(data_hcst.(cfg.var).(tmp.ly_str)(mi,grid.id_w_r1:grid.id_e_r1, grid.id_s_r1:grid.id_n_r1, :));
+            tmp.data_r1(tmp.data_r1<-900)=NaN;
+            tmp.data_r1(tmp.data_r1==0)=NaN;
+            tmp.data_r1_dseason= ...
+                reshape(reshape(tmp.data_r1, [size(tmp.data_r1,1), size(tmp.data_r1,2), 12, size(tmp.data_r1,3)/12]) - ...
+                mean(reshape(tmp.data_r1, [size(tmp.data_r1,1), size(tmp.data_r1,2), 12, size(tmp.data_r1,3)/12]),4, 'omitnan'), [size(tmp.data_r1)]);
+            data_IPO.hcst_r1(ly,mi,:)= Func_0011_get_area_weighted_mean(squeeze(tmp.data_r1_dseason), grid.cut_tlong_r1, grid.cut_tlat_r1);
+        
+            tmp.data_r2=squeeze(data_hcst.(cfg.var).(tmp.ly_str)(mi,grid.id_w_r2:grid.id_e_r2, grid.id_s_r2:grid.id_n_r2, :));
+            tmp.data_r2(tmp.data_r2<-900)=NaN;
+            tmp.data_r2(tmp.data_r2==0)=NaN;
+            tmp.data_r2_dseason= ...
+                reshape(reshape(tmp.data_r2, [size(tmp.data_r2,1), size(tmp.data_r2,2), 12, size(tmp.data_r2,3)/12]) - ...
+                mean(reshape(tmp.data_r2, [size(tmp.data_r2,1), size(tmp.data_r2,2), 12, size(tmp.data_r2,3)/12]),4, 'omitnan'), [size(tmp.data_r2)]);
+            data_IPO.hcst_r2(ly,mi,:)= Func_0011_get_area_weighted_mean(squeeze(tmp.data_r2_dseason), grid.cut_tlong_r2, grid.cut_tlat_r2);
+            
+            tmp.data_r3=squeeze(data_hcst.(cfg.var).(tmp.ly_str)(mi,grid.id_w_r3:grid.id_e_r3, grid.id_s_r3:grid.id_n_r3, :));
+            tmp.data_r3(tmp.data_r3<-900)=NaN;
+            tmp.data_r3(tmp.data_r3==0)=NaN;
+            tmp.data_r3_dseason= ...
+                reshape(reshape(tmp.data_r3, [size(tmp.data_r3,1), size(tmp.data_r3,2), 12, size(tmp.data_r3,3)/12]) - ...
+                mean(reshape(tmp.data_r3, [size(tmp.data_r3,1), size(tmp.data_r3,2), 12, size(tmp.data_r3,3)/12]),4, 'omitnan'), [size(tmp.data_r3)]);
+            data_IPO.hcst_r3(ly,mi,:)= Func_0011_get_area_weighted_mean(squeeze(tmp.data_r3_dseason), grid.cut_tlong_r3, grid.cut_tlat_r3);
+
+
+            data_IPO.hcst(ly,mi,:)=data_IPO.hcst_r2(ly,mi,:)-(data_IPO.hcst_r1(ly,mi,:)+data_IPO.hcst_r3(ly,mi,:))/2;
+            data_IPO.hcst_lp(ly,mi,:)=lowpass(squeeze(data_IPO.hcst(ly,mi,:)), 1/data_IPO.lp_period_month,  'steepness', 0.989);
+        end
+    end
+
+    %% IPO - save matfile 
+    mkdir([dirs.saveroot, '/clim_indices']);
+    matfilename=[dirs.saveroot, '/clim_indices/', 'clim_indices_', cfg.var, '_all_','IPO_', ...
+                'obs_', cfg.obs_name, '.mat'];
+    save(matfilename, 'cfg', 'cfg_assm', 'cfg_hcst', 'cfg_lens2', 'data_IPO');
+
+end
+
+
+
+
+
+
 
 
 end
@@ -1329,6 +2922,8 @@ function obsname_simple = f_obs_name(varn)
         case 'RAIN'
             obsname_simple='GPCC';
         case 'PSL'
+            obsname_simple='ERA5';
+        case 'Z500'
             obsname_simple='ERA5';
         case 'SOILWATER_10CM'
 %             obsname_simple='CMEMS';
@@ -1380,6 +2975,8 @@ function obsname_simple = f_obs_name_mid(varn)
             obsname_simple='GPCC_reg_cesm2.v5.';
         case 'PSL'
             obsname_simple='ERA5_msl_reg_cesm2.';
+        case 'Z500'
+            obsname_simple='ERA5_geopotential_reg_cesm2.';
         case 'SOILWATER_10CM'
 %             obsname_simple='SM_reg_cesm2.';
             obsname_simple='GLEAM_reg_cesm2.v5.';
@@ -1425,6 +3022,8 @@ function obsname_simple = f_obs_varname(varn)
             obsname_simple='precip';  % GPCC
         case 'PSL'
             obsname_simple='msl';
+        case 'Z500'
+            obsname_simple='z';
         case 'SOILWATER_10CM'
 %             obsname_simple='sm';
             obsname_simple='SMsurf'; %GLEAM

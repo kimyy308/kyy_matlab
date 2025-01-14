@@ -20,7 +20,7 @@ addpath(genpath([tmp.dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', tmp.fs, 'C
             [tmp.dropboxpath, tmp.error_status] = Func_0008_set_dropbox_path(computer);
 
 
-hatchflag=1;
+hatchflag=0;
 
 
 %% model configuration
@@ -31,7 +31,7 @@ cfg.vlayer_cnt=max(cfg.vlayer)-cfg.vlayer_1st+1;
 
 
 cfg.var1='SSH';
-% cfg.var2='NO3';
+cfg.var2='photoC_TOT_zint_100m';
 cfg.var3='photoC_TOT_zint_100m';
     
 
@@ -77,26 +77,34 @@ corrval_lens2=load(['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/statistics/corr_raw
 loc_column_first=1;
 loc_row_first=10;
 
-
 %% SUBPLOT(3,4,1); corr, ASSM <-> HCST, median(individual) (LY1)
 for subi=1:1
     fig_cfg.fig_size = [0,0,26,14]; %% paper size (original)
-    fig_cfg.fig_size = [0,0,26,10.5]; %% paper size (original)
-    fig_cfg.ax_size = [loc_column_first, loc_row_first-3.5, 5.4, 2.7];
+    fig_cfg.ax_size = [loc_column_first, loc_row_first, 5.4, 2.7];
 %     fig_cfg.cb_size = [2, 1, 9, 0.3];
     fig_cfg.cb_size = [2, 1, 20, 0.3];
     fig_cfg.title_pos = [0.5,1.02];
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
+    
+    try
+        tmp.var_sr=squeeze(median(corrval_hcst.assm_hcst.ly1.val_sr,1));
+    catch
+        tmp.var_sr=squeeze(median(corrval_hcst.assm_hcst_em.ly1.val_sr,1));
+    end
+    recasted_val_hcst=NaN(size(corrval_hcst.assm_hcst_em.ly1.val));
+    for reci=1:length(corrval_assm.grid.valid_ind)
+        recasted_val_hcst(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))=tmp.var_sr(1,reci);
+    end
+%     corrval_hcst.assm_hcst.ly1.val_median
 
-    tmp.C=squeeze(corrval_hcst.obsdet_hcst.ly1.val_median);
+    tmp.C=squeeze(recasted_val_hcst);
     tmp.C=tmp.C([end, 1:end],:);
 
     % significance test
-    tmp.D=sum(isfinite(corrval_assm.data_obs.([cfg.var,'_ym'])),3); % for DoF (num of data)
-    sig_n=tmp.D([end, 1:end],:);
-    sig_t=tmp.C.*sqrt(sig_n-2)./sqrt((1-tmp.C.^2));
+    sig_n=size(corrval_hcst.data.ly1.([cfg.var,'_ym']),3);
+    sig_t=tmp.C*sqrt(sig_n-2)./sqrt((1-tmp.C.^2));
     sig_tcdf=tcdf(sig_t,sig_n-2);
     for loni=1:size(tmp.C,1)
         for lati=1:size(tmp.C,2)
@@ -109,12 +117,226 @@ for subi=1:1
     end
 %     tmp.C(tmp.p>0.1)=NaN; % 90% significant
 
-    fig_cfg.fig_name='$$ (a) \hspace{1mm}  M(r_{O,I}^{\tau=1}) $$';
+
+    fig_cfg.fig_name='$$ (a) \hspace{1mm}  M(r_{A,E(I)}^{\tau=1}) $$';
     fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
         'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','on');
 
     %% map setting
     subplot(3,4,1);
+    ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
+        'fontname','freeserif'); 
+    set(ax_m, 'Parent', fig_h);
+%     subplot(3,3,2,ax_m);
+    axis off; 
+    hold on;
+    setm(ax_m,'origin',[0,205],'MapLatLimit',fig_cfg.y_lim);  % lat origin(middle point), lon origin (middle point)
+    set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
+        text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
+        'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
+        'fontsize',20,'fontname','freeserif','interpreter','latex')
+
+    %% draw on ax_m
+    h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
+    shading flat;
+    geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
+
+    % hatch -> insignificant area
+    if hatchflag==1
+        tmp.C2=tmp.C;
+        tmp.C2(tmp.p<=fig_cfg.p_lim)=NaN;
+        pp2 = pcolorm(tmp.Y,tmp.X,tmp.C2, 'parent', ax_m);
+        set(pp2,'linestyle','none','Tag','HatchingRegion');
+        hp = findobj(pp2,'Tag','HatchingRegion');
+        hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
+    end
+    %% frame and label setting
+    setm(ax_m,'frame','off','FLineWidth',1);
+
+    label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
+    label_x=mlabel('MLabelParallel','south', 'MLineLocation',30, 'MLabelLocation',90, 'labelrotation','on');
+    mlabel; plabel;
+    label_y=plabel; label_x=mlabel;
+    for lxi=1:length(label_x)
+        tmp.tmppos=label_x(lxi,1).Position;
+%         tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.67; % y position correction
+        label_x(lxi,1).Position=tmp.tmppos;
+        label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
+        label_x(lxi,1).String{2} = ['$$ ', label_x(lxi,1).String{2}, ' $$']; % latex grammar
+        set(label_x,'Interpreter','latex');
+    end
+
+    labelcorr=[3.4, 3.1, 2.8, 2.7, 2.7, 2.7, 2.8, 3.1, 3.4];
+    for lyi=1:length(label_y)
+        label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
+        tmp.tmppos=label_y(lyi,1).Position;
+        tmp.tmppos(1)=-fig_cfg.ax_size(3)+labelcorr(lyi); % x position correction 2.7=avg, for 0 deg
+        label_y(lyi,1).Position=tmp.tmppos;
+        label_y(lyi,1).String = ['$$ ', label_y(lyi,1).String, ' $$']; % latex grammar
+        set(label_y,'Interpreter','latex');
+    end
+
+    %% color set
+    caxis(ax_m, fig_cfg.c_lim);
+    colormap(ax_m,fig_cfg.c_map);
+end
+
+%% SUBPLOT(3,4,2); corr, ASSM<->HCST - ASSM <-> LENS2, median(individual) (LY1)
+for subi=1:1
+    fig_cfg.ax_size = [loc_column_first+5.5, loc_row_first, 5.4, 2.7];
+
+    tmp.X=grid.tlong([end, 1:end],:);
+    tmp.Y=grid.tlat([end, 1:end],:);
+    
+    try
+        tmp.var_sr1=squeeze(median(corrval_hcst.assm_hcst.ly1.val_sr,1));
+    catch
+        tmp.var_sr1=squeeze(median(corrval_hcst.assm_hcst_em.ly1.val_sr,1));
+    end
+    tmp.A=NaN(size(corrval_lens2.assm_lens2_em.val));
+    for reci=1:length(corrval_assm.grid.valid_ind)
+        tmp.A(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))=tmp.var_sr1(1,reci);
+    end
+    tmp.var_sr2=squeeze(median(corrval_lens2.assm_lens2_em.val_sr,1));
+    tmp.B=NaN(size(corrval_lens2.assm_lens2_em.val));
+    for reci=1:length(corrval_assm.grid.valid_ind)
+        tmp.B(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))=tmp.var_sr2(1,reci);
+    end
+    
+    %% double-sample t-test
+    tmp.tt=NaN(size(corrval_lens2.assm_lens2_em.val));
+    for reci=1:length(corrval_assm.grid.valid_ind)
+        try
+            tmp.a=corrval_hcst.assm_hcst.ly1.val_sr(:,reci);
+        catch
+            tmp.a=corrval_hcst.assm_hcst_em.ly1.val_sr(:,reci);
+        end
+        tmp.b=corrval_lens2.assm_lens2_em.val_sr(:,reci);
+        tmp.tt(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))=ttest2(tmp.a,tmp.b,'alpha', fig_cfg.p_lim);
+    end
+
+    %% get correlation p based on normal distribution, DOF
+%     [tmp.p1, tmp.p2, tmp.z, tmp.za, tmp.zb] = ...
+%         Func_0036_corr_diff_ttest(tmp.A, tmp.B, size(corrval_hcst.data.ly1.([cfg.var,'_ym']),3), size(corrval_lens2.data.([cfg.var,'_ym']),3));
+
+    tmp.C=squeeze(tmp.A-tmp.B);
+    tmp.C2=tmp.C;
+    tmp.C2(tmp.tt==1)=NaN;
+%     tmp.C2=tmp.tt;
+    tmp.C=tmp.C([end, 1:end],:);
+    tmp.C2=tmp.C2([end, 1:end],:);
+%     tmp.C(tmp.p2>0.1)=NaN;
+    
+
+
+    fig_cfg.fig_name='$$ (b) \hspace{1mm}  M(r_{A,E(I)}^{\tau=1}) -  M(r_{A,E(U)}^{\tau=1}) $$';
+
+    %% map setting
+    subplot(3,4,2);
+    ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
+        'fontname','freeserif'); 
+    set(ax_m, 'Parent', fig_h);
+%     subplot(3,3,2,ax_m);
+    axis off; 
+    hold on;
+    setm(ax_m,'origin',[0,205],'MapLatLimit',fig_cfg.y_lim);  % lat origin(middle point), lon origin (middle point)
+    set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
+        text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
+        'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
+        'fontsize',20,'fontname','freeserif','interpreter','latex')
+
+    %% draw on ax_m
+    h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
+    shading flat;
+    geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
+
+    % hatch -> insignificant area
+    if hatchflag ==1
+        pp2 = pcolorm(tmp.Y,tmp.X,tmp.C2, 'parent', ax_m);
+        set(pp2,'linestyle','none','Tag','HatchingRegion');
+        hp = findobj(pp2,'Tag','HatchingRegion');
+        hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
+    end
+    %% frame and label setting
+    setm(ax_m,'frame','off','FLineWidth',1);
+
+    label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
+    label_x=mlabel('MLabelParallel','south', 'MLineLocation',30, 'MLabelLocation',90, 'labelrotation','on');
+    mlabel; plabel;
+    label_y=plabel; label_x=mlabel;
+    for lxi=1:length(label_x)
+        tmp.tmppos=label_x(lxi,1).Position;
+%         tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.67; % y position correction
+        label_x(lxi,1).Position=tmp.tmppos;
+        label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
+        label_x(lxi,1).String{2} = ['$$ ', label_x(lxi,1).String{2}, ' $$']; % latex grammar
+        set(label_x,'Interpreter','latex');
+    end
+
+    labelcorr=[3.4, 3.1, 2.8, 2.7, 2.7, 2.7, 2.8, 3.1, 3.4];
+    for lyi=1:length(label_y)
+        label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
+        tmp.tmppos=label_y(lyi,1).Position;
+        tmp.tmppos(1)=-fig_cfg.ax_size(3)+labelcorr(lyi); % x position correction 2.7=avg, for 0 deg
+        label_y(lyi,1).Position=tmp.tmppos;
+        label_y(lyi,1).String = ['$$ ', label_y(lyi,1).String, ' $$']; % latex grammar
+        set(label_y,'Interpreter','latex');
+    end
+
+    %% color set
+    caxis(ax_m, fig_cfg.c_lim2);
+    colormap(ax_m,fig_cfg.c_map2);
+end
+
+
+cfg.var=cfg.var2;
+
+corrval_assm=load(['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/statistics/corr_raw/corr_assm_', cfg.var, '_v1_v1.mat']);
+corrval_hcst=load(['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/statistics/corr_raw/corr_hcst_', cfg.var, '_v1_v1.mat']);
+corrval_lens2=load(['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/statistics/corr_raw/corr_lens2_', cfg.var, '_v1_v1.mat']);
+
+
+%% SUBPLOT(3,4,5); corr, ASSM <-> HCST, median(individual) (LY1)
+for subi=1:1
+    fig_cfg.ax_size = [loc_column_first, loc_row_first-3.5, 5.4, 2.7];
+
+    tmp.X=grid.tlong([end, 1:end],:);
+    tmp.Y=grid.tlat([end, 1:end],:);
+    
+    try
+        tmp.var_sr1=squeeze(median(corrval_hcst.assm_hcst.ly1.val_sr,1));
+    catch
+        tmp.var_sr1=squeeze(median(corrval_hcst.assm_hcst_em.ly1.val_sr,1));
+    end
+    recasted_val_hcst=NaN(size(corrval_hcst.assm_hcst_em.ly1.val));
+    for reci=1:length(corrval_assm.grid.valid_ind)
+        recasted_val_hcst(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))=tmp.var_sr(1,reci);
+    end
+%     corrval_hcst.assm_hcst.ly1.val_median
+
+    tmp.C=squeeze(recasted_val_hcst);
+    tmp.C=tmp.C([end, 1:end],:);
+
+    % significance test
+    sig_n=size(corrval_hcst.data.ly1.([cfg.var,'_ym']),3);
+    sig_t=tmp.C*sqrt(sig_n-2)./sqrt((1-tmp.C.^2));
+    sig_tcdf=tcdf(sig_t,sig_n-2);
+    for loni=1:size(tmp.C,1)
+        for lati=1:size(tmp.C,2)
+            if tmp.C(loni,lati)>=0
+                tmp.p(loni,lati)=2*(1-sig_tcdf(loni,lati)); % r=positive
+            elseif tmp.C(loni,lati)<0
+                tmp.p(loni,lati)=2*(sig_tcdf(loni,lati)); % r=negative
+            end
+        end
+    end
+%     tmp.C(tmp.p>0.1)=NaN; % 90% significant
+
+
+    fig_cfg.fig_name='$$ (e) \hspace{1mm}  M(r_{A,E(I)}^{\tau=1}) $$';
+
+    %% map setting
+    subplot(3,4,5);
     ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
         'fontname','freeserif'); 
     set(ax_m, 'Parent', fig_h);
@@ -182,24 +404,39 @@ end
     cb_title=title(cb,'$$ r $$','fontsize', 22, 'Position', [1455, 0, 0]); % hor, ver, ?
     set(cb_title, 'interpreter', 'latex');
 
-%% SUBPLOT(3,4,2); corr, ASSM<->HCST - ASSM <-> LENS2, median(individual) (LY1)
+
+%% SUBPLOT(3,4,6); corr, ASSM<->HCST - ASSM <-> LENS2, median(individual) (LY1)
 for subi=1:1
     fig_cfg.ax_size = [loc_column_first+5.5, loc_row_first-3.5, 5.4, 2.7];
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
     
-    tmp.A=corrval_hcst.obsdet_hcst.ly1.val_median;
-    tmp.B=corrval_lens2.obsdet_lens2.val_median;
+    try
+        tmp.var_sr1=squeeze(median(corrval_hcst.assm_hcst.ly1.val_sr,1));
+    catch
+        tmp.var_sr1=squeeze(median(corrval_hcst.assm_hcst_em.ly1.val_sr,1));
+    end
+    tmp.A=NaN(size(corrval_lens2.assm_lens2_em.val));
+    for reci=1:length(corrval_assm.grid.valid_ind)
+        tmp.A(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))=tmp.var_sr1(1,reci);
+    end
+    tmp.var_sr2=squeeze(median(corrval_lens2.assm_lens2_em.val_sr,1));
+    tmp.B=NaN(size(corrval_lens2.assm_lens2_em.val));
+    for reci=1:length(corrval_assm.grid.valid_ind)
+        tmp.B(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))=tmp.var_sr2(1,reci);
+    end
     
     %% double-sample t-test
     tmp.tt=NaN(size(corrval_lens2.assm_lens2_em.val));
-    for loni=1:size(corrval_hcst.obsdet_hcst.ly1.val,2)
-        for lati=1:size(corrval_hcst.obsdet_hcst.ly1.val,3)
-            tmp.a=corrval_hcst.obsdet_hcst.ly1.val(:,loni,lati);
-            tmp.b=corrval_lens2.obsdet_lens2.val(:,loni,lati);
-            tmp.tt(loni,lati)=ttest2(tmp.a,tmp.b,'alpha', fig_cfg.p_lim);
+    for reci=1:length(corrval_assm.grid.valid_ind)
+        try
+            tmp.a=corrval_hcst.assm_hcst.ly1.val_sr(:,reci);
+        catch
+            tmp.a=corrval_hcst.assm_hcst_em.ly1.val_sr(:,reci);
         end
+        tmp.b=corrval_lens2.assm_lens2_em.val_sr(:,reci);
+        tmp.tt(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))=ttest2(tmp.a,tmp.b,'alpha', fig_cfg.p_lim);
     end
 
     %% get correlation p based on normal distribution, DOF
@@ -216,10 +453,10 @@ for subi=1:1
     
 
 
-    fig_cfg.fig_name='$$ (b) \hspace{1mm}  M(r_{O,I}^{\tau=1}) -  M(r_{O,U}^{\tau=1}) $$';
+    fig_cfg.fig_name='$$ (f) \hspace{1mm}  M(r_{A,E(I)}^{\tau=1}) -  M(r_{A,E(U)}^{\tau=1}) $$';
 
     %% map setting
-    subplot(3,4,2);
+    subplot(3,4,6);
     ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
         'fontname','freeserif'); 
     set(ax_m, 'Parent', fig_h);
@@ -236,9 +473,9 @@ for subi=1:1
     h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
     shading flat;
     geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
-
+    
     % hatch -> insignificant area
-    if hatchflag ==1
+    if hatchflag==1
         pp2 = pcolorm(tmp.Y,tmp.X,tmp.C2, 'parent', ax_m);
         set(pp2,'linestyle','none','Tag','HatchingRegion');
         hp = findobj(pp2,'Tag','HatchingRegion');
@@ -276,7 +513,6 @@ for subi=1:1
 end
 
 
-
 cfg.var=cfg.var3;
 
 corrval_assm=load(['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/statistics/corr_raw/corr_assm_', cfg.var, '_v1_v1.mat']);
@@ -289,14 +525,24 @@ for subi=1:1
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
+    
+    try
+        tmp.var_sr=squeeze(median(corrval_hcst.assm_hcst.ly1.val_sr,1));
+    catch
+        tmp.var_sr=squeeze(median(corrval_hcst.assm_hcst_em.ly1.val_sr,1));
+    end
+    recasted_val_hcst=NaN(size(corrval_hcst.assm_hcst_em.ly1.val));
+    for reci=1:length(corrval_assm.grid.valid_ind)
+        recasted_val_hcst(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))=tmp.var_sr(1,reci);
+    end
+%     corrval_hcst.assm_hcst.ly1.val_median
 
-    tmp.C=corrval_hcst.obs_hcst.ly1.val_median;
+    tmp.C=squeeze(recasted_val_hcst);
     tmp.C=tmp.C([end, 1:end],:);
 
     % significance test
-    tmp.D=sum(isfinite(corrval_assm.data_obs.([cfg.var,'_ym'])),3);
-    sig_n=tmp.D([end, 1:end],:);
-    sig_t=tmp.C.*sqrt(sig_n-2)./sqrt((1-tmp.C.^2));
+    sig_n=size(corrval_hcst.data.ly1.([cfg.var,'_ym']),3);
+    sig_t=tmp.C*sqrt(sig_n-2)./sqrt((1-tmp.C.^2));
     sig_tcdf=tcdf(sig_t,sig_n-2);
     for loni=1:size(tmp.C,1)
         for lati=1:size(tmp.C,2)
@@ -310,7 +556,7 @@ for subi=1:1
 %     tmp.C(tmp.p>0.1)=NaN; % 90% significant
 
 
-    fig_cfg.fig_name='$$ (i) \hspace{1mm}  M(r_{O,I}^{\tau=1}) $$';
+    fig_cfg.fig_name='$$ (i) \hspace{1mm}  M(r_{A,I}^{\tau=1}) $$';
 
     %% map setting
     subplot(3,4,9);
@@ -378,18 +624,58 @@ for subi=1:1
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
     
-    tmp.A=corrval_hcst.obs_hcst.ly1.val_median;
-    tmp.B=corrval_lens2.obs_lens2.val_median;
+    try
+        tmp.var_sr1=squeeze(median(corrval_hcst.assm_hcst.ly1.val_sr,1));
+    catch
+        tmp.var_sr1=squeeze(median(corrval_hcst.assm_hcst_em.ly1.val_sr,1));
+    end
+    tmp.A=NaN(size(corrval_lens2.assm_lens2_em.val));
+    for reci=1:length(corrval_assm.grid.valid_ind)
+        tmp.A(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))=tmp.var_sr1(1,reci);
+    end
+    tmp.var_sr2=squeeze(median(corrval_lens2.assm_lens2_em.val_sr,1));
+    tmp.B=NaN(size(corrval_lens2.assm_lens2_em.val));
+    for reci=1:length(corrval_assm.grid.valid_ind)
+        tmp.B(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))=tmp.var_sr2(1,reci);
+    end
     
     %% double-sample t-test
     tmp.tt=NaN(size(corrval_lens2.assm_lens2_em.val));
-    for loni=1:size(corrval_hcst.obs_hcst.ly1.val,2)
-        for lati=1:size(corrval_hcst.obs_hcst.ly1.val,3)
-            tmp.a=corrval_hcst.obs_hcst.ly1.val(:,loni,lati);
-            tmp.b=corrval_lens2.obs_lens2.val(:,loni,lati);
-            tmp.tt(loni,lati)=ttest2(tmp.a,tmp.b,'alpha', fig_cfg.p_lim);
+    for reci=1:length(corrval_assm.grid.valid_ind)
+        try
+            tmp.a=corrval_hcst.assm_hcst.ly1.val_sr(:,reci);
+        catch
+            tmp.a=corrval_hcst.assm_hcst_em.ly1.val_sr(:,reci);
         end
+        tmp.b=corrval_lens2.assm_lens2_em.val_sr(:,reci);
+        tmp.tt(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))=ttest2(tmp.a,tmp.b,'alpha', fig_cfg.p_lim);
     end
+
+%     %% check significant range of lens2
+%     tmp.ttt=NaN(size(corrval_assm.grid.valid_ind));
+%     tmp.a=corrval_hcst.assm_hcst.ly1.val_median;
+%     tmp.b=corrval_lens2.assm_lens2.val_median;
+%     tmp.b_low=quantile(corrval_lens2.assm_lens2.val,0.05,1);
+%     tmp.b_upper=quantile(corrval_lens2.assm_lens2.val,0.95,1);
+%     tmp.ind_f=find(tmp.a>tmp.b_low & tmp.a<tmp.b_upper);
+%     tmp.ttt(tmp.ind_f)=tmp.a(tmp.ind_f)-tmp.b(tmp.ind_f);
+%     tmp.tt=NaN(size(corrval_lens2.assm_lens2_em.val));
+%     for reci=1:length(corrval_assm.grid.valid_ind)
+%         tmp.tt(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))=tmp.ttt(reci);
+%     end
+
+    
+    %% pairwise subtraction
+%     aimax=size(corrval_hcst.assm_hcst.ly1.val,1);
+%     bimax=size(corrval_lens2.assm_lens2.val,1);
+%     for reci=1:length(corrval_assm.grid.valid_ind)
+%         for ai=1:aimax
+%             for bi=1:bimax
+%                 tmp.c((ai-1)*bimax+bi)=corrval_hcst.assm_hcst.ly1.val(ai,reci)-corrval_lens2.assm_lens2.val(bi,reci);
+%             end
+%         end
+%         tmp.C(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))=median(tmp.c);
+%     end
 
     %% get correlation p based on normal distribution, DOF
 %     [tmp.p1, tmp.p2, tmp.z, tmp.za, tmp.zb] = ...
@@ -405,7 +691,7 @@ for subi=1:1
     
 
 
-    fig_cfg.fig_name='$$ (j) \hspace{1mm}  M(r_{O,I}^{\tau=1}) -  M(r_{O,U}^{\tau=1}) $$';
+    fig_cfg.fig_name='$$ (j) \hspace{1mm}  M(r_{A,E(I)}^{\tau=1}) -  M(r_{A,E(U)}^{\tau=1}) $$';
 
     %% map setting
     subplot(3,4,10);
@@ -510,19 +796,26 @@ loc_row_first=10;
 %% SUBPLOT(3,4,3); corr, ASSM <-> HCST, median(individual) (LY2-5)
 for subi=1:1
     fig_cfg.fig_size = [0,0,13,14]; %% paper size (original)
-    fig_cfg.ax_size = [loc_column_first+11, loc_row_first-3.5, 5.4, 2.7];
+    fig_cfg.ax_size = [loc_column_first+11, loc_row_first, 5.4, 2.7];
     fig_cfg.title_pos = [0.5,1.02];
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
     
-    tmp.C=squeeze(median(corrval_hcst.obsdet_hcst_4ym.val,1));
+
+    tmp.var_sr=squeeze(median(corrval_hcst.assm_hcst_em_4ym.val_sr,1));    
+    recasted_val_hcst=NaN(size(corrval_hcst.assm_hcst_em.ly1.val));
+    for reci=1:length(corrval_assm.grid.valid_ind)
+        recasted_val_hcst(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))=tmp.var_sr(1,reci);
+    end
+%     corrval_hcst.assm_hcst.ly1.val_median
+
+    tmp.C=squeeze(recasted_val_hcst);
     tmp.C=tmp.C([end, 1:end],:);
 
     % significance test
-    tmp.D=sum(isfinite(corrval_assm.data_obs.([cfg.var,'_4ym'])),3);
-    sig_n=tmp.D([end, 1:end],:);
-    sig_t=tmp.C.*sqrt(sig_n-2)./sqrt((1-tmp.C.^2));
+    sig_n=size(corrval_hcst.data.([cfg.var,'_4ym']),3);
+    sig_t=tmp.C*sqrt(sig_n-2)./sqrt((1-tmp.C.^2));
     sig_tcdf=tcdf(sig_t,sig_n-2);
     for loni=1:size(tmp.C,1)
         for lati=1:size(tmp.C,2)
@@ -536,7 +829,7 @@ for subi=1:1
 %     tmp.C(tmp.p>0.1)=NaN; % 90% significant
 
 
-    fig_cfg.fig_name='$$ (c) \hspace{1mm}  M(r_{O,I}^{\tau=2 \textendash 5}) $$';
+    fig_cfg.fig_name='$$ (c) \hspace{1mm}  M(r_{A,E(I)}^{\tau=2 \textendash 5}) $$';
 %     fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
 %         'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','on');
 % 
@@ -599,25 +892,36 @@ for subi=1:1
     colormap(ax_m,fig_cfg.c_map);
 end
 
-%% SUBPLOT(3,4,4); corr, ASSM<->HCST - ASSM <-> LENS2, median(individual) (LY2-5)
+%% SUBPLOT(3,4,4); corr, ASSM<->HCST - ASSM <-> LENS2, median(individual) (LY1)
 for subi=1:1
-    fig_cfg.ax_size = [loc_column_first+16.5, loc_row_first-3.5, 5.4, 2.7];
+    fig_cfg.ax_size = [loc_column_first+16.5, loc_row_first, 5.4, 2.7];
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
     
-    tmp.A=squeeze(median(corrval_hcst.obsdet_hcst_4ym.val,1));
-    tmp.B=squeeze(median(corrval_lens2.obsdet_lens2_4ym.val,1));
+
+    tmp.var_sr1=squeeze(median(corrval_hcst.assm_hcst_em_4ym.val_sr,1));   
+    tmp.A=NaN(size(corrval_lens2.assm_lens2_em.val));
+    for reci=1:length(corrval_assm.grid.valid_ind)
+        tmp.A(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))=tmp.var_sr1(1,reci);
+    end
+    tmp.var_sr2=squeeze(median(corrval_lens2.assm_lens2_em_4ym.val_sr,1));   
+    tmp.B=NaN(size(corrval_lens2.assm_lens2_em.val));
+    for reci=1:length(corrval_assm.grid.valid_ind)
+        tmp.B(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))=tmp.var_sr2(1,reci);
+    end
     
     %% double-sample t-test
     tmp.tt=NaN(size(corrval_lens2.assm_lens2_em.val));
-    for loni=1:size(corrval_hcst.obsdet_hcst.ly1.val,2)
-        for lati=1:size(corrval_hcst.obsdet_hcst.ly1.val,3)
-            tmp.a=corrval_hcst.obsdet_hcst_4ym.val(:,loni,lati);
-            tmp.b=corrval_lens2.obsdet_lens2_4ym.val(:,loni,lati);
-            tmp.tt(loni,lati)=ttest2(tmp.a,tmp.b,'alpha', fig_cfg.p_lim);
-        end
+    for reci=1:length(corrval_assm.grid.valid_ind)
+        tmp.a=corrval_hcst.assm_hcst_em_4ym.val_sr(:,reci);
+        tmp.b=corrval_lens2.assm_lens2_em_4ym.val_sr(:,reci);
+        tmp.tt(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))=ttest2(tmp.a,tmp.b,'alpha', fig_cfg.p_lim);
     end
+
+    %% get correlation p based on normal distribution, DOF
+%     [tmp.p1, tmp.p2, tmp.z, tmp.za, tmp.zb] = ...
+%         Func_0036_corr_diff_ttest(tmp.A, tmp.B, size(corrval_hcst.data.ly1.([cfg.var,'_ym']),3), size(corrval_lens2.data.([cfg.var,'_ym']),3));
 
     tmp.C=squeeze(tmp.A-tmp.B);
     tmp.C2=tmp.C;
@@ -627,9 +931,7 @@ for subi=1:1
     tmp.C2=tmp.C2([end, 1:end],:);
 %     tmp.C(tmp.p2>0.1)=NaN;
     
-
-
-    fig_cfg.fig_name='$$ (d) \hspace{1mm}  M(r_{O,I}^{\tau=2 \textendash 5}) -  M(r_{O,U}^{\tau=2 \textendash 5}) $$';
+    fig_cfg.fig_name='$$ (d) \hspace{1mm}  M(r_{A,E(I)}^{\tau=2 \textendash 5}) -  M(r_{A,E(U)}^{\tau=2 \textendash 5}) $$';
 
     %% map setting
     subplot(3,4,4);
@@ -689,26 +991,33 @@ for subi=1:1
 end
 
 
-cfg.var=cfg.var3;
+cfg.var=cfg.var2;
 
 corrval_assm=load(['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/statistics/corr_raw/corr_assm_', cfg.var, '_v1_v1.mat']);
 corrval_hcst=load(['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/statistics/corr_raw/corr_hcst_', cfg.var, '_v1_v1.mat']);
 corrval_lens2=load(['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/statistics/corr_raw/corr_lens2_', cfg.var, '_v1_v1.mat']);
 
-%% SUBPLOT(3,4,11); corr, ASSM <-> HCST, median(individual) (LY2-5)
+
+%% SUBPLOT(3,4,7); corr, ASSM <-> HCST, median(individual) (LY1)
 for subi=1:1
-    fig_cfg.ax_size = [loc_column_first+11, loc_row_first-7, 5.4, 2.7];
+    fig_cfg.ax_size = [loc_column_first+11, loc_row_first-3.5, 5.4, 2.7];
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
-    
-    tmp.C=squeeze(median(corrval_hcst.obs_hcst_4ym.val,1));
+  
+    tmp.var_sr=squeeze(median(corrval_hcst.assm_hcst_em_4ym.val_sr,1));        
+    recasted_val_hcst=NaN(size(corrval_hcst.assm_hcst_em.ly1.val));
+    for reci=1:length(corrval_assm.grid.valid_ind)
+        recasted_val_hcst(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))=tmp.var_sr(1,reci);
+    end
+%     corrval_hcst.assm_hcst.ly1.val_median
+
+    tmp.C=squeeze(recasted_val_hcst);
     tmp.C=tmp.C([end, 1:end],:);
 
     % significance test
-    tmp.D=sum(isfinite(corrval_assm.data_obs.([cfg.var,'_4ym'])),3);
-    sig_n=tmp.D([end, 1:end],:);
-    sig_t=tmp.C.*sqrt(sig_n-2)./sqrt((1-tmp.C.^2));
+    sig_n=size(corrval_hcst.data.([cfg.var,'_4ym']),3);
+    sig_t=tmp.C*sqrt(sig_n-2)./sqrt((1-tmp.C.^2));
     sig_tcdf=tcdf(sig_t,sig_n-2);
     for loni=1:size(tmp.C,1)
         for lati=1:size(tmp.C,2)
@@ -719,9 +1028,211 @@ for subi=1:1
             end
         end
     end
+%     tmp.C(tmp.p>0.1)=NaN; % 90% significant
 
 
-    fig_cfg.fig_name='$$ (k) \hspace{1mm}  M(r_{O,I}^{\tau=2 \textendash 5}) $$';
+    fig_cfg.fig_name='$$ (g) \hspace{1mm}  M(r_{A,E(I)}^{\tau=2 \textendash 5}) $$';
+
+    %% map setting
+    subplot(3,4,7);
+    ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
+        'fontname','freeserif'); 
+    set(ax_m, 'Parent', fig_h);
+%     subplot(3,3,2,ax_m);
+    axis off; 
+    hold on;
+    setm(ax_m,'origin',[0,205],'MapLatLimit',fig_cfg.y_lim);  % lat origin(middle point), lon origin (middle point)
+    set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
+        text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
+        'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
+        'fontsize',20,'fontname','freeserif','interpreter','latex')
+
+    %% draw on ax_m
+    h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
+    shading flat;
+    geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
+
+    % hatch -> insignificant area
+    if hatchflag==1
+        tmp.C2=tmp.C;
+        tmp.C2(tmp.p<=fig_cfg.p_lim)=NaN;
+        pp2 = pcolorm(tmp.Y,tmp.X,tmp.C2, 'parent', ax_m);
+        set(pp2,'linestyle','none','Tag','HatchingRegion');
+        hp = findobj(pp2,'Tag','HatchingRegion');
+        hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
+    end
+    %% frame and label setting
+    setm(ax_m,'frame','off','FLineWidth',1);
+
+    label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
+    label_x=mlabel('MLabelParallel','south', 'MLineLocation',30, 'MLabelLocation',90, 'labelrotation','on');
+    mlabel; plabel;
+    label_y=plabel; label_x=mlabel;
+    for lxi=1:length(label_x)
+        tmp.tmppos=label_x(lxi,1).Position;
+%         tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.67; % y position correction
+        label_x(lxi,1).Position=tmp.tmppos;
+        label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
+        label_x(lxi,1).String{2} = ['$$ ', label_x(lxi,1).String{2}, ' $$']; % latex grammar
+        set(label_x,'Interpreter','latex');
+    end
+
+    labelcorr=[3.4, 3.1, 2.8, 2.7, 2.7, 2.7, 2.8, 3.1, 3.4];
+    for lyi=1:length(label_y)
+        label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
+        tmp.tmppos=label_y(lyi,1).Position;
+        tmp.tmppos(1)=-fig_cfg.ax_size(3)+labelcorr(lyi); % x position correction 2.7=avg, for 0 deg
+        label_y(lyi,1).Position=tmp.tmppos;
+        label_y(lyi,1).String = ['$$ ', label_y(lyi,1).String, ' $$']; % latex grammar
+        set(label_y,'Interpreter','latex');
+    end
+
+    %% color set
+    caxis(ax_m, fig_cfg.c_lim);
+    colormap(ax_m,fig_cfg.c_map);
+end
+
+
+%% SUBPLOT(3,4,8); corr, ASSM<->HCST - ASSM <-> LENS2, median(individual) (LY1)
+for subi=1:1
+    fig_cfg.ax_size = [loc_column_first+16.5, loc_row_first-3.5, 5.4, 2.7];
+
+    tmp.X=grid.tlong([end, 1:end],:);
+    tmp.Y=grid.tlat([end, 1:end],:);
+    
+    tmp.var_sr1=squeeze(median(corrval_hcst.assm_hcst_em_4ym.val_sr,1));   
+    tmp.A=NaN(size(corrval_lens2.assm_lens2_em.val));
+    for reci=1:length(corrval_assm.grid.valid_ind)
+        tmp.A(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))=tmp.var_sr1(1,reci);
+    end
+    tmp.var_sr2=squeeze(median(corrval_lens2.assm_lens2_em_4ym.val_sr,1));   
+    tmp.B=NaN(size(corrval_lens2.assm_lens2_em.val));
+    for reci=1:length(corrval_assm.grid.valid_ind)
+        tmp.B(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))=tmp.var_sr2(1,reci);
+    end
+    
+    %% double-sample t-test
+    tmp.tt=NaN(size(corrval_lens2.assm_lens2_em.val));
+    for reci=1:length(corrval_assm.grid.valid_ind)
+        tmp.a=corrval_hcst.assm_hcst_em_4ym.val_sr(:,reci);
+        tmp.b=corrval_lens2.assm_lens2_em_4ym.val_sr(:,reci);
+        tmp.tt(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))=ttest2(tmp.a,tmp.b,'alpha', fig_cfg.p_lim);
+    end
+
+    %% get correlation p based on normal distribution, DOF
+%     [tmp.p1, tmp.p2, tmp.z, tmp.za, tmp.zb] = ...
+%         Func_0036_corr_diff_ttest(tmp.A, tmp.B, size(corrval_hcst.data.ly1.([cfg.var,'_ym']),3), size(corrval_lens2.data.([cfg.var,'_ym']),3));
+
+    tmp.C=squeeze(tmp.A-tmp.B);
+    tmp.C2=tmp.C;
+    tmp.C2(tmp.tt==1)=NaN;
+%     tmp.C2=tmp.tt;
+    tmp.C=tmp.C([end, 1:end],:);
+    tmp.C2=tmp.C2([end, 1:end],:);
+%     tmp.C(tmp.p2>0.1)=NaN;
+    
+
+
+    fig_cfg.fig_name='$$ (h) \hspace{1mm}  M(r_{A,E(I)}^{\tau=2 \textendash 5}) -  M(r_{A,E(U)}^{\tau=2 \textendash 5}) $$';
+
+    %% map setting
+    subplot(3,4,8);
+    ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
+        'fontname','freeserif'); 
+    set(ax_m, 'Parent', fig_h);
+%     subplot(3,3,2,ax_m);
+    axis off; 
+    hold on;
+    setm(ax_m,'origin',[0,205],'MapLatLimit',fig_cfg.y_lim);  % lat origin(middle point), lon origin (middle point)
+    set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
+        text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
+        'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
+        'fontsize',20,'fontname','freeserif','interpreter','latex')
+
+    %% draw on ax_m
+    h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
+    shading flat;
+    geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
+    
+    % hatch -> insignificant area
+    if hatchflag==1
+        pp2 = pcolorm(tmp.Y,tmp.X,tmp.C2, 'parent', ax_m);
+        set(pp2,'linestyle','none','Tag','HatchingRegion');
+        hp = findobj(pp2,'Tag','HatchingRegion');
+        hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
+    end
+    %% frame and label setting
+    setm(ax_m,'frame','off','FLineWidth',1);
+
+    label_y=plabel('PlabelMeridian', 'west', 'PLineLocation',10, 'PLabelLocation',20, 'labelrotation','on');
+    label_x=mlabel('MLabelParallel','south', 'MLineLocation',30, 'MLabelLocation',90, 'labelrotation','on');
+    mlabel; plabel;
+    label_y=plabel; label_x=mlabel;
+    for lxi=1:length(label_x)
+        tmp.tmppos=label_x(lxi,1).Position;
+%         tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.67; % y position correction
+        label_x(lxi,1).Position=tmp.tmppos;
+        label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
+        label_x(lxi,1).String{2} = ['$$ ', label_x(lxi,1).String{2}, ' $$']; % latex grammar
+        set(label_x,'Interpreter','latex');
+    end
+
+    labelcorr=[3.4, 3.1, 2.8, 2.7, 2.7, 2.7, 2.8, 3.1, 3.4];
+    for lyi=1:length(label_y)
+        label_y(lyi,1).String=replace(label_y(lyi,1).String, ' ','');
+        tmp.tmppos=label_y(lyi,1).Position;
+        tmp.tmppos(1)=-fig_cfg.ax_size(3)+labelcorr(lyi); % x position correction 2.7=avg, for 0 deg
+        label_y(lyi,1).Position=tmp.tmppos;
+        label_y(lyi,1).String = ['$$ ', label_y(lyi,1).String, ' $$']; % latex grammar
+        set(label_y,'Interpreter','latex');
+    end
+
+    %% color set
+    caxis(ax_m, fig_cfg.c_lim2);
+    colormap(ax_m,fig_cfg.c_map2);
+end
+
+
+cfg.var=cfg.var3;
+
+corrval_assm=load(['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/statistics/corr_raw/corr_assm_', cfg.var, '_v1_v1.mat']);
+corrval_hcst=load(['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/statistics/corr_raw/corr_hcst_', cfg.var, '_v1_v1.mat']);
+corrval_lens2=load(['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/statistics/corr_raw/corr_lens2_', cfg.var, '_v1_v1.mat']);
+
+%% SUBPLOT(3,4,11); corr, ASSM <-> HCST, median(individual) (LY1)
+for subi=1:1
+    fig_cfg.ax_size = [loc_column_first+11, loc_row_first-7, 5.4, 2.7];
+
+    tmp.X=grid.tlong([end, 1:end],:);
+    tmp.Y=grid.tlat([end, 1:end],:);
+    
+    tmp.var_sr=squeeze(median(corrval_hcst.assm_hcst_em_4ym.val_sr,1));        
+    recasted_val_hcst=NaN(size(corrval_hcst.assm_hcst_em.ly1.val));
+    for reci=1:length(corrval_assm.grid.valid_ind)
+        recasted_val_hcst(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))=tmp.var_sr(1,reci);
+    end
+%     corrval_hcst.assm_hcst.ly1.val_median
+
+    tmp.C=squeeze(recasted_val_hcst);
+    tmp.C=tmp.C([end, 1:end],:);
+
+    % significance test
+    sig_n=size(corrval_hcst.data.([cfg.var,'_4ym']),3);
+    sig_t=tmp.C*sqrt(sig_n-2)./sqrt((1-tmp.C.^2));
+    sig_tcdf=tcdf(sig_t,sig_n-2);
+    for loni=1:size(tmp.C,1)
+        for lati=1:size(tmp.C,2)
+            if tmp.C(loni,lati)>=0
+                tmp.p(loni,lati)=2*(1-sig_tcdf(loni,lati)); % r=positive
+            elseif tmp.C(loni,lati)<0
+                tmp.p(loni,lati)=2*(sig_tcdf(loni,lati)); % r=negative
+            end
+        end
+    end
+%     tmp.C(tmp.p>0.1)=NaN; % 90% significant
+
+
+    fig_cfg.fig_name='$$ (k) \hspace{1mm}  M(r_{A,E(I)}^{\tau=2 \textendash 5}) $$';
 
     %% map setting
     subplot(3,4,11);
@@ -782,25 +1293,61 @@ for subi=1:1
     colormap(ax_m,fig_cfg.c_map);
 end
 
-%% SUBPLOT(3,4,12); corr, ASSM<->HCST - ASSM <-> LENS2, median(individual) (LY2-5)
+%% SUBPLOT(3,4,12); corr, ASSM<->HCST - ASSM <-> LENS2, median(individual) (LY1)
 for subi=1:1
     fig_cfg.ax_size = [loc_column_first+16.5, loc_row_first-7, 5.4, 2.7];
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
     
-    tmp.A=squeeze(median(corrval_hcst.obs_hcst_4ym.val,1));
-    tmp.B=squeeze(median(corrval_lens2.obs_lens2_4ym.val,1));
+    tmp.var_sr1=squeeze(median(corrval_hcst.assm_hcst_em_4ym.val_sr,1));   
+    tmp.A=NaN(size(corrval_lens2.assm_lens2_em.val));
+    for reci=1:length(corrval_assm.grid.valid_ind)
+        tmp.A(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))=tmp.var_sr1(1,reci);
+    end
+    tmp.var_sr2=squeeze(median(corrval_lens2.assm_lens2_em_4ym.val_sr,1));   
+    tmp.B=NaN(size(corrval_lens2.assm_lens2_em.val));
+    for reci=1:length(corrval_assm.grid.valid_ind)
+        tmp.B(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))=tmp.var_sr2(1,reci);
+    end
     
     %% double-sample t-test
     tmp.tt=NaN(size(corrval_lens2.assm_lens2_em.val));
-    for loni=1:size(corrval_hcst.obs_hcst.ly1.val,2)
-        for lati=1:size(corrval_hcst.obs_hcst.ly1.val,3)
-            tmp.a=corrval_hcst.obs_hcst_4ym.val(:,loni,lati);
-            tmp.b=corrval_lens2.obs_lens2_4ym.val(:,loni,lati);
-            tmp.tt(loni,lati)=ttest2(tmp.a,tmp.b,'alpha', fig_cfg.p_lim);
-        end
+    for reci=1:length(corrval_assm.grid.valid_ind)
+        tmp.a=corrval_hcst.assm_hcst_em_4ym.val_sr(:,reci);
+        tmp.b=corrval_lens2.assm_lens2_em_4ym.val_sr(:,reci);
+        tmp.tt(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))=ttest2(tmp.a,tmp.b,'alpha', fig_cfg.p_lim);
     end
+
+%     %% check significant range of lens2
+%     tmp.ttt=NaN(size(corrval_assm.grid.valid_ind));
+%     tmp.a=corrval_hcst.assm_hcst.ly1.val_median;
+%     tmp.b=corrval_lens2.assm_lens2.val_median;
+%     tmp.b_low=quantile(corrval_lens2.assm_lens2.val,0.05,1);
+%     tmp.b_upper=quantile(corrval_lens2.assm_lens2.val,0.95,1);
+%     tmp.ind_f=find(tmp.a>tmp.b_low & tmp.a<tmp.b_upper);
+%     tmp.ttt(tmp.ind_f)=tmp.a(tmp.ind_f)-tmp.b(tmp.ind_f);
+%     tmp.tt=NaN(size(corrval_lens2.assm_lens2_em.val));
+%     for reci=1:length(corrval_assm.grid.valid_ind)
+%         tmp.tt(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))=tmp.ttt(reci);
+%     end
+
+    
+    %% pairwise subtraction
+%     aimax=size(corrval_hcst.assm_hcst.ly1.val,1);
+%     bimax=size(corrval_lens2.assm_lens2.val,1);
+%     for reci=1:length(corrval_assm.grid.valid_ind)
+%         for ai=1:aimax
+%             for bi=1:bimax
+%                 tmp.c((ai-1)*bimax+bi)=corrval_hcst.assm_hcst.ly1.val(ai,reci)-corrval_lens2.assm_lens2.val(bi,reci);
+%             end
+%         end
+%         tmp.C(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))=median(tmp.c);
+%     end
+
+    %% get correlation p based on normal distribution, DOF
+%     [tmp.p1, tmp.p2, tmp.z, tmp.za, tmp.zb] = ...
+%         Func_0036_corr_diff_ttest(tmp.A, tmp.B, size(corrval_hcst.data.ly1.([cfg.var,'_ym']),3), size(corrval_lens2.data.([cfg.var,'_ym']),3));
 
     tmp.C=squeeze(tmp.A-tmp.B);
     tmp.C2=tmp.C;
@@ -812,7 +1359,7 @@ for subi=1:1
     
 
 
-    fig_cfg.fig_name='$$ (l) \hspace{1mm}  M(r_{O,I}^{\tau=2 \textendash 5}) -  M(r_{O,U}^{\tau=2 \textendash 5}) $$';
+    fig_cfg.fig_name='$$ (l) \hspace{1mm}  M(r_{A,E(I)}^{\tau=2 \textendash 5}) -  M(r_{A,E(U)}^{\tau=2 \textendash 5}) $$';
 
     %% map setting
     subplot(3,4,12);
@@ -885,10 +1432,10 @@ end
 %     dirs.figdir= [dirs.figroot, filesep, tmp.varname, '_corr_assm_map', filesep, 'lens2'];
 %     if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
     cfg.figname=['/Users/kimyy/Desktop/backup/Research/Postdoc/03_IBS/2022_predictability_assimilation_run/paper', ...
-        filesep, 'Figureset_raw', filesep, 'fig4','_OCN_comb_obs', '.tif'];
+        filesep, 'Figureset_raw', filesep, 'fig4','_OCN_comb_ensmean_v2', '.tif'];    
     print(fig_h, cfg.figname, '-dpng');
 %     RemoveWhiteSpace([], 'file', cfg.figname);
-    close all;
+%     close all;
 
 % end
 

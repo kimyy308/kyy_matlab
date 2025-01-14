@@ -74,27 +74,31 @@ corrval_lens2=load(['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/statistics/corr_raw
 
     
 
-loc_column_first=1;
+% loc_column_first=1;
+% loc_row_first=10;
+loc_column_first=3;
 loc_row_first=10;
-
 
 %% SUBPLOT(3,4,1); corr, ASSM <-> HCST, median(individual) (LY1)
 for subi=1:1
     fig_cfg.fig_size = [0,0,26,14]; %% paper size (original)
-    fig_cfg.fig_size = [0,0,26,10.5]; %% paper size (original)
+%     fig_cfg.fig_size = [0,0,26,10.5]; %% paper size (original)
+    fig_cfg.fig_size = [0,0,28,12.5]; %% paper size (original)
     fig_cfg.ax_size = [loc_column_first, loc_row_first-3.5, 5.4, 2.7];
 %     fig_cfg.cb_size = [2, 1, 9, 0.3];
-    fig_cfg.cb_size = [2, 1, 20, 0.3];
+    fig_cfg.cb_size = [2, 1, 20, 0.3]; % original
+    fig_cfg.cb_size = [4, 1, 20, 0.3]; % original
+
     fig_cfg.title_pos = [0.5,1.02];
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
 
-    tmp.C=squeeze(corrval_hcst.obsdet_hcst.ly1.val_median);
+    tmp.C=squeeze(corrval_hcst.obs_hcst.ly1.val_median);
     tmp.C=tmp.C([end, 1:end],:);
 
     % significance test
-    tmp.D=sum(isfinite(corrval_assm.data_obs.([cfg.var,'_ym'])),3); % for DoF (num of data)
+    tmp.D=sum(isfinite(corrval_assm.data_obs.([cfg.var,'_ym'])),3);
     sig_n=tmp.D([end, 1:end],:);
     sig_t=tmp.C.*sqrt(sig_n-2)./sqrt((1-tmp.C.^2));
     sig_tcdf=tcdf(sig_t,sig_n-2);
@@ -125,7 +129,7 @@ for subi=1:1
     set(ax_m,'Units','inches','Position',fig_cfg.ax_size);
         text(ax_m,fig_cfg.title_pos(1),fig_cfg.title_pos(2),fig_cfg.fig_name, ...
         'units','normalized', 'horizontalalignment','center', 'verticalalignment','middle', ...
-        'fontsize',20,'fontname','freeserif','interpreter','latex')
+        'fontsize',20,'fontname','freeserif','interpreter','latex');
 
     %% draw on ax_m
     h_pc = pcolorm(tmp.Y,tmp.X,tmp.C,'parent',ax_m); 
@@ -189,16 +193,17 @@ for subi=1:1
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
     
-    tmp.A=corrval_hcst.obsdet_hcst.ly1.val_median;
-    tmp.B=corrval_lens2.obsdet_lens2.val_median;
+    tmp.A=corrval_hcst.obs_hcst.ly1.val_median;
+    tmp.B=corrval_lens2.obs_lens2.val_median;
     
     %% double-sample t-test
+    sig_n=size(corrval_hcst.data.ly1.([cfg.var,'_ym']),3);
     tmp.tt=NaN(size(corrval_lens2.assm_lens2_em.val));
-    for loni=1:size(corrval_hcst.obsdet_hcst.ly1.val,2)
-        for lati=1:size(corrval_hcst.obsdet_hcst.ly1.val,3)
-            tmp.a=corrval_hcst.obsdet_hcst.ly1.val(:,loni,lati);
-            tmp.b=corrval_lens2.obsdet_lens2.val(:,loni,lati);
-            tmp.tt(loni,lati)=ttest2(tmp.a,tmp.b,'alpha', fig_cfg.p_lim);
+    for loni=1:size(corrval_hcst.obs_hcst.ly1.val,2)
+        for lati=1:size(corrval_hcst.obs_hcst.ly1.val,3)
+            tmp.a=median(corrval_hcst.obs_hcst.ly1.val(:,loni,lati));
+            tmp.b=median(corrval_lens2.obs_lens2.val(:,loni,lati));
+            tmp.tt(loni,lati)=Func_0038_compare_correlation(tmp.a,tmp.b,sig_n,sig_n);
         end
     end
 
@@ -208,7 +213,7 @@ for subi=1:1
 
     tmp.C=squeeze(tmp.A-tmp.B);
     tmp.C2=tmp.C;
-    tmp.C2(tmp.tt==1)=NaN;
+    tmp.C2(tmp.tt<=0.1)=NaN;
 %     tmp.C2=tmp.tt;
     tmp.C=tmp.C([end, 1:end],:);
     tmp.C2=tmp.C2([end, 1:end],:);
@@ -382,12 +387,13 @@ for subi=1:1
     tmp.B=corrval_lens2.obs_lens2.val_median;
     
     %% double-sample t-test
+    sig_n=size(corrval_hcst.data.ly1.([cfg.var,'_ym']),3);
     tmp.tt=NaN(size(corrval_lens2.assm_lens2_em.val));
     for loni=1:size(corrval_hcst.obs_hcst.ly1.val,2)
         for lati=1:size(corrval_hcst.obs_hcst.ly1.val,3)
-            tmp.a=corrval_hcst.obs_hcst.ly1.val(:,loni,lati);
-            tmp.b=corrval_lens2.obs_lens2.val(:,loni,lati);
-            tmp.tt(loni,lati)=ttest2(tmp.a,tmp.b,'alpha', fig_cfg.p_lim);
+            tmp.a=median(corrval_hcst.obs_hcst.ly1.val(:,loni,lati));
+            tmp.b=median(corrval_lens2.obs_lens2.val(:,loni,lati));
+            tmp.tt(loni,lati)=Func_0038_compare_correlation(tmp.a,tmp.b,sig_n,sig_n);
         end
     end
 
@@ -397,7 +403,7 @@ for subi=1:1
 
     tmp.C=squeeze(tmp.A-tmp.B);
     tmp.C2=tmp.C;
-    tmp.C2(tmp.tt==1)=NaN;
+    tmp.C2(tmp.tt<=0.1)=NaN;
 %     tmp.C2=tmp.tt;
     tmp.C=tmp.C([end, 1:end],:);
     tmp.C2=tmp.C2([end, 1:end],:);
@@ -504,19 +510,19 @@ corrval_lens2=load(['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/statistics/corr_raw
 %         fig_cfg.fig_size = [0,0,6.5,3.5]; %% paper size (original)
 
 
-loc_column_first=1;
-loc_row_first=10;
+% loc_column_first=1;
+% loc_row_first=10;
 
 %% SUBPLOT(3,4,3); corr, ASSM <-> HCST, median(individual) (LY2-5)
 for subi=1:1
-    fig_cfg.fig_size = [0,0,13,14]; %% paper size (original)
+%     fig_cfg.fig_size = [0,0,13,14]; %% paper size (original)
     fig_cfg.ax_size = [loc_column_first+11, loc_row_first-3.5, 5.4, 2.7];
     fig_cfg.title_pos = [0.5,1.02];
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
     
-    tmp.C=squeeze(median(corrval_hcst.obsdet_hcst_4ym.val,1));
+    tmp.C=squeeze(median(corrval_hcst.obs_hcst_4ym.val,1));
     tmp.C=tmp.C([end, 1:end],:);
 
     % significance test
@@ -606,22 +612,23 @@ for subi=1:1
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
     
-    tmp.A=squeeze(median(corrval_hcst.obsdet_hcst_4ym.val,1));
-    tmp.B=squeeze(median(corrval_lens2.obsdet_lens2_4ym.val,1));
+    tmp.A=squeeze(median(corrval_hcst.obs_hcst_4ym.val,1));
+    tmp.B=squeeze(median(corrval_lens2.obs_lens2_4ym.val,1));
     
     %% double-sample t-test
+    sig_n=size(corrval_hcst.data.ly1.([cfg.var,'_ym']),3);
     tmp.tt=NaN(size(corrval_lens2.assm_lens2_em.val));
-    for loni=1:size(corrval_hcst.obsdet_hcst.ly1.val,2)
-        for lati=1:size(corrval_hcst.obsdet_hcst.ly1.val,3)
-            tmp.a=corrval_hcst.obsdet_hcst_4ym.val(:,loni,lati);
-            tmp.b=corrval_lens2.obsdet_lens2_4ym.val(:,loni,lati);
-            tmp.tt(loni,lati)=ttest2(tmp.a,tmp.b,'alpha', fig_cfg.p_lim);
+    for loni=1:size(corrval_hcst.obs_hcst.ly1.val,2)
+        for lati=1:size(corrval_hcst.obs_hcst.ly1.val,3)
+            tmp.a=median(corrval_hcst.obs_hcst_4ym.val(:,loni,lati));
+            tmp.b=median(corrval_lens2.obs_lens2_4ym.val(:,loni,lati));
+            tmp.tt(loni,lati)=Func_0038_compare_correlation(tmp.a,tmp.b,sig_n-3,sig_n-3);
         end
     end
 
     tmp.C=squeeze(tmp.A-tmp.B);
     tmp.C2=tmp.C;
-    tmp.C2(tmp.tt==1)=NaN;
+    tmp.C2(tmp.tt<=0.1)=NaN;
 %     tmp.C2=tmp.tt;
     tmp.C=tmp.C([end, 1:end],:);
     tmp.C2=tmp.C2([end, 1:end],:);
@@ -793,18 +800,19 @@ for subi=1:1
     tmp.B=squeeze(median(corrval_lens2.obs_lens2_4ym.val,1));
     
     %% double-sample t-test
+    sig_n=size(corrval_hcst.data.ly1.([cfg.var,'_ym']),3);
     tmp.tt=NaN(size(corrval_lens2.assm_lens2_em.val));
     for loni=1:size(corrval_hcst.obs_hcst.ly1.val,2)
         for lati=1:size(corrval_hcst.obs_hcst.ly1.val,3)
-            tmp.a=corrval_hcst.obs_hcst_4ym.val(:,loni,lati);
-            tmp.b=corrval_lens2.obs_lens2_4ym.val(:,loni,lati);
-            tmp.tt(loni,lati)=ttest2(tmp.a,tmp.b,'alpha', fig_cfg.p_lim);
+            tmp.a=median(corrval_hcst.obs_hcst_4ym.val(:,loni,lati));
+            tmp.b=median(corrval_lens2.obs_lens2_4ym.val(:,loni,lati));
+            tmp.tt(loni,lati)=Func_0038_compare_correlation(tmp.a,tmp.b,sig_n-3,sig_n-3);
         end
     end
 
     tmp.C=squeeze(tmp.A-tmp.B);
     tmp.C2=tmp.C;
-    tmp.C2(tmp.tt==1)=NaN;
+    tmp.C2(tmp.tt<=0.1)=NaN;
 %     tmp.C2=tmp.tt;
     tmp.C=tmp.C([end, 1:end],:);
     tmp.C2=tmp.C2([end, 1:end],:);
@@ -881,13 +889,92 @@ end
     set(cb_title, 'interpreter', 'latex');
 
 
+%% annotations
+%     annotation('textbox', [loc_column_first - 1, loc_row_first, 5.4, 2.7], 'string', 'SSH')
+
+    title_main = uicontrol('style','text');
+    set(title_main,'String', 'Ocean IM-based Skills (Actual Skill)')
+%     set(title_main,'String', 'Individual based Skills (Potential Predictability)')
+    set(title_main,'Units','inches', 'Position',[fig_cfg.fig_size(3)/2-4.7, loc_row_first+0.4, 9, 1])
+    set(title_main,'HorizontalAlignment', 'center')
+    set(title_main,'Fontsize', 30)
+    set(title_main,'backgroundcolor',[1, 1, 1])
+
+    title_sub1 = uicontrol('style','text');
+    set(title_sub1,'String', 'Lead Year 1')
+    set(title_sub1,'Units','inches', 'Position',[fig_cfg.fig_size(3)/4-2.3, loc_row_first-0.4, 7, 1])
+    set(title_sub1,'HorizontalAlignment', 'center')
+    set(title_sub1,'Fontsize', 22)
+    set(title_sub1,'backgroundcolor',[1, 1, 1])
+
+    title_sub2 = uicontrol('style','text');
+    set(title_sub2,'String', 'Lead Year 2–5')
+    set(title_sub2,'Units','inches', 'Position',[fig_cfg.fig_size(3)*3/4-5.3, loc_row_first-0.4, 7, 1])
+    set(title_sub2,'HorizontalAlignment', 'center')
+    set(title_sub2,'Fontsize', 22)
+    set(title_sub2,'backgroundcolor',[1, 1, 1])
+
+
+    text_row2 = uicontrol('style','text');
+%     set(MyBox,'String','Burned Area')
+    set(text_row2,'String','NPP')
+    set(text_row2,'Units','inches', 'Position',[loc_column_first-2.4, loc_row_first-6.44, 2, 1])
+    set(text_row2,'HorizontalAlignment', 'right')
+    set(text_row2,'Fontsize', 22)
+    set(text_row2,'backgroundcolor',[1, 1, 1])
+
+    text_row1 = uicontrol('style','text');
+%     set(MyBox,'String','Burned Area')
+    set(text_row1,'String',cfg.var1)
+    set(text_row1,'Units','inches', 'Position',[loc_column_first-2.4, loc_row_first-2.93, 2, 1])
+    set(text_row1,'HorizontalAlignment', 'right')
+    set(text_row1,'Fontsize', 22)
+    set(text_row1,'backgroundcolor',[1, 1, 1])
+
+
+
+    text_column1 = uicontrol('style','text');
+    set(text_column1,'String', 'ACC')
+    set(text_column1,'Units','inches', 'Position',[fig_cfg.fig_size(3)/4-4.9, loc_row_first-0.4, 7, 0.5])
+    set(text_column1,'HorizontalAlignment', 'center')
+    set(text_column1,'Fontsize', 22)
+    set(text_column1,'backgroundcolor',[1, 1, 1])
+
+    text_column2 = uicontrol('style','text');
+    set(text_column2,'String', 'Improvement')
+    set(text_column2,'Units','inches', 'Position',[fig_cfg.fig_size(3)/4+0.7, loc_row_first-0.4, 7, 0.5])
+    set(text_column2,'HorizontalAlignment', 'center')
+    set(text_column2,'Fontsize', 22)
+    set(text_column2,'backgroundcolor',[1, 1, 1])
+
+    text_column3 = uicontrol('style','text');
+    set(text_column3,'String', 'ACC')
+    set(text_column3,'Units','inches', 'Position',[fig_cfg.fig_size(3)/4+6.3, loc_row_first-0.4, 7, 0.5])
+    set(text_column3,'HorizontalAlignment', 'center')
+    set(text_column3,'Fontsize', 22)
+    set(text_column3,'backgroundcolor',[1, 1, 1])
+
+    text_column4 = uicontrol('style','text');
+    set(text_column4,'String', 'Improvement')
+    set(text_column4,'Units','inches', 'Position',[fig_cfg.fig_size(3)/4+11.7, loc_row_first-0.4, 7, 0.5])
+    set(text_column4,'HorizontalAlignment', 'center')
+    set(text_column4,'Fontsize', 22)
+    set(text_column4,'backgroundcolor',[1, 1, 1])
+
+    
+
+%     text(loc_column_first-1, loc_row_first-7, 'SSH2', 'Units', 'inches', 'fontsize', 22)
+
     %% save
 %     dirs.figdir= [dirs.figroot, filesep, tmp.varname, '_corr_assm_map', filesep, 'lens2'];
 %     if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
-    cfg.figname=['/Users/kimyy/Desktop/backup/Research/Postdoc/03_IBS/2022_predictability_assimilation_run/paper', ...
-        filesep, 'Figureset_raw', filesep, 'fig4','_OCN_comb_obs', '.tif'];
+    cfg.figname=['/Volumes/kyy_raid/kimyy/Research/Postdoc/03_IBS/2022_predictability_assimilation_run/paper', ...
+        filesep, 'Figureset_raw', filesep, 'title_fig4','_OCN_comb_obs', '.tif'];
     print(fig_h, cfg.figname, '-dpng');
 %     RemoveWhiteSpace([], 'file', cfg.figname);
+    cfg.figname2=['/Volumes/kyy_raid/kimyy/Research/Postdoc/03_IBS/2022_predictability_assimilation_run/paper', ...
+        filesep, 'Figureset_raw', filesep, 'title_fig4','_OCN_comb_obs', '.eps'];
+    saveas(fig_h, cfg.figname2,'epsc');
     close all;
 
 % end
