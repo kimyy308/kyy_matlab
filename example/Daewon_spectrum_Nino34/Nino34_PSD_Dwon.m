@@ -1,0 +1,44 @@
+%%
+clear all; close all
+cd('/Users/daewonkim/Documents/Data/Nino34')
+data = importdata('Nino34_index.txt');
+nino34=reshape(data(:,2:13)',1,[]);
+
+de_nino34=detrend(nino34,1);
+% Generate time series from an AR(1) model
+a = 0.95;            % autoregressive coefficient close to 1
+sigma = std(de_nino34);           % standard deviation of error term
+
+% Define window sizes to test
+sz=size(de_nino34);
+windows = floor([sz(2)/1, sz(2)/5, sz(2)/10, sz(2)/20, sz(2)/50, sz(2)/100]);
+
+% Calculate power spectral density (PSD) and red noise spectrum for each window size
+for i = 1:length(windows)
+    window = windows(i);
+    [P,f] = pwelch(de_nino34, window, [], [], 1);
+    rednoise = sigma^2 ./ (1 - a*exp(-2*pi*f*1j)); % red noise spectrum
+%     rednoise = sigma^2 ./ (1 - (2*a*cos(2*pi*f)) + (a^2));
+    ub90 = chi2inv(0.95,2) .* rednoise ./ 2;
+    ub95 = chi2inv(0.975,2) .* rednoise ./ 2;
+    ub99 = chi2inv(0.995,2) .* rednoise ./ 2;
+    % Plot PSD and its red noise spectrum for the current window size
+    f1=figure;
+    set(f1,'OuterPosition', [900, 400, 1500, 700])
+    loglog(f*12,P,'linewidth',1.5)                  % plot PSD in log-log scale
+    hold on;
+    box on; grid on;
+%     loglog(f,rednoise,'r--');     % overlay red noise spectrum in red dashed line
+    loglog(f*12,ub99,'--','linewidth',1.5)           % overlay lower bound of confidence interval in black dashed line
+    loglog(f*12,ub95,'--','linewidth',1.5)           % overlay upper bound of confidence interval in black dashed line
+    loglog(f*12,ub90,'--','linewidth',1.5)           % overlay upper bound of confidence interval in black dashed line
+    xlabel('Frequency (1/yr)','fontsize',18);
+    ylabel('Power spectral density','fontsize',18);
+    xlim([0.05 6])
+    legend('PSD','99%','95%','90%','fontsize',16);
+    set(gca,'fontsize',18)
+    title(sprintf('Window size = %d', window));
+    title(strcat('Nino 3.4 PSD (Window size = ', num2str(window),')'),'fontsize',20);
+    print('-dpng',strcat('Nino3.4_PSD_w',num2str(window),'.png'))
+    close all
+end
