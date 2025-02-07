@@ -101,7 +101,16 @@ function [indw, inde, inds, indn]=Func_0012_findind_Y(dl,section,lon_rho,lat_rho
 %             lat_rho_temp(lon_rho>(section(2)))=NaN;
 %             lat_rho_temp(lat_rho<(section(3)))=NaN;
 %             lat_rho_temp(lat_rho>(section(4)))=NaN;
-            
+            if section(2) < section(1)
+                lon_rho_temp=lon_rho;
+                lat_rho_temp=lat_rho;
+                lon_rho_temp(lon_rho>(section(1)-dl) & lon_rho<(section(2)+dl))=NaN;
+                lon_rho_temp(lat_rho<(section(3)-dl))=NaN;
+                lon_rho_temp(lat_rho>(section(4)+dl))=NaN;
+                lat_rho_temp(lon_rho>(section(1)-dl) & lon_rho<(section(2)+dl))=NaN;
+                lat_rho_temp(lat_rho<(section(3)-dl))=NaN;
+                lat_rho_temp(lat_rho>(section(4)+dl))=NaN;
+            end
             
 %             lon_rho(isnan(lat_rho))=NaN;
 %             lat_rho(isnan(lon_rho))=NaN;

@@ -42,8 +42,10 @@ cfg_ts.vars={'GPP', 'PRECT', 'PSL', 'TREFHT', 'TWS'};
 % cfg_ts.var='NO3';
 
 cfg_ts.vars={'SSH'};
-cfg_ts.vars={'photoC_TOT_zint_100m', 'NO3'};
+% cfg_ts.vars={'photoC_TOT_zint_100m', 'NO3'};
 cfg_ts.vars={'SST'};
+cfg_ts.vars={'photoC_TOT_zint_100m'};
+cfg_ts.vars={'TREFHT'};
 
 
 % grid.regions=[45 80 -30 -20];
@@ -86,8 +88,12 @@ sta_lonlat ={[50 70 -35 -20], [160 190 35 50], [120 200 10 20], [150 210 -30 -10
     [240 300 -50 -20], [315 335 -30 -10], [300 360 -50 -40], [280 310 35 45], ...
     [280 360 25 45], [315 345 15 25], [70 140 -60 -50], [180 300 70 90], [30 180 70 90]}; 
 sta_lonlat = {[0 25 35 45], [110 120 -40 -12], [122 133 23 30], [199 206 18 23], [268 272 -2 0]};
-
-
+sta_lonlat = {[210 270 -20 10]};
+% sta_lonlat = {[200 200 20 20], [210 270 -5 5], [230 250 30 40], [320 360 -20 0], [340 360 30 40], [90 120, -10 10], [90 120 -20 0], [90 120 -40 0]};
+sta_lonlat = {[275 324 -18 17], [260 281 26 33], ...
+    [197 229 58 66], [297 339 61 81], [25 55 50 57], ...
+    [342 9 -6 12], [30 59 14 44], [70 89 6 32], ...
+    [97 152 -9 18], [113 179 -46 -12]};
 
 %% 145 30 should be rechecked
 
@@ -105,8 +111,8 @@ cfg.iyears=1960:2020;
 
 
 
-monthss={[12:14], [3:5], [6:8], [9:11]};
-% monthss={[1:12]};
+% monthss={[12:14], [3:5], [6:8], [9:11]};
+monthss={[1:12]};
 
 for mmmi=1:length(monthss)
     months=monthss{mmmi};
@@ -2678,12 +2684,12 @@ for mmmi=1:length(monthss)
     if length(months)==12
         str_prepos='annual';
         print(gcf, ...
-        '/Users/kimyy/Desktop/backup/Research/Postdoc/03_IBS/2022_predictability_assimilation_run/paper/Figureset_raw/Fin_Figure/sub/A_climate_indices_normalized.png', ...
+        '/Volumes/kyy_raid/kimyy/Research/Postdoc/03_IBS/2022_predictability_assimilation_run/paper/Figureset_raw/Fin_Figure/sub/A_climate_indices_normalized.png', ...
          '-dpng');
     else
         str_prepos='seasonal';
         print(gcf, ...
-        ['/Users/kimyy/Desktop/backup/Research/Postdoc/03_IBS/2022_predictability_assimilation_run/', ...
+        ['/Volumes/kyy_raid/kimyy/Research/Postdoc/03_IBS/2022_predictability_assimilation_run/', ...
         'paper/Figureset_raw/Fin_Figure/sub/A_climate_indices_normalized_', str_prepos, num2str(min(months)), '_', num2str(max(months)), '.png'], ...
          '-dpng');
     end
@@ -2709,12 +2715,12 @@ for mmmi=1:length(monthss)
     if length(months)==12
         str_prepos='annual';
         print(gcf, ...
-        '/Users/kimyy/Desktop/backup/Research/Postdoc/03_IBS/2022_predictability_assimilation_run/paper/Figureset_raw/Fin_Figure/sub/A_climate_indices_normalized_obs.png', ...
+        '/Volumes/kyy_raid/kimyy/Research/Postdoc/03_IBS/2022_predictability_assimilation_run/paper/Figureset_raw/Fin_Figure/sub/A_climate_indices_normalized_obs.png', ...
          '-dpng');
     else
         str_prepos='seasonal';
         print(gcf, ...
-        ['/Users/kimyy/Desktop/backup/Research/Postdoc/03_IBS/2022_predictability_assimilation_run/', ...
+        ['/Volumes/kyy_raid/kimyy/Research/Postdoc/03_IBS/2022_predictability_assimilation_run/', ...
         'paper/Figureset_raw/Fin_Figure/sub/A_climate_indices_normalized_obs_', str_prepos, num2str(min(months)), '_', num2str(max(months)), '.png'], ...
          '-dpng');
     end
@@ -2773,7 +2779,7 @@ for mmmi=1:length(monthss)
     % % sa9.XLabel.String='Years';
     % % set(gcf, 'Position', [0 0 1000 800]);
     % % print(gcf, ...
-    % %     '/Users/kimyy/Desktop/backup/Research/Postdoc/03_IBS/2022_predictability_assimilation_run/paper/Figureset_raw/Fin_Figure/sub/A_climate_indices_normalized_obs.png', ...
+    % %     '/kyy_raid/kimyy/Research/Postdoc/03_IBS/2022_predictability_assimilation_run/paper/Figureset_raw/Fin_Figure/sub/A_climate_indices_normalized_obs.png', ...
     % %      '-dpng');
     % % 
     % % close all;
@@ -2830,7 +2836,7 @@ for mmmi=1:length(monthss)
 % % % %     sa9.XLabel.String='Years';
 % % % %     set(gcf, 'Position', [0 0 1000 800]);
 % % % %     print(gcf, ...
-% % % %         '/Users/kimyy/Desktop/backup/Research/Postdoc/03_IBS/2022_predictability_assimilation_run/paper/Figureset_raw/Fin_Figure/sub/A_climate_indices_normalized_4ym.png', ...
+% % % %         '/kyy_raid/kimyy/Research/Postdoc/03_IBS/2022_predictability_assimilation_run/paper/Figureset_raw/Fin_Figure/sub/A_climate_indices_normalized_4ym.png', ...
 % % % %          '-dpng');
 % % % %     
 % % % %     close all;
@@ -2886,7 +2892,7 @@ for mmmi=1:length(monthss)
 % % % %     sa9.XLabel.String='Years';
 % % % %     set(gcf, 'Position', [0 0 1000 800]);
 % % % %     print(gcf, ...
-% % % %         '/Users/kimyy/Desktop/backup/Research/Postdoc/03_IBS/2022_predictability_assimilation_run/paper/Figureset_raw/Fin_Figure/sub/A_climate_indices_normalized_obs_4ym.png', ...
+% % % %         '/kyy_raid/kimyy/Research/Postdoc/03_IBS/2022_predictability_assimilation_run/paper/Figureset_raw/Fin_Figure/sub/A_climate_indices_normalized_obs_4ym.png', ...
 % % % %          '-dpng');
 % % % %     
 % % % %     close all;
@@ -2917,6 +2923,9 @@ function obsname_simple = f_obs_name(varn)
         case 'SSH'
             obsname_simple='CMEMS';
         case 'TS'
+%             obsname_simple='HadCRUT5';
+            obsname_simple='ERA5';
+        case 'TREFHT'
 %             obsname_simple='HadCRUT5';
             obsname_simple='ERA5';
         case 'sumChl'

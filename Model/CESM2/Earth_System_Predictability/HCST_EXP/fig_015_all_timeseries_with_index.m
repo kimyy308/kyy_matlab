@@ -33,6 +33,7 @@ cfg_ts.vars={'GPP', 'PRECT', 'PSL', 'TREFHT', 'TWS'};
 % cfg_ts.vars={'NO3'};
 cfg_ts.vars={'SST'};
 cfg_ts.vars={'DIC', 'TEMP', 'SALT', 'DIC_ALT_CO2'};
+cfg_ts.vars={'TREFHT', 'TS'};
 
 % cfg_ts.var='NO3';
 
@@ -69,11 +70,16 @@ sta_lonlat = {[140 155 25 35], [142 155 30 40], [150 150 20 50], [140 140 25 25]
     [150 150 25 25], [155 155 25 25], [140 140 30 30], [150 150 30 30], [155 155 30 30], ...
     [140 140 35 35], [145 145 35 35], [150 150 35 35], [155 155 35 35]};
 
+sta_lonlat = {[275 324 -18 17], [260 281 26 33], ...
+    [197 229 58 66], [297 339 61 81], [25 55 50 57], ...
+    [342 9 -6 12], [30 59 14 44], [70 89 6 32], ...
+    [97 152 -9 18], [113 179 -46 -12]};
+
 %% 145 30 should be rechecked
 
 
-% cfg.vlayer=1; % surface, vertical slice
-cfg.vlayer=24; % surface, vertical slice
+cfg.vlayer=1; % surface, vertical slice
+% cfg.vlayer=24; % surface, vertical slice
 
 % cfg.vlayer=1:10; % 10layer. don't put more than 15
 cfg.vlayer_1st=min(cfg.vlayer);
@@ -1910,6 +1916,9 @@ function obsname_simple = f_obs_name(varn)
         case 'SSH'
             obsname_simple='CMEMS';
         case 'TS'
+%             obsname_simple='HadCRUT5';
+            obsname_simple='ERA5';
+        case 'TREFHT'
 %             obsname_simple='HadCRUT5';
             obsname_simple='ERA5';
         case 'sumChl'
