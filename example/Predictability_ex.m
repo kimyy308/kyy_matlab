@@ -233,3 +233,50 @@ xlabel('Month')
 ylabel('Value')
 legend({'Variable A'}, 'Location', 'SouthOutside', 'Orientation', 'horizontal' )
 set(gca, 'Fontsize', 15)
+
+
+
+
+for hi=1:41
+    hindcast(hi,1) = cos(hi/6);
+    for ii=2:5
+        hindcast(hi,ii)=hindcast(hi,ii-1)+(cos((hi+ii)/6)-cos((hi+ii-1)/6))+(rand(1)*2-1)/2;
+    end
+end
+
+hold on
+y=cos(x/3);
+plot(x,[y(1:47), NaN(1,3)],'linewidth', 2, 'color', 'b');
+xlabel('Month');
+ylabel('Value');
+set(gca, 'Fontsize', 15);
+for hi=1:4:40
+    plot(x(hi:hi+4), hindcast(hi,1:5), 'linewidth', 2, 'color', 'k');
+end
+grid minor;
+plot(x(1:4:40), hindcast(1:4:40,1), 'ko', 'MarkerSize', 15, 'LineStyle', 'none');
+plot(x(2:4:41), hindcast(1:4:40,2), 'k*', 'MarkerSize', 15, 'LineStyle', 'none');
+plot(x(3:4:42), hindcast(1:4:40,3), 'k^', 'MarkerSize', 15, 'LineStyle', 'none');
+plot(x(4:4:43), hindcast(1:4:40,4), 'ks', 'MarkerSize', 15, 'LineStyle', 'none');
+plot(x(5:4:44), hindcast(1:4:40,5), 'kd', 'MarkerSize', 15, 'LineStyle', 'none');
+legend({'Observation', 'hindcast'}, 'Location', 'SouthOutside', 'Orientation', 'horizontal', 'Interpreter', 'none' );
+
+hold off;
+set(gca, 'Fontsize', 20)
+
+%'LT0', 'LT1', 'LT2', 'LT3', 'LT4'
+
+close all;
+hold on
+y=cos(x/3);
+plot(x,[y(1:47), NaN(1,3)],'linewidth', 2, 'color', 'b');
+xlabel('Month');
+ylabel('Value');
+set(gca, 'Fontsize', 15);
+plot(x(2:4:41), hindcast(1:4:40,2), 'k-*', 'MarkerSize', 15);
+plot(x(5:4:44), hindcast(1:4:40,5), 'k-d', 'MarkerSize', 15);
+hold off
+grid minor
+legend({'Observation', 'LT1', 'LT4'}, 'Location', 'SouthOutside', 'Orientation', 'horizontal', 'Interpreter', 'none' );
+set(gca, 'Fontsize', 20)
+
