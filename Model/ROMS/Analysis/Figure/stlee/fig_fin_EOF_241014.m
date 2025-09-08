@@ -783,7 +783,10 @@ end
 %             plot(cfg.years,part_tc, 'k--', 'linewidth', 1);
             plot(cfg.years,part3_mov_stlee.num_A_t(6,:), 'k--', 'linewidth', 1);
 %             plot(cfg.years,part3_mov_stlee.num_A_t(:,6), 'k--', 'linewidth', 1);
-            
+            abcd=corrcoef(part3_mov_stlee.num_A_t(6,:), ...
+                EOF_result_mov.(tmp.varn).pcs(si,:,amod), 'Rows', 'complete');
+            disp(['4c corr:', num2str(abcd(1,2))])
+
             ylabel('Particle #')
             title('(c) 1st mode PCT of meridional wind stress');
             grid on;
@@ -823,6 +826,10 @@ end
             plot(cfg.years,part3_mov_stlee.num_A_t(6,:), 'k--', 'linewidth', 1);
 %             plot(cfg.years,part3_mov_stlee.num_A_t(:,6), 'k--', 'linewidth', 1);
             
+            abcd=corrcoef(part3_mov_stlee.num_A_t(6,:), ...
+                EOF_result_mov.(tmp.varn).pcs(si,:,amod), 'Rows', 'complete');
+            disp(['4d corr:', num2str(abcd(1,2))])
+
             ylabel('Particle #')
             title('(d) 2nd mode PCT of sea level');
             grid on;
@@ -1011,6 +1018,11 @@ end
             yyaxis right
             abc=part3_mov_stlee.num_A_t(6,:);
             plot(cfg.years,abc, 'k--', 'linewidth', 1);
+
+            abcd=corrcoef(part3_mov_stlee.num_A_t(6,:), ...
+                EOF_result_mov.(tmp.varn).pcs(si,:,amod), 'Rows', 'complete');
+            disp(['supp corr:', num2str(abcd(1,2))]);
+
             ylabel('Particle #')
             title('(b) 1st mode PCT of sea level');
             grid on;
@@ -1027,6 +1039,61 @@ end
             mkdir(dir.figtgdir);
             
             cfg.figname=[dir.figtgdir, '/', 'Fin_sup_figure_stleepar_EOF_mov_', '_season_',num2str(si), '_', str_d, '_p_', num2str(pmon) '.tif'];
+            print(fig_h, cfg.figname, '-dpng');
+%             RemoveWhiteSpace([], 'file', cfg.figname);
+
+
+%% key figure fin (supplementary; wind 2mode,)
+            fntsize=15;
+            close all;
+            fig_cfg.fig_size=[0 0 6 8];
+            fig_h = figure('name', 'EOF','PaperUnits','inches', ...
+                    'PaperPosition',(fig_cfg.fig_size),'position', fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','off');
+                               
+            tmp.varn='svstr';
+            amod=2;
+            subplot(2,1,1); % FigS 3a
+            lv_l=squeeze(EOF_result_mov.(tmp.varn).lv(si,:,:,amod));
+            m_proj('mercator','lon',[lonlat(1) lonlat(2)],'lat',[lonlat(3) lonlat(4)]);
+            m_pcolor(lon',lat',lv_l'); shading flat; colorbar;
+            m_grid;  
+            m_gshhs_i('color',[1 1 1]);
+            m_gshhs_i('patch',[0.7 0.7 0.7]);   % gray colored land
+%             title([tmp.varn, ' lv, ', num2str(round(EOF_result_mov.(tmp.varn).var_exp(si,amod),2)), '%']);
+            title('(a) 2nd mode LV of meridional wind stress');
+            mcax=max(abs(lv_l(:)));
+            caxis([-mcax mcax]);
+            colormap(fig_cfg.c_map);
+            set(gca, 'fontsize', fntsize-5);
+            
+            sbp2=subplot(2,1,2); % FigS 3b
+            plot(cfg.years,EOF_result_mov.(tmp.varn).pcs(si,:,amod), 'k', 'linewidth', 2);
+%             ylim([-0.4 0.6])
+            ylabel('wind stress (N/m^2)')
+            yyaxis right
+            abc=part3_mov_stlee.num_A_t(6,:);
+            plot(cfg.years,abc, 'k--', 'linewidth', 1);
+
+            abcd=corrcoef(part3_mov_stlee.num_A_t(6,:), ...
+                EOF_result_mov.(tmp.varn).pcs(si,:,amod), 'Rows', 'complete');
+            disp(['supp corr:', num2str(abcd(1,2))]);
+
+            ylabel('Particle #')
+            title('(b) 2nd mode PCT of meridional wind stress');
+            grid on;
+            grid minor;
+            set(gca, 'fontsize', fntsize-5);
+            xlabel('Year')
+            legend('svstr', 'Particle #', 'Location', 'NorthWest')
+            pos = get(sbp2, 'Position');  % Get current position
+            pos(4)=pos(4)/2;
+            pos(2)=pos(2)+pos(4)*4/3;
+            set(sbp2, 'Position', pos);
+
+            dir.figtgdir=[dir.figdir, '/', 'EOF_mov', '/', 'par', num2str(pmon)];
+            mkdir(dir.figtgdir);
+            
+            cfg.figname=[dir.figtgdir, '/', 'Fin_sup_figure_svstr2_stleepar_EOF_mov_', '_season_',num2str(si), '_', str_d, '_p_', num2str(pmon) '.tif'];
             print(fig_h, cfg.figname, '-dpng');
 %             RemoveWhiteSpace([], 'file', cfg.figname);
 

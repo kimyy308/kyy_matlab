@@ -19,6 +19,7 @@ addpath(genpath([tmp.dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', tmp.fs, 'C
 addpath(genpath([tmp.dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', tmp.fs, 'Common', tmp.fs, 'order']));
             [tmp.dropboxpath, tmp.error_status] = Func_0008_set_dropbox_path(computer);
 
+
 hatchflag=1;
 
 
@@ -32,7 +33,9 @@ cfg.vlayer_cnt=max(cfg.vlayer)-cfg.vlayer_1st+1;
 cfg.var1='TWS';
 cfg.var2='GPP';
 cfg.var3='FAREA_BURNED';
-  
+    
+
+
 cfg.var=cfg.var1;
 corrval_assm=load(['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/statistics/corr_raw/corr_assm_', cfg.var, '_v1_v1.mat']);
 corrval_hcst=load(['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/statistics/corr_raw/corr_hcst_', cfg.var, '_v1_v1.mat']);
@@ -66,19 +69,17 @@ corrval_lens2=load(['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/statistics/corr_raw
     fig_cfg.c_lim2 = [-0.5 0.5];
     [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('bwr_20', tmp.dropboxpath);
     [fig_cfg.c_map2, tmp.err_stat] = Func_0009_get_colormaps('bwg_10', tmp.dropboxpath);
-
+    fig_cfg.c_map2=flip(fig_cfg.c_map2);
     fig_cfg.p_lim =0.05; %95% significance
     fig_cfg.p_lim =0.1; %90% significance
 %         fig_cfg.fig_size = [0,0,6.5,3.5]; %% paper size (original)
 
     
 
-% loc_column_first=1;
-% loc_row_first=10;
 loc_column_first=3;
 loc_row_first=10;
 
-%% subplot(3,2,1); corr, ASSM <-> HCST, ensmean (LY1)
+%% SUBPLOT(3,2,1); corr, ASSM <-> HCST, ensmean (LY1)
 for subi=1:1
 %     fig_cfg.fig_size = [0,0,13,14]; %% paper size (original)
     fig_cfg.fig_size = [0,0,15,18]; %% paper size (original)
@@ -90,13 +91,12 @@ for subi=1:1
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
     
-    tmp.C=squeeze(corrval_hcst.obs_hcst_em.ly1.val.*grid.lmask);
+    tmp.C=squeeze(corrval_hcst.assm_hcst_em.ly1.val.*grid.lmask);
     tmp.C=tmp.C([end, 1:end],:);
 
     % significance test
-    tmp.D=sum(isfinite(corrval_assm.data_obs.([cfg.var,'_ym'])),3);
-    sig_n=tmp.D([end, 1:end],:);
-    sig_t=tmp.C.*sqrt(sig_n-2)./sqrt((1-tmp.C.^2));
+    sig_n=size(corrval_hcst.data.ly1.([cfg.var,'_ym']),3);
+    sig_t=tmp.C*sqrt(sig_n-2)./sqrt((1-tmp.C.^2));
     sig_tcdf=tcdf(sig_t,sig_n-2);
     for loni=1:size(tmp.C,1)
         for lati=1:size(tmp.C,2)
@@ -112,7 +112,8 @@ for subi=1:1
 %     tmp.C(tmp.p>0.1)=NaN; % 90% significant
 
 
-    fig_cfg.fig_name='$$ (a) \hspace{1mm}  r_{O,E(I)}^{\tau=1} $$';
+%     fig_cfg.fig_name='$$ (c) \hspace{1mm}  r_{A,E(I)}^{\tau=2 \textendash 5} $$';
+    fig_cfg.fig_name='$$ (a) \hspace{1mm}  r_{E(A),E(I)}^{\tau=1} $$';
     fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
         'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','on');
 
@@ -176,32 +177,45 @@ for subi=1:1
     colormap(ax_m,fig_cfg.c_map);
 end
 
-%% subplot(3,2,2); corr, ASSM<->HCST - ASSM <-> LENS2, ensmean (LY1)
+%% SUBPLOT(3,2,2); corr, ASSM<->HCST - ASSM <-> LENS2, ensmean (LY1)
 for subi=1:1
     fig_cfg.ax_size = [loc_column_first+5.5, loc_row_first, 5.4, 2.7];
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
     
-    tmp.A=corrval_hcst.obs_hcst_em.ly1.val;
-    tmp.B=corrval_lens2.obs_lens2_em.val;
+    tmp.A=corrval_hcst.assm_hcst_em.ly1.val;
+    tmp.B=corrval_lens2.assm_lens2_em.val;
     
-    sig_n=sum(isfinite(corrval_assm.data_obs.([cfg.var,'_ym'])(100,100,:)));
-    tmp.tt=Func_0038_compare_correlation(tmp.A,tmp.B,sig_n,sig_n);
-%     pcolor(tmp.tt'); shading flat; colorbar;
+    r12_fn=['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/tmp_python/HCST_skills_HCST-LE/', ...
+        'corr_',cfg.var,'_LE_HCST_em.nc'];
+    r12=ncread(r12_fn, cfg.var);
+    
+    tmp.tt=NaN(size(corrval_hcst.assm_hcst_em.ly1.val));
+    for loni=1:size(corrval_hcst.assm_hcst_em.ly1.val,1)
+        for lati=1:size(corrval_hcst.assm_hcst_em.ly1.val,2)
+            tmp.a=corrval_hcst.assm_hcst_em.ly1.val(loni,lati,:);
+            tmp.b=corrval_lens2.assm_lens2_em.val(loni,lati,:);
+            [tmp.L(loni, lati), tmp.U(loni, lati), tmp.tt(loni, lati), tmp.R_neg(loni,lati)] = ...
+                Func_0039_compare_correlation_Siegert(tmp.b,tmp.a, ...
+                r12(loni,lati), sig_n,sig_n, 0.1);
+        end
+    end
+    tmp.R_neg = tmp.R_neg .*grid.lmask;
+    R_ratio=sum(tmp.R_neg(:), 'omitnan')/length(isfinite(tmp.R_neg(:))).*100.0; 
+    disp([cfg.var, ', R_ratio: ', num2str(R_ratio), '%']);
 
-%     tmp.tt(isnan(grid.lmask))=1;
     %% get correlation p based on normal distribution, DOF
 
     tmp.C=squeeze(tmp.A-tmp.B).*grid.lmask;
     tmp.C2=tmp.C;
-    tmp.C2(tmp.tt<=0.1)=NaN;
+    tmp.C2(tmp.tt==1)=NaN;
     tmp.C=tmp.C([end, 1:end],:);
     tmp.C2=tmp.C2([end, 1:end],:);
     
 
-
-    fig_cfg.fig_name='$$ (b) \hspace{1mm}  r_{O,E(I)}^{\tau=1} -  r_{O,E(U)}^{\tau=1} $$';
+%     fig_cfg.fig_name='$$ (d) \hspace{1mm}  r_{A,E(I)}^{\tau=2 \textendash 5} -  r_{A,E(U)}^{\tau=2 \textendash 5} $$';
+    fig_cfg.fig_name='$$ (b) \hspace{1mm}  r_{E(A),E(I)}^{\tau=1} -  r_{E(A),E(U)}^{\tau=1} $$';
 
     %% map setting
     subplot(6,6,2);
@@ -267,20 +281,19 @@ corrval_hcst=load(['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/statistics/corr_raw/
 corrval_lens2=load(['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/statistics/corr_raw/corr_lens2_', cfg.var, '_v1_v1.mat']);
 
 
-%% subplot(3,2,3); corr, ASSM <-> HCST, ensmean (LY1)
+%% SUBPLOT(3,2,3); corr, ASSM <-> HCST, ensmean (LY1)
 for subi=1:1
     fig_cfg.ax_size = [loc_column_first, loc_row_first-3.5, 5.4, 2.7];
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
 
-    tmp.C=squeeze(corrval_hcst.obs_hcst_em.ly1.val);
+    tmp.C=squeeze(corrval_hcst.assm_hcst_em.ly1.val);
     tmp.C=tmp.C([end, 1:end],:);
 
     % significance test
-    tmp.D=sum(isfinite(corrval_assm.data_obs.([cfg.var,'_ym'])),3);
-    sig_n=tmp.D([end, 1:end],:);
-    sig_t=tmp.C.*sqrt(sig_n-2)./sqrt((1-tmp.C.^2));
+    sig_n=size(corrval_hcst.data.ly1.([cfg.var,'_ym']),3);
+    sig_t=tmp.C*sqrt(sig_n-2)./sqrt((1-tmp.C.^2));
     sig_tcdf=tcdf(sig_t,sig_n-2);
     for loni=1:size(tmp.C,1)
         for lati=1:size(tmp.C,2)
@@ -292,7 +305,7 @@ for subi=1:1
         end
     end
 
-    fig_cfg.fig_name='$$ (c) \hspace{1mm}  r_{O,E(I)}^{\tau=1} $$';
+    fig_cfg.fig_name='$$ (c) \hspace{1mm}  r_{E(A),E(I)}^{\tau=1} $$';
 
     %% map setting
     subplot(6,6,3);
@@ -361,28 +374,43 @@ end
     set(cb_title, 'interpreter', 'latex');
 
 
-%% subplot(3,2,4); corr, ASSM<->HCST - ASSM <-> LENS2, ensmean (LY1)
+%% SUBPLOT(3,2,4); corr, ASSM<->HCST - ASSM <-> LENS2, ensmean (LY1)
 for subi=1:1
     fig_cfg.ax_size = [loc_column_first+5.5, loc_row_first-3.5, 5.4, 2.7];
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.A=corrval_hcst.obs_hcst_em.ly1.val;
-    tmp.B=corrval_lens2.obs_lens2_em.val;
+    tmp.A=corrval_hcst.assm_hcst_em.ly1.val;
+    tmp.B=corrval_lens2.assm_lens2_em.val;
 
-    sig_n=sum(isfinite(corrval_assm.data_obs.([cfg.var,'_ym'])(100,100,:)));
-    tmp.tt=Func_0038_compare_correlation(tmp.A,tmp.B,sig_n,sig_n);
+    r12_fn=['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/tmp_python/HCST_skills_HCST-LE/', ...
+        'corr_',cfg.var,'_LE_HCST_em.nc'];
+    r12=ncread(r12_fn, cfg.var);
+    
+    tmp.tt=NaN(size(corrval_hcst.assm_hcst_em.ly1.val));
+    for loni=1:size(corrval_hcst.assm_hcst_em.ly1.val,1)
+        for lati=1:size(corrval_hcst.assm_hcst_em.ly1.val,2)
+            tmp.a=corrval_hcst.assm_hcst_em.ly1.val(loni,lati,:);
+            tmp.b=corrval_lens2.assm_lens2_em.val(loni,lati,:);
+            [tmp.L(loni, lati), tmp.U(loni, lati), tmp.tt(loni, lati), tmp.R_neg(loni,lati)] = ...
+                Func_0039_compare_correlation_Siegert(tmp.b,tmp.a, ...
+                r12(loni,lati), sig_n,sig_n, 0.1);
+        end
+    end
+    tmp.R_neg = tmp.R_neg .*grid.lmask;
+    R_ratio=sum(tmp.R_neg(:), 'omitnan')/length(isfinite(tmp.R_neg(:))).*100.0; 
+    disp([cfg.var, ', R_ratio: ', num2str(R_ratio), '%']);
 
     %% get correlation p based on normal distribution, DOF
     tmp.C=squeeze(tmp.A-tmp.B);
     tmp.C2=tmp.C;
-    tmp.C2(tmp.tt<=0.1)=NaN;
+    tmp.C2(tmp.tt==1)=NaN;
     tmp.C=tmp.C([end, 1:end],:);
     tmp.C2=tmp.C2([end, 1:end],:);
     
 
 
-    fig_cfg.fig_name='$$ (d) \hspace{1mm}  r_{O,E(I)}^{\tau=1} -  r_{O,E(U)}^{\tau=1} $$';
+    fig_cfg.fig_name='$$ (d) \hspace{1mm}  r_{E(A),E(I)}^{\tau=1} -  r_{E(A),E(U)}^{\tau=1} $$';
 
     %% map setting
     subplot(6,6,4);
@@ -447,20 +475,19 @@ corrval_assm=load(['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/statistics/corr_raw/
 corrval_hcst=load(['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/statistics/corr_raw/corr_hcst_', cfg.var, '_v1_v1.mat']);
 corrval_lens2=load(['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/statistics/corr_raw/corr_lens2_', cfg.var, '_v1_v1.mat']);
 
-%% subplot(3,2,5); corr, ASSM <-> HCST, ensmean (LY1)
+%% SUBPLOT(3,2,5); corr, ASSM <-> HCST, ensmean (LY1)
 for subi=1:1
     fig_cfg.ax_size = [loc_column_first, loc_row_first-7, 5.4, 2.7];
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
 
-    tmp.C=squeeze(corrval_hcst.obs_hcst_em.ly1.val);
+    tmp.C=squeeze(corrval_hcst.assm_hcst_em.ly1.val);
     tmp.C=tmp.C([end, 1:end],:);
 
     % significance test
-    tmp.D=sum(isfinite(corrval_assm.data_obs.([cfg.var,'_ym'])),3);
-    sig_n=tmp.D([end, 1:end],:);
-    sig_t=tmp.C.*sqrt(sig_n-2)./sqrt((1-tmp.C.^2));
+    sig_n=size(corrval_hcst.data.ly1.([cfg.var,'_ym']),3);
+    sig_t=tmp.C*sqrt(sig_n-2)./sqrt((1-tmp.C.^2));
     sig_tcdf=tcdf(sig_t,sig_n-2);
     for loni=1:size(tmp.C,1)
         for lati=1:size(tmp.C,2)
@@ -472,7 +499,7 @@ for subi=1:1
         end
     end
 
-    fig_cfg.fig_name='$$ (e) \hspace{1mm}  r_{O,E(I)}^{\tau=1} $$';
+    fig_cfg.fig_name='$$ (e) \hspace{1mm}  r_{E(A),E(I)}^{\tau=1} $$';
 
     %% map setting
     subplot(6,6,5);
@@ -532,29 +559,43 @@ for subi=1:1
     colormap(ax_m,fig_cfg.c_map);
 end
 
-%% subplot(3,2,6); corr, ASSM<->HCST - ASSM <-> LENS2, ensmean (LY1)
+%% SUBPLOT(3,2,6); corr, ASSM<->HCST - ASSM <-> LENS2, ensmean (LY1)
 for subi=1:1
     fig_cfg.ax_size = [loc_column_first+5.5, loc_row_first-7, 5.4, 2.7];
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
 
-    tmp.A=corrval_hcst.obs_hcst_em.ly1.val;
-    tmp.B=corrval_lens2.obs_lens2_em.val;
+    tmp.A=corrval_hcst.assm_hcst_em.ly1.val;
+    tmp.B=corrval_lens2.assm_lens2_em.val;
     
-    sig_n=sum(isfinite(corrval_assm.data_obs.([cfg.var,'_ym'])(100,100,:)));
-    tmp.tt=Func_0038_compare_correlation(tmp.A,tmp.B,sig_n,sig_n);
+    r12_fn=['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/tmp_python/HCST_skills_HCST-LE/', ...
+        'corr_',cfg.var,'_LE_HCST_em.nc'];
+    r12=ncread(r12_fn, cfg.var);
     
-
+    tmp.tt=NaN(size(corrval_hcst.assm_hcst_em.ly1.val));
+    for loni=1:size(corrval_hcst.assm_hcst_em.ly1.val,1)
+        for lati=1:size(corrval_hcst.assm_hcst_em.ly1.val,2)
+            tmp.a=corrval_hcst.assm_hcst_em.ly1.val(loni,lati,:);
+            tmp.b=corrval_lens2.assm_lens2_em.val(loni,lati,:);
+            [tmp.L(loni, lati), tmp.U(loni, lati), tmp.tt(loni, lati), tmp.R_neg(loni,lati)] = ...
+                Func_0039_compare_correlation_Siegert(tmp.b,tmp.a, ...
+                r12(loni,lati), sig_n,sig_n, 0.1);
+        end
+    end
+    tmp.R_neg = tmp.R_neg .*grid.lmask;
+    R_ratio=sum(tmp.R_neg(:), 'omitnan')/length(isfinite(tmp.R_neg(:))).*100.0; 
+    disp([cfg.var, ', R_ratio: ', num2str(R_ratio), '%']);
+    
     %% get correlation p based on normal distribution, DOF
 
     tmp.C=squeeze(tmp.A-tmp.B);
     tmp.C2=tmp.C;
-    tmp.C2(tmp.tt<=0.1)=NaN;
+    tmp.C2(tmp.tt==1)=NaN;
     tmp.C=tmp.C([end, 1:end],:);
     tmp.C2=tmp.C2([end, 1:end],:);
 
-    fig_cfg.fig_name='$$ (f) \hspace{1mm}  r_{O,E(I)}^{\tau=1} -  r_{O,E(U)}^{\tau=1} $$';
+    fig_cfg.fig_name='$$ (f) \hspace{1mm}  r_{E(A),E(I)}^{\tau=1} -  r_{E(A),E(U)}^{\tau=1} $$';
 
     %% map setting
     subplot(6,6,6);
@@ -620,14 +661,18 @@ end
     set(cb_title, 'interpreter', 'latex');    
 
 
+
 %% annotations
     title_main = uicontrol('style','text');
 %     set(title_main,'String', 'Individual based Skills (Actual Skill)')
-    set(title_main,'String', 'Land EM-based Skills (Actual Skill)')
-%     set(title_main,'String', 'Ensemble mean based Skills (Potential Predictability)')
-    set(title_main,'Units','inches', 'Position',[fig_cfg.fig_size(3)/2-4.85, loc_row_first+3.9, 11, 1])
+%     set(title_main,'String', 'Individual based Skills (Potential Predictability)')
+%     set(title_main,'String', 'Ensemble mean based Skills (Actual Skill)')
+%     set(title_main,'String', 'Land EM-based Skills (Potential Predictability)')
+    set(title_main,'String', 'Land EM-based Skills (Attainable Skill)')
+%     set(title_main,'String', 'Ensemble mean hindcast vs Individual assimilation (Potential Predictability)')
+    set(title_main,'Units','inches', 'Position',[fig_cfg.fig_size(3)/2-6.45, loc_row_first+3.9, 15, 1])
     set(title_main,'HorizontalAlignment', 'center')
-    set(title_main,'Fontsize', 30)
+    set(title_main,'Fontsize', 25)
     set(title_main,'backgroundcolor',[1, 1, 1])
 
     title_sub1 = uicontrol('style','text');
@@ -636,7 +681,6 @@ end
     set(title_sub1,'HorizontalAlignment', 'center')
     set(title_sub1,'Fontsize', 22)
     set(title_sub1,'backgroundcolor',[1, 1, 1])
-
     
     text_row3 = uicontrol('style','text');
 %     set(MyBox,'String','Burned Area')
@@ -665,8 +709,6 @@ end
     set(text_row1,'Fontsize', 22)
     set(text_row1,'backgroundcolor',[1, 1, 1])
 
-
-
     text_column1 = uicontrol('style','text');
     set(text_column1,'String', 'ACC')
     set(text_column1,'Units','inches', 'Position',[fig_cfg.fig_size(3)/4-1.7, loc_row_first+3.0, 7, 0.5])
@@ -683,12 +725,13 @@ end
 
     %% save
     cfg.figname=['/Volumes/kyy_raid/kimyy/Research/Postdoc/03_IBS/2022_predictability_assimilation_run/paper', ...
-        filesep, 'Figureset_raw', filesep, 'title_fig3','_LND_obs_ensmean', '.tif'];
+        filesep, 'Figureset_raw', filesep, 'Siegert_title_fig3','_LND_ensmean', '.tif'];
     print(fig_h, cfg.figname, '-dpng');
     cfg.figname2=['/Volumes/kyy_raid/kimyy/Research/Postdoc/03_IBS/2022_predictability_assimilation_run/paper', ...
-        filesep, 'Figureset_raw', filesep, 'title_fig3','_LND_obs_ensmean', '.eps'];
+        filesep, 'Figureset_raw', filesep, 'Siegert_title_fig3','_LND_ensmean', '.epse'];
     saveas(fig_h, cfg.figname2,'epsc');
-    close all;
+    
+%     close all;
 
 
 

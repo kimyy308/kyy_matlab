@@ -145,6 +145,8 @@ corrval_lens2=load(['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/statistics/corr_raw
     fig_cfg.c_lim2 = [-0.5 0.5];
     [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('bwr_20', tmp.dropboxpath);
     [fig_cfg.c_map2, tmp.err_stat] = Func_0009_get_colormaps('bwg_10', tmp.dropboxpath);
+    fig_cfg.c_map2=flip(fig_cfg.c_map2);
+%     fig_cfg.c_map2 = flip(fig_cfg.c_map2);
 %     fig_cfg.p_lim =0.05; %95% significance
     fig_cfg.p_lim =0.1; %90% significance
 %         fig_cfg.fig_size = [0,0,6.5,3.5]; %% paper size (original)
@@ -911,23 +913,29 @@ for subi=1:1
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
     
-
-    
     tmp.A=corrval_hcst.assm_hcst_em.ly1.val;
     tmp.B=corrval_lens2.assm_lens2_em.val;
     
+    r12_fn=['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/tmp_python/HCST_skills_HCST-LE/', ...
+        'corr_',cfg.var,'_LE_HCST_em.nc'];
+    r12=ncread(r12_fn, cfg.var);
     sig_n=size(corrval_hcst.data.ly1.([cfg.var,'_ym']),3);
+    sig_n_k=ceil(sig_n/2);
 
     tmp.tt=NaN(size(corrval_hcst.assm_hcst_em.ly1.val));
     for loni=1:size(corrval_hcst.assm_hcst_em.ly1.val,1)
         for lati=1:size(corrval_hcst.assm_hcst_em.ly1.val,2)
             tmp.a=corrval_hcst.assm_hcst_em.ly1.val(loni,lati,:);
             tmp.b=corrval_lens2.assm_lens2_em.val(loni,lati,:);
-%             tmp.tt(loni, lati)=ttest2(tmp.a,tmp.b,'alpha', fig_cfg.p_lim);
-            tmp.tt(loni, lati)= ...
-            Func_0038_compare_correlation(tmp.a,tmp.b,sig_n,sig_n);
+            [tmp.L(loni, lati), tmp.U(loni, lati), tmp.tt(loni, lati), tmp.R_neg(loni,lati)] = ...
+                Func_0039_compare_correlation_Siegert(tmp.b,tmp.a, ...
+                r12(loni,lati), sig_n,sig_n, 0.1);
         end
     end
+    
+    R_ratio=sum(tmp.R_neg(:), 'omitnan')/length(isfinite(tmp.R_neg(:))).*100.0; 
+    disp([cfg.var, ', R_ratio: ', num2str(R_ratio), '%']);
+
     tmp.C=squeeze(tmp.A-tmp.B);
     tmp.C2=tmp.C;
     tmp.C2(tmp.tt<=0.1)=NaN;
@@ -1020,18 +1028,36 @@ for subi=1:1
         tmp.B(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))=tmp.var_sr2(reci);
     end
     
+    r12_fn=['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/tmp_python/HCST_skills_HCST-LE/', ...
+        'corr_',cfg.var,'_LE_HCST_em.nc'];
+    r12=ncread(r12_fn, cfg.var);
+
     %% double-sample t-test
     tmp.tt=NaN(size(corrval_lens2.assm_lens2_em.val));
     for reci=1:length(corrval_assm.grid.valid_ind)
         try
-            tmp.a=median(corrval_hcst.assm_hcst.ly1.val_sr(:,reci));
+            tmp.a=corrval_hcst.assm_hcst.ly1.val_sr(:,reci);
         catch
-            tmp.a=median(corrval_hcst.assm_hcst_em.ly1.val_sr(:,reci));
+            tmp.a=corrval_hcst.assm_hcst_em.ly1.val_sr(:,reci);
         end
-        tmp.b=median(corrval_lens2.assm_lens2_em.val_sr(:,reci));
-        tmp.tt(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))= ...
-            Func_0038_compare_correlation(tmp.a,tmp.b,sig_n,sig_n);
+        [~, tmp.a_order] = sort(tmp.a,'ascend'); 
+        tmp.a_idx   = tmp.a_order(length(tmp.a)/2);
+        tmp.a_idx_hc = tmp.a_idx;
+        tmp.b=corrval_lens2.assm_lens2_em.val_sr(:,reci);
+        [~, tmp.b_order] = sort(tmp.b,'ascend'); 
+        tmp.b_idx   = tmp.b_order(length(tmp.b)/2);
+        tmp.b_idx_le = tmp.b_idx; 
+        [tmp.L(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci)), ...
+            tmp.U(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci)), ...
+            tmp.tt(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci)), ...
+            tmp.R_neg(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))] = ...
+                Func_0039_compare_correlation_Siegert(tmp.b(tmp.b_idx),tmp.a(tmp.a_idx), ...
+                r12(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci)), ...
+                sig_n,sig_n, 0.1);
     end
+    
+    R_ratio=sum(tmp.R_neg(:), 'omitnan')/length(isfinite(tmp.R_neg(:))).*100.0; 
+    disp([cfg.var, ', R_ratio: ', num2str(R_ratio), '%']);
 
     tmp.C=squeeze(tmp.A-tmp.B);
     tmp.C2=tmp.C;
@@ -1041,8 +1067,6 @@ for subi=1:1
     tmp.C2=tmp.C2([end, 1:end],:);
 %     tmp.C(tmp.p2>0.1)=NaN;
     
-
-
     fig_cfg.fig_name='$$ (j) \hspace{1mm}  M(r_{A,E(I)}^{\tau=1}) -  M(r_{A,E(U)}^{\tau=1}) $$';
 
     %% map setting
@@ -1117,44 +1141,32 @@ for subi=1:1
         tmp.B(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))=corrval_lens2.assm_lens2.val_median(1,reci);
     end
     
+    r12_fn=['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/tmp_python/HCST_skills_HCST-LE/', ...
+        'corr_',cfg.var,'_LE_HCST.nc'];
+    r12=ncread(r12_fn, cfg.var);
+
     %% double-sample t-test
     tmp.tt=NaN(size(corrval_lens2.assm_lens2_em.val));
     for reci=1:length(corrval_assm.grid.valid_ind)
-        tmp.a=median(corrval_hcst.assm_hcst.ly1.val(:,reci));
-        tmp.b=median(corrval_lens2.assm_lens2.val(:,reci));
-        tmp.tt(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))= ...
-            Func_0038_compare_correlation(tmp.a,tmp.b,sig_n,sig_n);
+        tmp.a=corrval_hcst.assm_hcst.ly1.val(:,reci);
+        [~, tmp.a_order] = sort(tmp.a,'ascend'); 
+        tmp.a_idx   = tmp.a_order(length(tmp.a)/2);
+        tmp.a_idx_hc = mod(tmp.a_idx,20); tmp.a_idx_hc(tmp.a_idx_hc==0)=20;
+        tmp.b=corrval_lens2.assm_lens2.val(:,reci);
+        [~, tmp.b_order] = sort(tmp.b,'ascend'); 
+        tmp.b_idx   = tmp.b_order(length(tmp.b)/2);
+        tmp.b_idx_le = mod(tmp.b_idx,50); tmp.b_idx_le(tmp.b_idx_le==0)=50;
+        [tmp.L(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci)), ...
+            tmp.U(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci)), ...
+            tmp.tt(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci)), ...
+            tmp.R_neg(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))] = ...
+                Func_0039_compare_correlation_Siegert(tmp.b(tmp.b_idx),tmp.a(tmp.a_idx), ...
+                r12(tmp.a_idx_hc, corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci), tmp.b_idx_le), ...
+                sig_n,sig_n, 0.1);
     end
-
-%     %% check significant range of lens2
-%     tmp.ttt=NaN(size(corrval_assm.grid.valid_ind));
-%     tmp.a=corrval_hcst.assm_hcst.ly1.val_median;
-%     tmp.b=corrval_lens2.assm_lens2.val_median;
-%     tmp.b_low=quantile(corrval_lens2.assm_lens2.val,0.05,1);
-%     tmp.b_upper=quantile(corrval_lens2.assm_lens2.val,0.95,1);
-%     tmp.ind_f=find(tmp.a>tmp.b_low & tmp.a<tmp.b_upper);
-%     tmp.ttt(tmp.ind_f)=tmp.a(tmp.ind_f)-tmp.b(tmp.ind_f);
-%     tmp.tt=NaN(size(corrval_lens2.assm_lens2_em.val));
-%     for reci=1:length(corrval_assm.grid.valid_ind)
-%         tmp.tt(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))=tmp.ttt(reci);
-%     end
-
     
-    %% pairwise subtraction
-%     aimax=size(corrval_hcst.assm_hcst.ly1.val,1);
-%     bimax=size(corrval_lens2.assm_lens2.val,1);
-%     for reci=1:length(corrval_assm.grid.valid_ind)
-%         for ai=1:aimax
-%             for bi=1:bimax
-%                 tmp.c((ai-1)*bimax+bi)=corrval_hcst.assm_hcst.ly1.val(ai,reci)-corrval_lens2.assm_lens2.val(bi,reci);
-%             end
-%         end
-%         tmp.C(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))=median(tmp.c);
-%     end
-
-    %% get correlation p based on normal distribution, DOF
-%     [tmp.p1, tmp.p2, tmp.z, tmp.za, tmp.zb] = ...
-%         Func_0036_corr_diff_ttest(tmp.A, tmp.B, size(corrval_hcst.data.ly1.([cfg.var,'_ym']),3), size(corrval_lens2.data.([cfg.var,'_ym']),3));
+    R_ratio=sum(tmp.R_neg(:), 'omitnan')/length(isfinite(tmp.R_neg(:))).*100.0; 
+    disp([cfg.var, ', R_ratio: ', num2str(R_ratio), '%']);
 
     tmp.C=squeeze(tmp.A-tmp.B);
     tmp.C2=tmp.C;
@@ -1239,34 +1251,34 @@ for subi=1:1
     for reci=1:length(corrval_assm.grid.valid_ind)
         tmp.B(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))=corrval_lens2.assm_lens2_4ym.val_median(1,reci);
     end
+    
+    r12_fn=['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/tmp_python/HCST_skills_HCST-LE/', ...
+        'corr_',cfg.var,'_LE_HCST_ly25.nc'];
+    r12=ncread(r12_fn, cfg.var);
 
     % double-sample ttest
     tmp.tt=NaN(size(corrval_lens2.assm_lens2_em.val));
     for reci=1:length(corrval_assm.grid.valid_ind)
-        tmp.a=median(corrval_hcst.assm_hcst_4ym.val(:,reci));
-        tmp.b=median(corrval_lens2.assm_lens2_4ym.val(:,reci));
-%         tmp.tt(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))=ttest2(tmp.a,tmp.b,'alpha', fig_cfg.p_lim);
-        tmp.tt(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))= ...
-            Func_0038_compare_correlation(tmp.a,tmp.b,sig_n-3,sig_n-3);
+        tmp.a=corrval_hcst.assm_hcst_4ym.val(:,reci);
+        [~, tmp.a_order] = sort(tmp.a,'ascend'); 
+        tmp.a_idx   = tmp.a_order(length(tmp.a)/2);
+        tmp.a_idx_hc = mod(tmp.a_idx,20); tmp.a_idx_hc(tmp.a_idx_hc==0)=20;
+        tmp.b=corrval_lens2.assm_lens2_4ym.val(:,reci);
+        [~, tmp.b_order] = sort(tmp.b,'ascend'); 
+        tmp.b_idx   = tmp.b_order(length(tmp.b)/2);
+        tmp.b_idx_le = mod(tmp.b_idx,50); tmp.b_idx_le(tmp.b_idx_le==0)=50;
+        
+        [tmp.L(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci)), ...
+            tmp.U(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci)), ...
+            tmp.tt(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci)), ...
+            tmp.R_neg(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))] = ...
+                Func_0039_compare_correlation_Siegert(tmp.b(tmp.b_idx),tmp.a(tmp.a_idx), ...
+                r12(tmp.a_idx_hc, corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci), tmp.b_idx_le), ...
+                sig_n-3,sig_n-3, 0.1);
     end
-
-%     %% check significant range of lens2
-%     tmp.ttt=NaN(size(corrval_assm.grid.valid_ind));
-%     tmp.a=corrval_hcst.assm_hcst_4ym.val_median;
-%     tmp.b=corrval_lens2.assm_lens2_4ym.val_median;
-%     tmp.b_low=quantile(corrval_lens2.assm_lens2_4ym.val,0.05,1);
-%     tmp.b_upper=quantile(corrval_lens2.assm_lens2_4ym.val,0.95,1);
-%     tmp.ind_f=find(tmp.a>tmp.b_low & tmp.a<tmp.b_upper);
-%     tmp.ttt(tmp.ind_f)=tmp.a(tmp.ind_f)-tmp.b(tmp.ind_f);
-%     tmp.tt=NaN(size(corrval_lens2.assm_lens2_em.val));
-%     for reci=1:length(corrval_assm.grid.valid_ind)
-%         tmp.tt(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))=tmp.ttt(reci);
-%     end
-
-%     corrval_hcst.assm_hcst.ly1.val_median
     
-%     [tmp.p1, tmp.p2, tmp.z, tmp.za, tmp.zb] = ...
-%         Func_0036_corr_diff_ttest(tmp.A, tmp.B, size(corrval_hcst.data.ly1.([cfg.var,'_ym']),3), size(corrval_lens2.data.([cfg.var,'_ym']),3));
+    R_ratio=sum(tmp.R_neg(:), 'omitnan')/length(isfinite(tmp.R_neg(:))).*100.0; 
+    disp([cfg.var, ', R_ratio: ', num2str(R_ratio), '%']);
 
     tmp.C=squeeze(tmp.A-tmp.B);
     tmp.C2=tmp.C;
@@ -1344,7 +1356,8 @@ end
 
     %% annotation
      title_main = uicontrol('style','text');
-    set(title_main,'String', [cfg.var, ' ', 'Skills (Potential Predictability)'])
+%     set(title_main,'String', [cfg.var, ' ', 'Skills (Potential Predictability)'])
+    set(title_main,'String', [cfg.var, ' ', 'Skills (Attainable Skill)'])
 
     set(title_main,'Units','inches', 'Position',[fig_cfg.fig_size(3)/2-5.7, loc_row_first+3.9, 11, 1])
     set(title_main,'HorizontalAlignment', 'center')
@@ -1427,10 +1440,10 @@ end
     dirs.figdir= [dirs.figroot, filesep, tmp.varname, '_corr_assm_map', filesep, 'lens2'];
     if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
     cfg.figname=['/Volumes/kyy_raid/kimyy/Research/Postdoc/03_IBS/2022_predictability_assimilation_run/paper', ...
-        filesep, 'Figureset_raw', filesep, 'title_fig1','_v2_',cfg.var, '.tif'];
+        filesep, 'Figureset_raw', filesep, 'Siegert_title_fig1','_v2_',cfg.var, '.tif'];
     print(fig_h, cfg.figname, '-dpng');
     cfg.figname2=['/Volumes/kyy_raid/kimyy/Research/Postdoc/03_IBS/2022_predictability_assimilation_run/paper', ...
-        filesep, 'Figureset_raw', filesep, 'title_fig1','_v2_',cfg.var, '.eps'];
+        filesep, 'Figureset_raw', filesep, 'Siegert_title_fig1','_v2_',cfg.var, '.eps'];
     saveas(fig_h, cfg.figname2,'epsc');
     
 %     RemoveWhiteSpace([], 'file', cfg.figname);

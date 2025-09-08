@@ -1,4 +1,4 @@
-% %  Created 29-Feb-2024 by Yong-Yub Kim
+% %  Created 20-Apr-2024 by Yong-Yub Kim
 clc; clear all; close all;
 warning off;
 
@@ -19,6 +19,7 @@ addpath(genpath([tmp.dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', tmp.fs, 'C
 addpath(genpath([tmp.dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', tmp.fs, 'Common', tmp.fs, 'order']));
             [tmp.dropboxpath, tmp.error_status] = Func_0008_set_dropbox_path(computer);
 
+
 hatchflag=1;
 
 
@@ -29,15 +30,17 @@ cfg.vlayer_1st=min(cfg.vlayer);
 cfg.vlayer_cnt=max(cfg.vlayer)-cfg.vlayer_1st+1;
 
 
-cfg.var1='TWS';
-cfg.var2='GPP';
-cfg.var3='FAREA_BURNED';
-  
+cfg.var1='TREFHT';
+cfg.var2='PSL';
+cfg.var3='PRECT';
+    
+
+
 cfg.var=cfg.var1;
 corrval_assm=load(['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/statistics/corr_raw/corr_assm_', cfg.var, '_v1_v1.mat']);
 corrval_hcst=load(['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/statistics/corr_raw/corr_hcst_', cfg.var, '_v1_v1.mat']);
 corrval_lens2=load(['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/statistics/corr_raw/corr_lens2_', cfg.var, '_v1_v1.mat']);
-
+   
 
     grid=corrval_hcst.grid;
     grid.lmask=grid.lfrac;
@@ -66,19 +69,18 @@ corrval_lens2=load(['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/statistics/corr_raw
     fig_cfg.c_lim2 = [-0.5 0.5];
     [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('bwr_20', tmp.dropboxpath);
     [fig_cfg.c_map2, tmp.err_stat] = Func_0009_get_colormaps('bwg_10', tmp.dropboxpath);
-
-    fig_cfg.p_lim =0.05; %95% significance
+    fig_cfg.c_map2=flip(fig_cfg.c_map2);
+%     fig_cfg.p_lim =0.05; %95% significance
     fig_cfg.p_lim =0.1; %90% significance
+    
 %         fig_cfg.fig_size = [0,0,6.5,3.5]; %% paper size (original)
 
     
 
-% loc_column_first=1;
-% loc_row_first=10;
 loc_column_first=3;
 loc_row_first=10;
 
-%% subplot(3,2,1); corr, ASSM <-> HCST, ensmean (LY1)
+%% SUBPLOT(3,2,1); corr, ASSM <-> HCST, median(individual) (LY1)
 for subi=1:1
 %     fig_cfg.fig_size = [0,0,13,14]; %% paper size (original)
     fig_cfg.fig_size = [0,0,15,18]; %% paper size (original)
@@ -90,13 +92,18 @@ for subi=1:1
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
     
-    tmp.C=squeeze(corrval_hcst.obs_hcst_em.ly1.val.*grid.lmask);
+    recasted_val_hcst=NaN(size(corrval_hcst.assm_hcst_em.ly1.val));
+    for reci=1:length(corrval_assm.grid.valid_ind)
+        recasted_val_hcst(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))=corrval_hcst.assm_hcst.ly1.val_median(1,reci);
+    end
+%     corrval_hcst.assm_hcst.ly1.val_median
+    
+    tmp.C=squeeze(recasted_val_hcst).*grid.lmask;
     tmp.C=tmp.C([end, 1:end],:);
 
     % significance test
-    tmp.D=sum(isfinite(corrval_assm.data_obs.([cfg.var,'_ym'])),3);
-    sig_n=tmp.D([end, 1:end],:);
-    sig_t=tmp.C.*sqrt(sig_n-2)./sqrt((1-tmp.C.^2));
+    sig_n=size(corrval_hcst.data.ly1.([cfg.var,'_ym']),3);
+    sig_t=tmp.C*sqrt(sig_n-2)./sqrt((1-tmp.C.^2));
     sig_tcdf=tcdf(sig_t,sig_n-2);
     for loni=1:size(tmp.C,1)
         for lati=1:size(tmp.C,2)
@@ -104,15 +111,13 @@ for subi=1:1
                 tmp.p(loni,lati)=2*(1-sig_tcdf(loni,lati)); % r=positive
             elseif tmp.C(loni,lati)<0
                 tmp.p(loni,lati)=2*(sig_tcdf(loni,lati)); % r=negative
-            elseif isnan(tmp.C(loni,lati))
-                tmp.p(loni,lati)=0;
             end
         end
     end
-%     tmp.C(tmp.p>0.1)=NaN; % 90% significant
+% % %     tmp.C(tmp.p>0.1)=NaN; % 90% significant
 
 
-    fig_cfg.fig_name='$$ (a) \hspace{1mm}  r_{O,E(I)}^{\tau=1} $$';
+    fig_cfg.fig_name='$$ (a) \hspace{1mm}  M(r_{A,I}^{\tau=1}) $$';
     fig_h = figure('name',fig_cfg.fig_name,'PaperUnits','inches', ...
         'PaperPosition',fig_cfg.fig_size,'position',fig_cfg.fig_size*get(groot,'ScreenPixelsPerInch')+[200,200,0,0],'visible','on');
 
@@ -136,15 +141,17 @@ for subi=1:1
     geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
 
     % hatch -> insignificant area
-    tmp.C2=tmp.C;
-    tmp.C2(tmp.p<=fig_cfg.p_lim)=NaN;
-    if (hatchflag==1 && sum(isfinite(tmp.C2(:)))~=0)
+    if hatchflag==1
+        tmp.C2=tmp.C;
+        tmp.C2(tmp.p<=fig_cfg.p_lim)=NaN;
+%         tmp.C2(isnan(grid.lmask))=1;
         pp2 = pcolorm(tmp.Y,tmp.X,tmp.C2, 'parent', ax_m);
         set(pp2,'linestyle','none','Tag','HatchingRegion');
         hp = findobj(pp2,'Tag','HatchingRegion');
         hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
-        
     end
+    geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
+
     %% frame and label setting
     setm(ax_m,'frame','off','FLineWidth',1);
 
@@ -176,38 +183,74 @@ for subi=1:1
     colormap(ax_m,fig_cfg.c_map);
 end
 
-%% subplot(3,2,2); corr, ASSM<->HCST - ASSM <-> LENS2, ensmean (LY1)
+%% SUBPLOT(3,2,2); corr, ASSM<->HCST - ASSM <-> LENS2, median(individual) (LY1)
 for subi=1:1
     fig_cfg.ax_size = [loc_column_first+5.5, loc_row_first, 5.4, 2.7];
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
     
-    tmp.A=corrval_hcst.obs_hcst_em.ly1.val;
-    tmp.B=corrval_lens2.obs_lens2_em.val;
-    
-    sig_n=sum(isfinite(corrval_assm.data_obs.([cfg.var,'_ym'])(100,100,:)));
-    tmp.tt=Func_0038_compare_correlation(tmp.A,tmp.B,sig_n,sig_n);
-%     pcolor(tmp.tt'); shading flat; colorbar;
+    tmp.A=NaN(size(corrval_lens2.assm_lens2_em.val));
+    for reci=1:length(corrval_assm.grid.valid_ind)
+        tmp.A(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))=corrval_hcst.assm_hcst.ly1.val_median(1,reci);
+    end
+    tmp.B=NaN(size(corrval_lens2.assm_lens2_em.val));
+    for reci=1:length(corrval_assm.grid.valid_ind)
+        tmp.B(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))=corrval_lens2.assm_lens2.val_median(1,reci);
+    end
 
-%     tmp.tt(isnan(grid.lmask))=1;
+    r12_fn=['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/tmp_python/HCST_skills_HCST-LE/', ...
+        'corr_',cfg.var,'_LE_HCST.nc'];
+    r12=ncread(r12_fn, cfg.var);
+
+    %% double-sample t-test
+    sig_n=size(corrval_hcst.data.ly1.([cfg.var,'_ym']),3);
+    tmp.tt=NaN(size(corrval_lens2.assm_lens2_em.val));
+    for reci=1:length(corrval_assm.grid.valid_ind)
+        tmp.a=corrval_hcst.assm_hcst.ly1.val(:,reci);
+        [~, tmp.a_order] = sort(tmp.a,'ascend'); 
+        tmp.a_idx   = tmp.a_order(length(tmp.a)/2);
+        tmp.a_idx_hc = mod(tmp.a_idx,20); tmp.a_idx_hc(tmp.a_idx_hc==0)=20;
+        tmp.b=corrval_lens2.assm_lens2.val(:,reci);
+        [~, tmp.b_order] = sort(tmp.b,'ascend'); 
+        tmp.b_idx   = tmp.b_order(length(tmp.b)/2);
+        tmp.b_idx_le = mod(tmp.b_idx,50); tmp.b_idx_le(tmp.b_idx_le==0)=50;
+        [tmp.L(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci)), ...
+            tmp.U(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci)), ...
+            tmp.tt(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci)), ...
+            tmp.R_neg(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))] = ...
+                Func_0039_compare_correlation_Siegert(tmp.b(tmp.b_idx),tmp.a(tmp.a_idx), ...
+                r12(tmp.a_idx_hc, corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci), tmp.b_idx_le), ...
+                sig_n,sig_n, 0.1);
+    end
+    tmp.R_neg = tmp.R_neg .*grid.lmask;
+    R_ratio=sum(tmp.R_neg(:), 'omitnan')/length(isfinite(tmp.R_neg(:))).*100.0; 
+    disp([cfg.var, ', R_ratio: ', num2str(R_ratio), '%']);
+
     %% get correlation p based on normal distribution, DOF
-
+%     [tmp.p1, tmp.p2, tmp.z, tmp.za, tmp.zb] = ...
+%         Func_0036_corr_diff_ttest(tmp.A, tmp.B, size(corrval_hcst.data.ly1.([cfg.var,'_ym']),3), size(corrval_lens2.data.([cfg.var,'_ym']),3));
+    
+    tmp.tt(isnan(grid.lmask))=0;
     tmp.C=squeeze(tmp.A-tmp.B).*grid.lmask;
+%     tmp.C=squeeze(tmp.A-tmp.B);
     tmp.C2=tmp.C;
     tmp.C2(tmp.tt<=0.1)=NaN;
+%     tmp.C2=tmp.tt;
     tmp.C=tmp.C([end, 1:end],:);
     tmp.C2=tmp.C2([end, 1:end],:);
+%     tmp.C(tmp.p2>0.1)=NaN;
     
 
 
-    fig_cfg.fig_name='$$ (b) \hspace{1mm}  r_{O,E(I)}^{\tau=1} -  r_{O,E(U)}^{\tau=1} $$';
+    fig_cfg.fig_name='$$ (b) \hspace{1mm}  M(r_{A,I}^{\tau=1}) -  M(r_{A,U}^{\tau=1}) $$';
 
     %% map setting
     subplot(6,6,2);
     ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
         'fontname','freeserif'); 
     set(ax_m, 'Parent', fig_h);
+%     subplot(3,3,2,ax_m);
     axis off; 
     hold on;
     setm(ax_m,'origin',[0,160],'MapLatLimit',fig_cfg.y_lim);  % lat origin(middle point), lon origin (middle point)
@@ -228,6 +271,8 @@ for subi=1:1
         hp = findobj(pp2,'Tag','HatchingRegion');
         hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
     end
+    geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
+
     %% frame and label setting
     setm(ax_m,'frame','off','FLineWidth',1);
 
@@ -267,20 +312,25 @@ corrval_hcst=load(['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/statistics/corr_raw/
 corrval_lens2=load(['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/statistics/corr_raw/corr_lens2_', cfg.var, '_v1_v1.mat']);
 
 
-%% subplot(3,2,3); corr, ASSM <-> HCST, ensmean (LY1)
+%% SUBPLOT(3,2,3); corr, ASSM <-> HCST, median(individual) (LY1)
 for subi=1:1
     fig_cfg.ax_size = [loc_column_first, loc_row_first-3.5, 5.4, 2.7];
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
+    
+    recasted_val_hcst=NaN(size(corrval_hcst.assm_hcst_em.ly1.val));
+    for reci=1:length(corrval_assm.grid.valid_ind)
+        recasted_val_hcst(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))=corrval_hcst.assm_hcst.ly1.val_median(1,reci);
+    end
+%     corrval_hcst.assm_hcst.ly1.val_median
 
-    tmp.C=squeeze(corrval_hcst.obs_hcst_em.ly1.val);
+    tmp.C=squeeze(recasted_val_hcst);
     tmp.C=tmp.C([end, 1:end],:);
 
     % significance test
-    tmp.D=sum(isfinite(corrval_assm.data_obs.([cfg.var,'_ym'])),3);
-    sig_n=tmp.D([end, 1:end],:);
-    sig_t=tmp.C.*sqrt(sig_n-2)./sqrt((1-tmp.C.^2));
+    sig_n=size(corrval_hcst.data.ly1.([cfg.var,'_ym']),3);
+    sig_t=tmp.C*sqrt(sig_n-2)./sqrt((1-tmp.C.^2));
     sig_tcdf=tcdf(sig_t,sig_n-2);
     for loni=1:size(tmp.C,1)
         for lati=1:size(tmp.C,2)
@@ -291,14 +341,17 @@ for subi=1:1
             end
         end
     end
+%     tmp.C(tmp.p>0.1)=NaN; % 90% significant
 
-    fig_cfg.fig_name='$$ (c) \hspace{1mm}  r_{O,E(I)}^{\tau=1} $$';
+
+    fig_cfg.fig_name='$$ (c) \hspace{1mm}  M(r_{A,I}^{\tau=1}) $$';
 
     %% map setting
     subplot(6,6,3);
     ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
         'fontname','freeserif'); 
     set(ax_m, 'Parent', fig_h);
+%     subplot(3,3,2,ax_m);
     axis off; 
     hold on;
     setm(ax_m,'origin',[0,160],'MapLatLimit',fig_cfg.y_lim);  % lat origin(middle point), lon origin (middle point)
@@ -313,15 +366,16 @@ for subi=1:1
     geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
 
     % hatch -> insignificant area
-    
-    tmp.C2=tmp.C;
-    tmp.C2(tmp.p<=fig_cfg.p_lim)=NaN;
-    if (hatchflag==1 && sum(isfinite(tmp.C2(:)))~=0)
+    if hatchflag==1
+        tmp.C2=tmp.C;
+        tmp.C2(tmp.p<=fig_cfg.p_lim)=NaN;
         pp2 = pcolorm(tmp.Y,tmp.X,tmp.C2, 'parent', ax_m);
         set(pp2,'linestyle','none','Tag','HatchingRegion');
         hp = findobj(pp2,'Tag','HatchingRegion');
         hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
     end
+    geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
+
     %% frame and label setting
     setm(ax_m,'frame','off','FLineWidth',1);
 
@@ -331,6 +385,7 @@ for subi=1:1
     label_y=plabel; label_x=mlabel;
     for lxi=1:length(label_x)
         tmp.tmppos=label_x(lxi,1).Position;
+%         tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.67; % y position correction
         label_x(lxi,1).Position=tmp.tmppos;
         label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
         label_x(lxi,1).String{2} = ['$$ ', label_x(lxi,1).String{2}, ' $$']; % latex grammar
@@ -357,32 +412,71 @@ end
     colormap(ax_m,fig_cfg.c_map);
     cb = colorbar(ax_m,'units','inches','Location', 'southoutside', 'position',fig_cfg.cb_size + [0, 1, 0, 0]);
     set(cb,'fontsize',15,'fontname','freeserif','TickDir','both');
+%     cb.TickLabelPosition = 'top';
+%     cb_title=title(cb,'$$ r $$','fontsize', 22, 'Position', [880, 0, 0]); % hor, ver, ?
     cb_title=title(cb,'$$ r $$','fontsize', 22, 'Position', [660, 0, 0]); % hor, ver, ?
     set(cb_title, 'interpreter', 'latex');
 
 
-%% subplot(3,2,4); corr, ASSM<->HCST - ASSM <-> LENS2, ensmean (LY1)
+%% SUBPLOT(3,2,4); corr, ASSM<->HCST - ASSM <-> LENS2, median(individual) (LY1)
 for subi=1:1
     fig_cfg.ax_size = [loc_column_first+5.5, loc_row_first-3.5, 5.4, 2.7];
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
-    tmp.A=corrval_hcst.obs_hcst_em.ly1.val;
-    tmp.B=corrval_lens2.obs_lens2_em.val;
+    
+    tmp.A=NaN(size(corrval_lens2.assm_lens2_em.val));
+    for reci=1:length(corrval_assm.grid.valid_ind)
+        tmp.A(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))=corrval_hcst.assm_hcst.ly1.val_median(1,reci);
+    end
+    tmp.B=NaN(size(corrval_lens2.assm_lens2_em.val));
+    for reci=1:length(corrval_assm.grid.valid_ind)
+        tmp.B(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))=corrval_lens2.assm_lens2.val_median(1,reci);
+    end
+    
+    r12_fn=['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/tmp_python/HCST_skills_HCST-LE/', ...
+        'corr_',cfg.var,'_LE_HCST.nc'];
+    r12=ncread(r12_fn, cfg.var);
 
-    sig_n=sum(isfinite(corrval_assm.data_obs.([cfg.var,'_ym'])(100,100,:)));
-    tmp.tt=Func_0038_compare_correlation(tmp.A,tmp.B,sig_n,sig_n);
+    %% double-sample t-test
+    sig_n=size(corrval_hcst.data.ly1.([cfg.var,'_ym']),3);
+    tmp.tt=NaN(size(corrval_lens2.assm_lens2_em.val));
+    for reci=1:length(corrval_assm.grid.valid_ind)
+        tmp.a=corrval_hcst.assm_hcst.ly1.val(:,reci);
+        [~, tmp.a_order] = sort(tmp.a,'ascend'); 
+        tmp.a_idx   = tmp.a_order(length(tmp.a)/2);
+        tmp.a_idx_hc = mod(tmp.a_idx,20); tmp.a_idx_hc(tmp.a_idx_hc==0)=20;
+        tmp.b=corrval_lens2.assm_lens2.val(:,reci);
+        [~, tmp.b_order] = sort(tmp.b,'ascend'); 
+        tmp.b_idx   = tmp.b_order(length(tmp.b)/2);
+        tmp.b_idx_le = mod(tmp.b_idx,50); tmp.b_idx_le(tmp.b_idx_le==0)=50;
+        [tmp.L(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci)), ...
+            tmp.U(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci)), ...
+            tmp.tt(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci)), ...
+            tmp.R_neg(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))] = ...
+                Func_0039_compare_correlation_Siegert(tmp.b(tmp.b_idx),tmp.a(tmp.a_idx), ...
+                r12(tmp.a_idx_hc, corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci), tmp.b_idx_le), ...
+                sig_n,sig_n, 0.1);
+    end
+    tmp.R_neg = tmp.R_neg .*grid.lmask;
+    R_ratio=sum(tmp.R_neg(:), 'omitnan')/length(isfinite(tmp.R_neg(:))).*100.0; 
+    disp([cfg.var, ', R_ratio: ', num2str(R_ratio), '%']);
 
     %% get correlation p based on normal distribution, DOF
+%     [tmp.p1, tmp.p2, tmp.z, tmp.za, tmp.zb] = ...
+%         Func_0036_corr_diff_ttest(tmp.A, tmp.B, size(corrval_hcst.data.ly1.([cfg.var,'_ym']),3), size(corrval_lens2.data.([cfg.var,'_ym']),3));
+
     tmp.C=squeeze(tmp.A-tmp.B);
     tmp.C2=tmp.C;
     tmp.C2(tmp.tt<=0.1)=NaN;
+%     tmp.C2=tmp.tt;
     tmp.C=tmp.C([end, 1:end],:);
     tmp.C2=tmp.C2([end, 1:end],:);
+%     tmp.C(tmp.p2>0.1)=NaN;
     
 
 
-    fig_cfg.fig_name='$$ (d) \hspace{1mm}  r_{O,E(I)}^{\tau=1} -  r_{O,E(U)}^{\tau=1} $$';
+    fig_cfg.fig_name='$$ (d) \hspace{1mm}  M(r_{A,I}^{\tau=1}) -  M(r_{A,U}^{\tau=1}) $$';
 
     %% map setting
     subplot(6,6,4);
@@ -404,12 +498,14 @@ for subi=1:1
     geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
     
     % hatch -> insignificant area
-    if (hatchflag==1 && sum(isfinite(tmp.C2(:)))~=0)
+    if hatchflag==1
         pp2 = pcolorm(tmp.Y,tmp.X,tmp.C2, 'parent', ax_m);
         set(pp2,'linestyle','none','Tag','HatchingRegion');
         hp = findobj(pp2,'Tag','HatchingRegion');
         hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
     end
+    geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
+
     %% frame and label setting
     setm(ax_m,'frame','off','FLineWidth',1);
 
@@ -419,6 +515,7 @@ for subi=1:1
     label_y=plabel; label_x=mlabel;
     for lxi=1:length(label_x)
         tmp.tmppos=label_x(lxi,1).Position;
+%         tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.67; % y position correction
         label_x(lxi,1).Position=tmp.tmppos;
         label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
         label_x(lxi,1).String{2} = ['$$ ', label_x(lxi,1).String{2}, ' $$']; % latex grammar
@@ -447,20 +544,25 @@ corrval_assm=load(['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/statistics/corr_raw/
 corrval_hcst=load(['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/statistics/corr_raw/corr_hcst_', cfg.var, '_v1_v1.mat']);
 corrval_lens2=load(['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/statistics/corr_raw/corr_lens2_', cfg.var, '_v1_v1.mat']);
 
-%% subplot(3,2,5); corr, ASSM <-> HCST, ensmean (LY1)
+%% SUBPLOT(3,2,5); corr, ASSM <-> HCST, median(individual) (LY1)
 for subi=1:1
     fig_cfg.ax_size = [loc_column_first, loc_row_first-7, 5.4, 2.7];
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
+    
+    recasted_val_hcst=NaN(size(corrval_hcst.assm_hcst_em.ly1.val));
+    for reci=1:length(corrval_assm.grid.valid_ind)
+        recasted_val_hcst(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))=corrval_hcst.assm_hcst.ly1.val_median(1,reci);
+    end
+%     corrval_hcst.assm_hcst.ly1.val_median
 
-    tmp.C=squeeze(corrval_hcst.obs_hcst_em.ly1.val);
+    tmp.C=squeeze(recasted_val_hcst);
     tmp.C=tmp.C([end, 1:end],:);
 
     % significance test
-    tmp.D=sum(isfinite(corrval_assm.data_obs.([cfg.var,'_ym'])),3);
-    sig_n=tmp.D([end, 1:end],:);
-    sig_t=tmp.C.*sqrt(sig_n-2)./sqrt((1-tmp.C.^2));
+    sig_n=size(corrval_hcst.data.ly1.([cfg.var,'_ym']),3);
+    sig_t=tmp.C*sqrt(sig_n-2)./sqrt((1-tmp.C.^2));
     sig_tcdf=tcdf(sig_t,sig_n-2);
     for loni=1:size(tmp.C,1)
         for lati=1:size(tmp.C,2)
@@ -471,8 +573,10 @@ for subi=1:1
             end
         end
     end
+%     tmp.C(tmp.p>0.1)=NaN; % 90% significant
 
-    fig_cfg.fig_name='$$ (e) \hspace{1mm}  r_{O,E(I)}^{\tau=1} $$';
+
+    fig_cfg.fig_name='$$ (e) \hspace{1mm}  M(r_{A,I}^{\tau=1}) $$';
 
     %% map setting
     subplot(6,6,5);
@@ -494,14 +598,16 @@ for subi=1:1
     geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
 
     % hatch -> insignificant area
-    tmp.C2=tmp.C;
-    tmp.C2(tmp.p<=fig_cfg.p_lim)=NaN;
-    if (hatchflag==1 && sum(isfinite(tmp.C2(:)))~=0)        
+    if hatchflag==1
+        tmp.C2=tmp.C;
+        tmp.C2(tmp.p<=fig_cfg.p_lim)=NaN;
         pp2 = pcolorm(tmp.Y,tmp.X,tmp.C2, 'parent', ax_m);
         set(pp2,'linestyle','none','Tag','HatchingRegion');
         hp = findobj(pp2,'Tag','HatchingRegion');
         hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
     end
+    geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
+    
     %% frame and label setting
     setm(ax_m,'frame','off','FLineWidth',1);
 
@@ -511,6 +617,7 @@ for subi=1:1
     label_y=plabel; label_x=mlabel;
     for lxi=1:length(label_x)
         tmp.tmppos=label_x(lxi,1).Position;
+%         tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.67; % y position correction
         label_x(lxi,1).Position=tmp.tmppos;
         label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
         label_x(lxi,1).String{2} = ['$$ ', label_x(lxi,1).String{2}, ' $$']; % latex grammar
@@ -532,35 +639,69 @@ for subi=1:1
     colormap(ax_m,fig_cfg.c_map);
 end
 
-%% subplot(3,2,6); corr, ASSM<->HCST - ASSM <-> LENS2, ensmean (LY1)
+%% SUBPLOT(3,2,6); corr, ASSM<->HCST - ASSM <-> LENS2, median(individual) (LY1)
 for subi=1:1
     fig_cfg.ax_size = [loc_column_first+5.5, loc_row_first-7, 5.4, 2.7];
 
     tmp.X=grid.tlong([end, 1:end],:);
     tmp.Y=grid.tlat([end, 1:end],:);
-
-    tmp.A=corrval_hcst.obs_hcst_em.ly1.val;
-    tmp.B=corrval_lens2.obs_lens2_em.val;
     
-    sig_n=sum(isfinite(corrval_assm.data_obs.([cfg.var,'_ym'])(100,100,:)));
-    tmp.tt=Func_0038_compare_correlation(tmp.A,tmp.B,sig_n,sig_n);
+    tmp.A=NaN(size(corrval_lens2.assm_lens2_em.val));
+    for reci=1:length(corrval_assm.grid.valid_ind)
+        tmp.A(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))=corrval_hcst.assm_hcst.ly1.val_median(1,reci);
+    end
+    tmp.B=NaN(size(corrval_lens2.assm_lens2_em.val));
+    for reci=1:length(corrval_assm.grid.valid_ind)
+        tmp.B(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))=corrval_lens2.assm_lens2.val_median(1,reci);
+    end
     
+    r12_fn=['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/tmp_python/HCST_skills_HCST-LE/', ...
+        'corr_',cfg.var,'_LE_HCST.nc'];
+    r12=ncread(r12_fn, cfg.var);
 
-    %% get correlation p based on normal distribution, DOF
+    %% double-sample t-test
+    sig_n=size(corrval_hcst.data.ly1.([cfg.var,'_ym']),3);
+    tmp.tt=NaN(size(corrval_lens2.assm_lens2_em.val));
+    for reci=1:length(corrval_assm.grid.valid_ind)
+        tmp.a=corrval_hcst.assm_hcst.ly1.val(:,reci);
+        [~, tmp.a_order] = sort(tmp.a,'ascend'); 
+        tmp.a_idx   = tmp.a_order(length(tmp.a)/2);
+        tmp.a_idx_hc = mod(tmp.a_idx,20); tmp.a_idx_hc(tmp.a_idx_hc==0)=20;
+        tmp.b=corrval_lens2.assm_lens2.val(:,reci);
+        [~, tmp.b_order] = sort(tmp.b,'ascend'); 
+        tmp.b_idx   = tmp.b_order(length(tmp.b)/2);
+        tmp.b_idx_le = mod(tmp.b_idx,50); tmp.b_idx_le(tmp.b_idx_le==0)=50;
+        [tmp.L(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci)), ...
+            tmp.U(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci)), ...
+            tmp.tt(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci)), ...
+            tmp.R_neg(corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci))] = ...
+                Func_0039_compare_correlation_Siegert(tmp.b(tmp.b_idx),tmp.a(tmp.a_idx), ...
+                r12(tmp.a_idx_hc, corrval_assm.grid.valid_ind_i(reci), corrval_assm.grid.valid_ind_j(reci), tmp.b_idx_le), ...
+                sig_n,sig_n, 0.1);
+    end
+    tmp.R_neg = tmp.R_neg .*grid.lmask;
+    R_ratio=sum(tmp.R_neg(:), 'omitnan')/length(isfinite(tmp.R_neg(:))).*100.0; 
+    disp([cfg.var, ', R_ratio: ', num2str(R_ratio), '%']);
+
 
     tmp.C=squeeze(tmp.A-tmp.B);
     tmp.C2=tmp.C;
     tmp.C2(tmp.tt<=0.1)=NaN;
+%     tmp.C2=tmp.tt;
     tmp.C=tmp.C([end, 1:end],:);
     tmp.C2=tmp.C2([end, 1:end],:);
+%     tmp.C(tmp.p2>0.1)=NaN;
+    
 
-    fig_cfg.fig_name='$$ (f) \hspace{1mm}  r_{O,E(I)}^{\tau=1} -  r_{O,E(U)}^{\tau=1} $$';
+
+    fig_cfg.fig_name='$$ (f) \hspace{1mm}  M(r_{A,I}^{\tau=1}) -  M(r_{A,U}^{\tau=1}) $$';
 
     %% map setting
     subplot(6,6,6);
     ax_m = axesm('MapProjection',fig_cfg.map_proj,'grid','on','fontsize',14, ...
         'fontname','freeserif'); 
     set(ax_m, 'Parent', fig_h);
+%     subplot(3,3,2,ax_m);
     axis off; 
     hold on;
     setm(ax_m,'origin',[0,160],'MapLatLimit',fig_cfg.y_lim);  % lat origin(middle point), lon origin (middle point)
@@ -575,12 +716,14 @@ for subi=1:1
     geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
 
     % hatch -> insignificant area
-    if (hatchflag==1 && sum(isfinite(tmp.C2(:)))~=0)
+    if hatchflag==1
         pp2 = pcolorm(tmp.Y,tmp.X,tmp.C2, 'parent', ax_m);
         set(pp2,'linestyle','none','Tag','HatchingRegion');
         hp = findobj(pp2,'Tag','HatchingRegion');
         hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
     end
+    geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
+
     %% frame and label setting
     setm(ax_m,'frame','off','FLineWidth',1);
 
@@ -590,6 +733,7 @@ for subi=1:1
     label_y=plabel; label_x=mlabel;
     for lxi=1:length(label_x)
         tmp.tmppos=label_x(lxi,1).Position;
+%         tmp.tmppos(2)=-fig_cfg.ax_size(4)+1.67; % y position correction
         label_x(lxi,1).Position=tmp.tmppos;
         label_x(lxi,1).String{2}=replace(label_x(lxi,1).String{2}, ' ','');
         label_x(lxi,1).String{2} = ['$$ ', label_x(lxi,1).String{2}, ' $$']; % latex grammar
@@ -616,18 +760,18 @@ end
     colormap(ax_m,fig_cfg.c_map2);
     cb = colorbar(ax_m,'units','inches','Location', 'southoutside', 'position',fig_cfg.cb_size + [0 0 0 0]);
     set(cb,'fontsize',15,'fontname','freeserif','TickDir','both');
+%     cb.TickLabelPosition = 'top';
     cb_title=title(cb,'$$ \Delta r $$','fontsize', 22, 'Position', [670, -4, 0]); % hor, ver, ?
     set(cb_title, 'interpreter', 'latex');    
 
 
 %% annotations
     title_main = uicontrol('style','text');
-%     set(title_main,'String', 'Individual based Skills (Actual Skill)')
-    set(title_main,'String', 'Land EM-based Skills (Actual Skill)')
-%     set(title_main,'String', 'Ensemble mean based Skills (Potential Predictability)')
-    set(title_main,'Units','inches', 'Position',[fig_cfg.fig_size(3)/2-4.85, loc_row_first+3.9, 11, 1])
+%     set(title_main,'String', 'Atmosphere IM-based Skills (Potential Predictability)')
+    set(title_main,'String', 'Atmosphere IM-based Skills (Attainable Skill)')
+    set(title_main,'Units','inches', 'Position',[fig_cfg.fig_size(3)/2-6.75, loc_row_first+3.9, 15, 1])
     set(title_main,'HorizontalAlignment', 'center')
-    set(title_main,'Fontsize', 30)
+    set(title_main,'Fontsize', 25)
     set(title_main,'backgroundcolor',[1, 1, 1])
 
     title_sub1 = uicontrol('style','text');
@@ -636,11 +780,10 @@ end
     set(title_sub1,'HorizontalAlignment', 'center')
     set(title_sub1,'Fontsize', 22)
     set(title_sub1,'backgroundcolor',[1, 1, 1])
-
     
     text_row3 = uicontrol('style','text');
 %     set(MyBox,'String','Burned Area')
-    set(text_row3,'String','Burned Area')
+    set(text_row3,'String','Precipitation')
     set(text_row3,'Units','inches', 'Position',[loc_column_first-2.4, loc_row_first-6.46, 2, 1])
     set(text_row3,'HorizontalAlignment', 'right')
     set(text_row3,'Fontsize', 22)
@@ -650,7 +793,7 @@ end
 %     text_row2 = uicontrol('style','radiobutton');
 %     set(MyBox,'String','Burned Area')
 %     set(text_row2,'String',sprintf('<HTML>NO<SUB>3</SUB>',2))
-    set(text_row2,'String', 'GPP')    
+    set(text_row2,'String', 'PSL')    
     set(text_row2,'Units','inches', 'Position',[loc_column_first-2.4, loc_row_first-2.94, 2, 1])
     set(text_row2,'HorizontalAlignment', 'right')
     set(text_row2,'Fontsize', 22)
@@ -658,14 +801,12 @@ end
 
     text_row1 = uicontrol('style','text');
 %     set(MyBox,'String','Burned Area')
-    set(text_row1,'String','TWS')
+    set(text_row1,'String','T2m')
 %     set(text_row1,'String','TWS')
     set(text_row1,'Units','inches', 'Position',[loc_column_first-2.4, loc_row_first+0.58, 2, 1])
     set(text_row1,'HorizontalAlignment', 'right')
     set(text_row1,'Fontsize', 22)
     set(text_row1,'backgroundcolor',[1, 1, 1])
-
-
 
     text_column1 = uicontrol('style','text');
     set(text_column1,'String', 'ACC')
@@ -682,13 +823,20 @@ end
     set(text_column2,'backgroundcolor',[1, 1, 1])
 
     %% save
+%     dirs.figdir= [dirs.figroot, filesep, tmp.varname, '_corr_assm_map', filesep, 'lens2'];
+%     if ~exist(dirs.figdir,'dir'), mkdir(dirs.figdir); end
     cfg.figname=['/Volumes/kyy_raid/kimyy/Research/Postdoc/03_IBS/2022_predictability_assimilation_run/paper', ...
-        filesep, 'Figureset_raw', filesep, 'title_fig3','_LND_obs_ensmean', '.tif'];
+        filesep, 'Figureset_raw', filesep, 'Siegert_title_fig2','_ATM', '.tif'];
     print(fig_h, cfg.figname, '-dpng');
     cfg.figname2=['/Volumes/kyy_raid/kimyy/Research/Postdoc/03_IBS/2022_predictability_assimilation_run/paper', ...
-        filesep, 'Figureset_raw', filesep, 'title_fig3','_LND_obs_ensmean', '.eps'];
+        filesep, 'Figureset_raw', filesep, 'Siegert_title_fig2','_ATM', '.eps'];
     saveas(fig_h, cfg.figname2,'epsc');
-    close all;
+
+%     RemoveWhiteSpace([], 'file', cfg.figname);
+%     close all;
+
+% end
+
 
 
 

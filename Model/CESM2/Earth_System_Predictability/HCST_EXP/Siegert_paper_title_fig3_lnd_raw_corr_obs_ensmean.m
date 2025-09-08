@@ -66,7 +66,7 @@ corrval_lens2=load(['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/statistics/corr_raw
     fig_cfg.c_lim2 = [-0.5 0.5];
     [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('bwr_20', tmp.dropboxpath);
     [fig_cfg.c_map2, tmp.err_stat] = Func_0009_get_colormaps('bwg_10', tmp.dropboxpath);
-
+    fig_cfg.c_map2=flip(fig_cfg.c_map2);
     fig_cfg.p_lim =0.05; %95% significance
     fig_cfg.p_lim =0.1; %90% significance
 %         fig_cfg.fig_size = [0,0,6.5,3.5]; %% paper size (original)
@@ -186,11 +186,24 @@ for subi=1:1
     tmp.A=corrval_hcst.obs_hcst_em.ly1.val;
     tmp.B=corrval_lens2.obs_lens2_em.val;
     
-    sig_n=sum(isfinite(corrval_assm.data_obs.([cfg.var,'_ym'])(100,100,:)));
-    tmp.tt=Func_0038_compare_correlation(tmp.A,tmp.B,sig_n,sig_n);
-%     pcolor(tmp.tt'); shading flat; colorbar;
-
-%     tmp.tt(isnan(grid.lmask))=1;
+    sig_n=size(corrval_hcst.data.ly1.([cfg.var,'_ym']),3);
+    r12_fn=['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/tmp_python/HCST_skills_HCST-LE/', ...
+        'corr_',cfg.var,'_LE_HCST_em.nc'];
+    r12=ncread(r12_fn, cfg.var);
+    
+    tmp.tt=NaN(size(corrval_hcst.assm_hcst_em.ly1.val));
+    for loni=1:size(corrval_hcst.assm_hcst_em.ly1.val,1)
+        for lati=1:size(corrval_hcst.assm_hcst_em.ly1.val,2)
+            tmp.a=corrval_hcst.obs_hcst_em.ly1.val(loni,lati,:);
+            tmp.b=corrval_lens2.obs_lens2_em.val(loni,lati,:);
+            [tmp.L(loni, lati), tmp.U(loni, lati), tmp.tt(loni, lati), tmp.R_neg(loni,lati)] = ...
+                Func_0039_compare_correlation_Siegert(tmp.b,tmp.a, ...
+                r12(loni,lati), sig_n,sig_n, 0.1);
+        end
+    end
+    
+    R_ratio=sum(tmp.R_neg(:), 'omitnan')/length(isfinite(tmp.R_neg(:))).*100.0; 
+    disp([cfg.var, ', R_ratio: ', num2str(R_ratio), '%']);
     %% get correlation p based on normal distribution, DOF
 
     tmp.C=squeeze(tmp.A-tmp.B).*grid.lmask;
@@ -370,8 +383,24 @@ for subi=1:1
     tmp.A=corrval_hcst.obs_hcst_em.ly1.val;
     tmp.B=corrval_lens2.obs_lens2_em.val;
 
-    sig_n=sum(isfinite(corrval_assm.data_obs.([cfg.var,'_ym'])(100,100,:)));
-    tmp.tt=Func_0038_compare_correlation(tmp.A,tmp.B,sig_n,sig_n);
+    sig_n=size(corrval_hcst.data.ly1.([cfg.var,'_ym']),3);
+    r12_fn=['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/tmp_python/HCST_skills_HCST-LE/', ...
+        'corr_',cfg.var,'_LE_HCST_em.nc'];
+    r12=ncread(r12_fn, cfg.var);
+    
+    tmp.tt=NaN(size(corrval_hcst.assm_hcst_em.ly1.val));
+    for loni=1:size(corrval_hcst.assm_hcst_em.ly1.val,1)
+        for lati=1:size(corrval_hcst.assm_hcst_em.ly1.val,2)
+            tmp.a=corrval_hcst.obs_hcst_em.ly1.val(loni,lati,:);
+            tmp.b=corrval_lens2.obs_lens2_em.val(loni,lati,:);
+            [tmp.L(loni, lati), tmp.U(loni, lati), tmp.tt(loni, lati), tmp.R_neg(loni,lati)] = ...
+                Func_0039_compare_correlation_Siegert(tmp.b,tmp.a, ...
+                r12(loni,lati), sig_n,sig_n, 0.1);
+        end
+    end
+    
+    R_ratio=sum(tmp.R_neg(:), 'omitnan')/length(isfinite(tmp.R_neg(:))).*100.0; 
+    disp([cfg.var, ', R_ratio: ', num2str(R_ratio), '%']);
 
     %% get correlation p based on normal distribution, DOF
     tmp.C=squeeze(tmp.A-tmp.B);
@@ -542,8 +571,24 @@ for subi=1:1
     tmp.A=corrval_hcst.obs_hcst_em.ly1.val;
     tmp.B=corrval_lens2.obs_lens2_em.val;
     
-    sig_n=sum(isfinite(corrval_assm.data_obs.([cfg.var,'_ym'])(100,100,:)));
-    tmp.tt=Func_0038_compare_correlation(tmp.A,tmp.B,sig_n,sig_n);
+    sig_n=size(corrval_hcst.data.ly1.([cfg.var,'_ym']),3);
+    r12_fn=['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/tmp_python/HCST_skills_HCST-LE/', ...
+        'corr_',cfg.var,'_LE_HCST_em.nc'];
+    r12=ncread(r12_fn, cfg.var);
+    
+    tmp.tt=NaN(size(corrval_hcst.assm_hcst_em.ly1.val));
+    for loni=1:size(corrval_hcst.assm_hcst_em.ly1.val,1)
+        for lati=1:size(corrval_hcst.assm_hcst_em.ly1.val,2)
+            tmp.a=corrval_hcst.obs_hcst_em.ly1.val(loni,lati,:);
+            tmp.b=corrval_lens2.obs_lens2_em.val(loni,lati,:);
+            [tmp.L(loni, lati), tmp.U(loni, lati), tmp.tt(loni, lati), tmp.R_neg(loni,lati)] = ...
+                Func_0039_compare_correlation_Siegert(tmp.b,tmp.a, ...
+                r12(loni,lati), sig_n,sig_n, 0.1);
+        end
+    end
+    
+    R_ratio=sum(tmp.R_neg(:), 'omitnan')/length(isfinite(tmp.R_neg(:))).*100.0; 
+    disp([cfg.var, ', R_ratio: ', num2str(R_ratio), '%']);
     
 
     %% get correlation p based on normal distribution, DOF
@@ -683,10 +728,10 @@ end
 
     %% save
     cfg.figname=['/Volumes/kyy_raid/kimyy/Research/Postdoc/03_IBS/2022_predictability_assimilation_run/paper', ...
-        filesep, 'Figureset_raw', filesep, 'title_fig3','_LND_obs_ensmean', '.tif'];
+        filesep, 'Figureset_raw', filesep, 'Siegert_title_fig3','_LND_obs_ensmean', '.tif'];
     print(fig_h, cfg.figname, '-dpng');
     cfg.figname2=['/Volumes/kyy_raid/kimyy/Research/Postdoc/03_IBS/2022_predictability_assimilation_run/paper', ...
-        filesep, 'Figureset_raw', filesep, 'title_fig3','_LND_obs_ensmean', '.eps'];
+        filesep, 'Figureset_raw', filesep, 'Siegert_title_fig3','_LND_obs_ensmean', '.eps'];
     saveas(fig_h, cfg.figname2,'epsc');
     close all;
 

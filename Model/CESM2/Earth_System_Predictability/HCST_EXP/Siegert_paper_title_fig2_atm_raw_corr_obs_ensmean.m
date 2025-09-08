@@ -1,4 +1,4 @@
-% %  Created 29-Feb-2024 by Yong-Yub Kim
+% %  Created 20-Apr-2025 by Yong-Yub Kim
 clc; clear all; close all;
 warning off;
 
@@ -18,7 +18,6 @@ addpath(genpath([tmp.dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', tmp.fs, 'C
             [tmp.dropboxpath, tmp.error_status] = Func_0008_set_dropbox_path(computer);
 addpath(genpath([tmp.dropboxpath, tmp.fs, 'source', tmp.fs, 'matlab', tmp.fs, 'Common', tmp.fs, 'order']));
             [tmp.dropboxpath, tmp.error_status] = Func_0008_set_dropbox_path(computer);
-
 hatchflag=1;
 
 
@@ -28,10 +27,9 @@ cfg.vlayer=1; % surf, vertical slice
 cfg.vlayer_1st=min(cfg.vlayer);
 cfg.vlayer_cnt=max(cfg.vlayer)-cfg.vlayer_1st+1;
 
-
-cfg.var1='TWS';
-cfg.var2='GPP';
-cfg.var3='FAREA_BURNED';
+cfg.var1='TREFHT';
+cfg.var2='PSL';
+cfg.var3='PRECT';
   
 cfg.var=cfg.var1;
 corrval_assm=load(['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/statistics/corr_raw/corr_assm_', cfg.var, '_v1_v1.mat']);
@@ -66,7 +64,8 @@ corrval_lens2=load(['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/statistics/corr_raw
     fig_cfg.c_lim2 = [-0.5 0.5];
     [fig_cfg.c_map, tmp.err_stat] = Func_0009_get_colormaps('bwr_20', tmp.dropboxpath);
     [fig_cfg.c_map2, tmp.err_stat] = Func_0009_get_colormaps('bwg_10', tmp.dropboxpath);
-
+    fig_cfg.c_map2=flip(fig_cfg.c_map2);
+    
     fig_cfg.p_lim =0.05; %95% significance
     fig_cfg.p_lim =0.1; %90% significance
 %         fig_cfg.fig_size = [0,0,6.5,3.5]; %% paper size (original)
@@ -109,6 +108,8 @@ for subi=1:1
             end
         end
     end
+    
+
 %     tmp.C(tmp.p>0.1)=NaN; % 90% significant
 
 
@@ -145,6 +146,8 @@ for subi=1:1
         hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
         
     end
+    geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
+
     %% frame and label setting
     setm(ax_m,'frame','off','FLineWidth',1);
 
@@ -187,9 +190,26 @@ for subi=1:1
     tmp.B=corrval_lens2.obs_lens2_em.val;
     
     sig_n=sum(isfinite(corrval_assm.data_obs.([cfg.var,'_ym'])(100,100,:)));
-    tmp.tt=Func_0038_compare_correlation(tmp.A,tmp.B,sig_n,sig_n);
-%     pcolor(tmp.tt'); shading flat; colorbar;
+    r12_fn=['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/tmp_python/HCST_skills_HCST-LE/', ...
+        'corr_',cfg.var,'_LE_HCST_em.nc'];
+    r12=ncread(r12_fn, cfg.var);
+    
+    tmp.tt=NaN(size(corrval_hcst.assm_hcst_em.ly1.val));
+    for loni=1:size(corrval_hcst.assm_hcst_em.ly1.val,1)
+        for lati=1:size(corrval_hcst.assm_hcst_em.ly1.val,2)
+            tmp.a=corrval_hcst.obs_hcst_em.ly1.val(loni,lati,:);
+            tmp.b=corrval_lens2.obs_lens2_em.val(loni,lati,:);
+            [tmp.L(loni, lati), tmp.U(loni, lati), tmp.tt(loni, lati), tmp.R_neg(loni,lati)] = ...
+                Func_0039_compare_correlation_Siegert(tmp.b,tmp.a, ...
+                r12(loni,lati), sig_n,sig_n, 0.1);
+        end
+    end
+    tmp.R_neg = tmp.R_neg .*grid.lmask;
+    R_ratio=sum(tmp.R_neg(:), 'omitnan')/length(isfinite(tmp.R_neg(:))).*100.0; 
+    disp([cfg.var, ', R_ratio: ', num2str(R_ratio), '%']);
+    
 
+%     pcolor(tmp.tt'); shading flat; colorbar;
 %     tmp.tt(isnan(grid.lmask))=1;
     %% get correlation p based on normal distribution, DOF
 
@@ -228,6 +248,8 @@ for subi=1:1
         hp = findobj(pp2,'Tag','HatchingRegion');
         hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
     end
+    geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
+
     %% frame and label setting
     setm(ax_m,'frame','off','FLineWidth',1);
 
@@ -322,6 +344,8 @@ for subi=1:1
         hp = findobj(pp2,'Tag','HatchingRegion');
         hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
     end
+    geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
+
     %% frame and label setting
     setm(ax_m,'frame','off','FLineWidth',1);
 
@@ -371,7 +395,23 @@ for subi=1:1
     tmp.B=corrval_lens2.obs_lens2_em.val;
 
     sig_n=sum(isfinite(corrval_assm.data_obs.([cfg.var,'_ym'])(100,100,:)));
-    tmp.tt=Func_0038_compare_correlation(tmp.A,tmp.B,sig_n,sig_n);
+    r12_fn=['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/tmp_python/HCST_skills_HCST-LE/', ...
+        'corr_',cfg.var,'_LE_HCST_em.nc'];
+    r12=ncread(r12_fn, cfg.var);
+    
+    tmp.tt=NaN(size(corrval_hcst.assm_hcst_em.ly1.val));
+    for loni=1:size(corrval_hcst.assm_hcst_em.ly1.val,1)
+        for lati=1:size(corrval_hcst.assm_hcst_em.ly1.val,2)
+            tmp.a=corrval_hcst.obs_hcst_em.ly1.val(loni,lati,:);
+            tmp.b=corrval_lens2.obs_lens2_em.val(loni,lati,:);
+            [tmp.L(loni, lati), tmp.U(loni, lati), tmp.tt(loni, lati), tmp.R_neg(loni,lati)] = ...
+                Func_0039_compare_correlation_Siegert(tmp.b,tmp.a, ...
+                r12(loni,lati), sig_n,sig_n, 0.1);
+        end
+    end
+    tmp.R_neg = tmp.R_neg .*grid.lmask;
+    R_ratio=sum(tmp.R_neg(:), 'omitnan')/length(isfinite(tmp.R_neg(:))).*100.0; 
+    disp([cfg.var, ', R_ratio: ', num2str(R_ratio), '%']);
 
     %% get correlation p based on normal distribution, DOF
     tmp.C=squeeze(tmp.A-tmp.B);
@@ -410,6 +450,8 @@ for subi=1:1
         hp = findobj(pp2,'Tag','HatchingRegion');
         hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
     end
+    geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
+
     %% frame and label setting
     setm(ax_m,'frame','off','FLineWidth',1);
 
@@ -502,6 +544,8 @@ for subi=1:1
         hp = findobj(pp2,'Tag','HatchingRegion');
         hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
     end
+    geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
+
     %% frame and label setting
     setm(ax_m,'frame','off','FLineWidth',1);
 
@@ -542,8 +586,25 @@ for subi=1:1
     tmp.A=corrval_hcst.obs_hcst_em.ly1.val;
     tmp.B=corrval_lens2.obs_lens2_em.val;
     
+
     sig_n=sum(isfinite(corrval_assm.data_obs.([cfg.var,'_ym'])(100,100,:)));
-    tmp.tt=Func_0038_compare_correlation(tmp.A,tmp.B,sig_n,sig_n);
+    r12_fn=['/Volumes/kyy_raid/kimyy/Model/CESM2/ESP/tmp_python/HCST_skills_HCST-LE/', ...
+        'corr_',cfg.var,'_LE_HCST_em.nc'];
+    r12=ncread(r12_fn, cfg.var);
+    
+    tmp.tt=NaN(size(corrval_hcst.assm_hcst_em.ly1.val));
+    for loni=1:size(corrval_hcst.assm_hcst_em.ly1.val,1)
+        for lati=1:size(corrval_hcst.assm_hcst_em.ly1.val,2)
+            tmp.a=corrval_hcst.obs_hcst_em.ly1.val(loni,lati,:);
+            tmp.b=corrval_lens2.obs_lens2_em.val(loni,lati,:);
+            [tmp.L(loni, lati), tmp.U(loni, lati), tmp.tt(loni, lati), tmp.R_neg(loni,lati)] = ...
+                Func_0039_compare_correlation_Siegert(tmp.b,tmp.a, ...
+                r12(loni,lati), sig_n,sig_n, 0.1);
+        end
+    end
+    tmp.R_neg = tmp.R_neg .*grid.lmask;
+    R_ratio=sum(tmp.R_neg(:), 'omitnan')/length(isfinite(tmp.R_neg(:))).*100.0; 
+    disp([cfg.var, ', R_ratio: ', num2str(R_ratio), '%']);
     
 
     %% get correlation p based on normal distribution, DOF
@@ -581,6 +642,8 @@ for subi=1:1
         hp = findobj(pp2,'Tag','HatchingRegion');
         hh = hatchfill2(hp,'hatchstyle','single','HatchAngle',45,'HatchDensity',150,'HatchColor','w','HatchLineWidth',0.5);
     end
+    geoshow(ax_m,[S.Y],[S.X],'color','k','linewidth',0.5);
+
     %% frame and label setting
     setm(ax_m,'frame','off','FLineWidth',1);
 
@@ -623,7 +686,7 @@ end
 %% annotations
     title_main = uicontrol('style','text');
 %     set(title_main,'String', 'Individual based Skills (Actual Skill)')
-    set(title_main,'String', 'Land EM-based Skills (Actual Skill)')
+    set(title_main,'String', 'Atmosphere EM-based Skills (Actual Skill)')
 %     set(title_main,'String', 'Ensemble mean based Skills (Potential Predictability)')
     set(title_main,'Units','inches', 'Position',[fig_cfg.fig_size(3)/2-4.85, loc_row_first+3.9, 11, 1])
     set(title_main,'HorizontalAlignment', 'center')
@@ -640,7 +703,7 @@ end
     
     text_row3 = uicontrol('style','text');
 %     set(MyBox,'String','Burned Area')
-    set(text_row3,'String','Burned Area')
+    set(text_row3,'String','Precipitation')
     set(text_row3,'Units','inches', 'Position',[loc_column_first-2.4, loc_row_first-6.46, 2, 1])
     set(text_row3,'HorizontalAlignment', 'right')
     set(text_row3,'Fontsize', 22)
@@ -650,7 +713,7 @@ end
 %     text_row2 = uicontrol('style','radiobutton');
 %     set(MyBox,'String','Burned Area')
 %     set(text_row2,'String',sprintf('<HTML>NO<SUB>3</SUB>',2))
-    set(text_row2,'String', 'GPP')    
+    set(text_row2,'String', 'PSL')    
     set(text_row2,'Units','inches', 'Position',[loc_column_first-2.4, loc_row_first-2.94, 2, 1])
     set(text_row2,'HorizontalAlignment', 'right')
     set(text_row2,'Fontsize', 22)
@@ -658,7 +721,7 @@ end
 
     text_row1 = uicontrol('style','text');
 %     set(MyBox,'String','Burned Area')
-    set(text_row1,'String','TWS')
+    set(text_row1,'String','T2m')
 %     set(text_row1,'String','TWS')
     set(text_row1,'Units','inches', 'Position',[loc_column_first-2.4, loc_row_first+0.58, 2, 1])
     set(text_row1,'HorizontalAlignment', 'right')
@@ -683,10 +746,10 @@ end
 
     %% save
     cfg.figname=['/Volumes/kyy_raid/kimyy/Research/Postdoc/03_IBS/2022_predictability_assimilation_run/paper', ...
-        filesep, 'Figureset_raw', filesep, 'title_fig3','_LND_obs_ensmean', '.tif'];
+        filesep, 'Figureset_raw', filesep, 'Siegert_title_fig2','_ATM_obs_ensmean', '.tif'];
     print(fig_h, cfg.figname, '-dpng');
     cfg.figname2=['/Volumes/kyy_raid/kimyy/Research/Postdoc/03_IBS/2022_predictability_assimilation_run/paper', ...
-        filesep, 'Figureset_raw', filesep, 'title_fig3','_LND_obs_ensmean', '.eps'];
+        filesep, 'Figureset_raw', filesep, 'Siegert_title_fig2','_ATM_obs_ensmean', '.eps'];
     saveas(fig_h, cfg.figname2,'epsc');
     close all;
 
