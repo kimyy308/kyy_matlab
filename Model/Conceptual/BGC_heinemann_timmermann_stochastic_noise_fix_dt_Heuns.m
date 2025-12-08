@@ -75,7 +75,7 @@ function run_NPZ_model_fixed_dt
     disp(['Mean P = ', num2str(mean(y(:,2)))]);
 
     % Plot state variables
-    figure;
+    f1= figure;
     hold on;
 
 %     yyaxis right
@@ -85,8 +85,8 @@ function run_NPZ_model_fixed_dt
     set(gca, 'ycolor', 'b');
 
 %     yyaxis left
-    plot(t, y(:,3), 'r-', 'DisplayName', 'Zooplankton (Z)', 'LineWidth', 2);
     plot(t, y(:,2), 'g', 'DisplayName', 'Phytoplankton (P)', 'LineWidth', 2);
+    plot(t, y(:,3), 'r-', 'DisplayName', 'Zooplankton (Z)', 'LineWidth', 2);
 
     % Plot mean phytoplankton line
     P_mean = mean(y(:,2));
@@ -110,19 +110,22 @@ function run_NPZ_model_fixed_dt
         case 2
             title('N-P-Z Model with Gaussian Upwelling');
     end
+    set(f1, 'Position', [200 200 1000 500])   % x=200, y=200 location 1000x500
 
     % Plot flux terms
-    figure;
+    f2= figure;
     hold on;
     plot(t, upwelling_N, 'b--', 'DisplayName', 'Upwelling N', 'LineWidth', 2);
     plot(t, upwelling_P, 'g--', 'DisplayName', 'Upwelling P', 'LineWidth', 2);
     plot(t, uptake, 'k--', 'DisplayName', 'Uptake', 'LineWidth', 2);
     ylabel('Flux terms (gC m^{-3} day^{-1})');
-    ylim([-0.07, 0.07]);
+    ylim([-0.2, 0.2]);
     set(gca, 'ycolor', 'k');
     xlabel('Time (days)');
     legend('location', 'northwest');
     set(gca,'fontsize', 15);
+    set(f2, 'Position', [200 200 1000 500])   % x=200, y=200 location 1000x500
+    
 end
 
 

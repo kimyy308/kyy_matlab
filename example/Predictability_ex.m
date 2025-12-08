@@ -68,6 +68,25 @@ set(gca, 'Fontsize', 15)
 sqrt(sum((cos(x)-AR1_noise).^2))
 sqrt(sum((cos(x)-cos(x+2)).^2))
 
+%% external forcing driven error
+ti=50;
+x=[1:ti].*0.5;
+plot(x, cos(x)+x, 'k', 'linewidth', 2);
+hold on;
+% plot(x, AR1+x, 'r', 'linewidth', 2)
+plot(x, x, 'b', 'linewidth', 2);
+plot(x, [cos(x(1)), cos(x(2:ti)).*0.6]-1+x*0.5, 'r', 'linewidth', 2);
+
+% yline(cos(0.5), 'r', 'linewidth', 2);
+% plot(x, repmat(cos(x(1)), 1, 100), 'r', 'linewidth', 2)
+hold off
+xlabel('Year')
+ylabel('Value')
+legend({'OBS', 'Model D', 'Model E'}, 'Location', 'SouthOutside', 'Orientation', 'horizontal' )
+set(gca, 'Fontsize', 20)
+
+
+
 
 %% uncertainty growth in initialized ensemble forecast
 x=[1:100].*0.5;
@@ -193,19 +212,6 @@ set(gca, 'Fontsize', 15)
 
 
 
-ti=50;
-x=[1:ti].*0.5;
-plot(x, cos(x)+x, 'k', 'linewidth', 2);
-hold on;
-% plot(x, AR1+x, 'r', 'linewidth', 2)
-plot(x, [cos(x(1)), cos(x(2:ti)).*0.6]-1+x, 'b', 'linewidth', 2);
-% yline(cos(0.5), 'r', 'linewidth', 2);
-% plot(x, repmat(cos(x(1)), 1, 100), 'r', 'linewidth', 2)
-hold off
-xlabel('Year')
-ylabel('Value')
-legend({'OBS', 'Model D'}, 'Location', 'SouthOutside', 'Orientation', 'horizontal' )
-set(gca, 'Fontsize', 15)
 
 
 

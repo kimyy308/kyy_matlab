@@ -18,7 +18,10 @@ cfg.long_range=500;
 
 ext_flag=0;
 
-fname=['/Users/kimyy/Desktop/backup/Research/Postdoc/03_IBS', ...
+% fname=['/Users/kimyy/Desktop/backup/Research/Postdoc/03_IBS', ...
+%     '/2022_predictability_assimilation_run/Lorenz_predictability_example/', ...
+%     'lorenz_v2_temp.mat'];
+fname=['/Volumes/kyy_raid/kimyy/Research/Postdoc/03_IBS', ...
     '/2022_predictability_assimilation_run/Lorenz_predictability_example/', ...
     'lorenz_v2_temp.mat'];
 
@@ -603,7 +606,7 @@ lineplot_3=plot(ax_m_7, (1:cfg.pred_len), bsm, 'magenta', 'linewidth',2);
 title1=title('(d) ACC(\tau)', 'fontsize', 20);
 grid on
 
-ylabel('ACC for $$ x(\tau) $$', 'Interpreter', 'latex', 'fontsize', 25.*fig_weig)
+ylabel('Skills for $$ x(\tau) $$', 'Interpreter', 'latex', 'fontsize', 25.*fig_weig)
 xlabel('lead $$ \tau $$', 'Interpreter', 'latex', 'fontsize', 25.*fig_weig)
 set(ax_m_7, 'Ylim',[-0.2 1])
 set(ax_m_7,'fontsize',15);
@@ -653,7 +656,7 @@ hold on
 %         scatter(mi,skills_ri_med(mi,triali));
 %     end
 % end
-skills_em2(1,1:100)=NaN;
+skills_em2(1:23,1:1000)=NaN;
 skills_em2(2:10,:)=skills_em(2:10,:);
 skills_em2(11,:)=skills_em(15,:);
 skills_em2(12,:)=skills_em(20,:);
@@ -708,7 +711,15 @@ grid on
     'Location', 'southeast', ...
     'Fontsize', 15.*fig_weig);  %% for median
 
-print(gcf, ['lorenz_trajectory_v4_',num2str(ext_flag), '.png'], '-dpng');
+print(gcf, ['/Volumes/kyy_raid/kimyy/Research/Postdoc/03_IBS/2022_predictability_assimilation_run/paper/Figureset_raw/Fin_Figure/figures_v3', ...
+    '/', 'fin_lorenz_trajectory_v4_',num2str(ext_flag), '.png'], '-dpng');
+print(gcf, ['/Volumes/kyy_raid/kimyy/Research/Postdoc/03_IBS/2022_predictability_assimilation_run/paper/Figureset_raw/Fin_Figure/figures_v3', ...
+    '/', 'fin_lorenz_trajectory_v4_',num2str(ext_flag), '.tif'], '-dtiff');
+
+% set(gcf,'Renderer','painters');  % vector renderer
+% outdir = '/Volumes/kyy_raid/kimyy/Research/Postdoc/03_IBS/2022_predictability_assimilation_run/paper/Figureset_raw/Fin_Figure/figures_v3';
+% fname  = fullfile(outdir, ['fin_lorenz_trajectory_v4_', num2str(ext_flag), '.eps']);
+% print(gcf, fname, '-depsc', '-vector');  % color EPS
 
 
 
