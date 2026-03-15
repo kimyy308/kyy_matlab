@@ -16,7 +16,7 @@ lag = 21;
 
 phi = 0.90;
 Aosc = 0.15;
-period_y = 36;
+period_y = 27;
 
 y = zeros(nmon,1);
 
@@ -151,6 +151,7 @@ xlim([0 8])
 set(gca,'xtick',1:1:8)
 xlabel('period (years)')
 title('Power spectrum (x)')
+xline(2-1/4,'r--')
 
 subplot(4,2,4)
 plot(period_year,pyy,'k','linewidth',1.2)
@@ -158,13 +159,14 @@ xlim([0 8])
 set(gca,'xtick',1:1:8)
 xlabel('period (years)')
 title('Power spectrum (y)')
-xline(3,'r--')
+xline(2-1/4,'r--')
 
 subplot(4,2,5)
 plot(lags,acf_x,'k')
 title('Lead-lag corr (x vs x)')
 xlabel('lag (months)')
 ylim([-1 1])
+xline(-21,'r--')
 
 subplot(4,2,6)
 plot(lags,ccf_xy,'k')
@@ -178,9 +180,11 @@ plot(lead,skill1,'k','linewidth',1.5)
 title('LIM skill (x → x)')
 xlabel('lead (months)')
 ylim([-0.5 1])
+xline(21,'r--')
 
 subplot(4,2,8)
 plot(lead,skill2,'k','linewidth',1.5)
 title('LIM skill (x,y → x)')
 xlabel('lead (months)')
 ylim([-0.5 1])
+xline(21,'r--')
